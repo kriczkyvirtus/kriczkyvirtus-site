@@ -19,5 +19,8 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "vite": "catalog:"
+  },
+  "dependencies": {
+    "react-router-dom": "^7.15.1"
   }
 }
