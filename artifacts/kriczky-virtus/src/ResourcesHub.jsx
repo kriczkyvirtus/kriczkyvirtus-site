@@ -770,7 +770,7 @@ const ValueGapCalc = () => {
     <div>
       <div style={{fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#8B95A5", marginBottom: 4}}>{label}</div>
       <div style={{fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color, marginBottom: 6}}>{display}</div>
-      <input type="range" min={min} max={max} step={step} value={value} onChange={e => onChange(Number(e.target.value))} style={{width: "100%", accentColor: color, cursor: "pointer"}}/>
+      <input type="range" min={min} max={max} step={step} value={value} onChange={e => onChange(Number(e.target.value))} style={{width: "100%", accentColor: color, cursor: "pointer", "--thumb-color": color}}/>
     </div>
   );
 
