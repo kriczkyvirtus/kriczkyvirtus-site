@@ -1845,7 +1845,7 @@ const GoDeeper = () => {
 
         <Reveal delay={350}>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-            <GoldBtn onClick={() => {}} arrowInset={24} style={{ padding: "16px 48px" }}>Explore Free Tools</GoldBtn>
+            <GoldBtn onClick={() => { window.location.href = '/tools'; }} arrowInset={24} style={{ padding: "16px 48px" }}>Explore Free Tools</GoldBtn>
             <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, color: C.text3, margin: 0 }}>No account needed · Personalize these numbers to your business</p>
           </div>
         </Reveal>

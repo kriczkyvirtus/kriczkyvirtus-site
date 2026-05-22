@@ -112,8 +112,9 @@ const DiagonalShine = () => (
 const GoldBtn = ({ href, color = C.gold, children }) => {
   const [hov, setHov] = useState(false);
   const btnColor = color;
+  const isToolPage = href && href.startsWith('/tools/') && href !== '/tools';
   return (
-    <a href={href} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+    <a href={href} target={isToolPage ? "_blank" : undefined} rel={isToolPage ? "noopener noreferrer" : undefined} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       style={{
         position: "relative", display: "inline-flex", alignItems: "center", justifyContent: "center",
         padding: "12px 44px", borderRadius: 12, textDecoration: "none", cursor: "pointer",
@@ -1249,8 +1250,7 @@ export default function ResourcesHubV3() {
               color: C.text1, margin: "0 0 20px", textTransform: "uppercase", letterSpacing: "0.01em",
               textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}>
               You built it.<br/>
-              Do you know what it's<br/>
-              <span style={{ color: C.gold, textShadow: `0 0 30px ${C.gold}30` }}>actually worth?</span>
+              Do you know what it's <span style={{ color: C.gold, textShadow: `0 0 30px ${C.gold}30` }}>actually worth?</span>
             </h1>
             <p style={{ fontSize: 17, color: C.text2, lineHeight: 1.65, maxWidth: 500 }}>
               Find out how much — <span style={{ color: C.gold, fontWeight: 600 }}>and what's holding it back.</span> Each tool below scores a specific dimension of your business, takes under 15 minutes, and gives you a result you can act on immediately.
