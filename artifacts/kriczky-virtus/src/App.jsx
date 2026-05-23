@@ -922,7 +922,7 @@ const GapCycler = ({ mob }) => {
       </div>
 
       <div style={{ display: "flex", justifyContent: "center", margin: "6px 0" }}>
-        <GoldBtn color={C.cyan}>Go Deeper With Your Business</GoldBtn>
+        <GoldBtn color={C.cyan} onClick={() => window.location.href = '/tools'}>Go Deeper With Your Business</GoldBtn>
       </div>
       <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, color: C.text3, margin: 0, fontStyle: "italic", textAlign: "center" }}>Illustrative examples for educational purposes only. Best-in-class margins vary by industry — results not guaranteed.</p>
     </div>
