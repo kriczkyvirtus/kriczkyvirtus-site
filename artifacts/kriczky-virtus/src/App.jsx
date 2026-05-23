@@ -2544,12 +2544,12 @@ const Footer = () => {
           <div>
             <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 700, color: C.text2, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 14 }}>Quick Links</div>
             {[
-              { label: "Free Constraint Roadmap", href: "#hero" },
+              { label: "Free Constraint Roadmap", href: "/constraint-roadmap", target: "_blank" },
               { label: "Resources Hub", href: "/tools" },
               { label: "How We Work Together", href: "#pricing" },
               { label: "FAQ", href: "#faq" },
             ].map(l => (
-              <a key={l.label} href={l.href} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, color: C.text3, textDecoration: "none", display: "block", marginBottom: 10, transition: "color 0.2s" }}
+              <a key={l.label} href={l.href} target={l.target} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, color: C.text3, textDecoration: "none", display: "block", marginBottom: 10, transition: "color 0.2s" }}
                 onMouseEnter={e => e.currentTarget.style.color = C.gold}
                 onMouseLeave={e => e.currentTarget.style.color = C.text3}
               >{l.label}</a>
