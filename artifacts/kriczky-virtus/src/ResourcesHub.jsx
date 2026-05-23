@@ -109,12 +109,12 @@ const DiagonalShine = () => (
 );
 
 // ─── GOLD BTN (with arrow reveal) ───────────────────────────
-const GoldBtn = ({ href, color = C.gold, children }) => {
+const GoldBtn = ({ href, color = C.gold, children, onClick }) => {
   const [hov, setHov] = useState(false);
   const btnColor = color;
   const isToolPage = href && href.startsWith('/tools/') && href !== '/tools';
   return (
-    <a href={href} target={isToolPage ? "_blank" : undefined} rel={isToolPage ? "noopener noreferrer" : undefined} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+    <a href={href} onClick={onClick} target={isToolPage ? "_blank" : undefined} rel={isToolPage ? "noopener noreferrer" : undefined} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       style={{
         position: "relative", display: "inline-flex", alignItems: "center", justifyContent: "center",
         padding: "12px 44px", borderRadius: 12, textDecoration: "none", cursor: "pointer",
