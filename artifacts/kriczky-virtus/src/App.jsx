@@ -1063,7 +1063,7 @@ const JourneyAccordion = ({ onPrimary }) => {
           <Reveal delay={100}><h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: mob ? 30 : tab ? 38 : 48, lineHeight: 1.05, color: C.text1, textTransform: "uppercase", letterSpacing: -1, margin: "0 0 14px", textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}>Three stages. <GoldText>Your pace.</GoldText></h2></Reveal>
         </div>
         <Reveal delay={150}>
-          <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: mob ? 18 : 22, fontWeight: 400, color: C.text2, lineHeight: 1.4, margin: "0 auto 36px", maxWidth: 640, textAlign: "center", fontStyle: "italic" }}>
+          <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: mob ? 18 : 22, fontWeight: 400, color: C.text2, lineHeight: 1.4, margin: "0 auto 36px", maxWidth: 860, textAlign: "center", fontStyle: "italic" }}>
             You've built something real. But <span style={{ color: C.gold, fontWeight: 700 }}>the gap between what you earn and what you keep is growing</span> — and that's not a failure of effort. It's a constraint you haven't been able to see.
           </p>
         </Reveal>
