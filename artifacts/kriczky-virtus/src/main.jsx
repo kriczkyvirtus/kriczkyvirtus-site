@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import App from './App.jsx'
 import ResourcesHub from './ResourcesHub.jsx'
 import WMBW from './tools/WMBW.jsx'
@@ -10,9 +10,28 @@ import CustomerCapital from './tools/CustomerCapital.jsx'
 import StructuralCapital from './tools/StructuralCapital.jsx'
 import './index.css'
 
+const TITLES = {
+  '/tools/wmbw':              "What's My Business Worth?",
+  '/tools/bib':               'Business Independence Blueprint',
+  '/tools/human-capital':     'Attracting Top Employees',
+  '/tools/customer-capital':  'Getting More Valuable Customers',
+  '/tools/structural-capital':'Systems to Run Your Business Without You',
+}
+
+const DEFAULT_TITLE = 'Build Businesses Worth Owning - Kriczky Virtus'
+
+function TitleManager() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    document.title = TITLES[pathname] ?? DEFAULT_TITLE
+  }, [pathname])
+  return null
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
+      <TitleManager />
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/tools" element={<ResourcesHub />} />
