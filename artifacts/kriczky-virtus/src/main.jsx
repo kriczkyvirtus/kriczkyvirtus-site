@@ -8,6 +8,7 @@ import BIB from './tools/BIB.jsx'
 import HumanCapital from './tools/HumanCapital.jsx'
 import CustomerCapital from './tools/CustomerCapital.jsx'
 import StructuralCapital from './tools/StructuralCapital.jsx'
+import ConstraintRoadmap from './tools/ConstraintRoadmap.jsx'
 import './index.css'
 
 const TITLES = {
@@ -16,6 +17,7 @@ const TITLES = {
   '/tools/human-capital':     'Attracting Top Employees',
   '/tools/customer-capital':  'Getting More Valuable Customers',
   '/tools/structural-capital':'Systems to Run Your Business Without You',
+  '/constraint-roadmap':      'Constraint Roadmap',
 }
 
 const DEFAULT_TITLE = 'Build Businesses Worth Owning - Kriczky Virtus'
@@ -40,6 +42,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/tools/human-capital" element={<HumanCapital />} />
         <Route path="/tools/customer-capital" element={<CustomerCapital />} />
         <Route path="/tools/structural-capital" element={<StructuralCapital />} />
+        <Route path="/constraint-roadmap" element={<ConstraintRoadmap />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,

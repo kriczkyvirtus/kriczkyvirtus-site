@@ -478,7 +478,7 @@ const Nav = () => {
               </a>
             ))}
           </div>
-          <GoldBtn href="/constraint-roadmap">Get Your Free Roadmap</GoldBtn>
+          <GoldBtn onClick={() => window.open('/constraint-roadmap', '_blank')}>Get Your Free Roadmap</GoldBtn>
         </>)}
       </div>
     </nav>
@@ -500,7 +500,7 @@ const Nav = () => {
           </a>
         ))}
         <div style={{ marginTop: 16 }}>
-          <GoldBtn href="/constraint-roadmap">Get Your Free Roadmap</GoldBtn>
+          <GoldBtn onClick={() => window.open('/constraint-roadmap', '_blank')}>Get Your Free Roadmap</GoldBtn>
         </div>
       </div>
     )}

@@ -435,7 +435,7 @@ const Nav = ({ onPrimary }) => {
               </a>
             ))}
           </div>
-          <GoldBtn onClick={onPrimary}>Get Your Free Roadmap</GoldBtn>
+          <GoldBtn onClick={() => window.open('/constraint-roadmap', '_blank')}>Get Your Free Roadmap</GoldBtn>
         </>)}
       </div>
     </nav>
@@ -457,7 +457,7 @@ const Nav = ({ onPrimary }) => {
           </a>
         ))}
         <div style={{ marginTop: 16 }}>
-          <GoldBtn large style={{ width: "100%" }} onClick={() => { setMenuOpen(false); onPrimary && onPrimary(); }}>
+          <GoldBtn large style={{ width: "100%" }} onClick={() => { setMenuOpen(false); window.open('/constraint-roadmap', '_blank'); }}>
             Get Your Free Roadmap
           </GoldBtn>
         </div>
@@ -559,7 +559,7 @@ const HeroSection = ({ onPrimary }) => {
           </Reveal>
           <Reveal delay={300}>
             <div style={{ display: "inline-flex", flexDirection: "column", alignItems: mob ? "center" : "flex-start" }}>
-              <GoldBtn large onClick={onPrimary}>Get Your Free Constraint Roadmap</GoldBtn>
+              <GoldBtn large onClick={() => window.open('/constraint-roadmap', '_blank')}>Get Your Free Constraint Roadmap</GoldBtn>
               <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, color: C.text3, margin: "10px 0 0", textAlign: "center" }}>Free · 90 seconds · No account needed</p>
             </div>
           </Reveal>
@@ -1147,7 +1147,7 @@ const JourneyAccordion = ({ onPrimary }) => {
 
         <Reveal delay={300}>
           <div style={{ marginTop: mob ? 28 : 36, textAlign: "center" }}>
-            <GoldBtn large onClick={onPrimary}>Get Your Free Constraint Roadmap</GoldBtn>
+            <GoldBtn large onClick={() => window.open('/constraint-roadmap', '_blank')}>Get Your Free Constraint Roadmap</GoldBtn>
             <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, color: C.text3, margin: "8px 0 0" }}>Free · 90 seconds · No account needed</p>
           </div>
         </Reveal>
@@ -2463,7 +2463,7 @@ const FinalCTA = ({ onPrimary }) => {
                 The Constraint Roadmap is free. Everything downstream is entered at your pace — never ours.
               </p>
               <div style={{ display: "flex", gap: 12, justifyContent: "center", alignItems: "center", flexWrap: "wrap" }}>
-                <GoldBtn large style={{ width: mob ? "100%" : undefined }} onClick={onPrimary}>Get Your Free Constraint Roadmap</GoldBtn>
+                <GoldBtn large style={{ width: mob ? "100%" : undefined }} onClick={() => window.open('/constraint-roadmap', '_blank')}>Get Your Free Constraint Roadmap</GoldBtn>
               </div>
               <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, color: C.text3, marginTop: 16 }}>
                 No pitch. No pressure. Your data stays with you.
@@ -2790,7 +2790,7 @@ const SuccessTransformation = ({ onPrimary }) => {
 
         <Reveal delay={400}>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginTop: mob ? 28 : 40 }}>
-            <GoldBtn large onClick={onPrimary}>Get Your Free Constraint Roadmap</GoldBtn>
+            <GoldBtn large onClick={() => window.open('/constraint-roadmap', '_blank')}>Get Your Free Constraint Roadmap</GoldBtn>
             <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, color: C.text3, margin: 0 }}>Free · 90 seconds · No account needed</p>
           </div>
         </Reveal>
@@ -2810,7 +2810,7 @@ const CTAStrip = ({ onPrimary, message = "Ready to find your #1 constraint?" }) 
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg,transparent,${C.gold}30,${C.gold}60,${C.gold}30,transparent)` }}/>
       <Box style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: "center", justifyContent: "center", gap: mob ? 12 : 24 }}>
         <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: mob ? 18 : 22, color: C.text1, fontWeight: 500 }}>{message}</span>
-        <GoldBtn onClick={onPrimary}>Get Your Free Roadmap</GoldBtn>
+        <GoldBtn onClick={() => window.open('/constraint-roadmap', '_blank')}>Get Your Free Roadmap</GoldBtn>
       </Box>
     </div>
   );
