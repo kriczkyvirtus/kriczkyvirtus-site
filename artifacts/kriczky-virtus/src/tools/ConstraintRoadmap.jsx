@@ -703,7 +703,7 @@ export default function ConstraintRoadmap() {
                   marginTop: 18, fontSize: 12, color: C.text3, background: "none", border: "none",
                   cursor: "pointer", display: "flex", alignItems: "center", gap: 4, fontFamily: "inherit",
                 }}>
-                  \u2190 Previous question
+                  ← Previous question
                 </button>
               )}
             </Glass>
