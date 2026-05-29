@@ -372,6 +372,7 @@ export default function ConstraintRoadmap() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
+  const [roadmapUrl, setRoadmapUrl] = useState(null);
   const [displayScore, setDisplayScore] = useState(0);
   const [resultData, setResultData] = useState(null);
 
@@ -509,6 +510,10 @@ export default function ConstraintRoadmap() {
         body: JSON.stringify(payload),
       });
       if (res.ok) {
+        const responseData = await res.json();
+        if (responseData.roadmapUrl) {
+          setRoadmapUrl(responseData.roadmapUrl);
+        }
         setEmailSubmitted(true);
         return;
       }
@@ -913,6 +918,29 @@ export default function ConstraintRoadmap() {
                     A PDF copy of your results has been sent to <span style={{ color: C.text1, fontWeight: 600 }}>{email}</span>
                   </p>
                 </Glass>
+
+                {roadmapUrl && (
+                  <div style={{ textAlign: "center", marginBottom: 16 }}>
+                    <a href={roadmapUrl} target="_blank" rel="noopener noreferrer"
+                      style={{
+                        display: "inline-flex", alignItems: "center", gap: 8,
+                        padding: "14px 36px", borderRadius: 12, textDecoration: "none",
+                        border: `1.5px solid ${C.gold}50`, color: C.gold, fontWeight: 700,
+                        fontSize: 14, letterSpacing: "0.02em",
+                        background: `linear-gradient(135deg, ${C.gold}18, ${C.gold}0a)`,
+                        boxShadow: `0 0 20px ${C.gold}20, 0 4px 12px rgba(0,0,0,0.3)`,
+                        fontFamily: "'DM Sans', sans-serif", position: "relative", overflow: "hidden",
+                      }}>
+                      <span style={{
+                        position: "absolute", top: "-50%", left: "-50%", right: "-50%", bottom: "-50%",
+                        pointerEvents: "none",
+                        background: `linear-gradient(120deg, transparent 0%, transparent 40%, ${C.gold}12 48%, ${C.gold}20 50%, ${C.gold}12 52%, transparent 60%, transparent 100%)`,
+                        backgroundSize: "200% 200%", animation: "btnShimmer 6s ease-in-out infinite",
+                      }} />
+                      <span style={{ position: "relative", zIndex: 1 }}>View Your Personalized Roadmap</span>
+                    </a>
+                  </div>
+                )}
 
                 {/* Go Deeper — dynamic tool previews (breaks out of narrow container) */}
                 <div style={{ marginBottom: 16, marginTop: 8, position: "relative", left: "50%", transform: "translateX(-50%)", width: "min(1200px, 92vw)", padding: mob ? "0 16px" : "0 40px", boxSizing: "border-box" }}>
