@@ -1472,7 +1472,7 @@ export default function ResourcesHubV3() {
             {/* CTAs */}
             <div style={{ display: "flex", justifyContent: "center", gap: 14, marginTop: 24 }}>
               <GoldBtn href="/tools/wmbw" color={C.cyan}>Get "What's My Business Worth?"</GoldBtn>
-              <GoldBtn href="/call" color={C.gold}>Book Your Free Call</GoldBtn>
+              <GoldBtn href="/free-session" color={C.gold}>Book Your Free Working Session</GoldBtn>
             </div>
           </div>
         </Reveal>

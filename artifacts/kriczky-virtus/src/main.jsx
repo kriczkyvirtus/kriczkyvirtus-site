@@ -12,6 +12,7 @@ import ConstraintRoadmap from './tools/ConstraintRoadmap.jsx'
 import RoadmapSession from './RoadmapSession.jsx'
 import BookIntensive from './BookIntensive.jsx'
 import PartnerQualify from './PartnerQualify.jsx'
+import FreeWorkingSession from './FreeWorkingSession.jsx'
 import './index.css'
 
 const TITLES = {
@@ -49,6 +50,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/roadmap-session" element={<RoadmapSession />} />
         <Route path="/book-intensive" element={<BookIntensive />} />
         <Route path="/partner-qualify" element={<PartnerQualify />} />
+        <Route path="/free-session" element={<FreeWorkingSession />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
