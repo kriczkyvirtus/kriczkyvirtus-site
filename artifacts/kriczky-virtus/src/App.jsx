@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { HashLink } from 'react-router-hash-link';
 
 // ═══════════════════════════════════════════════════════════════════
 // KRICZKY VIRTUS HOMEPAGE — v2
@@ -398,10 +397,10 @@ const Nav = ({ onPrimary }) => {
   }, [menuOpen]);
 
   const links = [
-    { label: "How It Works", href: "/#journey" },
+    { label: "How It Works", href: "#journey" },
     { label: "Resources", href: "/tools" },
-    { label: "Pricing", href: "/#pricing" },
-    { label: "FAQ", href: "/#faq" },
+    { label: "Pricing", href: "#pricing" },
+    { label: "FAQ", href: "#faq" },
   ];
 
   return (<>
@@ -413,28 +412,21 @@ const Nav = ({ onPrimary }) => {
       transition: "all 0.4s",
     }}>
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: mob ? "0 16px" : "0 40px", display: "flex", alignItems: "center", justifyContent: "space-between", height: mob ? 60 : 72 }}>
-        <HashLink smooth to="/#top" style={{ display: "flex", alignItems: "center", gap: mob ? 8 : 12, textDecoration: "none" }}>
+        <a href="#top" style={{ display: "flex", alignItems: "center", gap: mob ? 8 : 12, textDecoration: "none" }}>
           <div style={{ width: mob ? 34 : 40, height: mob ? 34 : 40, borderRadius: mob ? 8 : 10, background: "rgba(200,162,78,0.06)", border: "1px solid rgba(200,162,78,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <KVShield size={mob ? 18 : 22} glow/>
           </div>
           <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.05 }}>
             <span style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: mob ? 15 : 19, color: C.text1, letterSpacing: 1.2, textTransform: "uppercase" }}>KRICZKY VIRTUS</span>
           </div>
-        </HashLink>
+        </a>
         {mob ? (
           <button onClick={() => setMenuOpen(!menuOpen)} style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
             {menuOpen ? <IconX size={24} color={C.text1}/> : <IconMenu size={24} color={C.text1}/>}
           </button>
         ) : (<>
           <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
-            {links.map(l => l.href.includes('#') ? (
-              <HashLink key={l.label} smooth to={l.href}
-                style={{ color: C.text2, fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 500, textDecoration: "none", cursor: "pointer" }}
-                onMouseEnter={e => { e.target.style.color = C.text1; }}
-                onMouseLeave={e => { e.target.style.color = C.text2; }}>
-                {l.label}
-              </HashLink>
-            ) : (
+            {links.map(l => (
               <a key={l.label} href={l.href}
                 style={{ color: C.text2, fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 500, textDecoration: "none", cursor: "pointer" }}
                 onMouseEnter={e => { e.target.style.color = C.text1; }}
@@ -458,12 +450,7 @@ const Nav = ({ onPrimary }) => {
         transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
         padding: "16px 20px",
       }}>
-        {links.map(l => l.href.includes('#') ? (
-          <HashLink key={l.label} smooth to={l.href} onClick={() => setMenuOpen(false)}
-            style={{ display: "block", padding: "12px 0", color: C.text2, fontFamily: "'DM Sans',sans-serif", fontSize: 16, fontWeight: 500, textDecoration: "none", borderBottom: `1px solid ${C.border1}` }}>
-            {l.label}
-          </HashLink>
-        ) : (
+        {links.map(l => (
           <a key={l.label} href={l.href} onClick={() => setMenuOpen(false)}
             style={{ display: "block", padding: "12px 0", color: C.text2, fontFamily: "'DM Sans',sans-serif", fontSize: 16, fontWeight: 500, textDecoration: "none", borderBottom: `1px solid ${C.border1}` }}>
             {l.label}
@@ -2562,14 +2549,9 @@ const Footer = () => {
             {[
               { label: "Free Constraint Roadmap", href: "/constraint-roadmap", target: "_blank" },
               { label: "Resources Hub", href: "/tools" },
-              { label: "How We Work Together", href: "/#pricing" },
-              { label: "FAQ", href: "/#faq" },
-            ].map(l => l.href.includes('#') ? (
-              <HashLink key={l.label} smooth to={l.href} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, color: C.text3, textDecoration: "none", display: "block", marginBottom: 10, transition: "color 0.2s" }}
-                onMouseEnter={e => e.currentTarget.style.color = C.gold}
-                onMouseLeave={e => e.currentTarget.style.color = C.text3}
-              >{l.label}</HashLink>
-            ) : (
+              { label: "How We Work Together", href: "#pricing" },
+              { label: "FAQ", href: "#faq" },
+            ].map(l => (
               <a key={l.label} href={l.href} target={l.target} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, color: C.text3, textDecoration: "none", display: "block", marginBottom: 10, transition: "color 0.2s" }}
                 onMouseEnter={e => e.currentTarget.style.color = C.gold}
                 onMouseLeave={e => e.currentTarget.style.color = C.text3}
@@ -2581,14 +2563,14 @@ const Footer = () => {
           <div>
             <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 700, color: C.text2, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 14 }}>Services</div>
             {[
-              { label: "Valuation Driver Intensive", href: "/#pricing" },
-              { label: "Clarity Partner", href: "/#pricing" },
-              { label: "Growth Partner", href: "/#pricing" },
+              { label: "Valuation Driver Intensive", href: "#pricing" },
+              { label: "Clarity Partner", href: "#pricing" },
+              { label: "Growth Partner", href: "#pricing" },
             ].map(l => (
-              <HashLink key={l.label} smooth to={l.href} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, color: C.text3, textDecoration: "none", display: "block", marginBottom: 10, transition: "color 0.2s" }}
+              <a key={l.label} href={l.href} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, color: C.text3, textDecoration: "none", display: "block", marginBottom: 10, transition: "color 0.2s" }}
                 onMouseEnter={e => e.currentTarget.style.color = C.gold}
                 onMouseLeave={e => e.currentTarget.style.color = C.text3}
-              >{l.label}</HashLink>
+              >{l.label}</a>
             ))}
           </div>
 
