@@ -60,16 +60,7 @@ export default function BookIntensive() {
   const { mob } = useBp();
 
   useEffect(() => {
-    // ═══════════════════════════════════════════════════════════
-    // PASTE YOUR ICLOSED EMBED SCRIPT URL HERE:
-    const ICLOSED_SCRIPT_URL = ""; // e.g. "https://app.iclosed.io/assets/widget.js"
-    const ICLOSED_DATA_URL = "";   // e.g. "https://app.iclosed.io/e/your-company/your-event"
-    // ═══════════════════════════════════════════════════════════
-
-    if (!ICLOSED_SCRIPT_URL) return;
-    const container = document.getElementById("iclosed-embed-intensive");
-    if (!container) return;
-    if (ICLOSED_DATA_URL) container.setAttribute("data-url", ICLOSED_DATA_URL);
+    const ICLOSED_SCRIPT_URL = "https://app.iclosed.io/assets/widget.js";
     const existing = document.querySelector(`script[src="${ICLOSED_SCRIPT_URL}"]`);
     if (!existing) {
       const script = document.createElement("script");
@@ -175,7 +166,7 @@ export default function BookIntensive() {
         {/* ─── SCHEDULER SECTION ───────────────────────── */}
         <div style={{ marginBottom: mob ? 40 : 56 }}>
           <div style={{ minHeight: 500, padding: mob ? "20px 16px" : "28px 32px", background: "linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015) 50%, rgba(255,255,255,0.025))", border: `1px solid ${C.border2}`, borderTop: "1px solid rgba(255,255,255,0.10)", borderRadius: 18, boxShadow: `0 4px 12px rgba(0,0,0,0.3), 0 16px 48px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 60px ${C.green}0a` }}>
-            <div id="iclosed-embed-intensive" style={{ width: "100%" }}>
+            <div id="iclosed-embed-intensive" className="iclosed-widget" data-url="https://app.iclosed.io/e/kriczkyvirtus/valuation-driver-intensive-fit-call" title="Valuation Driver Intensive - Fit Call" style={{ width: "100%", height: 620 }}>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 400, textAlign: "center", padding: 40 }}>
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={C.text4} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: 16, opacity: 0.5 }}>
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
