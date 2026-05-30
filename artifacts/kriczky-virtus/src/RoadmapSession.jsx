@@ -81,31 +81,6 @@ const Shield = ({ size = 32 }) => (
 export default function RoadmapSession() {
   const { mob } = useBp();
 
-  // ─── iClosed embed loader ──────────────────────────────────
-  useEffect(() => {
-    // ═══════════════════════════════════════════════════════════
-    // PASTE YOUR ICLOSED EMBED SCRIPT URL HERE:
-    const ICLOSED_SCRIPT_URL = ""; // e.g. "https://app.iclosed.io/assets/widget.js"
-    const ICLOSED_DATA_URL = "";   // e.g. "https://app.iclosed.io/e/your-company/your-event"
-    // ═══════════════════════════════════════════════════════════
-
-    if (!ICLOSED_SCRIPT_URL) return;
-
-    const container = document.getElementById("iclosed-embed");
-    if (!container) return;
-
-    if (ICLOSED_DATA_URL) {
-      container.setAttribute("data-url", ICLOSED_DATA_URL);
-    }
-
-    const existing = document.querySelector(`script[src="${ICLOSED_SCRIPT_URL}"]`);
-    if (!existing) {
-      const script = document.createElement("script");
-      script.src = ICLOSED_SCRIPT_URL;
-      script.async = true;
-      document.body.appendChild(script);
-    }
-  }, []);
 
   const SESSION_ITEMS = [
     {
@@ -226,31 +201,12 @@ export default function RoadmapSession() {
             borderRadius: 18,
             boxShadow: `0 4px 12px rgba(0,0,0,0.3), 0 16px 48px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 60px ${C.gold}0a`,
           }}>
-            <div id="iclosed-embed" style={{ width: "100%" }}>
-              {/* Placeholder shown until iClosed is configured */}
-              <div style={{
-                display: "flex", flexDirection: "column", alignItems: "center",
-                justifyContent: "center", minHeight: 400, textAlign: "center",
-                padding: 40,
-              }}>
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={C.text4} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: 16, opacity: 0.5 }}>
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, color: C.text3, marginBottom: 8 }}>
-                  Calendar loading...
-                </div>
-                <p style={{ fontSize: 13, color: C.text4, maxWidth: 360, lineHeight: 1.5 }}>
-                  If the scheduler doesn't appear, please email{" "}
-                  <a href="mailto:ekriczky@kriczkyvirtus.com" style={{ color: C.gold, textDecoration: "none" }}>
-                    ekriczky@kriczkyvirtus.com
-                  </a>{" "}
-                  to book directly.
-                </p>
-              </div>
-            </div>
+            <iframe
+              src="https://app.iclosed.io/e/kriczkyvirtus/constraint-roadmap-free-working-session"
+              title="Constraint Roadmap Free Working Session"
+              style={{ width: "100%", height: 620, border: "none", borderRadius: 12, background: "transparent" }}
+              allow="payment"
+            />
           </div>
         </div>
 
