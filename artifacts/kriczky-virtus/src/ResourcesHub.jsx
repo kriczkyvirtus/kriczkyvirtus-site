@@ -742,6 +742,22 @@ const VGS = [
   {rev:6000,margin:22,bic:30,lm:4,hm:8,tier:1},
   {rev:12000,margin:14,bic:22,lm:2.5,hm:6,tier:2},
 ];
+const SliderBlock = ({label, value, display, color, min, max, step, onChange}) => (
+  <div>
+    <div style={{fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#8B95A5", marginBottom: 4}}>{label}</div>
+    <div style={{fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color, marginBottom: 6}}>{display}</div>
+    <input type="range" min={min} max={max} step={step} value={value}
+      onInput={e => onChange(Number(e.target.value))}
+      onChange={e => onChange(Number(e.target.value))}
+      className="valuegap-slider"
+      style={{
+        width: "100%", cursor: "pointer", touchAction: "none",
+        background: `linear-gradient(to right, ${color} 0%, ${color} ${((value - min) / (max - min)) * 100}%, rgba(255,255,255,0.12) ${((value - min) / (max - min)) * 100}%, rgba(255,255,255,0.12) 100%)`,
+        "--vg-thumb": color,
+      }}/>
+  </div>
+);
+
 const ValueGapCalc = () => {
   const [tier,setTier]=useState(0);
   const [rev,setRev]=useState(4000);
@@ -767,20 +783,6 @@ const ValueGapCalc = () => {
   const aVGap=useAnimNum(vGap);const aPGap=useAnimNum(pGap);
 
   const fmt=(n)=>{const a=Math.abs(n);return a>=1000?`$${(n/1000).toFixed(1)}M`:`$${Math.round(n)}K`;};
-
-  const SliderBlock = ({label, value, display, color, min, max, step, onChange}) => (
-    <div>
-      <div style={{fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#8B95A5", marginBottom: 4}}>{label}</div>
-      <div style={{fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color, marginBottom: 6}}>{display}</div>
-      <input type="range" min={min} max={max} step={step} value={value} onChange={e => onChange(Number(e.target.value))}
-        className="valuegap-slider"
-        style={{
-          width: "100%", cursor: "pointer",
-          background: `linear-gradient(to right, ${color} 0%, ${color} ${((value - min) / (max - min)) * 100}%, rgba(255,255,255,0.12) ${((value - min) / (max - min)) * 100}%, rgba(255,255,255,0.12) 100%)`,
-          "--vg-thumb": color,
-        }}/>
-    </div>
-  );
 
   return (<div style={{maxWidth: 960, margin: "0 auto"}}>
     <style>{`
