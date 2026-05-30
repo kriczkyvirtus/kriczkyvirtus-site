@@ -600,7 +600,7 @@ const INDUSTRY_LOGOS = [
 
 const CLIENT_QUOTES = [
   { text: "I knew something was off, but I couldn't name it. The roadmap named it on the first page — and quantified how much it was costing me.", name: "Business Owner", title: "Professional Services · $1.4M" },
-  { text: "Seven questions and I got back a 15-page report that was more useful than the last two years of quarterly reviews from my CPA.", name: "Business Owner", title: "Construction · $3.2M" },
+  { text: "Seven questions and I got back a 14-page report that was more useful than the last two years of quarterly reviews from my CPA.", name: "Business Owner", title: "Construction · $3.2M" },
   { text: "I expected a generic PDF. Instead I got my actual constraint, three root causes with dollar amounts, and a 90-day plan I could start Monday.", name: "Business Owner", title: "Healthcare · $2.1M" },
 ];
 
@@ -1033,7 +1033,7 @@ const JourneyAccordion = ({ onPrimary }) => {
     {
       num: "01", kicker: "Start Here — Free", title: "Find the Constraint",
       accent: C.gold, icon: <IconSearch size={16} color={C.gold}/>,
-      description: "A 90-second assessment and a 15-page personalized roadmap that names your #1 constraint, its root causes, and three moves you can make this week.",
+      description: "A 90-second assessment and a 14-page personalized roadmap that names your #1 constraint, its root causes, and three moves you can make this week.",
       outcome: "You know what's broken and what to do first.",
     },
     {
@@ -2392,8 +2392,8 @@ const CaseStudiesSection = ({ onPrimary }) => {
 // FAQ
 // ═══════════════════════════════════════════════════════════════════
 const faqs = [
-  { q: "What's the difference between the free Roadmap and the Valuation Driver Intensive?", a: ["The Roadmap is a 7-question self-assessment that generates a 15-page diagnostic — enough to see your health score, your #1 constraint, and three immediate moves. The Valuation Driver Intensive is a comprehensive one-time engagement ($5K) where we build a full business valuation estimate, score your business across 5 key value drivers, map your Profit Gap and Value Gap with dollar amounts, model scenarios, and deliver a written 90-day action plan. ", "The Intensive is for owners who want precise numbers, a clear and detailed execution plan personalized to their business, and a guarantee that the quantified opportunities are worth multiples more than the cost of the Intensive."] },
-  { q: "Do I need to book a call to get the Roadmap?", a: ["No. The assessment is self-serve — 7 questions, about 90 seconds. ", "You get your preliminary health score and constraint immediately, then the full 15-page PDF after you enter your email."] },
+  { q: "What's the difference between the free Roadmap and the Valuation Driver Intensive?", a: ["The Roadmap is a 7-question self-assessment that generates a 14-page diagnostic — enough to see your health score, your #1 constraint, and three immediate moves. The Valuation Driver Intensive is a comprehensive one-time engagement ($5K) where we build a full business valuation estimate, score your business across 5 key value drivers, map your Profit Gap and Value Gap with dollar amounts, model scenarios, and deliver a written 90-day action plan. ", "The Intensive is for owners who want precise numbers, a clear and detailed execution plan personalized to their business, and a guarantee that the quantified opportunities are worth multiples more than the cost of the Intensive."] },
+  { q: "Do I need to book a call to get the Roadmap?", a: ["No. The assessment is self-serve — 7 questions, about 90 seconds. ", "You get your preliminary health score and constraint immediately, then the full 14-page PDF after you enter your email."] },
   { q: "How is this different from what my CPA or fractional CFO does?", a: ["Your CPA handles compliance and tax filing (sometimes baseline strategy). A fractional CFO typically manages reporting and financial controls with help for managing/reducing expenses. Both are essential — we don't replace either. Virtus helps fill the gap between them: ", "actively helping you grow your profits (offer structure, strategic partners, marketing and sales constraints, attracting and retaining A-tier talent, systematically making the business less dependent on the owner, etc.), build your business valuation, identify and execute against the #1 constraint suppressing your business's value and ability to scale, and coordinate your full advisor team so everyone rows in the same direction."] },
   { q: "What is the Valuation Growth Guarantee?", a: ["On the Clarity Partner tier ($3K/mo): if your documented business valuation hasn't grown by ", "$250K within 24 months", ", we continue working with you for up to 6 additional months of hands-on execution help for free until it does. On the Growth Partner tier ($5K/mo): ", "the threshold is $500K", ", with up to 12 months of additional 1:1 support for free. Conditions: 80%+ session attendance, execution of agreed action items, and use of the approved advisor stack (CPA, wealth advisor, legal, etc.). Full terms discussed during your free working session."] },
   { q: "What kinds of businesses is this for?", a: ["Owner-operated businesses between roughly $500K and $10M in revenue — services, agencies, construction, healthcare, e-commerce, restaurants, home services, and professional services firms. The methodology works on any business with a P&L, a balance sheet, and ", "an owner who wants to grow profits and build a business that is not dependent on them to run and grow, and that's valuable to an outside 3rd-party (whether they want to sell in the future or hold and own forever)."] },
@@ -3239,7 +3239,7 @@ function MiniAssessment({ onComplete }) {
                 <div style={{ position: "absolute", top: 0, left: "10%", width: "80%", height: 3, background: `linear-gradient(90deg, transparent, ${C.gold}, transparent)` }}/>
                 <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: C.gold, textTransform: "uppercase" }}>Unlock The Full Roadmap</span>
                 <h3 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: mob ? 18 : 22, fontWeight: 700, color: C.text1, margin: "6px 0 10px", lineHeight: 1.2 }}>
-                  Get your 15-page personalized PDF.
+                  Get your 14-page personalized PDF.
                 </h3>
                 <p style={{ fontSize: 12.5, color: C.text2, margin: "0 0 14px", lineHeight: 1.55 }}>
                   Includes the root causes behind your constraint, three immediate moves scoped to your revenue tier, a 90-day action checklist, and industry benchmarks for businesses your size.
@@ -3283,7 +3283,7 @@ function MiniAssessment({ onComplete }) {
                   Your roadmap is on its way.
                 </h3>
                 <p style={{ fontSize: 13, color: C.text2, margin: "0 0 4px", lineHeight: 1.5 }}>
-                  We've sent the full 15-page diagnostic to <span style={{ color: C.text1, fontWeight: 600 }}>{email}</span>.
+                  We've sent the full 14-page diagnostic to <span style={{ color: C.text1, fontWeight: 600 }}>{email}</span>.
                 </p>
               </MA_Glass>
             )}
