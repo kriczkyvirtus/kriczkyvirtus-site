@@ -109,12 +109,13 @@ const DiagonalShine = () => (
 );
 
 // ─── GOLD BTN (with arrow reveal) ───────────────────────────
-const GoldBtn = ({ href, color = C.gold, children, onClick }) => {
+const GoldBtn = ({ href, color = C.gold, children, onClick, target: targetProp }) => {
   const [hov, setHov] = useState(false);
   const btnColor = color;
   const isToolPage = href && href.startsWith('/tools/') && href !== '/tools';
+  const target = targetProp ?? (isToolPage ? "_blank" : undefined);
   return (
-    <a href={href} onClick={onClick} target={isToolPage ? "_blank" : undefined} rel={isToolPage ? "noopener noreferrer" : undefined} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+    <a href={href} onClick={onClick} target={target} rel={target === "_blank" ? "noopener noreferrer" : undefined} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       style={{
         position: "relative", display: "inline-flex", alignItems: "center", justifyContent: "center",
         padding: "12px 44px", borderRadius: 12, textDecoration: "none", cursor: "pointer",
@@ -1421,7 +1422,10 @@ export default function ResourcesHubV3() {
                 color: C.text1, margin: "0 0 16px" }}>
                 Where does <span style={{ color: C.gold }}>your</span> business land?
               </h3>
-              <GoldBtn href="/tools/wmbw" color={C.gold}>Get "What's My Business Worth?"</GoldBtn>
+              <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
+                <GoldBtn href="/tools/wmbw" color={C.gold}>Get "What's My Business Worth?"</GoldBtn>
+                <GoldBtn href="/free-session" color={C.gold} target="_blank">Book Your Free Working Session</GoldBtn>
+              </div>
             </div>
           </div>
         </Reveal>
@@ -1472,7 +1476,7 @@ export default function ResourcesHubV3() {
             {/* CTAs */}
             <div style={{ display: "flex", justifyContent: "center", gap: 14, marginTop: 24 }}>
               <GoldBtn href="/tools/wmbw" color={C.cyan}>Get "What's My Business Worth?"</GoldBtn>
-              <GoldBtn href="/free-session" color={C.gold}>Book Your Free Working Session</GoldBtn>
+              <GoldBtn href="/free-session" color={C.gold} target="_blank">Book Your Free Working Session</GoldBtn>
             </div>
           </div>
         </Reveal>
