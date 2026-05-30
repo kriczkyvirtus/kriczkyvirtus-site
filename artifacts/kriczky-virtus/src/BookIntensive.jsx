@@ -59,6 +59,13 @@ const Shield = ({ size = 32 }) => (
 export default function BookIntensive() {
   const { mob } = useBp();
 
+  useEffect(() => {
+    const s = document.createElement("style");
+    s.id = "hide-sb-bi";
+    s.textContent = "::-webkit-scrollbar{display:none!important}html,body{scrollbar-width:none!important;-ms-overflow-style:none!important;}";
+    document.head.appendChild(s);
+    return () => { const el = document.getElementById("hide-sb-bi"); if (el) el.remove(); };
+  }, []);
 
   const INTENSIVE_ITEMS = [
     {

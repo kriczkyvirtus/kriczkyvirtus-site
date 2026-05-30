@@ -81,6 +81,13 @@ const Shield = ({ size = 32 }) => (
 export default function RoadmapSession() {
   const { mob } = useBp();
 
+  useEffect(() => {
+    const s = document.createElement("style");
+    s.id = "hide-sb-rs";
+    s.textContent = "::-webkit-scrollbar{display:none!important}html,body{scrollbar-width:none!important;-ms-overflow-style:none!important;}";
+    document.head.appendChild(s);
+    return () => { const el = document.getElementById("hide-sb-rs"); if (el) el.remove(); };
+  }, []);
 
   const SESSION_ITEMS = [
     {

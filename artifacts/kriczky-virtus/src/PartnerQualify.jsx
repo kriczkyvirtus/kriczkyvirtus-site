@@ -60,6 +60,13 @@ const Shield = ({ size = 32 }) => (
 export default function PartnerQualify() {
   const { mob } = useBp();
 
+  useEffect(() => {
+    const s = document.createElement("style");
+    s.id = "hide-sb-pq";
+    s.textContent = "::-webkit-scrollbar{display:none!important}html,body{scrollbar-width:none!important;-ms-overflow-style:none!important;}";
+    document.head.appendChild(s);
+    return () => { const el = document.getElementById("hide-sb-pq"); if (el) el.remove(); };
+  }, []);
 
   const PARTNER_ITEMS = [
     {
