@@ -2823,6 +2823,20 @@ const CTAStrip = ({ onPrimary, message = "Ready to find your #1 constraint?" }) 
 // MAIN — ties all sections together with shared handlers
 // ═══════════════════════════════════════════════════════════════════
 export default function KriczkyVirtusHomepage() {
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    if (!hash) return;
+    const attempt = (tries) => {
+      const el = document.getElementById(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else if (tries > 0) {
+        setTimeout(() => attempt(tries - 1), 100);
+      }
+    };
+    setTimeout(() => attempt(10), 50);
+  }, []);
+
   const scrollToHero = () => {
     const el = document.getElementById("top");
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
