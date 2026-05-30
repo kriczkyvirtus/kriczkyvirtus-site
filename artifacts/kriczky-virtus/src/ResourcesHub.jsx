@@ -1423,7 +1423,7 @@ export default function ResourcesHubV3() {
                 Where does <span style={{ color: C.gold }}>your</span> business land?
               </h3>
               <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
-                <GoldBtn href="/tools/wmbw" color={C.gold}>Get "What's My Business Worth?"</GoldBtn>
+                <GoldBtn href="/tools/wmbw" color={C.cyan}>Get "What's My Business Worth?"</GoldBtn>
                 <GoldBtn href="/free-session" color={C.gold} target="_blank">Book Your Free Working Session</GoldBtn>
               </div>
             </div>
