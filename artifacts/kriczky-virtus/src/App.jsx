@@ -1880,7 +1880,8 @@ const PricingSection = ({ onPrimary }) => {
       ],
       guaranteeTitle: "Valuation Opportunity Guarantee",
       guaranteeCustom: true,
-      cta: "Book Your Intensive",
+      cta: "Book Free Fit Call First",
+      ctaHref: "/book-intensive",
     },
     {
       name: "Clarity Partner",
@@ -2016,7 +2017,7 @@ const PricingSection = ({ onPrimary }) => {
                         <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, color: C.text2, lineHeight: 1.45, margin: 0 }}><span style={{ color: C.gold, fontWeight: 700 }}>{t.guarantee}</span>. If not met: {t.guaranteeFallback.toLowerCase()}.</p>
                       )}
                     </div>
-                    <GoldBtn color={t.accent} style={{ width: "100%" }} onClick={onPrimary} arrowInset={18}>{t.cta}</GoldBtn>
+                    <GoldBtn color={t.accent} style={{ width: "100%" }} onClick={t.ctaHref ? () => window.location.href = t.ctaHref : onPrimary} arrowInset={18}>{t.cta}</GoldBtn>
                     <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, color: C.text3, margin: "8px 0 0", textAlign: "center" }}>{t.isVDA ? "One-time · No ongoing commitment" : "Free working session · No commitment"}</p>
                   </div>
                 </div>

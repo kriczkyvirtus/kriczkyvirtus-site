@@ -10,6 +10,7 @@ import CustomerCapital from './tools/CustomerCapital.jsx'
 import StructuralCapital from './tools/StructuralCapital.jsx'
 import ConstraintRoadmap from './tools/ConstraintRoadmap.jsx'
 import RoadmapSession from './RoadmapSession.jsx'
+import BookIntensive from './BookIntensive.jsx'
 import './index.css'
 
 const TITLES = {
@@ -45,6 +46,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/tools/structural-capital" element={<StructuralCapital />} />
         <Route path="/constraint-roadmap" element={<ConstraintRoadmap />} />
         <Route path="/roadmap-session" element={<RoadmapSession />} />
+        <Route path="/book-intensive" element={<BookIntensive />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
