@@ -140,7 +140,7 @@ export default function BookIntensive() {
       <div style={{ position: "fixed", top: "55%", right: "0%", width: 400, height: 6, background: `linear-gradient(90deg, transparent, ${C.gold} 50%, transparent)`, filter: "blur(16px)", opacity: 0.06, transform: "rotate(8deg)", pointerEvents: "none", zIndex: 1 }} />
 
       {/* Content */}
-      <div style={{ position: "relative", zIndex: 10, maxWidth: 900, margin: "0 auto", padding: mob ? "48px 20px 60px" : "72px 40px 80px" }}>
+      <div style={{ position: "relative", zIndex: 10, maxWidth: 900, margin: "0 auto", padding: mob ? "25px 20px 60px" : "25px 40px 80px" }}>
 
         {/* ─── NAV HEADER ──────────────────────────────── */}
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: mob ? 48 : 64 }}>
