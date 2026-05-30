@@ -1901,6 +1901,7 @@ const PricingSection = ({ onPrimary }) => {
       guarantee: "$250K valuation growth in 24 months",
       guaranteeFallback: "Up to 6 months of additional hands-on execution help for free until it does",
       cta: "See If You Qualify",
+      ctaHref: "/partner-qualify",
     },
     {
       name: "Growth Partner",
@@ -1923,6 +1924,7 @@ const PricingSection = ({ onPrimary }) => {
       guarantee: "$500K valuation growth in 24 months",
       guaranteeFallback: "Up to 12 months of additional 1:1 hands-on execution for free until it does",
       cta: "See If You Qualify",
+      ctaHref: "/partner-qualify",
     },
   ];
   return (
