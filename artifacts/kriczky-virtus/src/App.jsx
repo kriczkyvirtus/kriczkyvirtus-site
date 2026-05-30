@@ -2876,7 +2876,6 @@ export default function KriczkyVirtusHomepage() {
         .video-carousel-arrow { animation: arrowPulse 2s ease-in-out infinite; }
         .video-carousel-arrow:hover { animation: none !important; transform: scale(1.08) !important; filter: brightness(1.3); }
         .carousel-arrow:hover { animation: none !important; transform: scale(1.1) !important; filter: brightness(1.3); }
-        ::-webkit-scrollbar { display: none; }
       `}</style>
       <Nav onPrimary={scrollToHero}/>
       <HeroSection onPrimary={scrollToHero}/>
