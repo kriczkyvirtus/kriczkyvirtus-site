@@ -2851,7 +2851,7 @@ export default function KriczkyVirtusHomepage() {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
   return (
-    <div id="top" style={{ background: C.bgDeep, minHeight: "100vh", overflow: "hidden" }}>
+    <div id="top" style={{ background: C.bgDeep, minHeight: "100vh" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
         *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
