@@ -772,11 +772,22 @@ const ValueGapCalc = () => {
     <div>
       <div style={{fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#8B95A5", marginBottom: 4}}>{label}</div>
       <div style={{fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color, marginBottom: 6}}>{display}</div>
-      <input type="range" min={min} max={max} step={step} value={value} onChange={e => onChange(Number(e.target.value))} style={{width: "100%", accentColor: color, cursor: "pointer", "--thumb-color": color}}/>
+      <input type="range" min={min} max={max} step={step} value={value} onChange={e => onChange(Number(e.target.value))}
+        className="valuegap-slider"
+        style={{
+          width: "100%", cursor: "pointer",
+          background: `linear-gradient(to right, ${color} 0%, ${color} ${((value - min) / (max - min)) * 100}%, rgba(255,255,255,0.12) ${((value - min) / (max - min)) * 100}%, rgba(255,255,255,0.12) 100%)`,
+          "--vg-thumb": color,
+        }}/>
     </div>
   );
 
   return (<div style={{maxWidth: 960, margin: "0 auto"}}>
+    <style>{`
+      input[type="range"].valuegap-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 3px; outline: none; cursor: pointer; }
+      input[type="range"].valuegap-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--vg-thumb, #E8ECF1); border: 2px solid white; cursor: pointer; box-shadow: 0 0 8px rgba(255,255,255,0.4); }
+      input[type="range"].valuegap-slider::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--vg-thumb, #E8ECF1); border: 2px solid white; cursor: pointer; box-shadow: 0 0 8px rgba(255,255,255,0.4); border: none; }
+    `}</style>
     <div style={{display: "grid", gridTemplateColumns: "280px 1fr", gap: 24, alignItems: "stretch"}}>
 
       {/* LEFT — Sliders */}
