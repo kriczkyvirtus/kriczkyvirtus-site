@@ -151,8 +151,9 @@ export default function PartnerQualify() {
             <iframe
               src="https://app.iclosed.io/e/kriczkyvirtus/partner-tier-fit-call"
               title="Partner Tier Fit Call"
-              style={{ width: "100%", height: 620, border: "none", borderRadius: 12, background: "transparent" }}
+              style={{ width: "100%", height: 900, border: "none", borderRadius: 12, background: "transparent" }}
               allow="payment"
+              scrolling="no"
             />
           </div>
         </div>

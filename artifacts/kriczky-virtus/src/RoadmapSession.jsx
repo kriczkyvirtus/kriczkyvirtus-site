@@ -209,8 +209,9 @@ export default function RoadmapSession() {
             <iframe
               src="https://app.iclosed.io/e/kriczkyvirtus/constraint-roadmap-free-working-session"
               title="Constraint Roadmap Free Working Session"
-              style={{ width: "100%", height: 620, border: "none", borderRadius: 12, background: "transparent" }}
+              style={{ width: "100%", height: 900, border: "none", borderRadius: 12, background: "transparent" }}
               allow="payment"
+              scrolling="no"
             />
           </div>
         </div>

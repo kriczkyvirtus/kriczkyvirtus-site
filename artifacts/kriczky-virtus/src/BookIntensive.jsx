@@ -164,8 +164,9 @@ export default function BookIntensive() {
             <iframe
               src="https://app.iclosed.io/e/kriczkyvirtus/valuation-driver-intensive-fit-call"
               title="Valuation Driver Intensive - Fit Call"
-              style={{ width: "100%", height: 620, border: "none", borderRadius: 12, background: "transparent" }}
+              style={{ width: "100%", height: 900, border: "none", borderRadius: 12, background: "transparent" }}
               allow="payment"
+              scrolling="no"
             />
           </div>
         </div>

@@ -152,8 +152,9 @@ export default function FreeWorkingSession() {
             <iframe
               src="https://app.iclosed.io/e/kriczkyvirtus/free-working-session"
               title="Free Working Session"
-              style={{ width: "100%", height: 620, border: "none", borderRadius: 12, background: "transparent" }}
+              style={{ width: "100%", height: 900, border: "none", borderRadius: 12, background: "transparent" }}
               allow="payment"
+              scrolling="no"
             />
           </div>
         </div>
