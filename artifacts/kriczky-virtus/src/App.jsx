@@ -425,7 +425,7 @@ const Nav = ({ onPrimary }) => {
             {menuOpen ? <IconX size={24} color={C.text1}/> : <IconMenu size={24} color={C.text1}/>}
           </button>
         ) : (<>
-          <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+          <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", gap: 24, alignItems: "center" }}>
             {links.map(l => (
               <a key={l.label} href={l.href}
                 style={{ color: C.text2, fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 500, textDecoration: "none", cursor: "pointer" }}
