@@ -62,21 +62,8 @@ export default function FreeWorkingSession() {
   const { mob } = useBp();
 
   useEffect(() => {
-    const s = document.createElement("style");
-    s.id = "hide-sb-fs";
-    s.textContent = "html::-webkit-scrollbar,body::-webkit-scrollbar,::-webkit-scrollbar{width:0!important;height:0!important;display:none!important;}";
-    document.head.appendChild(s);
-    document.documentElement.style.setProperty("scrollbar-width","none","important");
-    document.documentElement.style.setProperty("-ms-overflow-style","none","important");
-    document.body.style.setProperty("scrollbar-width","none","important");
-    document.body.style.setProperty("-ms-overflow-style","none","important");
-    return () => {
-      const el = document.getElementById("hide-sb-fs"); if (el) el.remove();
-      document.documentElement.style.removeProperty("scrollbar-width");
-      document.documentElement.style.removeProperty("-ms-overflow-style");
-      document.body.style.removeProperty("scrollbar-width");
-      document.body.style.removeProperty("-ms-overflow-style");
-    };
+    document.documentElement.classList.add("hide-scrollbar");
+    return () => document.documentElement.classList.remove("hide-scrollbar");
   }, []);
 
   const SESSION_ITEMS = [

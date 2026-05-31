@@ -8,6 +8,19 @@ html {
   scroll-behavior: smooth;
 }
 
+html.hide-scrollbar::-webkit-scrollbar,
+html.hide-scrollbar *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+html.hide-scrollbar,
+html.hide-scrollbar * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
 body {
   background: #0A0E14;
   color: #E8ECF1;
