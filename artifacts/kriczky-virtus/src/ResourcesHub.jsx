@@ -118,7 +118,7 @@ const GoldBtn = ({ href, color = C.gold, children, onClick, target: targetProp }
     <a href={href} onClick={onClick} target={target} rel={target === "_blank" ? "noopener noreferrer" : undefined} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       style={{
         position: "relative", display: "inline-flex", alignItems: "center", justifyContent: "center",
-        padding: "12px 44px", borderRadius: 12, textDecoration: "none", cursor: "pointer",
+        padding: "12px 28px", borderRadius: 12, textDecoration: "none", cursor: "pointer",
         overflow: "hidden",
         background: hov ? `linear-gradient(135deg,${color}22,${color}12)` : `linear-gradient(135deg,${color}15,${color}08)`,
         border: `1px solid ${hov ? color + "55" : color + "35"}`,
