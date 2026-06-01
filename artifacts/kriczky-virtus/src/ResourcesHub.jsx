@@ -1241,7 +1241,7 @@ export default function ResourcesHubV3() {
       <div style={{ position: "relative", zIndex: 1, maxWidth: 1200, margin: "0 auto", padding: "0 40px" }}>
 
         {/* ═══════════ HERO ═══════════ */}
-        <div className="hub-hero" style={{ minHeight: "100vh", paddingTop: "calc(50vh - 205px)", paddingBottom: "80px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 60 }}>
+        <div className="hub-hero" style={{ minHeight: "100vh", paddingTop: "calc(50vh - 234px)", paddingBottom: "80px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 60 }}>
           <div className="hub-hero-text" style={{ maxWidth: 560, flexShrink: 0, position: "relative", zIndex: 2 }}>
             {/* Cyan pill kicker with shimmer */}
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "7px 18px", borderRadius: 100,
