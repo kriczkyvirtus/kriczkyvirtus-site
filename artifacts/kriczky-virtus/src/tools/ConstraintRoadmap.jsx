@@ -516,6 +516,17 @@ export default function ConstraintRoadmap() {
         console.log("[Assessment] API response:", responseData);
         if (responseData.roadmapUrl) {
           setRoadmapUrl(responseData.roadmapUrl);
+
+          const downloadLink = document.createElement("a");
+          downloadLink.href = responseData.roadmapUrl;
+          downloadLink.download = "Constraint-Roadmap.html";
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+
+          setTimeout(() => {
+            window.open(responseData.roadmapUrl, "_blank");
+          }, 500);
         }
         setEmailSubmitted(true);
         return;
