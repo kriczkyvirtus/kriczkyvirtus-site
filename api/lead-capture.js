@@ -18,16 +18,15 @@ module.exports = async function handler(req, res) {
     const categories = summary?.categories;
     const totalScore = summary?.totalScore;
 
-    if (!name || !email || !constraintId || !revenue || !categories) {
-      return res.status(400).json({
-        error: "Missing required fields: name, email, and summary with constraintId, revenue, categories",
-      });
+    if (!name || !email) {
+      return res.status(400).json({ error: "Missing required fields: name, email" });
     }
 
-    console.log(`[Lead] ${name} <${email}> — ${tool || "constraint-roadmap"} — ${constraintId}/${revenue} — score: ${totalScore}`);
+    console.log(`[Lead] ${name} <${email}> — ${tool || "constraint-roadmap"} — ${constraintId || "n/a"}/${revenue || "n/a"} — score: ${totalScore}`);
     console.log(`[Lead] Answers:`, JSON.stringify(req.body.answers || {}));
 
     let roadmapUrl = null;
+    if (constraintId && revenue && categories) {
     try {
       const { put } = await import("@vercel/blob");
 
@@ -98,6 +97,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
     } catch (renderErr) {
       console.error("[Roadmap] Generation failed:", renderErr);
     }
+    } // end if (constraintId && revenue && categories)
 
     // TODO: Google Sheets — append row
     // TODO: ActiveCampaign — create/update contact + tag

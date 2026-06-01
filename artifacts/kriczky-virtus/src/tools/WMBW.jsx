@@ -1409,7 +1409,7 @@ export default function BusinessWorthDiagnostic() {
           {/* Primary CTA */}
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 18 }}>
             <div style={{ display: "inline-block" }}>
-              <GlassBtn href="https://kriczkyvirtus.com/call" color={C.gold}>BOOK YOUR FREE CALL</GlassBtn>
+              <GlassBtn href="https://www.kriczkyvirtus.com/free-session" color={C.gold}>BOOK YOUR FREE WORKING SESSION</GlassBtn>
             </div>
           </div>
 

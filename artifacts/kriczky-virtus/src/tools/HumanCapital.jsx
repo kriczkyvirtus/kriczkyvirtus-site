@@ -870,23 +870,6 @@ export default function HumanCapitalDeepDive() {
                 </div>
               </div>
 
-              {/* CONSTRAINT Email CTA */}
-              <div style={{ padding: "20px 24px", borderRadius: 12,
-                background: `linear-gradient(135deg, ${C.gold}10, ${C.gold}04)`, border: `2px solid ${C.gold}40`,
-                boxShadow: `0 0 24px ${C.gold}12, inset 0 1px 0 ${C.gold}15`, textAlign: "center" }}>
-                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 20, fontWeight: 600, color: C.text1, marginBottom: 10 }}>
-                  Want the full action plan for <span style={{ color: C.gold }}>every</span> weak area?
-                </div>
-                <p style={{ fontSize: 13, color: C.text2, lineHeight: 1.6, marginBottom: 6 }}>
-                  Email the word <span style={{ color: C.gold, fontWeight: 800, fontSize: 15, letterSpacing: "0.1em" }}>TALENT</span> to
-                </p>
-                <div style={{ fontSize: 18, fontWeight: 700, color: C.cyan, letterSpacing: "0.02em", marginBottom: 12 }}>
-                  scale@kriczkyvirtus.com
-                </div>
-                <p style={{ fontSize: 10.5, color: C.text3, lineHeight: 1.55, maxWidth: 460, margin: "0 auto" }}>
-                  We'll send you a personalized list of prioritized action steps based on your weakest dimensions — your full Human Capital playbook delivered to your inbox.
-                </p>
-              </div>
             </Page>
             <div className="page-gap" style={{ height: 24 }}/>
           </>
@@ -943,7 +926,7 @@ export default function HumanCapitalDeepDive() {
           {/* Primary CTA */}
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 18 }}>
             <div style={{ display: "inline-block" }}>
-              <GlassBtn href="https://kriczkyvirtus.com/call" color={C.gold}>BOOK YOUR FREE CALL</GlassBtn>
+              <GlassBtn href="https://www.kriczkyvirtus.com/free-session" color={C.gold}>BOOK YOUR FREE WORKING SESSION</GlassBtn>
             </div>
           </div>
 
