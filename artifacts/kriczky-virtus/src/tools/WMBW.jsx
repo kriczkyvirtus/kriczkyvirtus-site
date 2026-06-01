@@ -478,29 +478,15 @@ const EmailGate = ({ toolName, toolSlug, accentColor, scores, summary, onUnlock,
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!name.trim()) { setError("Please enter your name so we can personalize your results."); return; }
     if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("Please enter a valid email address."); return; }
     setError(""); setSending(true);
-    const payload = { name: name.trim(), email: email.trim(), tool: toolSlug, toolName, scores, summary, timestamp: new Date().toISOString(), pdfBase64 };
-    try {
-      const res = await fetch("/api/lead-capture", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      if (res.ok) { onUnlock(); return; }
-      throw new Error("API unavailable");
-    } catch (err) {
-      console.log("[Virtus] API failed, queuing silent retry:", err.message || err);
-      const retryPayload = {...payload, pdfBase64: null};
-      const retryFn = async (attempt) => {
-        if (attempt > 5) { console.log("[Virtus] All retries exhausted. Lead data logged above."); return; }
-        try {
-          const r = await fetch("/api/lead-capture", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(retryPayload) });
-          if (r.ok) { console.log("[Virtus] Retry " + attempt + " succeeded"); return; }
-          throw new Error("Retry failed");
-        } catch (e) { console.log("[Virtus] Retry " + attempt + " failed, next in " + (30 * attempt) + "s"); setTimeout(() => retryFn(attempt + 1), 30000 * attempt); }
-      };
-      setTimeout(() => retryFn(1), 30000);
-      onUnlock();
-    } finally { setSending(false); }
+    const payload = { name: name.trim(), email: email.trim(), tool: toolSlug, toolName, scores, summary, timestamp: new Date().toISOString() };
+    fetch("/api/lead-capture", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+      .catch(err => console.error("[Lead] Fetch failed:", err));
+    onUnlock();
+    setSending(false);
   };
 
   return (
