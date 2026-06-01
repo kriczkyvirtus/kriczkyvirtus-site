@@ -40,14 +40,8 @@ module.exports = async function handler(req, res) {
         month: "long", day: "numeric", year: "numeric",
       });
 
-      require("@babel/register")({
-        presets: ["@babel/preset-react"],
-        extensions: [".jsx"],
-        only: [/shared/],
-      });
-
       const path = require("path");
-      const ConstraintRoadmap = require(path.join(__dirname, "..", "shared", "ConstraintRoadmap-v5.cjs.jsx"));
+      const ConstraintRoadmap = require(path.join(__dirname, "..", "shared", "ConstraintRoadmap-v5.compiled.js"));
 
       const CONSTRAINT_NAMES = {
         profitability: "Profitability",
