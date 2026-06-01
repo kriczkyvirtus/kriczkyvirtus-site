@@ -4,6 +4,7 @@
 const React = require("react");
 const ReactDOMServer = require("react-dom/server");
 const crypto = require("crypto");
+const { appendLead } = require("../lib/sheets");
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
@@ -99,7 +100,16 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
     }
     } // end if (constraintId && revenue && categories)
 
-    // TODO: Google Sheets — append row
+    // Google Sheets — fire-and-forget
+    appendLead({
+      name,
+      email,
+      tool: tool || "constraint-roadmap",
+      summary: summary || {},
+      answers: req.body.answers || {},
+      timestamp: timestamp || new Date().toISOString(),
+    }).catch(err => console.error("[Sheets] appendLead failed:", err));
+
     // TODO: ActiveCampaign — create/update contact + tag
     // TODO: Resend — send email with roadmap link
 

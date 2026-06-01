@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+const { appendLead } = require("../lib/sheets");
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
@@ -26,6 +27,16 @@ module.exports = async function handler(req, res) {
     });
 
     console.log(`[Store] ${tool}: ${name} <${email}> — ${Math.round(html.length / 1024)}KB — ${blob.url}`);
+
+    // Google Sheets — fire-and-forget (summary not available here, tool name is enough)
+    appendLead({
+      name,
+      email,
+      tool,
+      summary: req.body.summary || {},
+      answers: req.body.answers || {},
+      timestamp: req.body.timestamp || new Date().toISOString(),
+    }).catch(err => console.error("[Sheets] appendLead failed:", err));
 
     return res.status(200).json({ success: true, url: blob.url });
 

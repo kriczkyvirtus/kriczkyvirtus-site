@@ -18,6 +18,7 @@
     "@babel/preset-react": "^7.29.7",
     "@babel/register": "^7.29.7",
     "@vercel/blob": "^2.4.0",
+    "googleapis": "^173.0.0",
     "react": "catalog:",
     "react-dom": "catalog:"
   }
