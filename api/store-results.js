@@ -83,22 +83,39 @@ async function updateLinkColumn(email, tool, blobUrl) {
   }
 
   // ─── Update Aggregated tab ───────────────────────────────────────────────────
+  // Search by email + empty Link column (col I, index 8) rather than by tool
+  // name — avoids mismatches when TOOL_TO_TAB produces slightly different
+  // strings than what appendLead wrote into the Tool column.
+  function findAggRow(rows) {
+    for (let i = rows.length - 1; i >= 1; i--) {
+      const r = rows[i];
+      if (r && r[2] && r[2].toLowerCase() === email.toLowerCase()
+          && (!r[8] || r[8].trim() === "")) {
+        return i + 1; // 1-indexed
+      }
+    }
+    return -1;
+  }
+
   try {
     let aggRows = (await sheets.spreadsheets.values.get({
       spreadsheetId,
       range: `'Aggregated'!A:J`,
     })).data.values || [];
 
-    let aggTargetRow = await findRowForEmail(aggRows, email, tabName);
+    console.log(`[Store→Sheets] Searching Aggregated for email="${email}", tabName="${tabName}"`);
+    console.log(`[Store→Sheets] Aggregated has ${aggRows.length} rows`);
+
+    let aggTargetRow = findAggRow(aggRows);
 
     if (aggTargetRow === -1) {
-      console.warn(`[Store→Sheets] No row for ${email}/${tabName} in "Aggregated" — retrying in 3s`);
+      console.warn(`[Store→Sheets] No row for ${email} in "Aggregated" — retrying in 3s`);
       await new Promise(resolve => setTimeout(resolve, 3000));
       aggRows = (await sheets.spreadsheets.values.get({
         spreadsheetId,
         range: `'Aggregated'!A:J`,
       })).data.values || [];
-      aggTargetRow = await findRowForEmail(aggRows, email, tabName);
+      aggTargetRow = findAggRow(aggRows);
     }
 
     if (aggTargetRow > 0) {
@@ -110,7 +127,7 @@ async function updateLinkColumn(email, tool, blobUrl) {
       });
       console.log(`[Store→Sheets] Updated Link in "Aggregated" row ${aggTargetRow}`);
     } else {
-      console.error(`[Store→Sheets] Retry failed: still no row for ${email}/${tabName} in "Aggregated"`);
+      console.error(`[Store→Sheets] Retry failed: still no row for ${email} in "Aggregated"`);
     }
   } catch (err) {
     console.error(`[Store→Sheets] Failed to update "Aggregated" Link:`, err.message);
