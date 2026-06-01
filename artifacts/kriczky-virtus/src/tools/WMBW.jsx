@@ -1335,7 +1335,7 @@ export default function BusinessWorthDiagnostic() {
             {/* CTA */}
             <div style={{ display: "flex", justifyContent: "center", marginTop: 12 }}>
               <div style={{ display: "inline-block" }}>
-                <GlassBtn href="https://kriczkyvirtus.com/tools" color={C.cyan}>TAKE THE BUSINESS INDEPENDENCE BLUEPRINT</GlassBtn>
+                <GlassBtn href="https://www.kriczkyvirtus.com/tools/bib" color={C.cyan}>TAKE THE BUSINESS INDEPENDENCE BLUEPRINT</GlassBtn>
               </div>
             </div>
           </Page>
