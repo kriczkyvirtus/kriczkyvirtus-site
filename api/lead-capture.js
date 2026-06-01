@@ -108,6 +108,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
       summary: summary || {},
       answers: req.body.answers || {},
       timestamp: timestamp || new Date().toISOString(),
+      blobUrl: roadmapUrl || "",
     }).catch(err => console.error("[Sheets] appendLead failed:", err));
 
     // TODO: ActiveCampaign — create/update contact + tag
