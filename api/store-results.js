@@ -160,24 +160,30 @@ module.exports = async function handler(req, res) {
       contentDisposition: "inline",
     });
 
-    console.log(`[Store] ${tool}: ${name} <${email}> — ${Math.round(html.length / 1024)}KB — ${blob.url}`);
+    // Wrap the raw blob URL in our /api/view proxy so mobile browsers open
+    // the HTML inline instead of downloading it (Vercel Blob CDN forces
+    // Content-Disposition: attachment for HTML regardless of upload options).
+    const host = req.headers["x-forwarded-host"] || req.headers.host;
+    const viewUrl = `https://${host}/api/view?url=${encodeURIComponent(blob.url)}`;
+
+    console.log(`[Store] ${tool}: ${name} <${email}> — ${Math.round(html.length / 1024)}KB — ${viewUrl}`);
 
     // Await the Sheets update before returning so the serverless function stays
     // alive until the write completes (fire-and-forget gets killed on response).
     try {
-      await updateLinkColumn(email, tool, blob.url);
+      await updateLinkColumn(email, tool, viewUrl);
     } catch (err) {
       console.error("[Store→Sheets] updateLinkColumn failed:", err);
     }
 
-    // Send results email with the blob URL
+    // Send results email with the proxy URL
     try {
-      await sendResultsEmail({ name, email, tool, resultsUrl: blob.url });
+      await sendResultsEmail({ name, email, tool, resultsUrl: viewUrl });
     } catch (emailErr) {
       console.error("[Email] sendResultsEmail failed:", emailErr);
     }
 
-    return res.status(200).json({ success: true, url: blob.url });
+    return res.status(200).json({ success: true, url: viewUrl });
 
   } catch (err) {
     console.error("[Store] Failed:", err);

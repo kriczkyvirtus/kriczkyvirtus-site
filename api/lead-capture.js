@@ -96,8 +96,13 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
           cacheControlMaxAge: 31536000,
         });
 
-        roadmapUrl = blob.url;
-        console.log(`[Roadmap] Generated: ${id} for ${name} (${constraintId}/${revenue}) — ${Math.round(fullHTML.length / 1024)}KB — ${blob.url}`);
+        // Wrap the raw blob URL in our /api/view proxy so mobile browsers open
+        // the HTML inline instead of downloading it (Vercel Blob CDN forces
+        // Content-Disposition: attachment for HTML regardless of upload options).
+        const host = req.headers["x-forwarded-host"] || req.headers.host;
+        const viewUrl = `https://${host}/api/view?url=${encodeURIComponent(blob.url)}`;
+        roadmapUrl = viewUrl;
+        console.log(`[Roadmap] Generated: ${id} for ${name} (${constraintId}/${revenue}) — ${Math.round(fullHTML.length / 1024)}KB — ${viewUrl}`);
       } catch (renderErr) {
         console.error("[Roadmap] Generation failed:", renderErr);
       }
