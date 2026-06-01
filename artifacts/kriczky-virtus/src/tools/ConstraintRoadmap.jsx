@@ -436,6 +436,7 @@ export default function ConstraintRoadmap() {
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [roadmapHover, setRoadmapHover] = useState(false);
 
   // ─── Email gate: captures name + email, sends to lead-capture API ───
   const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -490,6 +491,7 @@ export default function ConstraintRoadmap() {
       tool: "constraint-roadmap",
       toolName: "Constraint Roadmap",
       scores: answers,
+      answers: answers,
       summary: {
         totalScore: resultData.score,
         pct: resultData.score,
@@ -924,15 +926,23 @@ export default function ConstraintRoadmap() {
                 {roadmapUrl && (
                   <div style={{ textAlign: "center", marginBottom: 16 }}>
                     <a href={roadmapUrl} target="_blank" rel="noopener noreferrer"
+                      onClick={(e) => { e.preventDefault(); window.open(roadmapUrl, "_blank"); }}
+                      onMouseEnter={() => setRoadmapHover(true)}
+                      onMouseLeave={() => setRoadmapHover(false)}
                       style={{
                         display: "inline-flex", alignItems: "center", justifyContent: "center",
                         gap: 10, padding: "16px 40px", borderRadius: 14, textDecoration: "none",
-                        border: `1.5px solid rgba(200,162,78,0.5)`, color: C.gold, fontWeight: 700,
-                        fontSize: 15, letterSpacing: "0.02em",
-                        background: "linear-gradient(135deg, rgba(200,162,78,0.15), rgba(200,162,78,0.05))",
-                        boxShadow: "0 0 24px rgba(200,162,78,0.2), 0 4px 16px rgba(0,0,0,0.3)",
+                        border: roadmapHover ? "1.5px solid rgba(200,162,78,0.7)" : "1.5px solid rgba(200,162,78,0.5)",
+                        color: C.gold, fontWeight: 700, fontSize: 15, letterSpacing: "0.02em",
+                        background: roadmapHover
+                          ? "linear-gradient(135deg, rgba(200,162,78,0.22), rgba(200,162,78,0.10))"
+                          : "linear-gradient(135deg, rgba(200,162,78,0.15), rgba(200,162,78,0.05))",
+                        boxShadow: roadmapHover
+                          ? "0 0 32px rgba(200,162,78,0.35), 0 4px 20px rgba(0,0,0,0.3)"
+                          : "0 0 24px rgba(200,162,78,0.2), 0 4px 16px rgba(0,0,0,0.3)",
                         fontFamily: "'DM Sans', sans-serif", position: "relative", overflow: "hidden",
                         transition: "all 0.3s ease",
+                        transform: roadmapHover ? "translateY(-1px)" : "none",
                       }}>
                       <span style={{
                         position: "absolute", top: "-50%", left: "-50%", right: "-50%", bottom: "-50%",
@@ -948,6 +958,10 @@ export default function ConstraintRoadmap() {
                         <polyline points="10 9 9 9 8 9" />
                       </svg>
                       <span style={{ position: "relative", zIndex: 1 }}>View Your Personalized Roadmap</span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                        style={{ position: "relative", zIndex: 1, transition: "transform 0.3s ease, opacity 0.3s ease", transform: roadmapHover ? "translateX(4px)" : "translateX(0)", opacity: roadmapHover ? 1 : 0.4 }}>
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
                     </a>
                   </div>
                 )}

@@ -25,6 +25,7 @@ module.exports = async function handler(req, res) {
     }
 
     console.log(`[Lead] ${name} <${email}> — ${tool || "constraint-roadmap"} — ${constraintId}/${revenue} — score: ${totalScore}`);
+    console.log(`[Lead] Answers:`, JSON.stringify(req.body.answers || {}));
 
     let roadmapUrl = null;
     try {
@@ -83,9 +84,12 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
 </style>
 </head><body>${markup}</body></html>`;
 
-      const blob = await put(`roadmaps/${id}.html`, fullHTML, {
+      const nameSlug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      const blob = await put(`roadmaps/${nameSlug}-${id}.html`, fullHTML, {
         access: "public",
         contentType: "text/html; charset=utf-8",
+        addRandomSuffix: false,
+        cacheControlMaxAge: 31536000,
       });
 
       roadmapUrl = blob.url;
