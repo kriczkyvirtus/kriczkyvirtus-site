@@ -157,6 +157,7 @@ module.exports = async function handler(req, res) {
       access: "public",
       contentType: "text/html; charset=utf-8",
       addRandomSuffix: false,
+      contentDisposition: "inline",
     });
 
     console.log(`[Store] ${tool}: ${name} <${email}> — ${Math.round(html.length / 1024)}KB — ${blob.url}`);

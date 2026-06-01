@@ -92,6 +92,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
           access: "public",
           contentType: "text/html; charset=utf-8",
           addRandomSuffix: false,
+          contentDisposition: "inline",
           cacheControlMaxAge: 31536000,
         });
 

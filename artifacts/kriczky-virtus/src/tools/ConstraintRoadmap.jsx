@@ -520,16 +520,22 @@ export default function ConstraintRoadmap() {
         if (responseData.roadmapUrl) {
           setRoadmapUrl(responseData.roadmapUrl);
 
-          const downloadLink = document.createElement("a");
-          downloadLink.href = responseData.roadmapUrl;
-          downloadLink.download = "Constraint-Roadmap.html";
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
+          const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
+          if (!isMobile) {
+            // Desktop only: trigger download
+            const downloadLink = document.createElement("a");
+            downloadLink.href = responseData.roadmapUrl;
+            downloadLink.download = "Constraint-Roadmap.html";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+          }
+
+          // Both desktop and mobile: open in new tab
           setTimeout(() => {
             window.open(responseData.roadmapUrl, "_blank");
-          }, 500);
+          }, isMobile ? 0 : 500);
         }
         setEmailSubmitted(true);
         return;
