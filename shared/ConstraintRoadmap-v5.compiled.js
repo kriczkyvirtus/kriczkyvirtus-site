@@ -4231,8 +4231,13 @@ const PageYouAreHere = ({
   recipientName
 }) => {
   const tier = TIER_LABELS[tierKey] || TIER_LABELS.growth;
-  const catRows = CATEGORY_ORDER.map(c => {
-    const cat = categories.find(x => x.color === CATEGORY_COLOR[c.id]);
+  const catRows = CATEGORY_ORDER.map((c, idx) => {
+    // Match by `id` first (unambiguous). Fall back to index-based lookup for
+    // backwards-compat with older payloads that lack the id field.
+    // DO NOT match by color — profitability & revenue_quality share gold, and
+    // owner_dependency & operational_efficiency share amber, so color-based
+    // find() always returns the wrong category for the second one in each pair.
+    const cat = categories.find(x => x.id === c.id) || categories[idx] || null;
     const catScore = cat ? cat.score : 50;
     return {
       id: c.id,

@@ -315,8 +315,11 @@ const buildResultData = (answers) => {
   const categories = buildCategoryScores(answers);
   const score = computeComposite(categories);
   const constraintId = determineConstraintId(answers, categories);
-  // Strip the internal `id` field — V5 only needs name/score/color.
-  const cleanCategories = categories.map(({ name, score, color }) => ({ name, score, color }));
+  // Keep `id` so the V5 component can match categories unambiguously.
+  // Color-based matching breaks when two categories share the same color
+  // (profitability & revenue_quality are both gold; owner_dependency &
+  // operational_efficiency are both amber).
+  const cleanCategories = categories.map(({ id, name, score, color }) => ({ id, name, score, color }));
   return {
     score,
     constraintId,
