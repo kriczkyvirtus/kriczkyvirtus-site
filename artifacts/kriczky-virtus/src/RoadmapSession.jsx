@@ -143,7 +143,7 @@ export default function RoadmapSession() {
       <div style={{
         position: "relative", zIndex: 10,
         maxWidth: 900, margin: "0 auto",
-        padding: mob ? "48px 20px 60px" : "72px 40px 80px",
+        padding: mob ? "25px 20px 60px" : "25px 40px 80px",
       }}>
 
         {/* ─── NAV HEADER (matches homepage nav logo) ──── */}
