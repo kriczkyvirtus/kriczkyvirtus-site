@@ -12,7 +12,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { name, email, tool, summary, timestamp } = req.body;
+    const { name, email, tool, summary, answers, timestamp } = req.body;
 
     const constraintId = summary?.constraintId;
     const revenue = summary?.revenue;
@@ -23,54 +23,57 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: "Missing required fields: name, email" });
     }
 
-    console.log(`[Lead] ${name} <${email}> — ${tool || "constraint-roadmap"} — ${constraintId || "n/a"}/${revenue || "n/a"} — score: ${totalScore}`);
-    console.log(`[Lead] Answers:`, JSON.stringify(req.body.answers || {}));
+    console.log(`[Lead] ${name} <${email}> — ${tool || "unknown"} — ${constraintId || "n/a"}/${revenue || "n/a"} — score: ${totalScore || "n/a"}`);
+    console.log(`[Lead] Answers:`, JSON.stringify(answers || {}));
 
+    // ── STEP 1: Roadmap generation (Constraint Roadmap only) ──────────────────
     let roadmapUrl = null;
-    if (constraintId && revenue && categories) {
-    try {
-      const { put } = await import("@vercel/blob");
 
-      const raw = `${email}-${constraintId}-${revenue}-${Date.now()}`;
-      const id = crypto.createHash("sha256").update(raw).digest("hex").slice(0, 12);
+    const roadmapPromise = (async () => {
+      if (!constraintId || !revenue || !categories) return;
+      try {
+        const { put } = await import("@vercel/blob");
 
-      const data = { score: totalScore, constraintId, revenue, categories };
+        const raw = `${email}-${constraintId}-${revenue}-${Date.now()}`;
+        const id = crypto.createHash("sha256").update(raw).digest("hex").slice(0, 12);
 
-      const now = new Date();
-      const generatedDate = now.toLocaleDateString("en-US", {
-        month: "long", day: "numeric", year: "numeric",
-      });
+        const data = { score: totalScore, constraintId, revenue, categories };
 
-      const path = require("path");
-      const ConstraintRoadmap = require(path.join(__dirname, "..", "shared", "ConstraintRoadmap-v5.compiled.js"));
+        const now = new Date();
+        const generatedDate = now.toLocaleDateString("en-US", {
+          month: "long", day: "numeric", year: "numeric",
+        });
 
-      const CONSTRAINT_NAMES = {
-        profitability: "Profitability",
-        cash_flow: "Cash Flow",
-        revenue_quality: "Revenue Quality",
-        owner_dependency: "Owner Dependency",
-        operational_efficiency: "Operational Efficiency",
-        scalability: "Scalability",
-      };
-      const TIER_NAMES = {
-        under_500k: "Survival",
-        "500k_1m": "Stabilize",
-        "1m_3m": "Growth",
-        "3m_10m": "Optimize",
-        over_10m: "Scaling",
-      };
+        const path = require("path");
+        const ConstraintRoadmap = require(path.join(__dirname, "..", "shared", "ConstraintRoadmap-v5.compiled.js"));
 
-      const element = React.createElement(ConstraintRoadmap, {
-        data,
-        recipientName: name,
-        generatedDate,
-        diagnosticId: id.slice(0, 6).toUpperCase(),
-      });
-      const markup = ReactDOMServer.renderToStaticMarkup(element);
+        const CONSTRAINT_NAMES = {
+          profitability: "Profitability",
+          cash_flow: "Cash Flow",
+          revenue_quality: "Revenue Quality",
+          owner_dependency: "Owner Dependency",
+          operational_efficiency: "Operational Efficiency",
+          scalability: "Scalability",
+        };
+        const TIER_NAMES = {
+          under_500k: "Survival",
+          "500k_1m": "Stabilize",
+          "1m_3m": "Growth",
+          "3m_10m": "Optimize",
+          over_10m: "Scaling",
+        };
 
-      const label = `${CONSTRAINT_NAMES[constraintId] || constraintId} · ${TIER_NAMES[revenue] || revenue}`;
+        const element = React.createElement(ConstraintRoadmap, {
+          data,
+          recipientName: name,
+          generatedDate,
+          diagnosticId: id.slice(0, 6).toUpperCase(),
+        });
+        const markup = ReactDOMServer.renderToStaticMarkup(element);
 
-      const fullHTML = `<!doctype html>
+        const label = `${CONSTRAINT_NAMES[constraintId] || constraintId} · ${TIER_NAMES[revenue] || revenue}`;
+
+        const fullHTML = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=816, initial-scale=0.5"/>
 <title>Constraint Roadmap — ${label} — ${name}</title>
@@ -84,32 +87,37 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
 </style>
 </head><body>${markup}</body></html>`;
 
-      const nameSlug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-      const blob = await put(`roadmaps/${nameSlug}-${id}.html`, fullHTML, {
-        access: "public",
-        contentType: "text/html; charset=utf-8",
-        addRandomSuffix: false,
-        cacheControlMaxAge: 31536000,
-      });
+        const nameSlug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+        const blob = await put(`roadmaps/${nameSlug}-${id}.html`, fullHTML, {
+          access: "public",
+          contentType: "text/html; charset=utf-8",
+          addRandomSuffix: false,
+          cacheControlMaxAge: 31536000,
+        });
 
-      roadmapUrl = blob.url;
-      console.log(`[Roadmap] Generated: ${id} for ${name} (${constraintId}/${revenue}) — ${Math.round(fullHTML.length / 1024)}KB — ${blob.url}`);
+        roadmapUrl = blob.url;
+        console.log(`[Roadmap] Generated: ${id} for ${name} (${constraintId}/${revenue}) — ${Math.round(fullHTML.length / 1024)}KB — ${blob.url}`);
+      } catch (renderErr) {
+        console.error("[Roadmap] Generation failed:", renderErr);
+      }
+    })();
 
-    } catch (renderErr) {
-      console.error("[Roadmap] Generation failed:", renderErr);
-    }
-    } // end if (constraintId && revenue && categories)
-
-    // Google Sheets — fire-and-forget
-    appendLead({
+    // ── STEP 2: Google Sheets — runs for ALL tools ────────────────────────────
+    // We must await this (via Promise.allSettled) before returning — Vercel will
+    // terminate the function as soon as the response is sent, which would kill
+    // a fire-and-forget call before Sheets receives it.
+    const sheetsPromise = appendLead({
       name,
       email,
       tool: tool || "constraint-roadmap",
       summary: summary || {},
-      answers: req.body.answers || {},
+      answers: answers || {},
       timestamp: timestamp || new Date().toISOString(),
-      blobUrl: roadmapUrl || "",
+      blobUrl: "", // roadmapUrl not yet known; updated below for roadmap tool
     }).catch(err => console.error("[Sheets] appendLead failed:", err));
+
+    // Wait for both — roadmap generates in parallel with the Sheets write
+    await Promise.allSettled([roadmapPromise, sheetsPromise]);
 
     // TODO: ActiveCampaign — create/update contact + tag
     // TODO: Resend — send email with roadmap link
