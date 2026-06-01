@@ -19,69 +19,101 @@ const TOOL_TO_TAB = {
   "structural-capital-deep-dive": "Structural Capital",
   "customer-capital-deep-dive": "Customer Capital",
   "human-capital-deep-dive": "Human Capital",
+  // Short slugs sent by Capital Deep Dive tools via toolSlug prop
+  "structural-capital": "Structural Capital",
+  "customer-capital": "Customer Capital",
+  "human-capital": "Human Capital",
 };
 
+// Column I is the Link column for all non-Constraint-Roadmap tool tabs.
+// Constraint Roadmap links are written by lead-capture.js (not this file).
+// Aggregated tab: Link = column I, Tools Completed = column J.
+const LINK_COL = "I";
+
+async function findRowForEmail(rows, email, tabNameFilter) {
+  for (let i = rows.length - 1; i >= 1; i--) {
+    const row = rows[i];
+    if (!row || !row[2]) continue;
+    const emailMatch = row[2].toLowerCase() === email.toLowerCase();
+    const tabMatch = tabNameFilter == null || row[3] === tabNameFilter;
+    if (emailMatch && tabMatch) return i + 1; // 1-indexed sheet row
+  }
+  return -1;
+}
+
 async function updateLinkColumn(email, tool, blobUrl) {
+  const sheets = getSheets();
+  const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
+  const tabName = TOOL_TO_TAB[tool] || tool;
+
+  // ─── Update tool-specific tab ───────────────────────────────────────────────
   try {
-    const sheets = getSheets();
-    const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
-    const tabName = TOOL_TO_TAB[tool] || tool;
-
-    // Find most recent row in tool tab matching this email
-    const readResult = await sheets.spreadsheets.values.get({
+    let rows = (await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: `'${tabName}'!A:I`,
-    });
-    const rows = readResult.data.values || [];
-    let targetRowIndex = -1;
-    for (let i = rows.length - 1; i >= 1; i--) {
-      if (rows[i][2] && rows[i][2].toLowerCase() === email.toLowerCase()) {
-        targetRowIndex = i;
-        break;
-      }
+      range: `'${tabName}'!A:${LINK_COL}`,
+    })).data.values || [];
+
+    let targetRow = await findRowForEmail(rows, email, null);
+
+    if (targetRow === -1) {
+      // Race condition: store-results may have run before lead-capture finished.
+      // Wait 3 seconds and retry once.
+      console.warn(`[Store→Sheets] No row for ${email} in "${tabName}" — retrying in 3s`);
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      rows = (await sheets.spreadsheets.values.get({
+        spreadsheetId,
+        range: `'${tabName}'!A:${LINK_COL}`,
+      })).data.values || [];
+      targetRow = await findRowForEmail(rows, email, null);
     }
 
-    if (targetRowIndex === -1) {
-      console.log(`[Store→Sheets] No row found for ${email} in "${tabName}" — skipping link update`);
+    if (targetRow > 0) {
+      await sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range: `'${tabName}'!${LINK_COL}${targetRow}`,
+        valueInputOption: "USER_ENTERED",
+        requestBody: { values: [[blobUrl]] },
+      });
+      console.log(`[Store→Sheets] Updated Link in "${tabName}" row ${targetRow} → ${blobUrl}`);
     } else {
-      const sheetRow = targetRowIndex + 1;
-      await sheets.spreadsheets.values.update({
-        spreadsheetId,
-        range: `'${tabName}'!I${sheetRow}`,
-        valueInputOption: "USER_ENTERED",
-        requestBody: { values: [[blobUrl]] },
-      });
-      console.log(`[Store→Sheets] Updated Link in "${tabName}" row ${sheetRow} for ${email}`);
-    }
-
-    // Also update Aggregated tab
-    const aggResult = await sheets.spreadsheets.values.get({
-      spreadsheetId,
-      range: "'Aggregated'!A:J",
-    });
-    const aggRows = aggResult.data.values || [];
-    let aggTargetRow = -1;
-    for (let i = aggRows.length - 1; i >= 1; i--) {
-      if (
-        aggRows[i][2] && aggRows[i][2].toLowerCase() === email.toLowerCase() &&
-        aggRows[i][3] === tabName
-      ) {
-        aggTargetRow = i;
-        break;
-      }
-    }
-    if (aggTargetRow !== -1) {
-      const aggSheetRow = aggTargetRow + 1;
-      await sheets.spreadsheets.values.update({
-        spreadsheetId,
-        range: `'Aggregated'!I${aggSheetRow}`,
-        valueInputOption: "USER_ENTERED",
-        requestBody: { values: [[blobUrl]] },
-      });
-      console.log(`[Store→Sheets] Updated Link in "Aggregated" row ${aggSheetRow} for ${email}`);
+      console.error(`[Store→Sheets] Retry failed: still no row for ${email} in "${tabName}"`);
     }
   } catch (err) {
-    console.error(`[Store→Sheets] Failed to update Link:`, err.message);
+    console.error(`[Store→Sheets] Failed to update "${tabName}" Link:`, err.message);
+  }
+
+  // ─── Update Aggregated tab ───────────────────────────────────────────────────
+  try {
+    let aggRows = (await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: `'Aggregated'!A:J`,
+    })).data.values || [];
+
+    let aggTargetRow = await findRowForEmail(aggRows, email, tabName);
+
+    if (aggTargetRow === -1) {
+      console.warn(`[Store→Sheets] No row for ${email}/${tabName} in "Aggregated" — retrying in 3s`);
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      aggRows = (await sheets.spreadsheets.values.get({
+        spreadsheetId,
+        range: `'Aggregated'!A:J`,
+      })).data.values || [];
+      aggTargetRow = await findRowForEmail(aggRows, email, tabName);
+    }
+
+    if (aggTargetRow > 0) {
+      await sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range: `'Aggregated'!${LINK_COL}${aggTargetRow}`,
+        valueInputOption: "USER_ENTERED",
+        requestBody: { values: [[blobUrl]] },
+      });
+      console.log(`[Store→Sheets] Updated Link in "Aggregated" row ${aggTargetRow}`);
+    } else {
+      console.error(`[Store→Sheets] Retry failed: still no row for ${email}/${tabName} in "Aggregated"`);
+    }
+  } catch (err) {
+    console.error(`[Store→Sheets] Failed to update "Aggregated" Link:`, err.message);
   }
 }
 
@@ -111,10 +143,13 @@ module.exports = async function handler(req, res) {
 
     console.log(`[Store] ${tool}: ${name} <${email}> — ${Math.round(html.length / 1024)}KB — ${blob.url}`);
 
-    // Update Google Sheets Link column — fire and forget
-    updateLinkColumn(email, tool, blob.url).catch(err =>
-      console.error("[Store→Sheets] updateLinkColumn failed:", err)
-    );
+    // Await the Sheets update before returning so the serverless function stays
+    // alive until the write completes (fire-and-forget gets killed on response).
+    try {
+      await updateLinkColumn(email, tool, blob.url);
+    } catch (err) {
+      console.error("[Store→Sheets] updateLinkColumn failed:", err);
+    }
 
     return res.status(200).json({ success: true, url: blob.url });
 
