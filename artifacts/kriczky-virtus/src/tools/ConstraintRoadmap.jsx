@@ -1114,7 +1114,7 @@ export default function ConstraintRoadmap() {
                       <span style={{ position: "relative", zIndex: 1 }}>Explore Free Tools</span>
                       <svg data-cta-arrow-gold="" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", right: 18, top: "50%", marginTop: -8, opacity: 0, transition: "all 0.25s ease" }}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     </a>
-                    <a href="https://kriczkyvirtus.com/call"
+                    <a href="https://www.kriczkyvirtus.com/free-session" target="_blank" rel="noopener noreferrer"
                       onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 0 40px ${C.cyan}30`; e.currentTarget.style.borderColor = `${C.cyan}80`; e.currentTarget.style.background = `linear-gradient(135deg, ${C.cyan}18, ${C.cyan}08)`; const a = e.currentTarget.querySelector("[data-cta-arrow-cyan]"); if(a) a.style.opacity="1"; }}
                       onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.borderColor = `${C.cyan}40`; e.currentTarget.style.background = "transparent"; const a = e.currentTarget.querySelector("[data-cta-arrow-cyan]"); if(a) a.style.opacity="0"; }}
                       style={{
