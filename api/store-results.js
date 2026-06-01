@@ -153,7 +153,15 @@ module.exports = async function handler(req, res) {
     const id = crypto.createHash("sha256").update(raw).digest("hex").slice(0, 12);
     const nameSlug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
-    const blob = await put(`results/${tool}/${nameSlug}-${id}.html`, html, {
+    // Strip all <script> tags before storing. The tools capture
+    // document.documentElement.outerHTML which includes the full React bundle.
+    // Without this, opening the HTML in a new tab re-boots the React app from
+    // scratch, clears the results content, and shows a blank dark screen.
+    // The rendered results DOM is already present in the snapshot; stripping
+    // scripts makes it render as static HTML while CSS links stay intact.
+    const cleanHtml = html.replace(/<script[\s\S]*?<\/script>/gi, "");
+
+    const blob = await put(`results/${tool}/${nameSlug}-${id}.html`, cleanHtml, {
       access: "public",
       contentType: "text/html; charset=utf-8",
       addRandomSuffix: false,
