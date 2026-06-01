@@ -567,6 +567,14 @@ const EmailGate = ({ toolName, toolSlug, accentColor, scores, summary, onUnlock,
       .catch(err => console.error("[Lead] Fetch failed:", err));
     onUnlock();
     setGSending(false);
+    const _name = gName.trim(), _email = gEmail.trim();
+    setTimeout(async () => {
+      try {
+        const res = await fetch("/api/store-results", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: _name, email: _email, tool: "business-independence-blueprint", html: document.documentElement.outerHTML }) });
+        if (res.ok) console.log("[Tool] Results stored");
+        else console.error("[Tool] Failed to store results:", res.status);
+      } catch (err) { console.error("[Tool] Store results failed:", err); }
+    }, 2000);
   };
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", padding: "60px 20px", textAlign: "center", position: "relative", pageBreakBefore: "always" }}>

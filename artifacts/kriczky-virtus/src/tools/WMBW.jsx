@@ -487,6 +487,14 @@ const EmailGate = ({ toolName, toolSlug, accentColor, scores, summary, onUnlock,
       .catch(err => console.error("[Lead] Fetch failed:", err));
     onUnlock();
     setSending(false);
+    const _name = name.trim(), _email = email.trim();
+    setTimeout(async () => {
+      try {
+        const res = await fetch("/api/store-results", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: _name, email: _email, tool: "value-range-estimator", html: document.documentElement.outerHTML }) });
+        if (res.ok) console.log("[Tool] Results stored");
+        else console.error("[Tool] Failed to store results:", res.status);
+      } catch (err) { console.error("[Tool] Store results failed:", err); }
+    }, 2000);
   };
 
   return (
