@@ -511,23 +511,25 @@ export default function ConstraintRoadmap() {
       });
       if (res.ok) {
         const responseData = await res.json();
+        console.log("[Assessment] API response:", responseData);
         if (responseData.roadmapUrl) {
           setRoadmapUrl(responseData.roadmapUrl);
         }
         setEmailSubmitted(true);
         return;
       }
+      console.error("[Assessment] API error:", res.status, await res.text());
       throw new Error("API unavailable");
     } catch (err) {
-      console.log("[Virtus] API failed, queuing silent retry:", err.message || err);
+      console.error("[Virtus] API failed, queuing silent retry:", err.message || err);
       const retryPayload = {...payload, pdfBase64: null};
       const retryFn = async (attempt) => {
-        if (attempt > 5) { console.log("[Virtus] All retries exhausted. Lead data logged above."); return; }
+        if (attempt > 5) { console.error("[Virtus] All retries exhausted."); return; }
         try {
           const r = await fetch("/api/lead-capture", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(retryPayload) });
           if (r.ok) { console.log("[Virtus] Retry " + attempt + " succeeded"); return; }
           throw new Error("Retry failed");
-        } catch (e) { console.log("[Virtus] Retry " + attempt + " failed, next in " + (30 * attempt) + "s"); setTimeout(() => retryFn(attempt + 1), 30000 * attempt); }
+        } catch (e) { console.error("[Virtus] Retry " + attempt + " failed, next in " + (30 * attempt) + "s"); setTimeout(() => retryFn(attempt + 1), 30000 * attempt); }
       };
       setTimeout(() => retryFn(1), 30000);
       setEmailSubmitted(true);
@@ -915,7 +917,7 @@ export default function ConstraintRoadmap() {
                     </svg>
                   </div>
                   <p style={{ fontSize: 13, color: C.text2, margin: 0, lineHeight: 1.5 }}>
-                    A PDF copy of your results has been sent to <span style={{ color: C.text1, fontWeight: 600 }}>{email}</span>
+                    Your results have been sent to <span style={{ color: C.text1, fontWeight: 600 }}>{email}</span>
                   </p>
                 </Glass>
 
@@ -923,20 +925,28 @@ export default function ConstraintRoadmap() {
                   <div style={{ textAlign: "center", marginBottom: 16 }}>
                     <a href={roadmapUrl} target="_blank" rel="noopener noreferrer"
                       style={{
-                        display: "inline-flex", alignItems: "center", gap: 8,
-                        padding: "14px 36px", borderRadius: 12, textDecoration: "none",
-                        border: `1.5px solid ${C.gold}50`, color: C.gold, fontWeight: 700,
-                        fontSize: 14, letterSpacing: "0.02em",
-                        background: `linear-gradient(135deg, ${C.gold}18, ${C.gold}0a)`,
-                        boxShadow: `0 0 20px ${C.gold}20, 0 4px 12px rgba(0,0,0,0.3)`,
+                        display: "inline-flex", alignItems: "center", justifyContent: "center",
+                        gap: 10, padding: "16px 40px", borderRadius: 14, textDecoration: "none",
+                        border: `1.5px solid rgba(200,162,78,0.5)`, color: C.gold, fontWeight: 700,
+                        fontSize: 15, letterSpacing: "0.02em",
+                        background: "linear-gradient(135deg, rgba(200,162,78,0.15), rgba(200,162,78,0.05))",
+                        boxShadow: "0 0 24px rgba(200,162,78,0.2), 0 4px 16px rgba(0,0,0,0.3)",
                         fontFamily: "'DM Sans', sans-serif", position: "relative", overflow: "hidden",
+                        transition: "all 0.3s ease",
                       }}>
                       <span style={{
                         position: "absolute", top: "-50%", left: "-50%", right: "-50%", bottom: "-50%",
                         pointerEvents: "none",
-                        background: `linear-gradient(120deg, transparent 0%, transparent 40%, ${C.gold}12 48%, ${C.gold}20 50%, ${C.gold}12 52%, transparent 60%, transparent 100%)`,
+                        background: "linear-gradient(120deg, transparent 0%, transparent 40%, rgba(200,162,78,0.08) 48%, rgba(200,162,78,0.15) 50%, rgba(200,162,78,0.08) 52%, transparent 60%, transparent 100%)",
                         backgroundSize: "200% 200%", animation: "btnShimmer 6s ease-in-out infinite",
                       }} />
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: "relative", zIndex: 1, flexShrink: 0 }}>
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                        <polyline points="10 9 9 9 8 9" />
+                      </svg>
                       <span style={{ position: "relative", zIndex: 1 }}>View Your Personalized Roadmap</span>
                     </a>
                   </div>
