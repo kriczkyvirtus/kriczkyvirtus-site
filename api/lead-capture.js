@@ -27,10 +27,9 @@ module.exports = async function handler(req, res) {
     console.log(`[Lead] Answers:`, JSON.stringify(answers || {}));
 
     // ── STEP 1: Roadmap generation (Constraint Roadmap only) ──────────────────
+    // Must complete BEFORE Sheets write so the URL is available for the Link column.
     let roadmapUrl = null;
-
-    const roadmapPromise = (async () => {
-      if (!constraintId || !revenue || !categories) return;
+    if (constraintId && revenue && categories) {
       try {
         const { put } = await import("@vercel/blob");
 
@@ -100,24 +99,23 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
       } catch (renderErr) {
         console.error("[Roadmap] Generation failed:", renderErr);
       }
-    })();
+    }
 
-    // ── STEP 2: Google Sheets — runs for ALL tools ────────────────────────────
-    // We must await this (via Promise.allSettled) before returning — Vercel will
-    // terminate the function as soon as the response is sent, which would kill
-    // a fire-and-forget call before Sheets receives it.
-    const sheetsPromise = appendLead({
-      name,
-      email,
-      tool: tool || "constraint-roadmap",
-      summary: summary || {},
-      answers: answers || {},
-      timestamp: timestamp || new Date().toISOString(),
-      blobUrl: "", // roadmapUrl not yet known; updated below for roadmap tool
-    }).catch(err => console.error("[Sheets] appendLead failed:", err));
-
-    // Wait for both — roadmap generates in parallel with the Sheets write
-    await Promise.allSettled([roadmapPromise, sheetsPromise]);
+    // ── STEP 2: Google Sheets — always runs for ALL tools ─────────────────────
+    // Roadmap URL is now populated (if generated), so the Link column gets the URL.
+    try {
+      await appendLead({
+        name,
+        email,
+        tool: tool || "constraint-roadmap",
+        summary: summary || {},
+        answers: answers || {},
+        timestamp: timestamp || new Date().toISOString(),
+        blobUrl: roadmapUrl || "",
+      });
+    } catch (sheetsErr) {
+      console.error("[Sheets] appendLead failed:", sheetsErr);
+    }
 
     // TODO: ActiveCampaign — create/update contact + tag
     // TODO: Resend — send email with roadmap link
