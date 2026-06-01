@@ -5,6 +5,7 @@ const React = require("react");
 const ReactDOMServer = require("react-dom/server");
 const crypto = require("crypto");
 const { appendLead } = require("../lib/sheets");
+const { sendResultsEmail } = require("../lib/email");
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
@@ -118,7 +119,20 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
     }
 
     // TODO: ActiveCampaign — create/update contact + tag
-    // TODO: Resend — send email with roadmap link
+
+    // Send results email (only if we have a results URL to link to)
+    if (roadmapUrl) {
+      try {
+        await sendResultsEmail({
+          name,
+          email,
+          tool: tool || "constraint-roadmap",
+          resultsUrl: roadmapUrl,
+        });
+      } catch (emailErr) {
+        console.error("[Email] sendResultsEmail failed:", emailErr);
+      }
+    }
 
     return res.status(200).json({
       success: true,

@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const { google } = require("googleapis");
+const { sendResultsEmail } = require("../lib/email");
 
 let sheetsClient = null;
 function getSheets() {
@@ -166,6 +167,13 @@ module.exports = async function handler(req, res) {
       await updateLinkColumn(email, tool, blob.url);
     } catch (err) {
       console.error("[Store→Sheets] updateLinkColumn failed:", err);
+    }
+
+    // Send results email with the blob URL
+    try {
+      await sendResultsEmail({ name, email, tool, resultsUrl: blob.url });
+    } catch (emailErr) {
+      console.error("[Email] sendResultsEmail failed:", emailErr);
     }
 
     return res.status(200).json({ success: true, url: blob.url });
