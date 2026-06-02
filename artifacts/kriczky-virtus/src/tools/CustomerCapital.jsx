@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
@@ -540,6 +540,21 @@ export default function CustomerCapitalDeepDive() {
   const toolRef = useRef(null);
   const [checks, setChecks] = useState({});
 
+  useEffect(() => {
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (!viewport) return;
+    const original = viewport.getAttribute('content');
+    const isMobile = window.innerWidth < 816;
+    if (isMobile) {
+      viewport.setAttribute('content', 'width=816, initial-scale=0.5, user-scalable=yes');
+    }
+    return () => {
+      if (original) {
+        viewport.setAttribute('content', original);
+      }
+    };
+  }, []);
+
   const setScore = (key, val) => setScores(p => ({ ...p, [key]: val }));
   const toggleCheck = (dimKey, idx) => setChecks(p => {
     const k = `${dimKey}-${idx}`;
@@ -559,10 +574,10 @@ export default function CustomerCapitalDeepDive() {
   let pageNum = 0;
 
   return (
-    <div ref={toolRef} style={{ background: C.bgDeep, minHeight: "100vh", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+    <div ref={toolRef} style={{ background: C.bgDeep, minHeight: "100vh" }}>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
       <style>{`@media print { .page-gap { display: none !important; } } @keyframes btnShimmer { 0%{background-position:200% 0}50%{background-position:-200% 0}100%{background-position:-200% 0} }`}</style>
-      <div style={{ maxWidth: "8.5in", margin: "0 auto", minWidth: "8.5in" }}>
+      <div style={{ maxWidth: "8.5in", margin: "0 auto" }}>
 
         {/* ═══ PAGE 1: COVER ═══ */}
         <Page pageNum={++pageNum} allScored={allScored}>
