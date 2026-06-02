@@ -11,6 +11,7 @@
 
 const { google } = require("googleapis");
 const { generateRoadmap } = require("../lib/generate-roadmap");
+const { syncContact } = require("../lib/activecampaign");
 
 // ─── GOOGLE SHEETS HELPER ────────────────────────────────────
 async function appendToSheets(sheetsClient, spreadsheetId, tabName, row) {
@@ -63,125 +64,6 @@ async function updateAggregatedTab(sheetsClient, spreadsheetId, email, toolName)
     return true;
   } catch (err) {
     console.error("[Sheets] Failed to update Aggregated tab:", err.message);
-    return false;
-  }
-}
-
-// ─── ACTIVECAMPAIGN HELPER ───────────────────────────────────
-const TOOL_TAGS = {
-  "constraint-roadmap": "Tool: Constraint Roadmap",
-  "value-range-estimator": "Tool: WMBW",
-  "business-independence-blueprint": "Tool: BIB",
-  "structural-capital-deep-dive": "Tool: Structural Capital",
-  "customer-capital-deep-dive": "Tool: Customer Capital",
-  "human-capital-deep-dive": "Tool: Human Capital",
-  "structural-capital": "Tool: Structural Capital",
-  "customer-capital": "Tool: Customer Capital",
-  "human-capital": "Tool: Human Capital",
-};
-
-const CONSTRAINT_TAGS = {
-  "profitability": "Constraint: Profitability",
-  "cash_flow": "Constraint: Cash Flow",
-  "revenue_quality": "Constraint: Revenue Quality",
-  "owner_dependency": "Constraint: Owner Dependency",
-  "operational_efficiency": "Constraint: Operational Efficiency",
-  "scalability": "Constraint: Scalability",
-};
-
-const TIER_TAGS = {
-  "under_500k": "Tier: Under $500K",
-  "500k_1m": "Tier: $500K-$1M",
-  "1m_3m": "Tier: $1M-$3M",
-  "3m_10m": "Tier: $3M-$10M",
-};
-
-const SOURCE_MAP = {
-  "instagram": "Source: Instagram",
-  "linkedin": "Source: LinkedIn",
-  "youtube": "Source: YouTube",
-  "email": "Source: Email",
-  "referral": "Source: Referral",
-  "google-ads": "Source: Google Ads",
-  "event": "Source: Event",
-  "skool": "Source: Skool",
-};
-
-function formatUtmValue(value) {
-  return value.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-}
-
-async function acGetOrCreateTag(acUrl, acKey, tagName) {
-  const searchRes = await fetch(`${acUrl}/api/3/tags?search=${encodeURIComponent(tagName)}`, {
-    headers: { "Api-Token": acKey },
-  });
-  const searchData = await searchRes.json();
-  const existing = searchData.tags?.find(t => t.tag === tagName);
-  if (existing) return existing.id;
-
-  const createRes = await fetch(`${acUrl}/api/3/tags`, {
-    method: "POST",
-    headers: { "Api-Token": acKey, "Content-Type": "application/json" },
-    body: JSON.stringify({ tag: { tag: tagName, tagType: "contact", description: "Auto-created by website lead capture" } }),
-  });
-  const createData = await createRes.json();
-  return createData.tag.id;
-}
-
-async function syncToActiveCampaign(acUrl, acKey, { name, email, tool, toolName, summary, utmSource, utmCampaign }) {
-  try {
-    const nameParts = name.split(" ");
-    const firstName = nameParts[0];
-    const lastName = nameParts.slice(1).join(" ") || "";
-
-    const contactRes = await fetch(`${acUrl}/api/3/contact/sync`, {
-      method: "POST",
-      headers: { "Api-Token": acKey, "Content-Type": "application/json" },
-      body: JSON.stringify({ contact: { email, firstName, lastName } }),
-    });
-    const contactData = await contactRes.json();
-    const contactId = contactData?.contact?.id;
-    if (!contactId) throw new Error("No contact ID returned");
-    console.log(`[AC] Contact synced: ${email} (id: ${contactId})`);
-
-    const tagNames = ["Website Lead"];
-
-    const toolTag = TOOL_TAGS[tool];
-    if (toolTag) tagNames.push(toolTag);
-
-    const constraintId = summary?.constraintId;
-    if (constraintId && CONSTRAINT_TAGS[constraintId]) tagNames.push(CONSTRAINT_TAGS[constraintId]);
-
-    const revenue = summary?.revenue;
-    if (revenue && TIER_TAGS[revenue]) tagNames.push(TIER_TAGS[revenue]);
-
-    if (utmSource) {
-      const sourceKey = utmSource.toLowerCase();
-      tagNames.push(SOURCE_MAP[sourceKey] || `Source: ${formatUtmValue(sourceKey)}`);
-    } else {
-      tagNames.push("Source: Website");
-    }
-
-    if (utmCampaign) tagNames.push(`Campaign: ${formatUtmValue(utmCampaign)}`);
-
-    for (const tagName of tagNames) {
-      try {
-        const tagId = await acGetOrCreateTag(acUrl, acKey, tagName);
-        await fetch(`${acUrl}/api/3/contactTags`, {
-          method: "POST",
-          headers: { "Api-Token": acKey, "Content-Type": "application/json" },
-          body: JSON.stringify({ contactTag: { contact: contactId, tag: tagId } }),
-        });
-        console.log(`[AC] Tagged ${email}: "${tagName}"`);
-      } catch (tagErr) {
-        console.error(`[AC] Failed to apply tag "${tagName}":`, tagErr.message);
-      }
-    }
-
-    console.log(`[AC] Done: ${email} — ${tagNames.length} tags applied`);
-    return true;
-  } catch (err) {
-    console.error("[ActiveCampaign] Error:", err.message);
     return false;
   }
 }
@@ -314,8 +196,6 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: "Name and email required" });
   }
 
-  const AC_URL = process.env.ACTIVECAMPAIGN_URL;
-  const AC_KEY = process.env.ACTIVECAMPAIGN_KEY;
   const RESEND_KEY = process.env.RESEND_API_KEY;
   const SHEETS_ID = process.env.GOOGLE_SHEETS_ID;
   const SERVICE_EMAIL = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
@@ -350,10 +230,18 @@ module.exports = async function handler(req, res) {
   }
 
   // ── ACTIVECAMPAIGN (CRM) ──
-  if (AC_URL && AC_KEY) {
-    results.activecampaign = await syncToActiveCampaign(AC_URL, AC_KEY, {
-      name, email, tool, toolName, summary, utmSource, utmCampaign,
+  try {
+    await syncContact({
+      name,
+      email,
+      tool: tool || "constraint-roadmap",
+      summary: summary || {},
+      utmSource: utmSource || null,
+      utmCampaign: utmCampaign || null,
     });
+    results.activecampaign = true;
+  } catch (acErr) {
+    console.error("[AC] syncContact failed:", acErr.message);
   }
 
   // ── GOOGLE SHEETS (logging) ──
