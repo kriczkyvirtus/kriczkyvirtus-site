@@ -1273,17 +1273,19 @@ export default function ResourcesHubV3() {
               First time? Start with <span style={{ color: C.cyan, fontWeight: 600 }}>"What's My Business Worth?"</span> Already taken it? Go deeper with the <span style={{ color: C.purple, fontWeight: 600 }}>Business Independence Blueprint</span>.
             </p>
             <div style={{ marginTop: 24 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                <GoldBtn href="/tools/wmbw" color={C.gold}>Get "What's My Business Worth?"</GoldBtn>
-                <span style={{ padding: "6px 14px", borderRadius: 6, background: `${C.green}18`,
-                  border: `1.5px solid ${C.green}50`, boxShadow: `0 0 14px ${C.green}20`,
-                  fontSize: 14, fontWeight: 800, letterSpacing: "0.12em", color: C.green,
-                  textTransform: "uppercase" }}>FREE</span>
-              </div>
-              <div style={{ fontSize: 12, color: C.text3, letterSpacing: "0.02em", textAlign: "center",
-                maxWidth: 420 }}>
-                Personalized action steps you can start implementing this week<br/>
-                Under 15 minutes
+              <div style={{ display: "inline-flex", flexDirection: "column", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+                  <GoldBtn href="/tools/wmbw" color={C.gold}>Get "What's My Business Worth?"</GoldBtn>
+                  <span style={{ padding: "6px 14px", borderRadius: 6, background: `${C.green}18`,
+                    border: `1.5px solid ${C.green}50`, boxShadow: `0 0 14px ${C.green}20`,
+                    fontSize: 14, fontWeight: 800, letterSpacing: "0.12em", color: C.green,
+                    textTransform: "uppercase" }}>FREE</span>
+                </div>
+                <div style={{ fontSize: 12, color: C.text3, letterSpacing: "0.02em", textAlign: "center",
+                  maxWidth: 420 }}>
+                  Personalized action steps you can start implementing this week<br/>
+                  Under 15 minutes
+                </div>
               </div>
             </div>
           </div>
