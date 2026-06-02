@@ -509,8 +509,6 @@ const EmailGate = ({ toolName, toolSlug, accentColor, scores, summary, onUnlock,
           Your answers are<br/><span style={{ color: accentColor }}>locked in.</span>
         </h2>
         <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: C.text2, lineHeight: 1.6, margin: "0 0 8px" }}>Enter your name and email to see your personalized results, scores, and recommended next steps.</p>
-        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: C.text3, lineHeight: 1.5, margin: "0 0 28px", fontStyle: "italic" }}>Your data stays with you. We'll send you a copy of your results.</p>
-
         {/* Form card */}
         <div style={{ padding: "28px 24px", borderRadius: 18, background: "linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.04))", border: `1px solid ${accentColor}20`, borderTop: "1px solid rgba(255,255,255,0.12)", boxShadow: `0 8px 32px rgba(0,0,0,0.4), 0 0 60px ${accentColor}08`, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", inset: 0, borderRadius: 18, pointerEvents: "none", background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 30%, transparent 50%, transparent 70%, rgba(255,255,255,0.03) 100%)" }}/>
@@ -529,11 +527,11 @@ const EmailGate = ({ toolName, toolSlug, accentColor, scores, summary, onUnlock,
               {/* Shimmer sweep */}
               <span style={{ position: "absolute", top: "-50%", left: "-50%", right: "-50%", bottom: "-50%", pointerEvents: "none", background: `linear-gradient(120deg, transparent 0%, transparent 40%, ${accentColor}12 48%, ${accentColor}20 50%, ${accentColor}12 52%, transparent 60%, transparent 100%)`, backgroundSize: "200% 200%", animation: "btnShimmer 6s ease-in-out infinite" }}/>
               <span style={{ position: "relative", zIndex: 1, display: "inline-flex", alignItems: "center", gap: 8 }}>
-                {sending ? "Unlocking your results..." : "See My Results"}
+                {sending ? "Unlocking your results..." : "See My Personalized Results"}
                 {!sending && <svg data-gate-arrow="" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0, transition: "all 0.25s ease" }}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>}
               </span>
             </button>
-            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: C.text3, textAlign: "center", marginTop: 12 }}>No spam. No pitch. Just your personalized results.</p>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: C.text3, textAlign: "center", marginTop: 12 }}>Your data stays with you. We will send you a copy of your results.</p>
           </div>
         </div>
 
@@ -547,6 +545,9 @@ const EmailGate = ({ toolName, toolSlug, accentColor, scores, summary, onUnlock,
             </div>
           ))}
         </div>
+        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: "#3D4654", lineHeight: 1.5, marginTop: 12, textAlign: "left" }}>
+          By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our <a href="https://www.kriczkyvirtus.com/privacy-policy" style={{ color: "#5A6474", textDecoration: "underline" }}>Privacy Policy</a> and <a href="https://www.kriczkyvirtus.com/terms-of-service" style={{ color: "#5A6474", textDecoration: "underline" }}>Terms of Service</a>.
+        </p>
       </div>
     </div>
   );
