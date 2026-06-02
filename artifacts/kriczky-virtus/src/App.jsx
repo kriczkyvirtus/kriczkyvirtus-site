@@ -1502,10 +1502,10 @@ const ComparisonTable = () => {
             <div style={{ display: "grid", gridTemplateColumns: mob ? "1.4fr 0.8fr 0.8fr" : "2fr 1fr 1fr", padding: mob ? "18px 16px" : "22px 28px", borderBottom: `1px solid ${C.border2}`, background: `${C.gold}03`, position: "relative", zIndex: 1, borderRadius: "18px 18px 0 0" }}>
               <div/>
               <div style={{ textAlign: "center" }}>
-                <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: mob ? 9 : 11, color: C.text3, textTransform: "uppercase", letterSpacing: 0.8, fontWeight: 600, whiteSpace: "nowrap" }}>Your Current Team</div>
+                <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: mob ? 9 : 11, color: C.text3, textTransform: "uppercase", letterSpacing: 0.8, fontWeight: 600, whiteSpace: mob ? "normal" : "nowrap", lineHeight: 1.3 }}>{mob ? <>Your<br/>Current Team</> : "Your Current Team"}</div>
               </div>
               <div style={{ textAlign: "center" }}>
-                <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: mob ? 9 : 11, color: C.gold, textTransform: "uppercase", letterSpacing: 0.8, fontWeight: 700, whiteSpace: "nowrap" }}>With Kriczky Virtus</div>
+                <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: mob ? 9 : 11, color: C.gold, textTransform: "uppercase", letterSpacing: 0.8, fontWeight: 700, whiteSpace: mob ? "normal" : "nowrap", lineHeight: 1.3 }}>{mob ? <>With<br/>Kriczky Virtus</> : "With Kriczky Virtus"}</div>
               </div>
             </div>
             {/* Rows */}
@@ -2507,7 +2507,7 @@ const ClosingStatement = () => {
         </div>
 
         {/* VIRTUS wireframe watermark — fading top to bottom */}
-        <div style={{ position: "relative", width: "100%", overflow: "hidden", height: mob ? 120 : 200, marginBottom: -40 }}>
+        <div style={{ position: "relative", width: "100%", overflow: "hidden", height: mob ? 120 : 200, marginBottom: -40, display: mob ? "none" : "block" }}>
           <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", fontFamily: "'Cormorant Garamond',serif", fontSize: mob ? 140 : 240, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.2em", whiteSpace: "nowrap", color: "transparent", WebkitTextStroke: "1.5px rgba(200,162,78,0.22)", maskImage: "linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)", WebkitMaskImage: "linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)", pointerEvents: "none", userSelect: "none", lineHeight: 0.85 }}>
             VIRTUS
           </div>
