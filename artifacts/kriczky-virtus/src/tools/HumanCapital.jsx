@@ -526,7 +526,7 @@ const EmailGate = ({ toolName, toolSlug, accentColor, scores, summary, onUnlock,
           ))}
         </div>
         <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: "#3D4654", lineHeight: 1.5, marginTop: 12, textAlign: "left" }}>
-          By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our <a href="https://www.kriczkyvirtus.com/privacy-policy" style={{ color: "#5A6474", textDecoration: "underline" }}>Privacy Policy</a> and <a href="https://www.kriczkyvirtus.com/terms-of-service" style={{ color: "#5A6474", textDecoration: "underline" }}>Terms of Service</a>.
+          By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our Privacy Policy and Terms of Service.
         </p>
       </div>
     </div>
@@ -736,7 +736,7 @@ export default function HumanCapitalDeepDive() {
               <div key={d.key} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 7 }}>
                 <span style={{ fontSize: 9.5, color: C.text2, width: 195, flexShrink: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{d.title}</span>
                 <div style={{ flex: 1, height: 8, borderRadius: 4, background: `${C.text4}20`, overflow: "hidden" }}>
-                  <div style={{ width: `${pct}%`, height: "100%", borderRadius: 4, background: barColor, transition: "all 0.4s ease", boxShadow: sc ? `0 0 6px ${barColor}40` : "none" }}/>
+                  <div style={{ width: `${pct}%`, height: "100%", borderRadius: 4, background: `linear-gradient(180deg, ${barColor}30, ${barColor}15)`, border: `0.5px solid ${barColor}`, boxShadow: sc ? `0 0 8px ${barColor}25, inset 0 1px 0 ${barColor}20` : "none", transition: "all 0.4s ease" }}/>
                 </div>
                 <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 13, fontWeight: 700, color: sc ? barColor : C.text4, width: 22, textAlign: "right" }}>
                   {sc || "–"}
@@ -885,7 +885,7 @@ export default function HumanCapitalDeepDive() {
               <img src={HEADSHOT} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}/>
             </div>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: C.text1 }}>Edward Kriczky, <span style={{ color: C.text1 }}>CEPA</span></div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: C.text1 }}>Edward Kriczky, <span style={{ color: C.text1 }}>CEPA®</span></div>
               <div style={{ fontSize: 11, color: C.gold, marginBottom: 6 }}>Founder, Kriczky Virtus</div>
               <div style={{ fontSize: 11, lineHeight: 1.6, color: C.text2 }}>
                 Most owners know their people matter — but they've never had a framework to measure, improve, and systematize their Human Capital. That's the gap this assessment reveals. The distance between where you scored and best-in-class isn't a problem — it's a roadmap for building the kind of team that makes your business a Masterpiece. Let's build it together.

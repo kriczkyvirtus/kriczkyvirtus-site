@@ -899,7 +899,7 @@ export default function ConstraintRoadmap() {
                   >
                     <span style={{ position: "absolute", top: "-50%", left: "-50%", right: "-50%", bottom: "-50%", pointerEvents: "none", background: `linear-gradient(120deg, transparent 0%, transparent 40%, ${C.gold}12 48%, ${C.gold}20 50%, ${C.gold}12 52%, transparent 60%, transparent 100%)`, backgroundSize: "200% 200%", animation: "btnShimmer 6s ease-in-out infinite" }}/>
                     <span style={{ position: "relative", zIndex: 1, display: "inline-flex", alignItems: "center", gap: 8 }}>
-                      {submitting ? "Generating your report..." : "See My Results"}
+                      {submitting ? "Generating your report..." : "See My Personalized Results"}
                       {!submitting && <svg data-gate-arrow="" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0, transition: "all 0.25s ease" }}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>}
                     </span>
                   </button>
@@ -911,6 +911,9 @@ export default function ConstraintRoadmap() {
                 )}
                 <p style={{ fontSize: 11, color: C.text4, margin: "10px 0 0", textAlign: "center" }}>
                   We won't sell your data — we want to send you your personalized results so you have a permanent copy.
+                </p>
+                <p style={{ fontSize: 9, color: "#3D4654", lineHeight: 1.5, marginTop: 12, textAlign: "left" }}>
+                  By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our Privacy Policy and Terms of Service.
                 </p>
               </Glass>
             ) : (

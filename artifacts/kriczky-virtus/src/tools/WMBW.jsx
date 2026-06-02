@@ -546,7 +546,7 @@ const EmailGate = ({ toolName, toolSlug, accentColor, scores, summary, onUnlock,
           ))}
         </div>
         <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: "#3D4654", lineHeight: 1.5, marginTop: 12, textAlign: "left" }}>
-          By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our <a href="https://www.kriczkyvirtus.com/privacy-policy" style={{ color: "#5A6474", textDecoration: "underline" }}>Privacy Policy</a> and <a href="https://www.kriczkyvirtus.com/terms-of-service" style={{ color: "#5A6474", textDecoration: "underline" }}>Terms of Service</a>.
+          By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our Privacy Policy and Terms of Service.
         </p>
       </div>
     </div>
@@ -1365,7 +1365,7 @@ export default function BusinessWorthDiagnostic() {
               <img src={HEADSHOT} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}/>
             </div>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: C.text1 }}>Edward Kriczky, <span style={{ color: C.text1 }}>CEPA</span></div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: C.text1 }}>Edward Kriczky, <span style={{ color: C.text1 }}>CEPA®</span></div>
               <div style={{ fontSize: 11, color: C.gold, marginBottom: 6 }}>Founder, Kriczky Virtus</div>
               <div style={{ fontSize: 11, lineHeight: 1.6, color: C.text2 }}>
                 I help business owners in the $1M–$10M range turn their businesses into assets that generate wealth — whether they're building to sell, building to keep, or building to hand down. As a Certified Exit Planning Advisor, I bring a structured methodology to the question every owner eventually asks: <i>"What is my business actually worth, and what would it take to make it worth more?"</i>
