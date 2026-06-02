@@ -1046,7 +1046,7 @@ const JourneyAccordion = ({ onPrimary }) => {
       outcome: "You see the exact dollar gap between where you are and where you could be.",
     },
     {
-      num: "03", kicker: "Work With Kriczky Virtus", title: "Close the Gap With a Partner",
+      num: "03", kicker: "Work With Kriczky Virtus — Start for Free", title: "Close the Gap With a Partner",
       accent: C.green, icon: <IconRefresh size={16} color={C.green}/>,
       description: "Get numbers personalized to your business by modeling your revenue, margins, and multiples against best-in-class peers in your industry — then get help executing and systematically improving profits and valuation, not just the diagnosis. Virtus builds and oversees the financial model, owns the KPIs, and runs 90-day sprints with you to ruthlessly execute on the core constraint (not just talk about how to grow). Every quarter: re-score, re-prioritize, and",
       descSuffix: "work long-term towards compounding profits and valuation.",
