@@ -535,6 +535,13 @@ export default function StructuralCapitalDeepDive() {
   const [gateUnlocked, setGateUnlocked] = useState(false);
   const toolRef = useRef(null);
   const [checks, setChecks] = useState({});
+  const [zoomLevel, setZoomLevel] = useState(1);
+  useEffect(() => {
+    const calc = () => { const w = window.innerWidth; setZoomLevel(w < 816 ? (w - 16) / 816 : 1); };
+    calc();
+    window.addEventListener("resize", calc);
+    return () => window.removeEventListener("resize", calc);
+  }, []);
 
   const setScore = (key, val) => setScores(p => ({ ...p, [key]: val }));
   const toggleCheck = (dimKey, idx) => setChecks(p => { const k = `${dimKey}-${idx}`; return { ...p, [k]: !p[k] }; });
@@ -555,7 +562,7 @@ export default function StructuralCapitalDeepDive() {
     <div ref={toolRef} style={{ background: C.bgDeep, minHeight: "100vh" }}>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
       <style>{`@media print { .page-gap { display: none !important; } } @keyframes btnShimmer { 0%{background-position:200% 0}50%{background-position:-200% 0}100%{background-position:-200% 0} }`}</style>
-      <div style={{ maxWidth: "8.5in", margin: "0 auto" }}>
+      <div style={{ maxWidth: "8.5in", margin: "0 auto", zoom: zoomLevel }}>
 
         {/* ═══ PAGE 1: COVER ═══ */}
         <Page pageNum={++pageNum} allScored={allScored}>

@@ -668,6 +668,7 @@ const PLBANDS = [
 ];
 
 const ScorePreview = () => {
+  const { mob } = useBp();
   const [ai, setAi] = useState(2);
   useEffect(() => { const t = setInterval(() => setAi(p => (p+1) % SCENARIOS.length), 5000); return () => clearInterval(t); }, []);
   const sc = SCENARIOS[ai];
@@ -680,10 +681,10 @@ const ScorePreview = () => {
     <div style={{display:"flex",justifyContent:"center",gap:6,marginBottom:14,flexWrap:"wrap"}}>
       {SCENARIOS.map((s,i)=>(<button key={i} onClick={()=>setAi(i)} style={{padding:"6px 14px",borderRadius:8,cursor:"pointer",border:"none",background:ai===i?`${s.bandColor}20`:"rgba(255,255,255,0.03)",outline:ai===i?`1.5px solid ${s.bandColor}50`:`1px solid rgba(255,255,255,0.08)`,color:ai===i?s.bandColor:"#5A6474",fontSize:10,fontWeight:700,fontFamily:"'DM Sans',sans-serif",transition:"all 0.3s ease"}}>{s.label}</button>))}
     </div>
-    <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:14}}>
+    <div style={{display:"grid",gridTemplateColumns: mob ? "1fr" : "2fr 1fr",gap:14}}>
       <div style={{padding:"20px",borderRadius:14,background:"linear-gradient(145deg,rgba(255,255,255,0.035),rgba(255,255,255,0.01))",border:"1px solid rgba(255,255,255,0.10)",position:"relative",overflow:"hidden"}}>
         <DiagonalShine />
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+        <div style={{display:"grid",gridTemplateColumns: mob ? "1fr" : "1fr 1fr",gap:16}}>
           <div>
             <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:"#22D3EE",marginBottom:10}}>Business Attractiveness</div>
             {DIMS.filter(d=>d.pillar==="A").map(d=> <AnimBar key={d.key} label={d.label} targetScore={sc.scores[d.key]} />)}
@@ -759,6 +760,7 @@ const SliderBlock = ({label, value, display, color, min, max, step, onChange}) =
 );
 
 const ValueGapCalc = () => {
+  const { mob } = useBp();
   const [tier,setTier]=useState(0);
   const [rev,setRev]=useState(4000);
   const [mg,setMg]=useState(15);
@@ -790,7 +792,7 @@ const ValueGapCalc = () => {
       input[type="range"].valuegap-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--vg-thumb, #E8ECF1); border: 2px solid white; cursor: pointer; box-shadow: 0 0 8px rgba(255,255,255,0.4); }
       input[type="range"].valuegap-slider::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--vg-thumb, #E8ECF1); border: 2px solid white; cursor: pointer; box-shadow: 0 0 8px rgba(255,255,255,0.4); border: none; }
     `}</style>
-    <div style={{display: "grid", gridTemplateColumns: "280px 1fr", gap: 24, alignItems: "stretch"}}>
+    <div style={{display: "grid", gridTemplateColumns: mob ? "1fr" : "280px 1fr", gap: mob ? 16 : 24, alignItems: "stretch"}}>
 
       {/* LEFT — Sliders */}
       <div style={{padding: "22px 20px", borderRadius: 14, background: "linear-gradient(145deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01))", border: "1px solid rgba(255,255,255,0.10)", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden"}}>
@@ -1194,6 +1196,7 @@ const StepAccordion = () => {
 // MAIN
 // ═══════════════════════════════════════════════════════════════════
 export default function ResourcesHubV3() {
+  const { mob } = useBp();
   const [highlighted, setHighlighted] = useState(null);
 
   const scrollToTool = (id) => {
@@ -1309,7 +1312,7 @@ export default function ResourcesHubV3() {
             </div>
           </Reveal>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24, maxWidth: 920, margin: "0 auto", alignItems: "stretch" }}>
+          <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr 1fr", gap: mob ? 16 : 24, maxWidth: 920, margin: "0 auto", alignItems: "stretch" }}>
             {[
               { target: 60, suffix: "%", label: "of owners don't know what their business is worth", sub: "Yet it's their single largest financial asset, and their greatest opportunity for generational wealth creation — whether they want to sell or build long-term.", color: C.amber },
               { target: 80, suffix: "%", label: "of business value is intangible and unmeasured", sub: <>Invisible to your P&L — but not to a buyer. These could work against you to suppress value, or work for you to compound it. Suppressing vs compounding is a choice.</>, color: C.cyan },

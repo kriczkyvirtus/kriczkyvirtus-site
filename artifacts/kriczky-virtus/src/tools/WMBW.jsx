@@ -560,6 +560,13 @@ export default function BusinessWorthDiagnostic() {
   const [checks, setChecks] = useState({});
   const [gateUnlocked, setGateUnlocked] = useState(false);
   const toolRef = useRef(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  useEffect(() => {
+    const calc = () => { const w = window.innerWidth; setZoomLevel(w < 816 ? (w - 16) / 816 : 1); };
+    calc();
+    window.addEventListener("resize", calc);
+    return () => window.removeEventListener("resize", calc);
+  }, []);
 
   const setScore = (key, val) => setScores(p => ({ ...p, [key]: val }));
   const toggleCheck = (key, idx) => setChecks(p => {
@@ -605,7 +612,7 @@ export default function BusinessWorthDiagnostic() {
         @media print { .page-gap { display: none; } }
       `}</style>
 
-      <div style={{ maxWidth: "8.5in", margin: "0 auto" }}>
+      <div style={{ maxWidth: "8.5in", margin: "0 auto", zoom: zoomLevel }}>
 
         {/* ====== PAGE 1: COVER ====== */}
         <Page pageNum={1} totalPages={totalPages}>
