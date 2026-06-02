@@ -281,7 +281,7 @@ export default function RoadmapSession() {
             borderRadius: 14,
             textAlign: "center",
           }}>
-            <div style={{ fontSize: 16, fontWeight: 700, color: C.text1 }}>Edward Kriczky, CEPA</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: C.text1 }}>Edward Kriczky, CEPA&reg;</div>
             <div style={{ fontSize: 11, color: C.gold, marginBottom: 10 }}>Founder, Kriczky Virtus</div>
             <p style={{ fontSize: 13, lineHeight: 1.65, color: C.text2, margin: 0, maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
               I help business owners in the $1M–$10M range turn their businesses into assets that generate wealth — whether they're building to sell, building to keep, or building to hand down. As a Certified Exit Planning Advisor, I bring a structured methodology to the question every owner eventually asks: <span style={{ fontStyle: "italic", color: C.text1 }}>"What is my business actually worth, and what would it take to make it worth more?"</span>

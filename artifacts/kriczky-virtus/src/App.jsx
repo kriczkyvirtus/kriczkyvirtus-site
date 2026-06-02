@@ -655,7 +655,7 @@ const SocialProof = () => {
           <div style={{ display: "flex", alignItems: "center", gap: mob ? 12 : 16, flexShrink: 0 }}>
             <img src={EDWARD_HEADSHOT} alt="Edward Kriczky" style={{ width: mob ? 56 : 64, height: mob ? 56 : 64, borderRadius: 14, objectFit: "cover", flexShrink: 0, border: `1.5px solid ${C.gold}50`, boxShadow: `0 0 16px ${C.gold}18` }}/>
             <div>
-              <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: mob ? 17 : 20, color: C.text1, fontWeight: 700, display: "block", lineHeight: 1.2 }}>Edward Kriczky, CEPA</span>
+              <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: mob ? 17 : 20, color: C.text1, fontWeight: 700, display: "block", lineHeight: 1.2 }}>Edward Kriczky, CEPA®</span>
               <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: mob ? 10 : 11, color: C.text3, display: "block", marginTop: 2 }}>Certified Exit Planning Advisor</span>
             </div>
           </div>
