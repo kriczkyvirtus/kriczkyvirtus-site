@@ -558,11 +558,18 @@ const EmailGate = ({ toolName, toolSlug, accentColor, scores, summary, onUnlock,
   const [gEmail, setGEmail] = useState("");
   const [gError, setGError] = useState("");
   const [gSending, setGSending] = useState(false);
+  const [utmSource, setUtmSource] = useState(null);
+  const [utmCampaign, setUtmCampaign] = useState(null);
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    const s = p.get("utm_source"); const c = p.get("utm_campaign");
+    if (s) setUtmSource(s); if (c) setUtmCampaign(c);
+  }, []);
   const handleGateSubmit = () => {
     if (!gName.trim()) { setGError("Please enter your name so we can personalize your results."); return; }
     if (!gEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(gEmail)) { setGError("Please enter a valid email address."); return; }
     setGError(""); setGSending(true);
-    const payload = { name: gName.trim(), email: gEmail.trim(), tool: toolSlug, toolName, scores, summary, timestamp: new Date().toISOString() };
+    const payload = { name: gName.trim(), email: gEmail.trim(), tool: toolSlug, toolName, scores, summary, timestamp: new Date().toISOString(), utmSource: utmSource || null, utmCampaign: utmCampaign || null };
     fetch("/api/lead-capture", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
       .catch(err => console.error("[Lead] Fetch failed:", err));
     onUnlock();

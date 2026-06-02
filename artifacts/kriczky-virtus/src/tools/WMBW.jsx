@@ -477,12 +477,19 @@ const EmailGate = ({ toolName, toolSlug, accentColor, scores, summary, onUnlock,
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
+  const [utmSource, setUtmSource] = useState(null);
+  const [utmCampaign, setUtmCampaign] = useState(null);
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    const s = p.get("utm_source"); const c = p.get("utm_campaign");
+    if (s) setUtmSource(s); if (c) setUtmCampaign(c);
+  }, []);
 
   const handleSubmit = () => {
     if (!name.trim()) { setError("Please enter your name so we can personalize your results."); return; }
     if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("Please enter a valid email address."); return; }
     setError(""); setSending(true);
-    const payload = { name: name.trim(), email: email.trim(), tool: toolSlug, toolName, scores, summary, timestamp: new Date().toISOString() };
+    const payload = { name: name.trim(), email: email.trim(), tool: toolSlug, toolName, scores, summary, timestamp: new Date().toISOString(), utmSource: utmSource || null, utmCampaign: utmCampaign || null };
     fetch("/api/lead-capture", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
       .catch(err => console.error("[Lead] Fetch failed:", err));
     onUnlock();

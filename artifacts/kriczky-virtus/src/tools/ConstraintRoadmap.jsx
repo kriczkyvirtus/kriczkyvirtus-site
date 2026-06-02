@@ -440,6 +440,13 @@ export default function ConstraintRoadmap() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [roadmapHover, setRoadmapHover] = useState(false);
+  const [utmSource, setUtmSource] = useState(null);
+  const [utmCampaign, setUtmCampaign] = useState(null);
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    const s = p.get("utm_source"); const c = p.get("utm_campaign");
+    if (s) setUtmSource(s); if (c) setUtmCampaign(c);
+  }, []);
 
   // ─── Email gate: captures name + email, sends to lead-capture API ───
   const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -506,6 +513,8 @@ export default function ConstraintRoadmap() {
       },
       timestamp: new Date().toISOString(),
       pdfBase64,
+      utmSource: utmSource || null,
+      utmCampaign: utmCampaign || null,
     };
 
     try {
