@@ -1143,7 +1143,7 @@ const StepAccordion = () => {
 
             {/* Expanded content */}
             <div style={{
-              maxHeight: isOpen ? 500 : 0, overflow: "hidden",
+              maxHeight: isOpen ? (mob ? 900 : 500) : 0, overflow: "hidden",
               opacity: isOpen ? 1 : 0,
               transition: "max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease",
             }}>
@@ -1164,9 +1164,9 @@ const StepAccordion = () => {
                       border: `1px solid ${C.green}35`, fontSize: 11, fontWeight: 700, color: C.green }}>FREE</span>
                   </div>
                   {s.deepDives ? (
-                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    <div style={{ display: "flex", flexDirection: mob ? "column" : "row", gap: 8, flexWrap: "wrap" }}>
                       {CAPITAL_DEEP_DIVES.map(dd => (
-                        <GoldBtn key={dd.id} href={`/tools/${dd.id}`} color={dd.accent}>{dd.capital}</GoldBtn>
+                        <GoldBtn key={dd.id} href={`/tools/${dd.id}`} color={dd.accent} style={{ width: mob ? "100%" : "auto", textAlign: "center" }}>{dd.capital}</GoldBtn>
                       ))}
                     </div>
                   ) : (
@@ -1175,11 +1175,12 @@ const StepAccordion = () => {
                 </div>
                 <div style={{ flexShrink: 0, width: mob ? "100%" : "auto", marginTop: mob ? 12 : 0 }}>
                   {s.img ? (
-                    <div style={{ borderRadius: 10, overflow: "hidden", width: 200, height: 282,
+                    <div style={{ borderRadius: 10, overflow: "visible", width: mob ? "100%" : 200, height: mob ? "auto" : 282,
                       border: `1px solid ${s.color}20`,
-                      boxShadow: `0 8px 32px rgba(0,0,0,0.3), 0 0 16px ${s.color}08` }}>
-                      <img src={s.img} alt={s.title} style={{ width: "100%", height: "100%", objectFit: "cover",
-                        objectPosition: "top center", display: "block" }}/>
+                      boxShadow: `0 8px 32px rgba(0,0,0,0.3), 0 0 16px ${s.color}08`,
+                      display: "flex", justifyContent: mob ? "center" : "flex-start" }}>
+                      <img src={s.img} alt={s.title} style={{ width: "100%", height: mob ? "auto" : "100%", objectFit: "cover",
+                        objectPosition: "top center", display: "block", borderRadius: 10 }}/>
                     </div>
                   ) : (
                     <DeepDiveCycler />
@@ -1246,7 +1247,7 @@ export default function ResourcesHubV3() {
       <div style={{ position: "relative", zIndex: 1, maxWidth: 1200, margin: "0 auto", padding: "0 40px" }}>
 
         {/* ═══════════ HERO ═══════════ */}
-        <div className="hub-hero" style={{ minHeight: "100vh", paddingTop: mob ? 24 : "calc(50vh - 234px)", paddingBottom: "80px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 60 }}>
+        <div className="hub-hero" style={{ minHeight: "100vh", paddingTop: mob ? 80 : "calc(50vh - 234px)", paddingBottom: "80px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 60 }}>
           <div className="hub-hero-text" style={{ maxWidth: 560, flexShrink: 0, position: "relative", zIndex: 2 }}>
             {/* Cyan pill kicker with shimmer */}
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: mob ? "5px 12px" : "7px 18px", borderRadius: 100,
@@ -1517,7 +1518,7 @@ export default function ResourcesHubV3() {
                 background: `linear-gradient(90deg, transparent, ${C.gold}, transparent)` }}/>
             </div>
             {/* VIRTUS wireframe watermark — below quote, fading top to bottom */}
-            <div style={{ position: "relative", width: "100%", overflow: "hidden", height: 200, marginBottom: -40 }}>
+            <div style={{ position: "relative", width: "100%", overflow: "hidden", height: 200, marginBottom: -40, display: mob ? "none" : "block" }}>
               <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)",
                 fontFamily: "'Cormorant Garamond', serif", fontSize: mob ? 120 : 240, fontWeight: 700, textTransform: "uppercase",
                 letterSpacing: mob ? "0.1em" : "0.2em", whiteSpace: "nowrap",

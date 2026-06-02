@@ -560,13 +560,6 @@ export default function BusinessWorthDiagnostic() {
   const [checks, setChecks] = useState({});
   const [gateUnlocked, setGateUnlocked] = useState(false);
   const toolRef = useRef(null);
-  const [zoomLevel, setZoomLevel] = useState(1);
-  useEffect(() => {
-    const calc = () => { const w = window.innerWidth; if (w && w < 816) { setZoomLevel((w - 32) / 816); } else { setZoomLevel(1); } };
-    calc();
-    window.addEventListener("resize", calc);
-    return () => window.removeEventListener("resize", calc);
-  }, []);
 
   const setScore = (key, val) => setScores(p => ({ ...p, [key]: val }));
   const toggleCheck = (key, idx) => setChecks(p => {
@@ -602,7 +595,7 @@ export default function BusinessWorthDiagnostic() {
   const totalPages = allScored ? 20 : 16;
 
   return (
-    <div ref={toolRef} style={{ background: C.bgDeep, minHeight: "100vh" }}>
+    <div ref={toolRef} style={{ background: C.bgDeep, minHeight: "100vh", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
       <style>{`
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -612,7 +605,7 @@ export default function BusinessWorthDiagnostic() {
         @media print { .page-gap { display: none; } }
       `}</style>
 
-      <div style={{ maxWidth: "8.5in", margin: "0 auto", zoom: zoomLevel }}>
+      <div style={{ maxWidth: "8.5in", margin: "0 auto", minWidth: "8.5in" }}>
 
         {/* ====== PAGE 1: COVER ====== */}
         <Page pageNum={1} totalPages={totalPages}>

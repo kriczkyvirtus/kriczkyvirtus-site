@@ -539,13 +539,6 @@ export default function HumanCapitalDeepDive() {
   const [gateUnlocked, setGateUnlocked] = useState(false);
   const toolRef = useRef(null);
   const [checks, setChecks] = useState({});
-  const [zoomLevel, setZoomLevel] = useState(1);
-  useEffect(() => {
-    const calc = () => { const w = window.innerWidth; if (w && w < 816) { setZoomLevel((w - 32) / 816); } else { setZoomLevel(1); } };
-    calc();
-    window.addEventListener("resize", calc);
-    return () => window.removeEventListener("resize", calc);
-  }, []);
 
   const setScore = (key, val) => setScores(p => ({ ...p, [key]: val }));
   const toggleCheck = (dimKey, idx) => setChecks(p => {
@@ -566,10 +559,10 @@ export default function HumanCapitalDeepDive() {
   let pageNum = 0;
 
   return (
-    <div ref={toolRef} style={{ background: C.bgDeep, minHeight: "100vh" }}>
+    <div ref={toolRef} style={{ background: C.bgDeep, minHeight: "100vh", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
       <style>{`@media print { .page-gap { display: none !important; } } @keyframes btnShimmer { 0%{background-position:200% 0}50%{background-position:-200% 0}100%{background-position:-200% 0} }`}</style>
-      <div style={{ maxWidth: "8.5in", margin: "0 auto", zoom: zoomLevel }}>
+      <div style={{ maxWidth: "8.5in", margin: "0 auto", minWidth: "8.5in" }}>
 
         {/* ═══ PAGE 1: COVER ═══ */}
         <Page pageNum={++pageNum} allScored={allScored}>
