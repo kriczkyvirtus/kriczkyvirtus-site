@@ -2134,7 +2134,7 @@ const PageCover = ({ constraint, constraintId, score, scoreColor, recipientName,
             paddingTop: 14, borderTop: `1px solid ${C.border1}`,
           }}>
             <div style={{ fontSize: 9, color: C.text3, letterSpacing: "0.12em", textTransform: "uppercase" }}>
-              Edward Kriczky, CEPA · Founder
+              Edward Kriczky, CEPA® · Founder
             </div>
             <div style={{ fontSize: 9, color: C.text3, letterSpacing: "0.14em", textTransform: "uppercase" }}>
               {generatedDate}
@@ -3085,7 +3085,7 @@ const PageClosing = ({ constraint, recipientName }) => (
       <div style={{ display: "flex", gap: 18, marginBottom: 20, alignItems: "flex-start" }}>
         <img src={HEADSHOT} alt="Edward Kriczky" style={{ width: 64, height: 64, borderRadius: "50%", objectFit: "cover", border: `2px solid ${C.gold}40`, flexShrink: 0 }} />
         <div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: C.text1 }}>Edward Kriczky, CEPA</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: C.text1 }}>Edward Kriczky, CEPA®</div>
           <div style={{ fontSize: 10, color: C.gold, marginBottom: 6 }}>Founder, Kriczky Virtus</div>
           <P size={10} color={C.text2} style={{ lineHeight: 1.55 }}>
             I help business owners in the $1M–$10M range turn their businesses into assets that generate wealth — whether they’re building to sell, building to keep, or building to hand down. As a Certified Exit Planning Advisor, I bring a structured methodology to the question every owner eventually asks: <span style={{ fontStyle: "italic", color: C.text1 }}>“What is my business actually worth, and what would it take to make it worth more?”</span>

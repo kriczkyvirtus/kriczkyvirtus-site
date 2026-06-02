@@ -867,7 +867,7 @@ export default function BusinessWorthDiagnostic() {
                       {d.title.length > 22 ? d.title.split(" & ")[0].split(" ").slice(0,3).join(" ") : d.title.split(" & ")[0]}
                     </div>
                     <div style={{ flex: 1, height: 10, borderRadius: 5, background: `${C.text4}30`, overflow: "hidden" }}>
-                      {s && <div style={{ width: `${(s / 6) * 100}%`, height: "100%", borderRadius: 5, background: `linear-gradient(90deg, ${sc}90, ${sc})`, transition: "width 0.5s ease" }}/>}
+                      {s && <div style={{ width: `${(s / 6) * 100}%`, height: "100%", borderRadius: 5, background: `linear-gradient(180deg, ${sc}30, ${sc}15)`, border: `0.5px solid ${sc}`, boxShadow: `0 0 8px ${sc}25, inset 0 1px 0 ${sc}20`, transition: "width 0.5s ease" }}/>}
                     </div>
                     <span style={{ width: 18, fontSize: 12, fontWeight: 700, fontFamily: "'Playfair Display', serif", color: s ? sc : C.text4, textAlign: "right" }}>{s || "—"}</span>
                   </div>
@@ -890,7 +890,7 @@ export default function BusinessWorthDiagnostic() {
                       {d.title.length > 22 ? d.title.split(" & ")[0].split(" ").slice(0,3).join(" ") : d.title.split(" & ")[0]}
                     </div>
                     <div style={{ flex: 1, height: 10, borderRadius: 5, background: `${C.text4}30`, overflow: "hidden" }}>
-                      {s && <div style={{ width: `${(s / 6) * 100}%`, height: "100%", borderRadius: 5, background: `linear-gradient(90deg, ${sc}90, ${sc})`, transition: "width 0.5s ease" }}/>}
+                      {s && <div style={{ width: `${(s / 6) * 100}%`, height: "100%", borderRadius: 5, background: `linear-gradient(180deg, ${sc}30, ${sc}15)`, border: `0.5px solid ${sc}`, boxShadow: `0 0 8px ${sc}25, inset 0 1px 0 ${sc}20`, transition: "width 0.5s ease" }}/>}
                     </div>
                     <span style={{ width: 18, fontSize: 12, fontWeight: 700, fontFamily: "'Playfair Display', serif", color: s ? sc : C.text4, textAlign: "right" }}>{s || "—"}</span>
                   </div>
