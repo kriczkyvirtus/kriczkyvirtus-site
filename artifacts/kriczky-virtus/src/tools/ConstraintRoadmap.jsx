@@ -1155,12 +1155,15 @@ export default function ConstraintRoadmap() {
                       onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 0 40px ${C.cyan}30`; e.currentTarget.style.borderColor = `${C.cyan}80`; e.currentTarget.style.background = `linear-gradient(135deg, ${C.cyan}18, ${C.cyan}08)`; const a = e.currentTarget.querySelector("[data-cta-arrow-cyan]"); if(a) a.style.opacity="1"; }}
                       onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.borderColor = `${C.cyan}40`; e.currentTarget.style.background = "transparent"; const a = e.currentTarget.querySelector("[data-cta-arrow-cyan]"); if(a) a.style.opacity="0"; }}
                       style={{
-                        display: "inline-flex", alignItems: "center", padding: "10px 40px", borderRadius: 10, textDecoration: "none",
-                        border: `1px solid ${C.cyan}40`, color: C.cyan, fontWeight: 600, fontSize: 12,
+                        display: "inline-flex", alignItems: "center", padding: mob ? "12px 20px" : "10px 40px", borderRadius: 10, textDecoration: "none",
+                        border: `1px solid ${C.cyan}40`, color: C.cyan, fontWeight: 600, fontSize: mob ? 11 : 12,
                         background: "transparent",
                         fontFamily: "'DM Sans',sans-serif", transition: "all 0.3s ease", position: "relative",
+                        textAlign: "center", lineHeight: 1.4,
                       }}>
-                      <span style={{ position: "relative", zIndex: 1 }}>Ready for hands-on help? Book a free working session</span>
+                      <span style={{ position: "relative", zIndex: 1 }}>
+                        Ready for hands-on help?{mob ? <br/> : " "}Book a free working session
+                      </span>
                       <svg data-cta-arrow-cyan="" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.cyan} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", right: 12, top: "50%", marginTop: -7, opacity: 0, transition: "all 0.25s ease" }}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     </a>
                   </div>

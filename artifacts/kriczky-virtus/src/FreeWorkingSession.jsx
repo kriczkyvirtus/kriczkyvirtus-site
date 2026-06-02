@@ -138,7 +138,7 @@ export default function FreeWorkingSession() {
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 16px", borderRadius: 100, background: "rgba(34,211,238,0.08)", border: "1px solid rgba(34,211,238,0.20)", marginBottom: 20 }}>
             <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: mob ? 11 : 12, fontWeight: 600, color: C.cyan, letterSpacing: 0.3 }}>100% Free · No Commitment · No Strings Attached</span>
           </div>
-          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: mob ? 32 : 46, lineHeight: 1.1, letterSpacing: "-0.02em", color: C.text1, margin: "0 0 18px" }}>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: mob ? 28 : 46, lineHeight: 1.1, letterSpacing: "-0.02em", color: C.text1, margin: "0 0 18px" }}>
             Find Out What Your <span style={{ color: C.cyan, fontStyle: "italic" }}>Profit Gap</span> and<br /><span style={{ color: C.cyan, fontStyle: "italic" }}>Value Gap</span> Actually Look Like
           </h1>
           <p style={{ fontSize: mob ? 14 : 16, lineHeight: 1.65, color: C.text2, maxWidth: 740, margin: "0 auto", fontWeight: 400 }}>

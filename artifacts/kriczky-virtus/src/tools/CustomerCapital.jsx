@@ -541,7 +541,7 @@ export default function CustomerCapitalDeepDive() {
   const [checks, setChecks] = useState({});
   const [zoomLevel, setZoomLevel] = useState(1);
   useEffect(() => {
-    const calc = () => { const w = window.innerWidth; setZoomLevel(w < 816 ? (w - 16) / 816 : 1); };
+    const calc = () => { const w = window.innerWidth; if (w && w < 816) { setZoomLevel((w - 32) / 816); } else { setZoomLevel(1); } };
     calc();
     window.addEventListener("resize", calc);
     return () => window.removeEventListener("resize", calc);

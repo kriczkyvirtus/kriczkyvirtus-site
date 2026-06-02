@@ -109,7 +109,7 @@ const DiagonalShine = () => (
 );
 
 // ─── GOLD BTN (with arrow reveal) ───────────────────────────
-const GoldBtn = ({ href, color = C.gold, children, onClick, target: targetProp }) => {
+const GoldBtn = ({ href, color = C.gold, children, onClick, target: targetProp, style: extraStyle }) => {
   const [hov, setHov] = useState(false);
   const btnColor = color;
   const isToolPage = href && href.startsWith('/tools/') && href !== '/tools';
@@ -125,6 +125,7 @@ const GoldBtn = ({ href, color = C.gold, children, onClick, target: targetProp }
         boxShadow: hov ? `0 0 32px ${color}18,0 4px 14px rgba(0,0,0,0.25)` : `0 0 24px ${color}12,0 4px 12px rgba(0,0,0,0.2)`,
         color, fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, letterSpacing: 0.3,
         transition: "all 0.25s ease",
+        ...extraStyle,
       }}>
       <div style={{ position: "absolute", top: "-50%", left: "-50%", right: "-50%", bottom: "-50%", pointerEvents: "none", background: `linear-gradient(120deg, transparent 0%, transparent 42%, ${btnColor + "12"} 48%, ${btnColor + "25"} 50%, ${btnColor + "12"} 52%, transparent 58%, transparent 100%)`, backgroundSize: "200% 200%", animation: "btnShimmerSlow 20s ease-in-out infinite", zIndex: 0 }}/>
       <span style={{ position: "relative", zIndex: 1 }}>{children}</span>
@@ -1090,6 +1091,7 @@ const STEPS = [
 ];
 
 const StepAccordion = () => {
+  const { mob } = useBp();
   const [openStep, setOpenStep] = useState(0);
 
   return (
@@ -1145,7 +1147,7 @@ const StepAccordion = () => {
               opacity: isOpen ? 1 : 0,
               transition: "max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease",
             }}>
-              <div style={{ display: "flex", gap: 40, alignItems: "center", paddingBottom: 32,
+              <div style={{ display: "flex", flexDirection: mob ? "column" : "row", gap: mob ? 16 : 40, alignItems: mob ? "flex-start" : "center", paddingBottom: 32,
                 borderBottom: `1px solid ${C.border1}` }}>
                 <div style={{ flex: 1 }}>
                   <span style={{ fontSize: 10, fontWeight: 600, color: s.color, letterSpacing: "0.08em",
@@ -1168,10 +1170,10 @@ const StepAccordion = () => {
                       ))}
                     </div>
                   ) : (
-                    <GoldBtn href={s.href} color={s.color}>{s.cta}</GoldBtn>
+                    <GoldBtn href={s.href} color={s.color} style={{ fontSize: mob ? 11 : 14, width: mob ? "100%" : "auto", textAlign: "center", whiteSpace: "nowrap" }}>{s.cta}</GoldBtn>
                   )}
                 </div>
-                <div style={{ flexShrink: 0 }}>
+                <div style={{ flexShrink: 0, width: mob ? "100%" : "auto", marginTop: mob ? 12 : 0 }}>
                   {s.img ? (
                     <div style={{ borderRadius: 10, overflow: "hidden", width: 200, height: 282,
                       border: `1px solid ${s.color}20`,
@@ -1221,7 +1223,7 @@ export default function ResourcesHubV3() {
         @media (max-width: 768px) {
           .hub-grid-2 { grid-template-columns: 1fr !important; }
           .hub-hero { flex-direction: column !important; }
-          .hub-hero-carousel { width: 100% !important; height: 280px !important; }
+          .hub-hero-carousel { width: 100% !important; height: 320px !important; }
           .hub-hero-text { max-width: 100% !important; }
           .hub-hero h1 { font-size: 36px !important; }
           .hub-stat-bar { flex-wrap: wrap !important; gap: 16px !important; }
@@ -1244,10 +1246,10 @@ export default function ResourcesHubV3() {
       <div style={{ position: "relative", zIndex: 1, maxWidth: 1200, margin: "0 auto", padding: "0 40px" }}>
 
         {/* ═══════════ HERO ═══════════ */}
-        <div className="hub-hero" style={{ minHeight: "100vh", paddingTop: "calc(50vh - 234px)", paddingBottom: "80px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 60 }}>
+        <div className="hub-hero" style={{ minHeight: "100vh", paddingTop: mob ? 24 : "calc(50vh - 234px)", paddingBottom: "80px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 60 }}>
           <div className="hub-hero-text" style={{ maxWidth: 560, flexShrink: 0, position: "relative", zIndex: 2 }}>
             {/* Cyan pill kicker with shimmer */}
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "7px 18px", borderRadius: 100,
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: mob ? "5px 12px" : "7px 18px", borderRadius: 100,
               background: "rgba(34,211,238,0.08)", border: "1px solid rgba(34,211,238,0.20)", marginBottom: 20, position: "relative" }}>
               {/* 360° shimmer border */}
               <div className="pill-shimmer" style={{ position: "absolute", inset: -1, borderRadius: 100, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
@@ -1258,7 +1260,7 @@ export default function ResourcesHubV3() {
                 <line x1="3" y1="21" x2="3" y2="3"/><line x1="3" y1="21" x2="21" y2="21"/>
                 <path d="M7 15l4-5 4 3 5-7"/><circle cx="20" cy="6" r="1.5" fill={C.cyan}/>
               </svg>
-              <span style={{ position: "relative", zIndex: 1, fontSize: 12, fontWeight: 600, color: C.cyan, letterSpacing: "0.04em" }}>
+              <span style={{ position: "relative", zIndex: 1, fontSize: mob ? 9 : 12, fontWeight: 600, color: C.cyan, letterSpacing: mob ? 0 : "0.04em" }}>
                 A $5M business can be worth $2M — or $10M.
               </span>
             </div>
@@ -1278,14 +1280,14 @@ export default function ResourcesHubV3() {
             <div style={{ marginTop: 24 }}>
               <div style={{ display: "inline-flex", flexDirection: "column", alignItems: "center" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                  <GoldBtn href="/tools/wmbw" color={C.gold}>Get "What's My Business Worth?"</GoldBtn>
+                  <GoldBtn href="/tools/wmbw" color={C.gold} style={{ fontSize: mob ? 12 : 14, padding: mob ? "12px 20px" : "12px 28px" }}>Get "What's My Business Worth?"</GoldBtn>
                   <span style={{ padding: "6px 14px", borderRadius: 6, background: `${C.green}18`,
                     border: `1.5px solid ${C.green}50`, boxShadow: `0 0 14px ${C.green}20`,
                     fontSize: 14, fontWeight: 800, letterSpacing: "0.12em", color: C.green,
                     textTransform: "uppercase" }}>FREE</span>
                 </div>
-                <div style={{ fontSize: 12, color: C.text3, letterSpacing: "0.02em", textAlign: "center",
-                  maxWidth: 420 }}>
+                <div style={{ fontSize: mob ? 11 : 12, color: C.text3, letterSpacing: "0.02em", textAlign: "center",
+                  maxWidth: mob ? 320 : 420 }}>
                   Personalized action steps you can start implementing this week<br/>
                   Under 15 minutes
                 </div>
@@ -1492,9 +1494,9 @@ export default function ResourcesHubV3() {
             <ValueGapCalc />
 
             {/* CTAs */}
-            <div style={{ display: "flex", justifyContent: "center", gap: 14, marginTop: 24 }}>
-              <GoldBtn href="/tools/wmbw" color={C.cyan}>Get "What's My Business Worth?"</GoldBtn>
-              <GoldBtn href="/free-session" color={C.gold} target="_blank">Book Your Free Working Session</GoldBtn>
+            <div style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "stretch" : "center", justifyContent: "center", gap: mob ? 12 : 14, marginTop: 24 }}>
+              <GoldBtn href="/tools/wmbw" color={C.cyan} style={{ width: mob ? "100%" : "auto", textAlign: "center" }}>Get "What's My Business Worth?"</GoldBtn>
+              <GoldBtn href="/free-session" color={C.gold} target="_blank" style={{ width: mob ? "100%" : "auto", textAlign: "center" }}>Book Your Free Working Session</GoldBtn>
             </div>
           </div>
         </Reveal>
@@ -1517,8 +1519,8 @@ export default function ResourcesHubV3() {
             {/* VIRTUS wireframe watermark — below quote, fading top to bottom */}
             <div style={{ position: "relative", width: "100%", overflow: "hidden", height: 200, marginBottom: -40 }}>
               <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)",
-                fontFamily: "'Cormorant Garamond', serif", fontSize: 240, fontWeight: 700, textTransform: "uppercase",
-                letterSpacing: "0.2em", whiteSpace: "nowrap",
+                fontFamily: "'Cormorant Garamond', serif", fontSize: mob ? 120 : 240, fontWeight: 700, textTransform: "uppercase",
+                letterSpacing: mob ? "0.1em" : "0.2em", whiteSpace: "nowrap",
                 color: "transparent",
                 WebkitTextStroke: "1.5px rgba(200,162,78,0.22)",
                 maskImage: "linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)",
