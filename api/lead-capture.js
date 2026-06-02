@@ -6,6 +6,7 @@ const ReactDOMServer = require("react-dom/server");
 const crypto = require("crypto");
 const { appendLead } = require("../lib/sheets");
 const { sendResultsEmail } = require("../lib/email");
+const { syncContact } = require("../lib/activecampaign");
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
@@ -13,7 +14,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { name, email, tool, summary, answers, timestamp } = req.body;
+    const { name, email, tool, summary, answers, timestamp, utmSource, utmCampaign } = req.body;
 
     const constraintId = summary?.constraintId;
     const revenue = summary?.revenue;
@@ -119,12 +120,28 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         answers: answers || {},
         timestamp: timestamp || new Date().toISOString(),
         blobUrl: roadmapUrl || "",
+        utmSource: utmSource || null,
+        utmCampaign: utmCampaign || null,
       });
     } catch (sheetsErr) {
       console.error("[Sheets] appendLead failed:", sheetsErr);
     }
 
-    // TODO: ActiveCampaign — create/update contact + tag
+    // ── STEP 3: ActiveCampaign — create/update contact + apply tags ───────────
+    try {
+      console.log("[AC] About to call syncContact...");
+      await syncContact({
+        name,
+        email,
+        tool: tool || "constraint-roadmap",
+        summary: summary || {},
+        utmSource: utmSource || null,
+        utmCampaign: utmCampaign || null,
+      });
+      console.log("[AC] syncContact completed");
+    } catch (acErr) {
+      console.error("[AC] syncContact failed:", acErr.message);
+    }
 
     // Send results email (only if we have a results URL to link to)
     if (roadmapUrl) {
