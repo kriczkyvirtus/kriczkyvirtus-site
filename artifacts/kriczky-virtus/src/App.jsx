@@ -1222,7 +1222,7 @@ const TestimonialStrip = () => {
     <Section gradient={`radial-gradient(ellipse 60% 50% at 50% 50%,rgba(200,162,78,0.04) 0%,transparent 50%),linear-gradient(180deg,#090d14 0%,#0a0e15 50%,#090d14 100%)`} style={{ padding: mob ? "70px 0 120px" : "110px 0 210px", position: "relative", overflow: "visible" }}>
       {/* Background VIRTUS watermark — wireframe with top-to-bottom fade */}
       <div style={{ position: "absolute", bottom: mob ? -70 : -100, left: "-10%", right: "-10%", height: mob ? 160 : 280, pointerEvents: "none", userSelect: "none", zIndex: 1, display: "flex", justifyContent: "center" }}>
-        <svg width="100%" height="100%" viewBox="0 0 1800 240" preserveAspectRatio="xMidYMid meet" style={{ overflow: "visible" }}>
+        <svg width="100%" height="100%" viewBox={mob ? "0 0 1000 160" : "0 0 1800 240"} preserveAspectRatio="xMidYMid meet" style={{ overflow: "visible" }}>
           <defs>
             <linearGradient id="virtusWmFade" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={C.gold} stopOpacity="0.12"/>
@@ -1231,7 +1231,7 @@ const TestimonialStrip = () => {
               <stop offset="100%" stopColor={C.gold} stopOpacity="0"/>
             </linearGradient>
           </defs>
-          <text x="900" y="170" textAnchor="middle" fontFamily="'Cormorant Garamond', serif" fontSize="280" fontWeight="700" letterSpacing="0.25em" fill="none" stroke="url(#virtusWmFade)" strokeWidth="1.2">VIRTUS</text>
+          <text x={mob ? "500" : "900"} y={mob ? "120" : "170"} textAnchor="middle" fontFamily="'Cormorant Garamond', serif" fontSize={mob ? "160" : "280"} fontWeight="700" letterSpacing="0.25em" fill="none" stroke="url(#virtusWmFade)" strokeWidth={mob ? "0.8" : "1.2"}>VIRTUS</text>
         </svg>
       </div>
       <Box>
