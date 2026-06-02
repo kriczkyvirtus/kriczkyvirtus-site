@@ -751,7 +751,7 @@ const JourneyCover = ({ title, score, color, back }) => {
   const [flipped, setFlipped] = useState(false);
   return (
     <div onMouseEnter={() => { setHov(true); setFlipped(true); }} onMouseLeave={() => { setHov(false); setFlipped(false); }}
-      style={{ width: 150, height: 200, perspective: 800, flexShrink: 0, cursor: "default" }}>
+      style={{ width: 150, height: 240, perspective: 800, flexShrink: 0, cursor: "default" }}>
       <div style={{
         width: "100%", height: "100%", position: "relative", transformStyle: "preserve-3d",
         transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
@@ -1117,7 +1117,7 @@ const JourneyAccordion = ({ onPrimary }) => {
 
                       {/* STEP 1: Flippable covers — aligned with text */}
                       {i === 0 && (
-                        <div style={{ display: "flex", gap: mob ? 8 : 12, overflowX: "auto", paddingBottom: 8, paddingLeft: mob ? 0 : 70, paddingRight: mob ? 0 : 70 }}>
+                        <div style={{ display: "flex", gap: mob ? 8 : 12, overflowX: mob ? "auto" : "hidden", overflowY: "hidden", paddingBottom: 8, paddingLeft: mob ? 0 : 70, paddingRight: mob ? 0 : 70 }}>
                           {JOURNEY_COVERS.map((c, j) => (
                             <JourneyCover key={j} title={c.title} score={c.score} color={c.color} back={c.back}/>
                           ))}
