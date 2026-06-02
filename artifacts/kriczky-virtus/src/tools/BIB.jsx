@@ -441,7 +441,7 @@ const Page = ({ children, pageNum, allScored }) => {
         display: "flex", justifyContent: "space-between", alignItems: "baseline",
         fontSize: 9, letterSpacing: "0.16em", textTransform: "uppercase", color: C.text3, fontWeight: 500, zIndex: 5 }}>
         <span>Kriczky Virtus</span>
-        <span><b style={{ color: ACCENT, fontWeight: 600 }}>Business Independence Blueprint</b> — What Drives Business Valuation?</span>
+        <span><b style={{ color: ACCENT, fontWeight: 600 }}>Business Independence Blueprint</b> — 4 Capitals Assessment</span>
       </div>
       <div style={{ position: "absolute", top: "0.68in", left: "0.65in", right: "0.65in", height: 0.5,
         background: "linear-gradient(90deg, transparent, #A78BFA40, transparent)", zIndex: 5 }}/>
