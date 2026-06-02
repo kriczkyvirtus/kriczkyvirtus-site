@@ -13,6 +13,7 @@ import RoadmapSession from './RoadmapSession.jsx'
 import BookIntensive from './BookIntensive.jsx'
 import PartnerQualify from './PartnerQualify.jsx'
 import FreeWorkingSession from './FreeWorkingSession.jsx'
+import Unsubscribe from './Unsubscribe.jsx'
 import './index.css'
 
 const TITLES = {
@@ -51,6 +52,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/book-intensive" element={<BookIntensive />} />
         <Route path="/partner-qualify" element={<PartnerQualify />} />
         <Route path="/free-session" element={<FreeWorkingSession />} />
+        <Route path="/unsubscribe" element={<Unsubscribe />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
