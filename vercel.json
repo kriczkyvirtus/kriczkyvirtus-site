@@ -10,6 +10,7 @@
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/engage-giveaway-2026-flyer", "destination": "/engage-giveaway-2026.html" },
+    { "source": "/acqvantage-giveaway-flyer", "destination": "/acqvantage-giveaway-flyer.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
