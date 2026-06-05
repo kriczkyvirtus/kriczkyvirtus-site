@@ -171,6 +171,32 @@ export default function BookIntensive() {
           </div>
         </div>
 
+        {/* ─── TESTIMONIAL ─────────────────────────────── */}
+        <div style={{
+          marginBottom: mob ? 40 : 56,
+          padding: mob ? "24px 20px" : "28px 32px",
+          background: "linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015) 50%, rgba(255,255,255,0.025))",
+          border: "1px solid rgba(255,255,255,0.08)",
+          borderRadius: 16,
+          position: "relative",
+        }}>
+          <div style={{ position: "absolute", top: mob ? 16 : 20, left: mob ? 16 : 24, fontFamily: "'Cormorant Garamond', serif", fontSize: 48, color: "#C8A24E", opacity: 0.3, lineHeight: 1, userSelect: "none" }}>"</div>
+          <p style={{ fontSize: mob ? 13 : 14, lineHeight: 1.65, color: "#8B95A5", margin: "0 0 16px", paddingLeft: mob ? 28 : 36, fontStyle: "italic" }}>
+            Within 9 months of working with Edward we have implemented two core improvements in our business and both our{" "}
+            <span style={{ color: "#E8ECF1", fontWeight: 600, textDecoration: "underline", textDecorationColor: "#C8A24E", textUnderlineOffset: "3px" }}>revenue and profit are on track now to be up ~50% compared to last year.</span>{" "}
+            He also helped us see that we still have a{" "}
+            <span style={{ color: "#E8ECF1", fontWeight: 700 }}>Profit Gap of $300K per year we are leaving on the table</span>{" "}
+            that we are actively working to close so we can attract and retain better talent.
+          </p>
+          <div style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", gap: mob ? 10 : 16, paddingLeft: mob ? 28 : 36 }}>
+            <span style={{ fontSize: 12, color: "#5A6474" }}>Phil C. · $3.0M Revenue · Home Services</span>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <span style={{ padding: "4px 12px", borderRadius: 100, background: "rgba(200,162,78,0.10)", border: "1px solid rgba(200,162,78,0.25)", fontSize: 11, fontWeight: 600, color: "#C8A24E" }}>Profit Gap: $300K/yr</span>
+              <span style={{ padding: "4px 12px", borderRadius: 100, background: "rgba(34,211,238,0.08)", border: "1px solid rgba(34,211,238,0.20)", fontSize: 11, fontWeight: 600, color: "#22D3EE" }}>Value Gap: $779K</span>
+            </div>
+          </div>
+        </div>
+
         {/* ─── WHAT'S INCLUDED ─────────────────────────── */}
         <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: mob ? 40 : 56 }}>
           <div style={{ fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: C.text3, fontWeight: 600, textAlign: "center", marginBottom: 4 }}>
