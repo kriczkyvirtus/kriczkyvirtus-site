@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACQ Vantage Bonus — Free Business Valuation Estimates — Kriczky Virtus</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  @page { size: letter; margin: 0; }
+  @media print {
+    html, body { 
+      width: 8.5in; height: 11in; margin: 0; padding: 0;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+    .page { box-shadow: none !important; page-break-after: avoid; page-break-inside: avoid; }
+  }
+
+  :root {
+    --gold: #C8A24E; --gold-muted: #A68A42; --gold-light: #D4B665;
+    --cyan: #22D3EE; --green: #34D399; --red: #F87171; --amber: #FBBF24;
+    --bg-deep: #0A0E14; --bg-card: #111720; --bg-elev: #1A2130;
+    --text-1: #E8ECF1; --text-2: #8B95A5; --text-3: #5A6474; --text-4: #3D4654;
+    --border-1: rgba(255,255,255,0.06); --border-2: rgba(255,255,255,0.10);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #070a0f;
+    display: flex; justify-content: center; align-items: flex-start;
+    min-height: 100vh; padding: 20px;
+  }
+  @media print { body { padding: 0; background: var(--bg-deep); } }
+
+  .page {
+    width: 8.5in; height: 11in;
+    position: relative; overflow: hidden;
+    background: linear-gradient(180deg, #0A0E14 0%, #0D1119 30%, #0E131C 50%, #0D1119 70%, #0A0E14 100%);
+    color: var(--text-1);
+    box-shadow: 0 4px 60px rgba(0,0,0,0.5);
+  }
+  .page::before {
+    content: ''; position: absolute; inset: 0;
+    pointer-events: none; z-index: 1; opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 128px 128px;
+  }
+  .page::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; z-index: 10;
+    background: linear-gradient(90deg, transparent 3%, rgba(200,162,78,0.19) 15%, #C8A24E 35%, #D4B665 50%, #C8A24E 65%, rgba(200,162,78,0.19) 85%, transparent 97%);
+  }
+
+  .content {
+    position: relative; z-index: 5;
+    padding: 0.4in 0.55in 0.5in;
+    display: flex; flex-direction: column;
+  }
+  .sidebar-rule {
+    position: absolute; top: 0.75in; bottom: 0.6in; left: 0.42in; width: 0.5px;
+    background: linear-gradient(180deg, transparent, rgba(200,162,78,0.12), rgba(200,162,78,0.12), transparent);
+    z-index: 2;
+  }
+  .glow-gold {
+    position: absolute; top: -80px; right: -60px;
+    width: 360px; height: 360px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,162,78,0.06) 0%, transparent 70%);
+    z-index: 0; pointer-events: none;
+  }
+  .glow-cyan {
+    position: absolute; bottom: 60px; left: -40px;
+    width: 300px; height: 300px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(34,211,238,0.04) 0%, transparent 70%);
+    z-index: 0; pointer-events: none;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 0.5px solid rgba(200,162,78,0.15);
+    margin-bottom: 14px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif; font-weight: 700;
+    font-size: 15px; letter-spacing: 1.6px; text-transform: uppercase;
+  }
+  .brand-name .gold { color: var(--gold); }
+  .brand-name .white { color: var(--text-1); }
+  .tagline {
+    font-size: 7.5px; color: var(--text-3);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+
+  /* ── Urgency Pill ── */
+  .pill-row { text-align: center; margin-bottom: 8px; }
+  .urgency-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 18px; border-radius: 100px;
+    background: linear-gradient(135deg, rgba(200,162,78,0.10), rgba(200,162,78,0.03));
+    border: 1px solid rgba(200,162,78,0.25);
+    font-size: 8px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold);
+  }
+
+  /* ── Headline ── */
+  .headline { text-align: center; margin-bottom: 6px; }
+  .headline h1 {
+    font-family: 'Cormorant Garamond', serif; font-weight: 600;
+    font-size: 32px; line-height: 1.1; letter-spacing: -0.01em; color: var(--text-1);
+  }
+  .headline h1 .gold {
+    color: var(--gold); font-style: italic;
+    text-shadow: 0 0 30px rgba(200,162,78,0.15);
+  }
+  .headline h1 .cyan {
+    color: var(--cyan); font-style: italic;
+    text-shadow: 0 0 30px rgba(34,211,238,0.15);
+  }
+  .subhead {
+    text-align: center; font-size: 10.5px; line-height: 1.65;
+    color: var(--text-2); max-width: 500px; margin: 0 auto 12px;
+  }
+
+  /* ── Offer Cards ── */
+  .cards-row { display: flex; gap: 14px; margin-bottom: 10px; }
+  .offer-card {
+    flex: 1; border-radius: 10px; padding: 16px 18px 14px;
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .offer-card::before {
+    content: ''; position: absolute; top: 0; left: 18px; right: 18px; height: 1.5px;
+  }
+  .card-spotlight {
+    background: linear-gradient(145deg, rgba(34,211,238,0.07), rgba(34,211,238,0.015));
+    border: 1px solid rgba(34,211,238,0.18);
+  }
+  .card-spotlight::before {
+    background: linear-gradient(90deg, transparent, rgba(34,211,238,0.5), rgba(34,211,238,0.8), rgba(34,211,238,0.5), transparent);
+  }
+  .card-intensive {
+    background: linear-gradient(145deg, rgba(200,162,78,0.07), rgba(200,162,78,0.015));
+    border: 1px solid rgba(200,162,78,0.20);
+  }
+  .card-intensive::before {
+    background: linear-gradient(90deg, transparent, rgba(200,162,78,0.5), rgba(200,162,78,0.8), rgba(200,162,78,0.5), transparent);
+  }
+
+  .card-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 12px; gap: 8px;
+  }
+  .card-title {
+    font-family: 'Cormorant Garamond', serif; font-weight: 600;
+    font-size: 17px; line-height: 1.2; color: var(--text-1);
+  }
+
+  /* Price badge */
+  .price-badge-wrap {
+    flex-shrink: 0; text-align: center;
+  }
+  .price-badge {
+    padding: 5px 12px; border-radius: 8px; display: inline-block;
+  }
+  .price-badge.cyan {
+    background: linear-gradient(135deg, rgba(34,211,238,0.12), rgba(34,211,238,0.04));
+    border: 1px solid rgba(34,211,238,0.30);
+  }
+  .price-badge.gold {
+    background: linear-gradient(135deg, rgba(200,162,78,0.12), rgba(200,162,78,0.04));
+    border: 1px solid rgba(200,162,78,0.30);
+  }
+  .price-badge .old-price {
+    font-size: 11px; font-weight: 600;
+    text-decoration: line-through; opacity: 0.6;
+    color: var(--text-2); display: block; line-height: 1;
+  }
+  .price-badge .free-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 700; line-height: 1; display: block;
+    letter-spacing: 0.04em;
+  }
+  .price-badge .free-label.cyan-text { color: var(--cyan); }
+  .price-badge .free-label.gold-text { color: var(--gold); }
+  .deadline-text {
+    font-size: 7px; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text-3); margin-top: 3px;
+    text-align: center;
+  }
+
+  /* Card body — fixed height rows so both cards align */
+  .card-body { flex: 1; display: flex; flex-direction: column; }
+  .card-spotlight .card-body { padding-top: 14px; }
+  .card-check-list { list-style: none; padding: 0; margin: 0; flex: 1; }
+  .card-check-list li {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 8.5px; line-height: 1;
+    color: var(--text-2);
+    height: 24px; /* fixed row height for alignment */
+  }
+  .check-icon {
+    flex-shrink: 0; width: 13px; height: 13px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .check-icon.cyan { background: rgba(34,211,238,0.12); }
+  .check-icon.gold { background: rgba(200,162,78,0.12); }
+  .check-icon svg { width: 7px; height: 7px; }
+  .card-callout {
+    font-size: 8px; font-weight: 700;
+    padding-top: 8px; margin-top: 8px;
+    border-top: 0.5px solid rgba(255,255,255,0.06);
+  }
+  .card-callout.cyan { color: var(--cyan); }
+  .card-callout.gold { color: var(--gold); }
+
+  /* ── Stats Section ── */
+  .stats-section {
+    display: flex; justify-content: center; gap: 16px;
+    margin-bottom: 8px; padding: 10px 0;
+  }
+  .stat-card {
+    flex: 1; text-align: center;
+    padding: 14px 10px 12px; border-radius: 10px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.008));
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative; overflow: hidden;
+  }
+  .stat-card .ghost {
+    position: absolute; right: 8px;
+    font-family: 'Cormorant Garamond', serif; font-weight: 700;
+    font-size: 52px; line-height: 1;
+    color: rgba(255,255,255,0.03); pointer-events: none; user-select: none;
+  }
+  .stat-card:nth-child(1) .ghost { top: 4px; }
+  .stat-card:nth-child(2) .ghost { top: 4px; }
+  .stat-card:nth-child(3) .ghost { top: 4px; }
+  .stat-card .number {
+    font-family: 'Cormorant Garamond', serif; font-weight: 700;
+    font-size: 28px; line-height: 1; position: relative; z-index: 1;
+    margin-bottom: 6px;
+  }
+  .stat-card:nth-child(1) .number { color: var(--gold); }
+  .stat-card:nth-child(2) .number { color: var(--cyan); }
+  .stat-card:nth-child(3) .number { color: var(--amber); }
+  .stat-card .stat-label {
+    font-size: 8px; font-weight: 600; line-height: 1.4;
+    color: var(--text-1); position: relative; z-index: 1;
+  }
+  .stat-card .stat-desc {
+    font-size: 7.5px; line-height: 1.5; color: var(--text-3);
+    margin-top: 5px; position: relative; z-index: 1;
+  }
+
+  /* ── Testimonial Section ── */
+  .testimonial-section {
+    margin-bottom: 8px; padding: 12px 20px;
+    border-radius: 10px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.008));
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+  }
+  .testimonial-quote-mark {
+    font-family: 'Cormorant Garamond', serif; font-weight: 700;
+    font-size: 32px; line-height: 1; color: var(--gold); opacity: 0.4;
+    position: absolute; top: 8px; left: 16px;
+  }
+  .testimonial-text {
+    font-size: 8.5px; font-style: italic; line-height: 1.65;
+    color: var(--text-2); padding-left: 18px;
+  }
+  .testimonial-text strong {
+    color: var(--text-1); font-weight: 700; font-style: italic;
+  }
+  .testimonial-footer {
+    display: flex; align-items: center; gap: 14px;
+    margin-top: 10px; padding-left: 18px;
+  }
+  .testimonial-attrib {
+    font-size: 7.5px; color: var(--text-3); letter-spacing: 0.03em;
+  }
+  .testimonial-pills {
+    display: flex; gap: 8px;
+  }
+  .testimonial-pill {
+    font-size: 7px; font-weight: 700; letter-spacing: 0.04em;
+    padding: 3px 10px; border-radius: 100px;
+  }
+  .testimonial-pill.cyan-pill {
+    color: var(--cyan);
+    background: linear-gradient(135deg, rgba(34,211,238,0.10), rgba(34,211,238,0.03));
+    border: 1px solid rgba(34,211,238,0.25);
+  }
+  .testimonial-pill.gold-pill {
+    color: var(--gold);
+    background: linear-gradient(135deg, rgba(200,162,78,0.10), rgba(200,162,78,0.03));
+    border: 1px solid rgba(200,162,78,0.25);
+  }
+
+  /* ── QR CTA ── */
+  .qr-section { display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+  .qr-card {
+    display: flex; align-items: center; gap: 24px;
+    padding: 18px 28px; border-radius: 12px;
+    background: linear-gradient(145deg, rgba(200,162,78,0.06), rgba(200,162,78,0.015));
+    border: 1px solid rgba(200,162,78,0.18);
+    position: relative; overflow: hidden; width: 100%; max-width: 540px;
+  }
+  .qr-card::after {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: linear-gradient(135deg, transparent 42%, rgba(200,162,78,0.04) 48%, rgba(200,162,78,0.06) 50%, rgba(200,162,78,0.04) 52%, transparent 58%);
+    pointer-events: none;
+  }
+  .qr-wrap {
+    flex-shrink: 0; width: 108px; height: 108px; border-radius: 10px;
+    background: white; padding: 5px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 0 1px rgba(200,162,78,0.15);
+    position: relative; z-index: 1;
+  }
+  .qr-wrap img { width: 100%; height: 100%; display: block; }
+  .qr-text { position: relative; z-index: 1; }
+  .qr-text h2 {
+    font-family: 'Cormorant Garamond', serif; font-weight: 600;
+    font-size: 20px; line-height: 1.15; color: var(--text-1); margin-bottom: 4px;
+  }
+  .qr-text h2 .gold { color: var(--gold); font-style: italic; }
+  .qr-text .qr-desc { font-size: 9px; line-height: 1.6; color: var(--text-2); margin-bottom: 8px; }
+  .qr-text .qr-url { font-size: 10.5px; font-weight: 700; color: var(--cyan); margin-bottom: 5px; }
+  .qr-text .qr-fine { font-size: 7px; color: var(--text-4); letter-spacing: 0.02em; }
+
+  /* ── Edward Row ── */
+  .edward-row {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 8px; padding: 10px 16px; border-radius: 10px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.025), rgba(255,255,255,0.008));
+    border: 0.5px solid rgba(255,255,255,0.06);
+  }
+  .edward-photo {
+    width: 50px; height: 50px; border-radius: 50%;
+    border: 1.5px solid rgba(200,162,78,0.30); object-fit: cover; flex-shrink: 0;
+  }
+  .edward-info .name {
+    font-family: 'Cormorant Garamond', serif; font-weight: 600;
+    font-size: 13px; color: var(--text-1); letter-spacing: 0.02em;
+  }
+  .edward-info .title {
+    font-size: 7.5px; color: var(--text-3); letter-spacing: 0.06em; margin-top: 1px;
+  }
+  .edward-info .blurb {
+    font-size: 7.5px; color: var(--text-3); line-height: 1.55;
+    margin-top: 4px; max-width: 560px;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    padding-top: 8px; border-top: 0.5px solid rgba(200,162,78,0.12);
+    text-align: center;
+  }
+  .footer .creds {
+    font-size: 6.5px; color: var(--text-4); letter-spacing: 0.04em; line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="glow-gold"></div>
+  <div class="glow-cyan"></div>
+  <div class="sidebar-rule"></div>
+
+  <div class="content">
+
+    <!-- ═══ HEADER ═══ -->
+    <div class="header">
+      <div class="brand">
+        <!-- Shield — empty, no checkmark, no V -->
+        <svg width="26" height="26" viewBox="0 0 64 64" fill="none">
+          <path d="M32 8L14 16V30C14 42 22 52 32 56C42 52 50 42 50 30V16L32 8Z"
+            fill="none" stroke="#C8A24E" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M32 12L18 18.5V30C18 40.5 24.5 49 32 52C39.5 49 46 40.5 46 30V18.5L32 12Z"
+            fill="rgba(200,162,78,0.06)"/>
+        </svg>
+        <div class="brand-name">
+          <span class="white">Kriczky</span> <span class="gold">Virtus</span>
+        </div>
+      </div>
+      <div class="tagline">Advisory &middot; Exit Planning &middot; Value Acceleration</div>
+    </div>
+
+    <!-- ═══ URGENCY PILL — no pulsing dot ═══ -->
+    <div class="pill-row">
+      <div class="urgency-pill">
+        ACQ Vantage Bonus &mdash; Free Business Valuation Estimates
+      </div>
+    </div>
+
+    <!-- ═══ HEADLINE ═══ -->
+    <div class="headline">
+      <h1>Find Out What Your Business Is <span class="gold">Actually Worth</span><br>
+      &amp; How Much Profit You're <span class="cyan">Leaving on the Table</span></h1>
+    </div>
+    <p class="subhead">
+      As a thank you for your generosity towards the community we wanted to offer you a bonus to help you try to grow your business. For a limited time, business owners earning $750K+ in annual revenue can lock in a 
+      complimentary Business Valuation Estimate and Profit Gap analysis — for free.
+    </p>
+
+    <!-- ═══ TWO OFFER CARDS ═══ -->
+    <div class="cards-row">
+
+      <!-- Spotlight Card -->
+      <div class="offer-card card-spotlight">
+        <div class="card-header">
+          <div class="card-title">Business Valuation Spotlight</div>
+          <div class="price-badge-wrap">
+            <div class="price-badge cyan">
+              <span class="old-price">$995</span>
+              <span class="free-label cyan-text">FREE</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <ul class="card-check-list">
+            <li>
+              <span class="check-icon cyan"><svg viewBox="0 0 12 12" fill="none" stroke="#22D3EE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 6 5 8.5 9.5 3.5"/></svg></span>
+              <span>Your estimated enterprise value range</span>
+            </li>
+            <li>
+              <span class="check-icon cyan"><svg viewBox="0 0 12 12" fill="none" stroke="#22D3EE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 6 5 8.5 9.5 3.5"/></svg></span>
+              <span>Where you stand vs. industry benchmarks</span>
+            </li>
+            <li>
+              <span class="check-icon cyan"><svg viewBox="0 0 12 12" fill="none" stroke="#22D3EE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 6 5 8.5 9.5 3.5"/></svg></span>
+              <span>Key value drivers and risk factors identified</span>
+            </li>
+            <li>
+              <span class="check-icon cyan"><svg viewBox="0 0 12 12" fill="none" stroke="#22D3EE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 6 5 8.5 9.5 3.5"/></svg></span>
+              <span>Your Profit Gap &amp; Value Gap quantified</span>
+            </li>
+          </ul>
+          <div class="card-callout cyan">Normally a paid engagement — yours free.</div>
+        </div>
+      </div>
+
+      <!-- Intensive Card -->
+      <div class="offer-card card-intensive">
+        <div class="card-header">
+          <div class="card-title">Valuation Driver Intensive</div>
+          <div class="price-badge-wrap">
+            <div class="price-badge gold">
+              <span class="old-price">$5,000</span>
+              <span class="free-label gold-text">FREE</span>
+            </div>
+            <div class="deadline-text">Through June 30</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <ul class="card-check-list">
+            <li>
+              <span class="check-icon gold"><svg viewBox="0 0 12 12" fill="none" stroke="#C8A24E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 6 5 8.5 9.5 3.5"/></svg></span>
+              <span>Full business valuation with detailed methodology</span>
+            </li>
+            <li>
+              <span class="check-icon gold"><svg viewBox="0 0 12 12" fill="none" stroke="#C8A24E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 6 5 8.5 9.5 3.5"/></svg></span>
+              <span>5 value drivers scored with dollar-amount gaps</span>
+            </li>
+            <li>
+              <span class="check-icon gold"><svg viewBox="0 0 12 12" fill="none" stroke="#C8A24E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 6 5 8.5 9.5 3.5"/></svg></span>
+              <span>Profit Gap &amp; Value Gap modeled with scenarios</span>
+            </li>
+            <li>
+              <span class="check-icon gold"><svg viewBox="0 0 12 12" fill="none" stroke="#C8A24E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 6 5 8.5 9.5 3.5"/></svg></span>
+              <span>Written 90-day prioritized action plan</span>
+            </li>
+          </ul>
+          <div class="card-callout gold">Normally a paid engagement — yours free.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ STATS SECTION ═══ -->
+    <div class="stats-section">
+      <div class="stat-card">
+        <div class="ghost">60</div>
+        <div class="number">60%</div>
+        <div class="stat-label">of owners don't know what their<br>business is worth</div>
+        <div class="stat-desc">Yet it's their single largest financial asset and greatest opportunity for wealth creation.</div>
+      </div>
+      <div class="stat-card">
+        <div class="ghost">80</div>
+        <div class="number">80%</div>
+        <div class="stat-label">of business value is intangible<br>and unmeasured</div>
+        <div class="stat-desc">Invisible to your P&amp;L — but not to a buyer. These could suppress value, or compound it.</div>
+      </div>
+      <div class="stat-card">
+        <div class="ghost">70</div>
+        <div class="number">70%</div>
+        <div class="stat-label">of businesses that go to<br>market fail to sell</div>
+        <div class="stat-desc">Because the owners never identified the gaps and worked to improve them.</div>
+      </div>
+    </div>
+
+    <!-- ═══ TESTIMONIAL ═══ -->
+    <div class="testimonial-section">
+      <div class="testimonial-quote-mark">&ldquo;</div>
+      <div class="testimonial-text">
+        Within 9 months of working with Edward we have implemented two core improvements in our business and both our 
+        <strong>revenue and profit are on track now to be up ~50% compared to last year.</strong> 
+        He also helped us see that we still have a <strong>Profit Gap of $300K per year we are leaving on the table</strong> 
+        that we are actively working to close so we can attract and retain better talent.
+      </div>
+      <div class="testimonial-footer">
+        <div class="testimonial-attrib">Phil C. &middot; $3.0M Revenue &middot; Home Services</div>
+        <div class="testimonial-pills">
+          <span class="testimonial-pill cyan-pill">Profit Gap: $300K/yr</span>
+          <span class="testimonial-pill gold-pill">Value Gap: $779K</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ QR CODE CTA ═══ -->
+    <div class="qr-section">
+      <div class="qr-card">
+        <div class="qr-wrap">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAhwAAAIcCAIAAAAynOArAAAMuklEQVR4nO3csY7k1hVFUbfRmQJH/v8PdORAMR1LgMcP1sbt+1hrxQOSRbJng8n5ep7nbwBQ+PtPXwAA7yEqAGREBYCMqACQERUAMqICQEZUAMiICgAZUQEgIyoAZEQFgIyoAJARFQAyogJARlQAyIgKABlRASAjKgBkRAWAjKgAkBEVADKiAkBGVADIfFcH+u0f/6wOdZ3f//2v//lvTu7P5HEmbXs3Ju/P5HOfVN3D6ndtu54bVffQlwoAGVEBICMqAGREBYCMqACQERUAMqICQEZUAMiICgAZUQEgIyoAZLLtrxPbNqlOvHULaNuG2I37V5Ubf9e2za5JN17z5DvmSwWAjKgAkBEVADKiAkBGVADIiAoAGVEBICMqAGREBYCMqACQERUAMqPbXycmN2o+eduqup6T40ye68Tkud763LfZtmW37ZlO8qUCQEZUAMiICgAZUQEgIyoAZEQFgIyoAJARFQAyogJARlQAyIgKAJl1219vtW1PqdpK+uTNpRPbNs2q+zO5IbbtmfJrvlQAyIgKABlRASAjKgBkRAWAjKgAkBEVADKiAkBGVADIiAoAGVEBIGP7a5HJPaVtJnfGqo2syU2zbSbvzyff5xv5UgEgIyoAZEQFgIyoAJARFQAyogJARlQAyIgKABlRASAjKgBkRAWAzLrtr0/e+Znc9Zq8z9v2yrZtrFXneuvvqky+85/8/5gvFQAyogJARlQAyIgKABlRASAjKgBkRAWAjKgAkBEVADKiAkBGVADIjG5/bdsC2mZyu+nkONV+UfW7Jo8zadtm143P65M3zbbxpQJARlQAyIgKABlRASAjKgBkRAWAjKgAkBEVADKiAkBGVADIiAoAmWz7a9ue0jbb9otu3Bm7cXPprX8Xnhf/jS8VADKiAkBGVADIiAoAGVEBICMqAGREBYCMqACQERUAMqICQEZUAMhk21+Tqi2pbefa5sbfVV3ztvdn8lnceM2T3rrRVz0vXyoAZEQFgIyoAJARFQAyogJARlQAyIgKABlRASAjKgBkRAWAjKgAkFm3/TW5q3Ni2wZUZXIv6K1bUtU93LbdNLk3dWLb38Xk/wnV9Uw+L18qAGREBYCMqACQERUAMqICQEZUAMiICgAZUQEgIyoAZEQFgIyoAJBZt/311n2nSTdec2XbJtXk9Wx77jfu5m17pie27Qr6UgEgIyoAZEQFgIyoAJARFQAyogJARlQAyIgKABlRASAjKgBkRAWAzNfzPD99DX+wbbvpxLbtnW3XU6nejWrfads9nLw/Ffd55lwnqvvsSwWAjKgAkBEVADKiAkBGVADIiAoAGVEBICMqAGREBYCMqACQERUAMtn21+RGzYnJXa8T267nxOQ20Y17U9s2oLZt2b31Pk+ea9u7ccKXCgAZUQEgIyoAZEQFgIyoAJARFQAyogJARlQAyIgKABlRASAjKgBkvn/6Av6s2rqp9nC27SlNbvhUbrzmSTduQFUbWdv2wU5U9/Ctfxe+VADIiAoAGVEBICMqAGREBYCMqACQERUAMqICQEZUAMiICgAZUQEg8/U8T3Kgyd2hE9s2hd66XzR5f2607T08se3dOLFto2/yt1eqe+hLBYCMqACQERUAMqICQEZUAMiICgAZUQEgIyoAZEQFgIyoAJARFQAy3z99Af+PyX2eGzeptl3ztmexbZdp20bWtr+Lbdd8497d5DvmSwWAjKgAkBEVADKiAkBGVADIiAoAGVEBICMqAGREBYCMqACQERUAMtn21+SuTnWubZtC1fWc2LbvNGnyPt94D7ftem07zra/nW1bdr5UAMiICgAZUQEgIyoAZEQFgIyoAJARFQAyogJARlQAyIgKABlRASCTbX9VJneZTkxuAW3b8Dnx1t91Ytu+k3f1r5v8XW+9h75UAMiICgAZUQEgIyoAZEQFgIyoAJARFQAyogJARlQAyIgKABlRASCzbvur2iaqznXjzlilehaTv6s6zuQ7NnkPq99147ta2fbbt/GlAkBGVADIiAoAGVEBICMqAGREBYCMqACQERUAMqICQEZUAMiICgCZr+d5kgNt2+yqbNv52bYBtW1rq1Ldw233Z9v1nHjr39e2v9PqXL5UAMiICgAZUQEgIyoAZEQFgIyoAJARFQAyogJARlQAyIgKABlRASCTbX9Vtu3hnNi2F1T55D2ubZtLk899kt/+a5PvasWXCgAZUQEgIyoAZEQFgIyoAJARFQAyogJARlQAyIgKABlRASAjKgBkvidPVm34bNu/unGfp3LjttVbn+nk9dz4vCqT17PtXCd8qQCQERUAMqICQEZUAMiICgAZUQEgIyoAZEQFgIyoAJARFQAyogJAJtv+2raVNLlJdeOWVHWuyeOc3MO33ucT2zagKtt2vSaPc+Mz9aUCQEZUAMiICgAZUQEgIyoAZEQFgIyoAJARFQAyogJARlQAyIgKAJls+6syufNzotqkmjR5zdt2om40uVe27blPbuudeOvO2OQ75ksFgIyoAJARFQAyogJARlQAyIgKABlRASAjKgBkRAWAjKgAkBEVADLrtr8mN4Vu3EGqjrNt02xym6hSXfO2Z3Fi29/OpBt3zybvsy8VADKiAkBGVADIiAoAGVEBICMqAGREBYCMqACQERUAMqICQEZUAMis2/7atmMzub2zbUNs22+f/F2T1zO561W9Y9X9ufFd3fZ/1Da+VADIiAoAGVEBICMqAGREBYCMqACQERUAMqICQEZUAMiICgAZUQEg8/U8T3Kgyf2iE9u2pG7cC7pxK+mTr3nyXDce58S2+1yd60R1Pb5UAMiICgAZUQEgIyoAZEQFgIyoAJARFQAyogJARlQAyIgKABlRASDzXR3oxp2fE5N7XDfuBZ24cdNs0o3P9MS26zmxbUerOtfks/ClAkBGVADIiAoAGVEBICMqAGREBYCMqACQERUAMqICQEZUAMiICgCZr+d5fvoa/uDGvaDKtp2xyrZtom3Xc2LbuzF5D2/cRtv2vE5U1+xLBYCMqACQERUAMqICQEZUAMiICgAZUQEgIyoAZEQFgIyoAJARFQAy3z99AX/21k2hbftF1X2e3Dj65OflnZ8x+f/Ptr+vii8VADKiAkBGVADIiAoAGVEBICMqAGREBYCMqACQERUAMqICQEZUAMh8Pc+THKjasXnrcU5MXnNlcpvoxt2zbe/PNjduW9242TV5zb5UAMiICgAZUQEgIyoAZEQFgIyoAJARFQAyogJARlQAyIgKABlRASCTbX9Vtu0Xbdt3qkzuaE166+7ZiW3v4bZ37JO39Wx/AXAlUQEgIyoAZEQFgIyoAJARFQAyogJARlQAyIgKABlRASAjKgBksu2vt+4Onfjk3/XWPaXJ37Xt/lTe+ndRmXzuk8/ClwoAGVEBICMqAGREBYCMqACQERUAMqICQEZUAMiICgAZUQEgIyoAZLLtL35tchvtk3e0Tty4STV5nyue+1934/3xpQJARlQAyIgKABlRASAjKgBkRAWAjKgAkBEVADKiAkBGVADIiAoAme/qQJN7U9ucbOa8dddr0rbtpup6bvxdNx7nxFuf++S5fKkAkBEVADKiAkBGVADIiAoAGVEBICMqAGREBYCMqACQERUAMqICQCbb/jqxbUvqxOTW1o07SJOq65ncajtRPffq3dj23Cdt+z/qxk0zXyoAZEQFgIyoAJARFQAyogJARlQAyIgKABlRASAjKgBkRAWAjKgAkBnd/joxuTu0befnxOT+1YnJTaFtu2fbNsROTD73bbZd8+TfzuRv96UCQEZUAMiICgAZUQEgIyoAZEQFgIyoAJARFQAyogJARlQAyIgKAJl1219vVe38TB7nxI0bYtvOdWLy3Thx4w7bW5/F5LlO+FIBICMqAGREBYCMqACQERUAMqICQEZUAMiICgAZUQEgIyoAZEQFgIztryGT2zsntl3PjSY3qW7c0dr2jm27nrdukflSASAjKgBkRAWAjKgAkBEVADKiAkBGVADIiAoAGVEBICMqAGREBYDMuu2vbfs8N5rc+ZncL6qOM7m1Val+16Rt21aTJve4tu2w+VIBICMqAGREBYCMqACQERUAMqICQEZUAMiICgAZUQEgIyoAZEQFgMzo9te2fZ5ttm34bNv1mrw/2/amtp1r2/2pbNuOu/Ee+lIBICMqAGREBYCMqACQERUAMqICQEZUAMiICgAZUQEgIyoAZEQFgMzX8zw/fQ0AvIQvFQAyogJARlQAyIgKABlRASAjKgBkRAWAjKgAkBEVADKiAkBGVADIiAoAGVEBICMqAGREBYCMqACQERUAMqICQEZUAMiICgAZUQEgIyoAZEQFgMx/AP33uQVw5OaTAAAAAElFTkSuQmCC" alt="Scan to book your free valuation"/>
+        </div>
+        <div class="qr-text">
+          <h2>Scan to Lock In Your <span class="gold">Free Valuation Estimate</span></h2>
+          <p class="qr-desc">
+            Scan the QR code or visit the link below to book
+            your complimentary session before June 30th.
+          </p>
+          <div class="qr-url">kriczkyvirtus.com/acq-vantage-bonus</div>
+          <div class="qr-fine">No commitment &middot; No strings attached &middot; Yours to keep whether we work together or not</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ EDWARD ROW ═══ -->
+    <div class="edward-row">
+      <img class="edward-photo" src="data:image/jpeg;base64,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" alt="Edward Kriczky"/>
+      <div class="edward-info">
+        <div class="name">Edward Kriczky, CEPA&reg;</div>
+        <div class="title">Certified Exit Planning Advisor &middot; Founder, Kriczky Virtus</div>
+        <div class="blurb">
+          Valuation methodology powered by our partner firm with 10,000+ business valuations over 40 years of experience. You've built something valuable — but do you know what it's actually worth, what's suppressing it, and where the highest ROI might be found? We help business owners do just that.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ FOOTER ═══ -->
+    <div class="footer">
+      <div class="creds">
+        ekriczky@kriczkyvirtus.com &ensp;&middot;&ensp; kriczkyvirtus.com &ensp;&middot;&ensp; This is not a certified valuation. Information is for educational purposes only. Your results may vary.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
