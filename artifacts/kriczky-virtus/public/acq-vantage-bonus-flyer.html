@@ -362,6 +362,54 @@
   .footer .creds {
     font-size: 6.5px; color: var(--text-4); letter-spacing: 0.04em; line-height: 1.6;
   }
+
+  /* ── Mobile Responsive ── */
+  @media screen and (max-width: 900px) {
+    body { padding: 0; align-items: flex-start; background: #0A0E14; }
+    .page {
+      width: 100vw; height: auto; min-height: 100vh;
+      overflow: visible;
+      box-shadow: none;
+    }
+    .content { padding: 20px 18px 40px; }
+    .sidebar-rule { display: none; }
+
+    /* Header */
+    .header { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .brand-name { font-size: 13px; }
+    .tagline { font-size: 7px; }
+
+    /* Headline */
+    .headline h1 { font-size: 22px; }
+    .subhead { font-size: 10px; }
+
+    /* Cards stack vertically */
+    .cards-row { flex-direction: column; gap: 12px; }
+    .offer-card { padding: 14px 14px 12px; }
+    .card-title { font-size: 15px; }
+    .price-badge .free-label { font-size: 18px; }
+    .card-check-list li { font-size: 8px; height: auto; padding: 4px 0; }
+
+    /* Stats */
+    .stats-section { flex-direction: column; gap: 10px; }
+    .stat-card { padding: 12px 14px; }
+    .stat-card .number { font-size: 24px; }
+    .stat-card .ghost { font-size: 40px; }
+
+    /* QR card */
+    .qr-card { flex-direction: column; align-items: center; text-align: center; padding: 18px 16px; gap: 16px; }
+    .qr-wrap { width: 120px; height: 120px; }
+    .qr-text h2 { font-size: 17px; }
+    .qr-text .qr-url { font-size: 10px; }
+
+    /* Edward row */
+    .edward-row { flex-wrap: wrap; gap: 10px; }
+    .edward-info .blurb { max-width: 100%; }
+
+    /* Testimonial */
+    .testimonial-text { font-size: 8px; }
+    .testimonial-footer { flex-wrap: wrap; gap: 8px; }
+  }
 </style>
 </head>
 <body>
