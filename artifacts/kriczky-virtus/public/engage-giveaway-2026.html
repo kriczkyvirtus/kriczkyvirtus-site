@@ -363,6 +363,71 @@
     font-size: 6.5px; color: var(--text-4); letter-spacing: 0.04em; line-height: 1.6;
   }
 </style>
+
+<!-- ── Mobile responsive overrides ── -->
+<style>
+@media (max-width: 640px) {
+  body { padding: 0; }
+
+  .page {
+    width: 100%; height: auto; overflow: visible;
+  }
+
+  .content { padding: 20px 16px 32px; }
+
+  .sidebar-rule { display: none; }
+
+  /* Header */
+  .header { flex-direction: column; align-items: flex-start; gap: 4px; margin-bottom: 16px; }
+  .tagline { font-size: 10px; }
+  .brand-name { font-size: 16px; }
+
+  /* Pill */
+  .urgency-pill { font-size: 10px; padding: 6px 14px; }
+
+  /* Headline */
+  .headline h1 { font-size: 24px; }
+  .subhead { font-size: 13px; margin-bottom: 16px; }
+
+  /* Offer cards — stack vertically */
+  .cards-row { flex-direction: column; margin-bottom: 16px; }
+  .card-title { font-size: 18px; }
+  .card-check-list li { font-size: 13px; height: auto; padding: 4px 0; }
+  .check-icon { width: 18px; height: 18px; }
+  .check-icon svg { width: 10px; height: 10px; }
+  .card-callout { font-size: 12px; }
+  .price-badge .old-price { font-size: 13px; }
+  .price-badge .free-label { font-size: 26px; }
+  .deadline-text { font-size: 10px; }
+
+  /* Stats — stack vertically */
+  .stats-section { flex-direction: column; gap: 10px; }
+  .stat-card .number { font-size: 36px; }
+  .stat-card .stat-label { font-size: 13px; }
+  .stat-card .stat-desc { font-size: 12px; }
+
+  /* Testimonial */
+  .testimonial-text { font-size: 13px; }
+  .testimonial-footer { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .testimonial-attrib { font-size: 12px; }
+  .testimonial-pill { font-size: 11px; }
+
+  /* QR card — stack vertically, center */
+  .qr-card { flex-direction: column; align-items: center; text-align: center; padding: 20px 16px; max-width: 100%; }
+  .qr-text h2 { font-size: 20px; }
+  .qr-text .qr-desc { font-size: 13px; }
+  .qr-text .qr-url { font-size: 14px; }
+  .qr-text .qr-fine { font-size: 11px; }
+
+  /* Edward row */
+  .edward-info .name { font-size: 16px; }
+  .edward-info .title { font-size: 11px; }
+  .edward-info .blurb { font-size: 12px; }
+
+  /* Footer */
+  .footer .creds { font-size: 11px; }
+}
+</style>
 </head>
 <body>
 
