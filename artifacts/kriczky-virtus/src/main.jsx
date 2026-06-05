@@ -15,6 +15,7 @@ import PartnerQualify from './PartnerQualify.jsx'
 import FreeWorkingSession from './FreeWorkingSession.jsx'
 import Unsubscribe from './Unsubscribe.jsx'
 import EngageGiveaway2026 from './EngageGiveaway2026.jsx'
+import AcqVantageBonus from './AcqVantageBonus.jsx'
 import './index.css'
 
 const TITLES = {
@@ -55,6 +56,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/free-session" element={<FreeWorkingSession />} />
         <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route path="/engage-giveaway-2026" element={<EngageGiveaway2026 />} />
+        <Route path="/acq-vantage-bonus" element={<AcqVantageBonus />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
