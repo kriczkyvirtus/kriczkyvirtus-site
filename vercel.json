@@ -9,6 +9,7 @@
   },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/engage-giveaway-2026", "destination": "/engage-giveaway-2026.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
