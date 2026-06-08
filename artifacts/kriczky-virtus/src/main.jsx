@@ -16,6 +16,7 @@ import FreeWorkingSession from './FreeWorkingSession.jsx'
 import Unsubscribe from './Unsubscribe.jsx'
 import EngageGiveaway2026 from './EngageGiveaway2026.jsx'
 import AcqVantageBonus from './AcqVantageBonus.jsx'
+import ValuationEstimate from './ValuationEstimate.jsx'
 import './index.css'
 
 const TITLES = {
@@ -57,6 +58,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route path="/engage-giveaway-2026" element={<EngageGiveaway2026 />} />
         <Route path="/acq-vantage-bonus" element={<AcqVantageBonus />} />
+        <Route path="/valuation-estimate" element={<ValuationEstimate />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
