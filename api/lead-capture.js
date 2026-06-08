@@ -15,6 +15,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const { name, email, tool, summary, answers, timestamp, utmSource, utmCampaign } = req.body;
+    const isPartial = req.body.partial === true;
 
     console.log("[Lead] businessName:", req.body.businessName);
     const constraintId = summary?.constraintId;
@@ -145,8 +146,8 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
       console.error("[AC] syncContact failed:", acErr.message);
     }
 
-    // For valuation-questionnaire: email answers to Edward only (no user-facing results email)
-    if (tool === "valuation-questionnaire") {
+    // For valuation-questionnaire: email answers to Edward only (not for partial/early capture)
+    if (tool === "valuation-questionnaire" && !isPartial) {
       try {
         const { Resend } = require("resend");
         const resend = new Resend(process.env.RESEND_API_KEY);

@@ -204,6 +204,7 @@ const TOTAL_STEPS = SECTIONS.length;
 
 export default function ValuationEstimate() {
   const { mob } = useBp();
+  const topRef = React.useRef(null);
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -327,6 +328,7 @@ export default function ValuationEstimate() {
 
       {/* Content */}
       <div style={{ position: "relative", zIndex: 10, maxWidth: 680, margin: "0 auto", padding: mob ? "25px 20px 60px" : "40px 40px 80px" }}>
+        <div ref={topRef} />
 
         {/* Logo */}
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: 40 }}>
@@ -510,7 +512,7 @@ export default function ValuationEstimate() {
                 <button
                   onMouseEnter={() => setBackHover(true)}
                   onMouseLeave={() => setBackHover(false)}
-                  onClick={() => { setStep(s => s - 1); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                  onClick={() => { setStep(s => s - 1); setTimeout(() => { topRef.current?.scrollIntoView({ behavior: "smooth" }); }, 50); }}
                   style={{
                     padding: "10px 20px", borderRadius: 8,
                     border: `1px solid ${backHover ? C.border2 : C.border1}`,
@@ -529,7 +531,30 @@ export default function ValuationEstimate() {
                 <button
                   onMouseEnter={() => setContinueHover(true)}
                   onMouseLeave={() => setContinueHover(false)}
-                  onClick={() => { if (canAdvance()) { setStep(s => s + 1); window.scrollTo({ top: 0, behavior: "smooth" }); } }}
+                  onClick={() => {
+                    if (canAdvance()) {
+                      if (step === 0) {
+                        fetch("/api/lead-capture", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            name: `${firstName.trim()} ${lastName.trim()}`,
+                            email: email.trim(),
+                            businessName: businessName.trim(),
+                            tool: "valuation-questionnaire",
+                            answers: {},
+                            summary: {},
+                            utmSource: utmSource || null,
+                            utmCampaign: utmCampaign || null,
+                            timestamp: new Date().toISOString(),
+                            partial: true,
+                          }),
+                        }).catch(err => console.error("[Questionnaire] Early capture failed:", err));
+                      }
+                      setStep(s => s + 1);
+                      setTimeout(() => { topRef.current?.scrollIntoView({ behavior: "smooth" }); }, 50);
+                    }
+                  }}
                   disabled={!canAdvance()}
                   style={{
                     padding: "10px 24px", borderRadius: 8,
