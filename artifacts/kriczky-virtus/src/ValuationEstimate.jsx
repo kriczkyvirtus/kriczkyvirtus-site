@@ -344,7 +344,7 @@ export default function ValuationEstimate() {
             <span style={{ fontSize: mob ? 10 : 12, fontWeight: 600, color: C.gold, letterSpacing: 0.3 }}>Baseline Business Valuation Questionnaire</span>
           </div>
           <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: mob ? 26 : 36, lineHeight: 1.1, color: C.text1, margin: 0 }}>
-            Get Your Personalized <span style={{ color: C.gold, fontStyle: "italic" }}>Profit Gap</span> and <span style={{ color: C.gold, fontStyle: "italic" }}>Value Gap</span> Report
+            Get Your Personalized<br /><span style={{ color: C.gold, fontStyle: "italic" }}>Profit Gap</span> and <span style={{ color: C.gold, fontStyle: "italic" }}>Value Gap</span> Report
           </h1>
         </div>
 
@@ -510,7 +510,7 @@ export default function ValuationEstimate() {
                 <button
                   onMouseEnter={() => setBackHover(true)}
                   onMouseLeave={() => setBackHover(false)}
-                  onClick={() => setStep(s => s - 1)}
+                  onClick={() => { setStep(s => s - 1); window.scrollTo({ top: 0, behavior: "smooth" }); }}
                   style={{
                     padding: "10px 20px", borderRadius: 8,
                     border: `1px solid ${backHover ? C.border2 : C.border1}`,
@@ -573,15 +573,17 @@ export default function ValuationEstimate() {
           </div>
         )}
 
-        {/* Disclaimers */}
-        <div style={{ marginTop: 40, marginBottom: 24 }}>
-          <p style={{ fontSize: 10, lineHeight: 1.55, color: "#5A6474", textAlign: "center", maxWidth: 560, margin: "0 auto 16px" }}>
-            This report serves as an indication of value based on current market trends and benchmarks. It is not intended as an income-based or certified valuation. For exit planning, financing, or transactional purposes, a credentialed Valuation Expert should be engaged to produce a certified valuation report.
-          </p>
-          <p style={{ fontSize: 10, lineHeight: 1.55, color: "#5A6474", textAlign: "center", maxWidth: 560, margin: "0 auto" }}>
-            By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our Privacy Policy and Terms of Service.
-          </p>
-        </div>
+        {/* Disclaimers — only on first and last step */}
+        {!submitted && (step === 0 || step === TOTAL_STEPS - 1) && (
+          <div style={{ marginTop: 40, marginBottom: 24 }}>
+            <p style={{ fontSize: 10, lineHeight: 1.55, color: "#5A6474", textAlign: "center", maxWidth: 560, margin: "0 auto 16px" }}>
+              This report serves as an indication of value based on current market trends and benchmarks. It is not intended as an income-based or certified valuation. For exit planning, financing, or transactional purposes, a credentialed Valuation Expert should be engaged to produce a certified valuation report.
+            </p>
+            <p style={{ fontSize: 10, lineHeight: 1.55, color: "#5A6474", textAlign: "center", maxWidth: 560, margin: "0 auto" }}>
+              By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our Privacy Policy and Terms of Service.
+            </p>
+          </div>
+        )}
 
         {/* Footer */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", paddingTop: 32, marginTop: 0, borderTop: `1px solid ${C.border1}` }}>

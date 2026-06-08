@@ -16,6 +16,7 @@ module.exports = async function handler(req, res) {
   try {
     const { name, email, tool, summary, answers, timestamp, utmSource, utmCampaign } = req.body;
 
+    console.log("[Lead] businessName:", req.body.businessName);
     const constraintId = summary?.constraintId;
     const revenue = summary?.revenue;
     const categories = summary?.categories;
