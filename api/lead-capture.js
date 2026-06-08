@@ -117,11 +117,12 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         email,
         tool: tool || "constraint-roadmap",
         summary: summary || {},
-        answers: answers || {},
+        answers: req.body.answers || {},
         timestamp: timestamp || new Date().toISOString(),
         blobUrl: roadmapUrl || "",
-        utmSource: utmSource || null,
-        utmCampaign: utmCampaign || null,
+        utmSource: req.body.utmSource || null,
+        utmCampaign: req.body.utmCampaign || null,
+        businessName: req.body.businessName || "",
       });
     } catch (sheetsErr) {
       console.error("[Sheets] appendLead failed:", sheetsErr);

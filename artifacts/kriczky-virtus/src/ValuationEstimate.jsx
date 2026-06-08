@@ -207,6 +207,9 @@ export default function ValuationEstimate() {
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [continueHover, setContinueHover] = useState(false);
+  const [backHover, setBackHover] = useState(false);
+  const [submitHover, setSubmitHover] = useState(false);
 
   // Contact info
   const [firstName, setFirstName] = useState("");
@@ -229,6 +232,17 @@ export default function ValuationEstimate() {
   }, []);
 
   const setAnswer = (id, value) => setAnswers(prev => ({ ...prev, [id]: value }));
+
+  function formatCurrency(value) {
+    const digits = value.replace(/[^0-9]/g, "");
+    if (!digits) return "";
+    const num = parseInt(digits, 10);
+    return "$" + num.toLocaleString("en-US");
+  }
+
+  function parseCurrencyToRaw(value) {
+    return value.replace(/[^0-9]/g, "");
+  }
 
   const section = SECTIONS[step];
 
@@ -261,10 +275,11 @@ export default function ValuationEstimate() {
     SECTIONS.forEach(sec => {
       if (sec.questions) {
         sec.questions.forEach(q => {
-          payload.answers[q.id] = {
-            question: q.text,
-            answer: answers[q.id] || "",
-          };
+          let answer = answers[q.id] || "";
+          if ((q.id === "q1" || q.id === "q2") && answer) {
+            answer = formatCurrency(answer);
+          }
+          payload.answers[q.id] = { question: q.text, answer };
         });
       }
     });
@@ -329,7 +344,7 @@ export default function ValuationEstimate() {
             <span style={{ fontSize: mob ? 10 : 12, fontWeight: 600, color: C.gold, letterSpacing: 0.3 }}>Baseline Business Valuation Questionnaire</span>
           </div>
           <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: mob ? 26 : 36, lineHeight: 1.1, color: C.text1, margin: 0 }}>
-            Help Us Build Your <span style={{ color: C.gold, fontStyle: "italic" }}>Personalized Report</span>
+            Get Your Personalized <span style={{ color: C.gold, fontStyle: "italic" }}>Profit Gap</span> and <span style={{ color: C.gold, fontStyle: "italic" }}>Value Gap</span> Report
           </h1>
         </div>
 
@@ -341,14 +356,14 @@ export default function ValuationEstimate() {
                 Step {step + 1} of {TOTAL_STEPS}
               </span>
               <span style={{ fontSize: 11, color: C.text3 }}>
-                {Math.round(((step + 1) / TOTAL_STEPS) * 100)}%
+                {Math.round((step / TOTAL_STEPS) * 100)}%
               </span>
             </div>
             <div style={{ height: 4, borderRadius: 2, background: "rgba(255,255,255,0.06)" }}>
               <div style={{
                 height: "100%", borderRadius: 2,
                 background: `linear-gradient(90deg, ${C.gold}, ${C.gold}cc)`,
-                width: `${((step + 1) / TOTAL_STEPS) * 100}%`,
+                width: `${(step / TOTAL_STEPS) * 100}%`,
                 transition: "width 0.4s ease",
               }} />
             </div>
@@ -362,7 +377,34 @@ export default function ValuationEstimate() {
             background: "linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015) 50%, rgba(255,255,255,0.025))",
             border: `1px solid ${C.border2}`, borderRadius: 18,
           }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>✓</div>
+            <style>{`
+              @keyframes drawCircle {
+                0% { stroke-dashoffset: 176; }
+                100% { stroke-dashoffset: 0; }
+              }
+              @keyframes drawCheck {
+                0% { stroke-dashoffset: 50; opacity: 1; }
+                100% { stroke-dashoffset: 0; opacity: 1; }
+              }
+            `}</style>
+            <div style={{ marginBottom: 20, display: "flex", justifyContent: "center" }}>
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="32" r="28"
+                  stroke="#34D399" strokeWidth="3" fill="none"
+                  strokeLinecap="round"
+                  strokeDasharray="176"
+                  strokeDashoffset="176"
+                  style={{ animation: "drawCircle 0.8s ease-out forwards" }}
+                />
+                <path d="M20 33 L28 41 L44 25"
+                  stroke="#34D399" strokeWidth="3" fill="none"
+                  strokeLinecap="round" strokeLinejoin="round"
+                  strokeDasharray="50"
+                  strokeDashoffset="50"
+                  style={{ animation: "drawCheck 0.4s ease-out 0.8s forwards" }}
+                />
+              </svg>
+            </div>
             <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: mob ? 24 : 30, fontWeight: 400, color: C.text1, margin: "0 0 16px" }}>
               Thank You for Completing the Questionnaire
             </h2>
@@ -428,12 +470,22 @@ export default function ValuationEstimate() {
                       {q.text}
                     </div>
                     {q.type === "text" ? (
+                      (q.id === "q1" || q.id === "q2") ? (
+                        <input
+                          value={answers[q.id] ? formatCurrency(answers[q.id]) : ""}
+                          onChange={e => setAnswer(q.id, parseCurrencyToRaw(e.target.value))}
+                          inputMode="numeric"
+                          placeholder={q.placeholder}
+                          style={inputStyle}
+                        />
+                      ) : (
                       <input
                         value={answers[q.id] || ""}
                         onChange={e => setAnswer(q.id, e.target.value)}
                         placeholder={q.placeholder}
                         style={inputStyle}
                       />
+                      )
                     ) : (
                       <div>
                         {q.options.map((opt, oi) => (
@@ -455,42 +507,63 @@ export default function ValuationEstimate() {
             {/* Navigation */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 28, paddingTop: 20, borderTop: `1px solid ${C.border1}` }}>
               {step > 0 ? (
-                <button onClick={() => setStep(s => s - 1)} style={{
-                  padding: "10px 20px", borderRadius: 8, border: `1px solid ${C.border2}`,
-                  background: "transparent", color: C.text2, fontSize: 13, cursor: "pointer",
-                  fontFamily: "'DM Sans', sans-serif",
-                }}>
-                  ← Back
+                <button
+                  onMouseEnter={() => setBackHover(true)}
+                  onMouseLeave={() => setBackHover(false)}
+                  onClick={() => setStep(s => s - 1)}
+                  style={{
+                    padding: "10px 20px", borderRadius: 8,
+                    border: `1px solid ${backHover ? C.border2 : C.border1}`,
+                    background: backHover ? "rgba(255,255,255,0.03)" : "transparent",
+                    color: backHover ? C.text1 : C.text2,
+                    fontSize: 13, cursor: "pointer",
+                    fontFamily: "'DM Sans', sans-serif",
+                    transition: "all 0.3s ease",
+                  }}
+                >
+                  Back
                 </button>
               ) : <div />}
 
               {step < TOTAL_STEPS - 1 ? (
                 <button
+                  onMouseEnter={() => setContinueHover(true)}
+                  onMouseLeave={() => setContinueHover(false)}
                   onClick={() => { if (canAdvance()) { setStep(s => s + 1); window.scrollTo({ top: 0, behavior: "smooth" }); } }}
                   disabled={!canAdvance()}
                   style={{
                     padding: "10px 24px", borderRadius: 8,
-                    border: `1.5px solid ${canAdvance() ? C.gold + "80" : C.border2}`,
-                    background: canAdvance() ? `linear-gradient(135deg, ${C.gold}15, ${C.gold}08)` : "transparent",
+                    border: `1.5px solid ${canAdvance() ? (continueHover ? C.gold : C.gold + "80") : C.border2}`,
+                    background: canAdvance()
+                      ? (continueHover ? `linear-gradient(135deg, ${C.gold}22, ${C.gold}12)` : `linear-gradient(135deg, ${C.gold}15, ${C.gold}08)`)
+                      : "transparent",
                     color: canAdvance() ? C.gold : C.text4,
                     fontSize: 13, fontWeight: 600, cursor: canAdvance() ? "pointer" : "not-allowed",
-                    fontFamily: "'DM Sans', sans-serif", transition: "all 0.2s ease",
+                    fontFamily: "'DM Sans', sans-serif",
+                    transition: "all 0.3s ease",
+                    boxShadow: canAdvance() && continueHover ? `0 0 20px ${C.gold}25` : "none",
+                    transform: continueHover && canAdvance() ? "translateY(-1px)" : "none",
                   }}
                 >
-                  Continue →
+                  Continue
                 </button>
               ) : (
                 <button
+                  onMouseEnter={() => setSubmitHover(true)}
+                  onMouseLeave={() => setSubmitHover(false)}
                   onClick={handleSubmit}
                   disabled={!canAdvance() || submitting}
                   style={{
                     padding: "12px 32px", borderRadius: 10,
-                    border: `1.5px solid ${canAdvance() ? C.gold : C.border2}`,
-                    background: canAdvance() ? `linear-gradient(135deg, ${C.gold}20, ${C.gold}08)` : "transparent",
+                    border: `1.5px solid ${canAdvance() ? (submitHover ? C.gold : C.gold + "80") : C.border2}`,
+                    background: canAdvance()
+                      ? (submitHover ? `linear-gradient(135deg, ${C.gold}22, ${C.gold}12)` : `linear-gradient(135deg, ${C.gold}20, ${C.gold}08)`)
+                      : "transparent",
                     color: canAdvance() ? C.gold : C.text4,
                     fontSize: 14, fontWeight: 700, cursor: canAdvance() ? "pointer" : "not-allowed",
-                    fontFamily: "'DM Sans', sans-serif", transition: "all 0.2s ease",
-                    boxShadow: canAdvance() ? `0 0 20px ${C.gold}15` : "none",
+                    fontFamily: "'DM Sans', sans-serif", transition: "all 0.3s ease",
+                    boxShadow: canAdvance() && submitHover ? `0 0 20px ${C.gold}25` : (canAdvance() ? `0 0 20px ${C.gold}15` : "none"),
+                    transform: submitHover && canAdvance() ? "translateY(-1px)" : "none",
                   }}
                 >
                   {submitting ? "Submitting..." : "Submit"}
@@ -500,8 +573,18 @@ export default function ValuationEstimate() {
           </div>
         )}
 
+        {/* Disclaimers */}
+        <div style={{ marginTop: 40, marginBottom: 24 }}>
+          <p style={{ fontSize: 10, lineHeight: 1.55, color: "#5A6474", textAlign: "center", maxWidth: 560, margin: "0 auto 16px" }}>
+            This report serves as an indication of value based on current market trends and benchmarks. It is not intended as an income-based or certified valuation. For exit planning, financing, or transactional purposes, a credentialed Valuation Expert should be engaged to produce a certified valuation report.
+          </p>
+          <p style={{ fontSize: 10, lineHeight: 1.55, color: "#5A6474", textAlign: "center", maxWidth: 560, margin: "0 auto" }}>
+            By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our Privacy Policy and Terms of Service.
+          </p>
+        </div>
+
         {/* Footer */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", paddingTop: 32, marginTop: 40, borderTop: `1px solid ${C.border1}` }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", paddingTop: 32, marginTop: 0, borderTop: `1px solid ${C.border1}` }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.text3} strokeWidth="1.5"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M22 7l-10 7L2 7" /></svg>
