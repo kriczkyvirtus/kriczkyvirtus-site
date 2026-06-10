@@ -211,6 +211,20 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
       }
     }
 
+    // Send user-facing Snapshot follow-up email for valuation-questionnaire (full submissions only)
+    if (tool === "valuation-questionnaire" && !isPartial) {
+      try {
+        await sendResultsEmail({
+          name,
+          email,
+          tool: "valuation-questionnaire",
+          resultsUrl: "https://app.iclosed.io/e/kriczkyvirtus/profit-valuation-snapshot",
+        });
+      } catch (userEmailErr) {
+        console.error("[Email] Failed to send user Snapshot email:", userEmailErr.message);
+      }
+    }
+
     // Send results email (only if we have a results URL to link to, and not valuation-questionnaire)
     if (roadmapUrl && tool !== "valuation-questionnaire") {
       try {
