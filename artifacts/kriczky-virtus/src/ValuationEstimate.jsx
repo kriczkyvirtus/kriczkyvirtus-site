@@ -449,13 +449,14 @@ export default function ValuationEstimate() {
               background: "linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015) 50%, rgba(255,255,255,0.025))",
               border: `1px solid ${C.border2}`, borderTop: "1px solid rgba(255,255,255,0.10)",
               borderRadius: 18, boxShadow: `0 4px 12px rgba(0,0,0,0.3), 0 16px 48px rgba(0,0,0,0.25)`,
-              marginBottom: mob ? 28 : 36,
+              marginBottom: mob ? 28 : 36, overflow: "hidden",
             }}>
               <iframe
                 src="https://app.iclosed.io/e/kriczkyvirtus/profit-valuation-snapshot"
                 title="Profit & Valuation Snapshot"
-                style={{ width: "100%", height: 620, border: "none", borderRadius: 12, background: "transparent" }}
+                style={{ width: "100%", height: 820, border: "none", borderRadius: 12, background: "transparent" }}
                 allow="payment"
+                scrolling="no"
               />
             </div>
 
