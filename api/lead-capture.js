@@ -17,6 +17,9 @@ module.exports = async function handler(req, res) {
     const { name, email, tool, summary, answers, timestamp, utmSource, utmCampaign } = req.body;
     const isPartial = req.body.partial === true;
     const { revenueRange, businessConstraint, timeline, reason } = req.body;
+    const sheetsAnswers = tool === "cohort-waitlist"
+      ? { revenueRange, businessConstraint, timeline, reason }
+      : (answers || {});
 
     console.log("[Lead] businessName:", req.body.businessName);
     const constraintId = summary?.constraintId;
@@ -29,7 +32,7 @@ module.exports = async function handler(req, res) {
     }
 
     console.log(`[Lead] ${name} <${email}> — ${tool || "unknown"} — ${constraintId || "n/a"}/${revenue || "n/a"} — score: ${totalScore || "n/a"}`);
-    console.log(`[Lead] Answers:`, JSON.stringify(answers || {}));
+    console.log(`[Lead] Answers:`, JSON.stringify(sheetsAnswers));
 
     // ── STEP 1: Roadmap generation (Constraint Roadmap only) ──────────────────
     // Must complete BEFORE Sheets write so the URL is available for the Link column.
@@ -120,7 +123,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         email,
         tool: tool || "constraint-roadmap",
         summary: summary || {},
-        answers: req.body.answers || {},
+        answers: sheetsAnswers,
         timestamp: timestamp || new Date().toISOString(),
         blobUrl: roadmapUrl || "",
         utmSource: req.body.utmSource || null,
