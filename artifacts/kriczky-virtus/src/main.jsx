@@ -17,6 +17,7 @@ import Unsubscribe from './Unsubscribe.jsx'
 import EngageGiveaway2026 from './EngageGiveaway2026.jsx'
 import AcqVantageBonus from './AcqVantageBonus.jsx'
 import ValuationEstimate from './ValuationEstimate.jsx'
+import Cohort from './Cohort.jsx'
 import './index.css'
 
 const TITLES = {
@@ -26,6 +27,7 @@ const TITLES = {
   '/tools/customer-capital':  'Getting More Valuable Customers',
   '/tools/structural-capital':'Systems to Run Your Business Without You',
   '/constraint-roadmap':      'Constraint Roadmap',
+  '/cohort':                  'Virtus Collective — Cohort Program',
 }
 
 const DEFAULT_TITLE = 'Build Businesses Worth Owning - Kriczky Virtus'
@@ -59,6 +61,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/engage-giveaway-2026" element={<EngageGiveaway2026 />} />
         <Route path="/acq-vantage-bonus" element={<AcqVantageBonus />} />
         <Route path="/valuation-estimate" element={<ValuationEstimate />} />
+        <Route path="/cohort" element={<Cohort />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,

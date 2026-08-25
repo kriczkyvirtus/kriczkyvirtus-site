@@ -16,6 +16,7 @@ module.exports = async function handler(req, res) {
   try {
     const { name, email, tool, summary, answers, timestamp, utmSource, utmCampaign } = req.body;
     const isPartial = req.body.partial === true;
+    const { revenueRange, businessConstraint, timeline, reason } = req.body;
 
     console.log("[Lead] businessName:", req.body.businessName);
     const constraintId = summary?.constraintId;
@@ -125,6 +126,10 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         utmSource: req.body.utmSource || null,
         utmCampaign: req.body.utmCampaign || null,
         businessName: req.body.businessName || "",
+        revenueRange,
+        businessConstraint,
+        timeline,
+        reason,
       });
     } catch (sheetsErr) {
       console.error("[Sheets] appendLead failed:", sheetsErr);
@@ -140,10 +145,47 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         summary: summary || {},
         utmSource: utmSource || null,
         utmCampaign: utmCampaign || null,
+        revenueRange,
+        businessConstraint,
+        timeline,
+        reason,
       });
       console.log("[AC] syncContact completed");
     } catch (acErr) {
       console.error("[AC] syncContact failed:", acErr.message);
+    }
+
+    // Cohort applications get a dedicated notification with the four
+    // application answers. This branch is intentionally separate from the
+    // existing result-email flows below.
+    if (tool === "cohort-waitlist") {
+      try {
+        const { Resend } = require("resend");
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        await resend.emails.send({
+          from: "Kriczky Virtus <growth@kriczkyvirtus.com>",
+          replyTo: "ekriczky@kriczkyvirtus.com",
+          to: "ekriczky@kriczkyvirtus.com",
+          subject: `New cohort application — ${name}`,
+          html: `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: Arial, sans-serif; color: #20252d; line-height: 1.5;">
+  <h2>New cohort application</h2>
+  <p><strong>Name:</strong> ${name}</p>
+  <p><strong>Email:</strong> ${email}</p>
+  <hr>
+  <p><strong>Revenue range:</strong> ${revenueRange || ""}</p>
+  <p><strong>Business constraint:</strong><br>${businessConstraint || ""}</p>
+  <p><strong>Timeline:</strong> ${timeline || ""}</p>
+  <p><strong>Interest reason:</strong><br>${reason || ""}</p>
+</body>
+</html>`,
+        });
+        console.log(`[Email] Sent cohort application notification for ${name} <${email}>`);
+      } catch (emailErr) {
+        console.error("[Email] Failed to send cohort application notification:", emailErr.message);
+      }
     }
 
     // For valuation-questionnaire: email answers to Edward only (not for partial/early capture)
