@@ -1107,7 +1107,7 @@ export default function ReinvestOrHarvestScorecard() {
               <img src={HEADSHOT} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}/>
             </div>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: C.text1 }}>Edward Kriczky, <span style={{ color: C.text1 }}>CEPA<sup style={{ fontSize: 10, fontWeight: 600, top: "-0.45em", position: "relative", marginLeft: 1 }}>&#174;</sup></span></div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: C.text1 }}>Edward Kriczky, <span style={{ color: C.text1 }}>CEPA<sup style={{ fontSize: 12, fontWeight: 700, lineHeight: 1, verticalAlign: "baseline", top: "-0.05em", position: "relative", marginLeft: 2 }}>&#174;</sup></span></div>
               <div style={{ fontSize: 11, color: C.gold, marginBottom: 6 }}>Founder, Kriczky Virtus</div>
               <div style={{ fontSize: 11, lineHeight: 1.6, color: C.text2 }}>
                 <span style={{ color: C.gold, fontWeight: 600 }}>We've all heard the phrase "reinvest back into your business" — but nobody shows you how, specifically customized to your company's unique situation. I help business owners figure out where their best opportunities for ROI are when reinvesting back into their business, aligned with where they want their business to go long-term.</span>{" "}
