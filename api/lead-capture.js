@@ -8,15 +8,32 @@ const { appendLead } = require("../lib/sheets");
 const { sendResultsEmail } = require("../lib/email");
 const { syncContact } = require("../lib/activecampaign");
 
+function utmsFromReferer(req) {
+  const referer = req.headers?.referer || req.headers?.referrer;
+  if (!referer) return {};
+  try {
+    const url = new URL(referer);
+    return {
+      utmSource: url.searchParams.get("utm_source") || null,
+      utmCampaign: url.searchParams.get("utm_campaign") || null,
+    };
+  } catch {
+    return {};
+  }
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const { name, email, tool, summary, answers, timestamp, utmSource, utmCampaign } = req.body;
+    const { name, email, tool, summary, answers, timestamp, utmSource, utmCampaign, revenueBand, pdfBase64 } = req.body;
     const isPartial = req.body.partial === true;
     const { revenueRange, businessConstraint, timeline, reason } = req.body;
+    const refererUtms = tool === "reinvest-harvest" ? utmsFromReferer(req) : {};
+    const resolvedUtmSource = utmSource || refererUtms.utmSource || null;
+    const resolvedUtmCampaign = utmCampaign || refererUtms.utmCampaign || null;
     const sheetsAnswers = tool === "cohort-waitlist"
       ? { revenueRange, businessConstraint, timeline, reason }
       : (answers || {});
@@ -115,6 +132,30 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
       }
     }
 
+    // Reinvest or Harvest supplies a generated PDF in its byte-locked
+    // component. Persist it here, rather than changing that supplied source or
+    // duplicating the existing client-side HTML snapshot behavior.
+    let reinvestHarvestResultsUrl = null;
+    if (tool === "reinvest-harvest" && pdfBase64) {
+      try {
+        const { put } = await import("@vercel/blob");
+        const raw = `${email}-${tool}-${Date.now()}`;
+        const id = crypto.createHash("sha256").update(raw).digest("hex").slice(0, 12);
+        const nameSlug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+        const encodedPdf = pdfBase64.includes(",") ? pdfBase64.split(",").pop() : pdfBase64;
+        const blob = await put(`results/${tool}/${nameSlug}-${id}.pdf`, Buffer.from(encodedPdf, "base64"), {
+          access: "public",
+          contentType: "application/pdf",
+          addRandomSuffix: false,
+          contentDisposition: "inline",
+        });
+        reinvestHarvestResultsUrl = blob.url;
+        console.log(`[Results] Stored Reinvest or Harvest PDF for ${name} <${email}>`);
+      } catch (resultErr) {
+        console.error("[Results] Failed to store Reinvest or Harvest PDF:", resultErr.message);
+      }
+    }
+
     // ── STEP 2: Google Sheets — always runs for ALL tools ─────────────────────
     // Roadmap URL is now populated (if generated), so the Link column gets the URL.
     try {
@@ -125,10 +166,11 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         summary: summary || {},
         answers: sheetsAnswers,
         timestamp: timestamp || new Date().toISOString(),
-        blobUrl: roadmapUrl || "",
-        utmSource: req.body.utmSource || null,
-        utmCampaign: req.body.utmCampaign || null,
+        blobUrl: roadmapUrl || reinvestHarvestResultsUrl || "",
+        utmSource: resolvedUtmSource,
+        utmCampaign: resolvedUtmCampaign,
         businessName: req.body.businessName || "",
+        revenueBand,
         revenueRange,
         businessConstraint,
         timeline,
@@ -146,8 +188,9 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         email,
         tool: tool || "constraint-roadmap",
         summary: summary || {},
-        utmSource: utmSource || null,
-        utmCampaign: utmCampaign || null,
+        utmSource: resolvedUtmSource,
+        utmCampaign: resolvedUtmCampaign,
+        revenueBand,
         revenueRange,
         businessConstraint,
         timeline,
@@ -267,6 +310,22 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         });
       } catch (userEmailErr) {
         console.error("[Email] Failed to send user Snapshot email:", userEmailErr.message);
+      }
+    }
+
+    // Reinvest or Harvest persists its generated PDF during lead capture, so
+    // its standard user-facing result email belongs here rather than in
+    // /api/store-results (which is used by the other tool components).
+    if (tool === "reinvest-harvest" && reinvestHarvestResultsUrl) {
+      try {
+        await sendResultsEmail({
+          name,
+          email,
+          tool: "reinvest-harvest",
+          resultsUrl: reinvestHarvestResultsUrl,
+        });
+      } catch (emailErr) {
+        console.error("[Email] Reinvest or Harvest result email failed:", emailErr);
       }
     }
 

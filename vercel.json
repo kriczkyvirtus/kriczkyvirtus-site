@@ -2,6 +2,13 @@
   "buildCommand": "node scripts/compile-shared.cjs && pnpm --filter @workspace/kriczky-virtus build",
   "outputDirectory": "artifacts/kriczky-virtus/dist/public",
   "framework": "vite",
+  "redirects": [
+    {
+      "source": "/ig",
+      "destination": "/tools/reinvest-harvest?utm_source=instagram&utm_campaign=bio-link",
+      "permanent": false
+    }
+  ],
   "functions": {
     "api/**/*.js": {
       "maxDuration": 30

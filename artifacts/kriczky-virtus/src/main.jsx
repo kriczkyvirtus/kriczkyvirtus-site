@@ -18,6 +18,7 @@ import EngageGiveaway2026 from './EngageGiveaway2026.jsx'
 import AcqVantageBonus from './AcqVantageBonus.jsx'
 import ValuationEstimate from './ValuationEstimate.jsx'
 import Cohort from './Cohort.jsx'
+import ReinvestHarvestScorecard from './tools/reinvest-harvest-scorecard.jsx'
 import './index.css'
 
 const TITLES = {
@@ -28,6 +29,7 @@ const TITLES = {
   '/tools/structural-capital':'Systems to Run Your Business Without You',
   '/constraint-roadmap':      'Constraint Roadmap',
   '/cohort':                  'Virtus Collective — Cohort Program',
+  '/tools/reinvest-harvest':  'Reinvest or Harvest — Capital Allocation Scorecard',
 }
 
 const DEFAULT_TITLE = 'Build Businesses Worth Owning - Kriczky Virtus'
@@ -52,6 +54,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/tools/human-capital" element={<HumanCapital />} />
         <Route path="/tools/customer-capital" element={<CustomerCapital />} />
         <Route path="/tools/structural-capital" element={<StructuralCapital />} />
+        <Route path="/tools/reinvest-harvest" element={<ReinvestHarvestScorecard />} />
         <Route path="/constraint-roadmap" element={<ConstraintRoadmap />} />
         <Route path="/roadmap-session" element={<RoadmapSession />} />
         <Route path="/book-intensive" element={<BookIntensive />} />

@@ -1088,6 +1088,14 @@ const STEPS = [
     duration: "12 min each", dims: "3 assessments",
     href: null, deepDives: true,
   },
+  {
+    step: 4, color: "#C8A24E", title: "Reinvest or Harvest",
+    subtitle: "The Owner's Capital Allocation Scorecard",
+    desc: "Score your business capacity and personal foundation separately to see where the next dollar should go — and why.",
+    duration: "12 min", dims: "10 dimensions",
+    href: "/tools/reinvest-harvest",
+    cta: "Start Assessment",
+  },
 ];
 
 const StepAccordion = () => {
