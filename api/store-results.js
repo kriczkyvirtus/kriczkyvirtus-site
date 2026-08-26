@@ -24,6 +24,7 @@ const TOOL_TO_TAB = {
   "structural-capital": "Structural Capital",
   "customer-capital": "Customer Capital",
   "human-capital": "Human Capital",
+  "reinvest-harvest": "Reinvest or Harvest",
 };
 
 // Column I is the Link column for all non-Constraint-Roadmap tool tabs.

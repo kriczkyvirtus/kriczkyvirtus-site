@@ -1,6 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 
 /* ═══════════════════════════════════════════════════════════════
    REINVEST OR HARVEST
@@ -512,7 +510,7 @@ const Disclosure = ({ compact }) => (
 );
 
 /* =================== EMAIL GATE =================== */
-const EmailGate = ({ toolName, toolSlug, accentColor, scores, summary, onUnlock, onGeneratePdf }) => {
+const EmailGate = ({ toolName, toolSlug, accentColor, scores, summary, onUnlock }) => {
   const [gName, setGName] = useState("");
   const [gEmail, setGEmail] = useState("");
   const [gRevenue, setGRevenue] = useState("");
@@ -523,24 +521,23 @@ const EmailGate = ({ toolName, toolSlug, accentColor, scores, summary, onUnlock,
     if (!gEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(gEmail)) { setGError("Please enter a valid email address."); return; }
     if (!gRevenue) { setGError("Please select your annual revenue so we can tailor your next steps."); return; }
     setGError(""); setGSending(true);
-    let pdfBase64 = null;
-    if (onGeneratePdf) { try { pdfBase64 = await onGeneratePdf(); } catch (err) { console.error("[PDF] Generation failed:", err); } }
-    const payload = { name: gName.trim(), email: gEmail.trim(), revenueBand: gRevenue, tool: toolSlug, toolName, scores, summary, timestamp: new Date().toISOString(), pdfBase64 };
-    try { const res = await fetch("/api/lead-capture", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }); if (res.ok) { onUnlock(gRevenue); return; } throw new Error("API unavailable"); }
-    catch (err) {
-      console.log("[Virtus] API failed, queuing silent retry:", err.message || err);
-      console.log("[Virtus] Lead data:", JSON.stringify(payload, null, 2));
-      var retryPayload = JSON.parse(JSON.stringify(payload)); retryPayload.pdfBase64 = null;
-      var retryFn = function(attempt) {
-        if (attempt > 5) { console.log("[Virtus] All retries exhausted. Lead data logged above."); return; }
-        fetch("/api/lead-capture", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(retryPayload) })
-          .then(function(r) { if (r.ok) { console.log("[Virtus] Retry " + attempt + " succeeded"); } else { throw new Error("fail"); } })
-          .catch(function() { console.log("[Virtus] Retry " + attempt + " failed, next in " + (30*attempt) + "s"); setTimeout(function() { retryFn(attempt+1); }, 30000*attempt); });
-      };
-      setTimeout(function() { retryFn(1); }, 30000);
-      onUnlock(gRevenue);
-    }
-    finally { setGSending(false); }
+    const payload = { name: gName.trim(), email: gEmail.trim(), revenueBand: gRevenue, tool: toolSlug, toolName, scores, summary, timestamp: new Date().toISOString() };
+    fetch("/api/lead-capture", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+      .catch(err => console.error("[Lead] Fetch failed:", err));
+    onUnlock(gRevenue);
+    setGSending(false);
+    const _name = gName.trim(), _email = gEmail.trim();
+    setTimeout(async () => {
+      try {
+        const res = await fetch("/api/store-results", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: _name, email: _email, tool: toolSlug, html: document.documentElement.outerHTML }),
+        });
+        if (res.ok) console.log("[Tool] Results stored");
+        else console.error("[Tool] Failed to store results:", res.status);
+      } catch (err) { console.error("[Tool] Store results failed:", err); }
+    }, 2000);
   };
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", padding: "60px 20px", textAlign: "center", position: "relative", pageBreakBefore: "always" }}>
@@ -947,26 +944,6 @@ export default function ReinvestOrHarvestScorecard() {
               trackIntent: quadrant?.key === "harvest" || quadrant?.key === "split" ? "Wealth" : "Business",
             }}
             onUnlock={(rb) => { if (rb) setRevenueBand(rb); setGateUnlocked(true); }}
-            onGeneratePdf={async () => {
-              setGateUnlocked(true);
-              await new Promise(r => setTimeout(r, 800));
-              const el = toolRef.current;
-              if (!el) return null;
-              try {
-                const canvas = await html2canvas(el, { scale: 2, useCORS: true, backgroundColor: "#0A0E14", logging: false, windowWidth: 800 });
-                const imgData = canvas.toDataURL("image/jpeg", 0.85);
-                const imgW = 210;
-                const imgH = (canvas.height * imgW) / canvas.width;
-                const pdf = new jsPDF("p", "mm", "a4");
-                let pos = 0;
-                while (pos < imgH) {
-                  if (pos > 0) pdf.addPage();
-                  pdf.addImage(imgData, "JPEG", 0, -pos, imgW, imgH);
-                  pos += 297;
-                }
-                return pdf.output("datauristring").split(",")[1];
-              } catch (err) { console.error("[PDF] Generation failed:", err); return null; }
-            }}
           />
         )}
 

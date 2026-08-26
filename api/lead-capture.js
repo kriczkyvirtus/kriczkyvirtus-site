@@ -28,7 +28,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { name, email, tool, summary, answers, timestamp, utmSource, utmCampaign, revenueBand, pdfBase64 } = req.body;
+    const { name, email, tool, summary, answers, timestamp, utmSource, utmCampaign, revenueBand } = req.body;
     const isPartial = req.body.partial === true;
     const { revenueRange, businessConstraint, timeline, reason } = req.body;
     const refererUtms = tool === "reinvest-harvest" ? utmsFromReferer(req) : {};
@@ -132,32 +132,9 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
       }
     }
 
-    // Reinvest or Harvest supplies a generated PDF in its byte-locked
-    // component. Persist it here, rather than changing that supplied source or
-    // duplicating the existing client-side HTML snapshot behavior.
-    let reinvestHarvestResultsUrl = null;
-    if (tool === "reinvest-harvest" && pdfBase64) {
-      try {
-        const { put } = await import("@vercel/blob");
-        const raw = `${email}-${tool}-${Date.now()}`;
-        const id = crypto.createHash("sha256").update(raw).digest("hex").slice(0, 12);
-        const nameSlug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-        const encodedPdf = pdfBase64.includes(",") ? pdfBase64.split(",").pop() : pdfBase64;
-        const blob = await put(`results/${tool}/${nameSlug}-${id}.pdf`, Buffer.from(encodedPdf, "base64"), {
-          access: "public",
-          contentType: "application/pdf",
-          addRandomSuffix: false,
-          contentDisposition: "inline",
-        });
-        reinvestHarvestResultsUrl = blob.url;
-        console.log(`[Results] Stored Reinvest or Harvest PDF for ${name} <${email}>`);
-      } catch (resultErr) {
-        console.error("[Results] Failed to store Reinvest or Harvest PDF:", resultErr.message);
-      }
-    }
-
     // ── STEP 2: Google Sheets — always runs for ALL tools ─────────────────────
-    // Roadmap URL is now populated (if generated), so the Link column gets the URL.
+    // Roadmap URL is populated for Constraint Roadmap; other tool result links
+    // are added by their standard /api/store-results snapshot flow.
     try {
       await appendLead({
         name,
@@ -166,7 +143,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         summary: summary || {},
         answers: sheetsAnswers,
         timestamp: timestamp || new Date().toISOString(),
-        blobUrl: roadmapUrl || reinvestHarvestResultsUrl || "",
+        blobUrl: roadmapUrl || "",
         utmSource: resolvedUtmSource,
         utmCampaign: resolvedUtmCampaign,
         businessName: req.body.businessName || "",
@@ -310,22 +287,6 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         });
       } catch (userEmailErr) {
         console.error("[Email] Failed to send user Snapshot email:", userEmailErr.message);
-      }
-    }
-
-    // Reinvest or Harvest persists its generated PDF during lead capture, so
-    // its standard user-facing result email belongs here rather than in
-    // /api/store-results (which is used by the other tool components).
-    if (tool === "reinvest-harvest" && reinvestHarvestResultsUrl) {
-      try {
-        await sendResultsEmail({
-          name,
-          email,
-          tool: "reinvest-harvest",
-          resultsUrl: reinvestHarvestResultsUrl,
-        });
-      } catch (emailErr) {
-        console.error("[Email] Reinvest or Harvest result email failed:", emailErr);
       }
     }
 
