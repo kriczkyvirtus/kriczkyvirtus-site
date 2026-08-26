@@ -523,20 +523,36 @@ const EmailGate = ({ toolName, toolSlug, accentColor, scores, summary, onUnlock 
     setGError(""); setGSending(true);
     const payload = { name: gName.trim(), email: gEmail.trim(), revenueBand: gRevenue, tool: toolSlug, toolName, scores, summary, timestamp: new Date().toISOString() };
     fetch("/api/lead-capture", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
-      .catch(err => console.error("[Lead] Fetch failed:", err));
+      .then(function(r) {
+        if (r.ok) return;
+        throw new Error("API unavailable");
+      })
+      .catch(function(err) {
+        console.log("[Virtus] API failed, queuing silent retry:", err.message || err);
+        console.log("[Virtus] Lead data:", JSON.stringify(payload, null, 2));
+        var retryPayload = JSON.parse(JSON.stringify(payload));
+        var retryFn = function(attempt) {
+          if (attempt > 5) { console.log("[Virtus] All retries exhausted. Lead data logged above."); return; }
+          fetch("/api/lead-capture", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(retryPayload) })
+            .then(function(r) { if (r.ok) { console.log("[Virtus] Retry " + attempt + " succeeded"); return; } throw new Error("Retry failed"); })
+            .catch(function() { console.log("[Virtus] Retry " + attempt + " failed, next in " + (30 * attempt) + "s"); setTimeout(function() { retryFn(attempt + 1); }, 30000 * attempt); });
+        };
+        setTimeout(function() { retryFn(1); }, 30000);
+      });
     onUnlock(gRevenue);
     setGSending(false);
     const _name = gName.trim(), _email = gEmail.trim();
     setTimeout(async () => {
-      try {
-        const res = await fetch("/api/store-results", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: _name, email: _email, tool: toolSlug, html: document.documentElement.outerHTML }),
-        });
-        if (res.ok) console.log("[Tool] Results stored");
-        else console.error("[Tool] Failed to store results:", res.status);
-      } catch (err) { console.error("[Tool] Store results failed:", err); }
+      fetch("/api/store-results", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: _name, email: _email, tool: toolSlug, html: document.documentElement.outerHTML }),
+      })
+        .then(function(res) {
+          if (res.ok) console.log("[Tool] Results stored");
+          else console.error("[Tool] Failed to store results:", res.status);
+        })
+        .catch(function(err) { console.error("[Tool] Store results failed:", err); });
     }, 2000);
   };
   return (
