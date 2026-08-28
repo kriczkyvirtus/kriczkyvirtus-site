@@ -90,7 +90,7 @@ const P = ({ children, mob, style }) => (
 const INCLUDED = [
   {
     title: "Biweekly working sessions",
-    desc: "Ten owners in the same revenue tier. We work through your actual constraints with accountability from me and from nine people who understand the problem because they're living it.",
+    desc: "Ten owners in the same revenue tier — the weekly community call is open to every member, this is the small room. We work through your actual constraints with accountability from Kriczky Virtus and from nine people who understand the problem because they're living it.",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
@@ -98,8 +98,8 @@ const INCLUDED = [
     ),
   },
   {
-    title: "A monthly financials-only session",
-    desc: "One session every month is entirely your numbers. Margins, cash flow, revenue quality, where the money is actually going.",
+    title: "A monthly business metrics-only session",
+    desc: "One session every month is entirely your numbers. Margins, cash flow, revenue quality, where your specific reinvestment opportunities live.",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
@@ -107,8 +107,8 @@ const INCLUDED = [
     ),
   },
   {
-    title: "Your own metrics dashboard",
-    desc: "A personalized business and financial dashboard benchmarked against your industry — not a generic average.",
+    title: "Your own operating dashboard",
+    desc: "A personalized business operating dashboard — margin, cash conversion, capacity, concentration — benchmarked against your industry rather than a generic average.",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 3v18h18" /><path d="M7 14l4-4 4 4 5-7" /><circle cx="20" cy="7" r="1.3" fill={C.gold} stroke="none" />
@@ -116,8 +116,8 @@ const INCLUDED = [
     ),
   },
   {
-    title: "Tax and wealth workshops",
-    desc: "The levers most owners at your level have never had walked through, and how they connect to what the business is doing.",
+    title: "Tax and Business Reinvestment Workshops",
+    desc: "The levers most owners at your level have never had walked through, and how they connect to what the business is doing. Educational, and coordinated with your CPA — not tax advice.",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 2L3 7v6c0 5 3.8 9.4 9 10 5.2-.6 9-5 9-10V7l-9-5z" /><path d="M9 12l2 2 4-4" />
@@ -293,6 +293,11 @@ const ApplicationForm = ({ mob }) => {
       <Field label="Annual revenue">
         <Choice options={REVENUE_OPTIONS} value={revenue}
           onChange={v => { setRevenue(v); setError(""); }} />
+        {revenue === "$10M+" && (
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, lineHeight: 1.6, color: C.text3, margin: "9px 0 0" }}>
+            Cohorts run up to $10M. Above that is a different conversation &mdash; apply anyway and I&rsquo;ll point you to the right one.
+          </p>
+        )}
       </Field>
 
       <Field label="What's the main thing getting in your way right now?">
@@ -375,10 +380,10 @@ export default function Cohort() {
         {/* ─── HERO ───────────────────────────────── */}
         <div style={{ textAlign: "center", marginBottom: SectionGap }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 16px", borderRadius: 100, background: "rgba(200,162,78,0.08)", border: "1px solid rgba(200,162,78,0.20)", marginBottom: 20 }}>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: mob ? 10 : 12, fontWeight: 600, color: C.gold, letterSpacing: 0.3 }}>The Virtus Collective — Cohort Program</span>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: mob ? 10 : 12, fontWeight: 600, color: C.gold, letterSpacing: 0.3 }}>The Virtus Collective — Cohorts</span>
           </div>
           <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: mob ? 34 : 52, color: C.text1, letterSpacing: "-0.02em", lineHeight: 1.08, margin: "0 0 20px" }}>
-            Nine other owners<br /><span style={{ color: C.gold, fontStyle: "italic" }}>who get it.</span>
+            Nine other owners at your stage<br /><span style={{ color: C.gold, fontStyle: "italic" }}>who get it.</span>
           </h1>
           <P mob={mob} style={{ fontSize: mob ? 14 : 16, maxWidth: 620, margin: "0 auto 14px" }}>
             You're making six-figure decisions with nobody looking at the whole picture. Your CPA sees last year. Your advisor sees a portfolio that's a fraction of your net worth. Your friends with W-2 jobs can't help, and your competitors aren't opening their books.
@@ -391,9 +396,9 @@ export default function Cohort() {
         {/* ─── WHAT IT IS ─────────────────────────── */}
         <div style={{ marginBottom: SectionGap }}>
           <Eyebrow>What it is</Eyebrow>
-          <H mob={mob}>An outsourced finance team, <span style={{ color: C.gold, fontStyle: "italic" }}>in a room</span></H>
+          <H mob={mob}>Ten owners at your scale, <span style={{ color: C.gold, fontStyle: "italic" }}>in the same room</span></H>
           <P mob={mob}>
-            Ten owners. All in the same revenue tier, so the problems are comparable and the advice actually transfers. We meet biweekly and work through what's constraining your business — with accountability from me and from nine people who understand it because they're living the same thing.
+            Ten owners. All in the same revenue tier, so the problems are comparable and the advice actually transfers. We meet biweekly and work through what's constraining your business — with accountability from Kriczky Virtus and from nine people who understand it because they're living the same thing.
           </P>
           <P mob={mob} style={{ marginBottom: 0, color: C.text1 }}>
             It costs less than a part-time bookkeeper.
@@ -451,17 +456,56 @@ export default function Cohort() {
 
         {/* ─── PRICING ────────────────────────────── */}
         <div style={{ marginBottom: SectionGap }}>
-          <div style={{ ...CARD, padding: mob ? "30px 22px" : "40px 34px", textAlign: "center", border: `1px solid ${C.gold}30`, background: `linear-gradient(135deg, ${C.gold}0A, ${C.gold}04)`, boxShadow: `0 2px 4px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 60px ${C.gold}10` }}>
+          <div style={{ ...CARD, padding: mob ? "28px 22px" : "38px 34px", textAlign: "center", border: `1px solid ${C.gold}30`, background: `linear-gradient(135deg, ${C.gold}0A, ${C.gold}04)` }}>
             <Eyebrow>Founding members</Eyebrow>
             <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 8, marginBottom: 12 }}>
-              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: mob ? 46 : 60, fontWeight: 600, color: C.gold, lineHeight: 1 }}>$797</span>
+              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: mob ? 46 : 60, fontWeight: 700, color: C.gold, lineHeight: 1 }}>$797</span>
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: C.text2 }}>/month</span>
             </div>
-            <P mob={mob} style={{ maxWidth: 480, margin: "0 auto 6px", color: C.text1 }}>
-              Locked for as long as you stay.
+            <P mob={mob} style={{ maxWidth: 520, margin: "0 auto 4px", color: C.text1 }}>
+              Locked for as long as your membership stays continuously active.
             </P>
-            <P mob={mob} style={{ maxWidth: 480, margin: "0 auto", fontSize: 13 }}>
-              That price holds for the first twenty paying members, then it goes up. Cohorts open in waves and each one caps at ten.
+            <P mob={mob} style={{ maxWidth: 520, margin: "0 auto 22px", fontSize: 13 }}>
+              If you join in the first twenty, you stay at $797/month regardless of what the price becomes later.
+            </P>
+
+            <div style={{ display: "flex", justifyContent: "center", gap: mob ? 0 : 8, flexDirection: mob ? "column" : "row", borderTop: `1px solid ${C.border1}`, paddingTop: 20 }}>
+              {[
+                { price: "$797", label: "First 20 owners" },
+                { price: "$897", label: "Next 20 owners" },
+                { price: "$997", label: "After 40 owners" },
+              ].map((step, i) => (
+                <div key={i} style={{ flex: 1, padding: mob ? "10px 0" : "0 10px", borderTop: mob && i > 0 ? `1px solid ${C.border1}` : "none" }}>
+                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: mob ? 22 : 26, fontWeight: 700, color: i === 0 ? C.gold : C.text2, lineHeight: 1.2 }}>
+                    {step.price}<span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: C.text3 }}>/mo</span>
+                  </div>
+                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10.5, letterSpacing: "0.14em", textTransform: "uppercase", color: C.text3, marginTop: 5 }}>
+                    {step.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <P mob={mob} style={{ maxWidth: 520, margin: "20px auto 0", fontSize: 12.5, color: C.text3 }}>
+              Counted across all revenue bands. Cohorts cap at ten owners and are grouped by revenue &mdash; under $1M, $1M&ndash;$3M, $3M&ndash;$10M &mdash; so the room is working on problems of the same size.
+            </P>
+          </div>
+
+          <div style={{ ...CARD, padding: mob ? "20px 20px" : "26px 30px", marginTop: 14 }}>
+            <div style={{ fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: C.text3, fontWeight: 600, marginBottom: 12 }}>
+              What it is and isn&rsquo;t
+            </div>
+            <P mob={mob} style={{ fontSize: 12.5, marginBottom: 12 }}>
+              Membership is ongoing and monthly. &ldquo;Cohort&rdquo; describes how you come in &mdash; ten at a time, grouped by band &mdash; not a program with an end date.
+            </P>
+            <P mob={mob} style={{ fontSize: 12.5, marginBottom: 12 }}>
+              Sessions are group sessions. Membership does not include one-on-one advisory time, personal financial planning, or investment recommendations. If you want personal financial advice from Edward Kriczky, that requires a formal client relationship with Kriczky Wealth Management, LLC &mdash; a separate engagement under its own agreement.
+            </P>
+            <P mob={mob} style={{ fontSize: 12.5, marginBottom: 12 }}>
+              Billed monthly and renews automatically. Cancel any time. You keep access through the end of the billing period you have already paid for, and there are no refunds for partial billing periods. Cancelling is not the same as leaving the group &mdash; leaving ends access immediately, so cancel from your Skool subscription settings at least 24 hours before the renewal date. If you cancel and rejoin later, you rejoin at whatever the price is then &mdash; founding pricing does not carry over.
+            </P>
+            <P mob={mob} style={{ fontSize: 12, color: C.text3, marginBottom: 0 }}>
+              Educational content only. Nothing here is individualized investment, tax, or legal advice.
             </P>
           </div>
         </div>
