@@ -243,8 +243,7 @@ ${COHORT_CONFIRMATION_DISCLOSURE}`;
 
         await resend.emails.send({
           from: "Edward Kriczky <growth@kriczkyvirtus.com>",
-          // Intentionally omit replyTo so Reply Tracking cannot replace it
-          // with an activehosted address on this applicant receipt.
+          replyTo: "ekriczky@kriczkyvirtus.com",
           to: email,
           subject: "Got your application",
           text: confirmationText,
