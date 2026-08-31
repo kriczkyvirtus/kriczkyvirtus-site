@@ -23,7 +23,10 @@ const C = {
 
 const GRAIN = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
 
-const HEADSHOT = "data:image/jpeg;base64,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";
+// ═══ PASTE HEADSHOT BASE64 HERE ═══
+// Extract with:
+// grep -o 'data:image/jpeg;base64,[A-Za-z0-9+/=]*' legacy-roadmap-full-v2.html | head -1
+const HEADSHOT = "HEADSHOT_PLACEHOLDER";
 
 const useBp = () => {
   const [bp, setBp] = useState("desktop");
@@ -38,19 +41,9 @@ const Grain = () => (
   <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 1, opacity: 0.07, mixBlendMode: "overlay", backgroundImage: GRAIN, backgroundSize: "128px 128px" }} />
 );
 
-const KVShield = ({ size = 22, glow = false }) => (
+const Shield = ({ size = 28, glow = false }) => (
   <svg width={size} height={size} viewBox="0 0 64 64" fill="none"
     style={glow ? { filter: `drop-shadow(0 0 12px ${C.gold}60) drop-shadow(0 0 4px ${C.gold}90)` } : {}}>
-    <path d="M32 8L14 16V30C14 42 22 52 32 56C42 52 50 42 50 30V16L32 8Z"
-      fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinejoin="round" />
-    <path d="M32 12L18 18.5V30C18 40.5 24.5 49 32 52C39.5 49 46 40.5 46 30V18.5L32 12Z"
-      fill="rgba(200,162,78,0.06)" />
-  </svg>
-);
-
-const Shield = ({ size = 32 }) => (
-  <svg width={size} height={size} viewBox="0 0 64 64" fill="none"
-    style={{ filter: "drop-shadow(0 0 12px rgba(200,162,78,0.38)) drop-shadow(0 0 4px rgba(200,162,78,0.56))" }}>
     <path d="M32 8L14 16V30C14 42 22 52 32 56C42 52 50 42 50 30V16L32 8Z"
       fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinejoin="round" />
     <path d="M32 12L18 18.5V30C18 40.5 24.5 49 32 52C39.5 49 46 40.5 46 30V18.5L32 12Z"
@@ -68,7 +61,7 @@ const CARD = {
 };
 
 const H = ({ children, mob, size }) => (
-  <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: size || (mob ? 27 : 36), color: C.text1, letterSpacing: "-0.01em", lineHeight: 1.15, margin: "0 0 14px" }}>
+  <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: size || (mob ? 26 : 34), color: C.text1, textTransform: "uppercase", letterSpacing: "0.02em", lineHeight: 1.12, margin: "0 0 14px" }}>
     {children}
   </h2>
 );
@@ -149,7 +142,7 @@ const Label = ({ children }) => (
 );
 
 const inputStyle = {
-  width: "100%", padding: "13px 15px", borderRadius: 10, background: C.bgElev,
+  width: "100%", padding: "13px 15px", borderRadius: 10, background: "#0F141C",
   border: "1px solid rgba(255,255,255,0.10)", color: C.text1, fontSize: 14,
   fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box",
   transition: "border-color 0.2s",
@@ -203,7 +196,7 @@ const Choice = ({ options, value, onChange }) => (
           style={{
             padding: "10px 15px", borderRadius: 9, cursor: "pointer",
             fontFamily: "'DM Sans', sans-serif", fontSize: 13,
-            background: active ? `${C.gold}14` : C.bgElev,
+            background: active ? `${C.gold}14` : "#0F141C",
             border: `1px solid ${active ? `${C.gold}55` : "rgba(255,255,255,0.10)"}`,
             color: active ? C.goldLight : C.text2,
             transition: "all 0.18s ease",
@@ -229,7 +222,6 @@ const ApplicationForm = ({ mob }) => {
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
-  const [btnHover, setBtnHover] = useState(false);
 
   const submit = async () => {
     if (!name.trim()) return setError("Please enter your name.");
@@ -279,11 +271,9 @@ const ApplicationForm = ({ mob }) => {
 
   if (done) {
     return (
-      <div style={{ ...CARD, padding: mob ? "40px 22px" : "52px 40px", textAlign: "center" }}>
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
-          <Shield size={54} />
-        </div>
-        <H mob={mob} size={mob ? 24 : 29}>Application received</H>
+      <div style={{ ...CARD, padding: mob ? "36px 22px" : "48px 40px", textAlign: "center" }}>
+        <div style={{ margin: "0 auto 18px", width: 54, height: 54 }}><Shield size={54} glow /></div>
+        <H mob={mob} size={mob ? 24 : 28}>Application received</H>
         <P mob={mob} style={{ maxWidth: 440, margin: "0 auto" }}>
           I read every one of these personally. If there's a fit, I'll reach out when the next cohort opens with details on timing and seats. If there isn't, I'll tell you that too — and point you somewhere more useful.
         </P>
@@ -351,20 +341,12 @@ const ApplicationForm = ({ mob }) => {
       )}
 
       <button type="button" onClick={submit} disabled={sending}
-        onMouseEnter={() => setBtnHover(true)} onMouseLeave={() => setBtnHover(false)}
         style={{
-          width: "100%", padding: "15px 20px", borderRadius: 12,
+          width: "100%", padding: "16px 20px", borderRadius: 11, border: "none",
           cursor: sending ? "default" : "pointer",
-          border: `1.5px solid ${sending ? C.border2 : (btnHover ? C.gold : `${C.gold}80`)}`,
-          background: sending
-            ? "transparent"
-            : (btnHover ? `linear-gradient(135deg, ${C.gold}26, ${C.gold}12)` : `linear-gradient(135deg, ${C.gold}18, ${C.gold}08)`),
-          color: sending ? C.text4 : C.gold,
-          fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700,
-          letterSpacing: "0.02em",
-          boxShadow: !sending && btnHover ? `0 0 24px ${C.gold}28` : "none",
-          transform: !sending && btnHover ? "translateY(-1px)" : "none",
-          transition: "all 0.3s ease",
+          background: sending ? `${C.gold}40` : `linear-gradient(135deg, ${C.gold}, ${C.goldMuted})`,
+          color: "#0A0E14", fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, fontWeight: 700,
+          letterSpacing: "0.03em", boxShadow: `0 4px 20px ${C.gold}25`, transition: "all 0.2s ease",
         }}>
         {sending ? "Sending…" : "Apply for a seat"}
       </button>
@@ -380,46 +362,44 @@ const ApplicationForm = ({ mob }) => {
 
 export default function Cohort() {
   const { mob } = useBp();
-  const SectionGap = mob ? 48 : 72;
+
+  useEffect(() => {
+    const meta = document.createElement("meta");
+    meta.name = "viewport";
+    meta.content = "width=device-width, initial-scale=1, viewport-fit=cover";
+    document.head.appendChild(meta);
+    return () => { if (meta.parentNode) meta.parentNode.removeChild(meta); };
+  }, []);
+
+  const SectionGap = mob ? 44 : 68;
 
   return (
-    <div style={{ minHeight: "100vh", background: C.bgDeep, fontFamily: "'DM Sans', sans-serif", color: C.text1, position: "relative", overflow: "hidden" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
-      {/* Background atmosphere */}
-      <div style={{ position: "fixed", inset: 0, zIndex: 0, background: `radial-gradient(ellipse 80% 60% at 25% 85%, #221a08 0%, transparent 55%), radial-gradient(ellipse 60% 50% at 75% 15%, #151a30 0%, transparent 55%), radial-gradient(ellipse 70% 50% at 50% 50%, rgba(200,162,78,0.04) 0%, transparent 60%), linear-gradient(155deg, #070a10 0%, #0c1018 25%, #151208 50%, #0e1220 75%, #090d14 100%)` }} />
+    <div style={{ minHeight: "100vh", background: C.bgDeep, fontFamily: "'DM Sans', sans-serif", color: C.text1, position: "relative", overflowX: "hidden" }}>
       <Grain />
 
-      {/* Caustic light streaks */}
-      <div style={{ position: "fixed", top: "15%", left: "5%", width: 500, height: 6, background: `linear-gradient(90deg, transparent, ${C.gold} 50%, transparent)`, filter: "blur(20px)", opacity: 0.08, transform: "rotate(-10deg)", pointerEvents: "none", zIndex: 1 }} />
-      <div style={{ position: "fixed", top: "55%", right: "0%", width: 400, height: 6, background: `linear-gradient(90deg, transparent, ${C.gold} 50%, transparent)`, filter: "blur(16px)", opacity: 0.06, transform: "rotate(8deg)", pointerEvents: "none", zIndex: 1 }} />
+      <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "min(900px, 100%)", height: 480, background: `radial-gradient(ellipse 60% 100% at 50% 0%, ${C.gold}0E, transparent 70%)`, pointerEvents: "none" }} />
 
-      <div style={{ position: "relative", zIndex: 10, maxWidth: 800, margin: "0 auto", padding: mob ? "25px 20px 60px" : "25px 40px 80px" }}>
+      <div style={{ position: "relative", zIndex: 2, maxWidth: 780, margin: "0 auto", padding: mob ? "40px 20px 56px" : "68px 32px 80px" }}>
 
-        {/* ─── NAV HEADER ─────────────────────────── */}
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: mob ? 44 : 60 }}>
-          <a href="/" style={{ display: "flex", alignItems: "center", gap: mob ? 8 : 12, textDecoration: "none" }}>
-            <div style={{ width: mob ? 34 : 40, height: mob ? 34 : 40, borderRadius: mob ? 8 : 10, background: "rgba(200,162,78,0.06)", border: "1px solid rgba(200,162,78,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <KVShield size={mob ? 18 : 22} glow />
-            </div>
-            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: mob ? 15 : 19, color: C.text1, letterSpacing: 1.2, textTransform: "uppercase" }}>
-              KRICZKY VIRTUS
-            </span>
-          </a>
+        {/* ─── HEADER ─────────────────────────────── */}
+        <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: mob ? 34 : 48 }}>
+          <Shield size={22} />
+          <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 13, letterSpacing: "0.14em", textTransform: "uppercase", color: C.text2 }}>
+            Kriczky Virtus
+          </span>
         </div>
 
         {/* ─── HERO ───────────────────────────────── */}
-        <div style={{ textAlign: "center", marginBottom: SectionGap }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 16px", borderRadius: 100, background: "rgba(200,162,78,0.08)", border: "1px solid rgba(200,162,78,0.20)", marginBottom: 20 }}>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: mob ? 10 : 12, fontWeight: 600, color: C.gold, letterSpacing: 0.3 }}>The Virtus Collective — Cohorts</span>
-          </div>
-          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: mob ? 34 : 52, color: C.text1, letterSpacing: "-0.02em", lineHeight: 1.08, margin: "0 0 20px" }}>
-            Nine other owners at your stage<br /><span style={{ color: C.gold, fontStyle: "italic" }}>who get it.</span>
+        <div style={{ marginBottom: SectionGap }}>
+          <Eyebrow>The Virtus Collective — Cohorts</Eyebrow>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: mob ? 34 : 52, color: C.text1, textTransform: "uppercase", letterSpacing: "0.01em", lineHeight: 1.05, margin: "0 0 20px" }}>
+            Nine other owners at your stage<br />
+            <span style={{ color: C.gold }}>who get it.</span>
           </h1>
-          <P mob={mob} style={{ fontSize: mob ? 14 : 16, maxWidth: 620, margin: "0 auto 14px" }}>
+          <P mob={mob} style={{ fontSize: mob ? 15 : 17, color: C.text2, maxWidth: 620 }}>
             You're making six-figure decisions with nobody looking at the whole picture. Your CPA sees last year. Your advisor sees a portfolio that's a fraction of your net worth. Your friends with W-2 jobs can't help, and your competitors aren't opening their books.
           </P>
-          <P mob={mob} style={{ fontSize: mob ? 14 : 16, color: C.text1, maxWidth: 620, margin: "0 auto" }}>
+          <P mob={mob} style={{ fontSize: mob ? 15 : 17, color: C.text1, maxWidth: 620, marginBottom: 0 }}>
             This is a room for that conversation.
           </P>
         </div>
@@ -427,11 +407,11 @@ export default function Cohort() {
         {/* ─── WHAT IT IS ─────────────────────────── */}
         <div style={{ marginBottom: SectionGap }}>
           <Eyebrow>What it is</Eyebrow>
-          <H mob={mob}>Ten owners at your scale, <span style={{ color: C.gold, fontStyle: "italic" }}>in the same room</span></H>
+          <H mob={mob}>Ten owners at your scale, in the same room</H>
           <P mob={mob}>
             Ten owners. All in the same revenue tier, so the problems are comparable and the advice actually transfers. We meet biweekly and work through what's constraining your business — with accountability from Kriczky Virtus and from nine people who understand it because they're living the same thing.
           </P>
-          <P mob={mob} style={{ marginBottom: 0, color: C.text1 }}>
+          <P mob={mob} style={{ marginBottom: 0 }}>
             It costs less than a part-time bookkeeper.
           </P>
         </div>
@@ -455,7 +435,7 @@ export default function Cohort() {
 
         {/* ─── FIT ────────────────────────────────── */}
         <div style={{ marginBottom: SectionGap, display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: 14 }}>
-          <div style={{ ...CARD, padding: mob ? "22px 20px" : "26px 26px" }}>
+          <div style={{ ...CARD, padding: mob ? "20px 20px" : "26px 26px" }}>
             <div style={{ fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: C.gold, fontWeight: 600, marginBottom: 14 }}>
               This is for you if
             </div>
@@ -467,7 +447,7 @@ export default function Cohort() {
             ))}
           </div>
 
-          <div style={{ ...CARD, padding: mob ? "22px 20px" : "26px 26px", boxShadow: "0 2px 4px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06)" }}>
+          <div style={{ ...CARD, padding: mob ? "20px 20px" : "26px 26px", boxShadow: "0 2px 4px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06)" }}>
             <div style={{ fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: C.text3, fontWeight: 600, marginBottom: 14 }}>
               It isn't if
             </div>
@@ -551,7 +531,7 @@ export default function Cohort() {
         {/* ─── APPLICATION ────────────────────────── */}
         <div id="apply" style={{ marginBottom: SectionGap }}>
           <Eyebrow>Apply</Eyebrow>
-          <H mob={mob}>Tell me <span style={{ color: C.gold, fontStyle: "italic" }}>where you are</span></H>
+          <H mob={mob}>Tell me where you are</H>
           <P mob={mob} style={{ maxWidth: 600, marginBottom: 24 }}>
             I use these answers to build cohorts that actually fit together — same scale, comparable problems. It takes about two minutes.
           </P>
@@ -561,18 +541,18 @@ export default function Cohort() {
         {/* ─── EDWARD ─────────────────────────────── */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: SectionGap }}>
           <img src={HEADSHOT} alt="Edward Kriczky"
-            style={{ width: 120, height: 120, borderRadius: "50%", objectFit: "cover", border: `3px solid ${C.gold}50`, marginBottom: -28, boxShadow: `0 0 24px ${C.gold}20, 0 4px 16px rgba(0,0,0,0.4)`, position: "relative", zIndex: 2 }} />
-          <div style={{ width: "100%", padding: mob ? "44px 20px 22px" : "44px 28px 24px", background: `linear-gradient(135deg, ${C.gold}08, ${C.gold}03)`, border: `1px solid ${C.gold}25`, borderRadius: 14, textAlign: "center" }}>
-            <div style={{ fontSize: 16, fontWeight: 700, color: C.text1 }}>Edward Kriczky, CEPA®</div>
-            <div style={{ fontSize: 11, color: C.gold, marginBottom: 10 }}>Founder, Kriczky Virtus</div>
-            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, lineHeight: 1.65, color: C.text2, margin: 0, maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
+            style={{ width: 110, height: 110, borderRadius: "50%", objectFit: "cover", border: `3px solid ${C.gold}50`, marginBottom: -26, boxShadow: `0 0 24px ${C.gold}20, 0 4px 16px rgba(0,0,0,0.4)`, position: "relative", zIndex: 2 }} />
+          <div style={{ width: "100%", padding: mob ? "40px 20px 22px" : "42px 30px 26px", background: `linear-gradient(135deg, ${C.gold}08, ${C.gold}03)`, border: `1px solid ${C.gold}25`, borderRadius: 14, textAlign: "center" }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: C.text1 }}>Edward Kriczky, CEPA</div>
+            <div style={{ fontSize: 11, color: C.gold, marginBottom: 12 }}>Founder, Kriczky Virtus</div>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, lineHeight: 1.68, color: C.text2, margin: 0, maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
               I work with owners in the $1M–$10M range on the thing nobody else owns: making sure the business plan, the tax plan, and the personal plan are actually one plan. As a Certified Exit Planning Advisor, I bring a structured methodology to the question every owner eventually asks — <span style={{ fontStyle: "italic", color: C.text1 }}>"why isn't this making me more money, and what would it take to change that?"</span>
             </p>
           </div>
         </div>
 
         {/* ─── CONSENT ────────────────────────────── */}
-        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, lineHeight: 1.6, color: C.text2, textAlign: "center", maxWidth: 600, margin: "0 auto", marginBottom: mob ? 32 : 40 }}>
+        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, lineHeight: 1.6, color: C.text3, textAlign: "center", maxWidth: 600, margin: "0 auto", marginBottom: mob ? 30 : 40 }}>
           By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our Privacy Policy and Terms of Service.
         </p>
 
