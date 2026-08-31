@@ -1,0 +1,40 @@
+TASK: convert the cohort applicant confirmation email to the branded HTML template
+
+The cohort applicant confirmation in api/lead-capture.js is the only Resend send that goes out as plain text. Every other applicant-facing email — the shared sendResultsEmail() in lib/email.js and the valuation snapshot email — uses the branded dark HTML template with cards, logo, the "Edward Kriczky, CEPA®" sign-off block, and the headshot.
+
+Convert the applicant confirmation to that same template so it's visually consistent with the rest.
+
+Reuse the existing template. Do not write new HTML from scratch. Read how sendResultsEmail() and the valuation snapshot email build their markup — the dark background, card container, heading treatment, sign-off block, headshot, and disclosure — and construct this email the same way. Extract a shared template function if that's the cleanest route, but do not change the output of any existing email while doing so.
+
+Unchanged:
+
+From: Edward Kriczky <growth@kriczkyvirtus.com>
+Reply-To: ekriczky@kriczkyvirtus.com
+Subject: Got your application
+
+Body content — same copy, in the branded layout:
+
+Hi {firstName},
+
+Your cohort application came through — thanks for taking the time on it.
+
+I read every one of these personally. If there's a fit, I'll reach out when the next cohort opens with details on timing and seats. If there isn't, I'll tell you that too, and point you somewhere more useful.
+
+Then the standard sign-off block and headshot as used elsewhere.
+
+Two differences from the results emails:
+
+No CTA button. The results emails have a "View Your Results" button. This one has nothing to click — it's a receipt. Omit the button rather than inventing a destination for it.
+
+Sign-off line. The results emails close with "Hopefully this helps you build financial freedom through your business." This one should read "Rooting for you," above the Edward Kriczky, CEPA® block.
+
+Include a plain-text alternative alongside the HTML if the existing sends do, matching their pattern.
+
+Constraints
+
+Do not change any other email's output
+Do not change ActiveCampaign, Sheets, or Cohort.jsx
+Do not add dependencies
+Do not add a CTA, link, or attachment
+
+Verify: submit one cohort application and confirm the confirmation arrives branded and consistent with a diagnostic results email, Reply-To still reads ekriczky@kriczkyvirtus.com, no CTA button is present, and a diagnostic results email still renders unchanged.

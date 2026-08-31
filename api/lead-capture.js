@@ -5,7 +5,7 @@ const React = require("react");
 const ReactDOMServer = require("react-dom/server");
 const crypto = require("crypto");
 const { appendLead } = require("../lib/sheets");
-const { sendResultsEmail } = require("../lib/email");
+const { sendResultsEmail, sendCohortConfirmationEmail } = require("../lib/email");
 const { syncContact } = require("../lib/activecampaign");
 
 function utmsFromReferer(req) {
@@ -21,16 +21,6 @@ function utmsFromReferer(req) {
     return {};
   }
 }
-
-const COHORT_CONFIRMATION_DISCLOSURE = `You are receiving this email because you opted-in through our website.
-
-Kriczky Virtus, LLC
-237 Roosevelt Avenue
-Downingtown, PA 19335
-
-This message, including any hypothetical scenarios described, is provided for informational and illustrative purposes only and does not constitute professional advice. These scenarios are hypothetical and are not indicative of any specific outcome or past performance. Results will vary based on individual efforts and external factors. We make no promises or guarantees regarding your success or income level.
-
-Please note that individual successes are influenced by personal abilities, market conditions, and other external factors. We assume no responsibility for decisions made or actions taken based on the content of this email. Always consult with qualified professionals before making significant business decisions.`;
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
@@ -227,28 +217,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
       }
 
       try {
-        const { Resend } = require("resend");
-        const resend = new Resend(process.env.RESEND_API_KEY);
-        const firstName = name.trim().split(/\s+/)[0] || name;
-        const confirmationText = `Hi ${firstName},
-
-Your cohort application came through — thanks for taking the time on it.
-
-I read every one of these personally. If there's a fit, I'll reach out when the next cohort opens with details on timing and seats. If there isn't, I'll tell you that too, and point you somewhere more useful.
-
-Rooting for you,
-— Edward
-
-${COHORT_CONFIRMATION_DISCLOSURE}`;
-
-        await resend.emails.send({
-          from: "Edward Kriczky <growth@kriczkyvirtus.com>",
-          replyTo: "ekriczky@kriczkyvirtus.com",
-          to: email,
-          subject: "Got your application",
-          text: confirmationText,
-        });
-        console.log(`[Email] Sent cohort application confirmation to ${name} <${email}>`);
+        await sendCohortConfirmationEmail({ name, email });
       } catch (emailErr) {
         console.error("[Email] Failed to send cohort application confirmation:", emailErr.message);
       }
