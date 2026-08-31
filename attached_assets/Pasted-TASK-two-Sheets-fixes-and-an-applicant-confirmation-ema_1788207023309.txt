@@ -1,0 +1,50 @@
+TASK: two Sheets fixes and an applicant confirmation email for the cohort application
+
+1. Populate Aggregated column M for cohort submissions
+
+Aggregated has a Revenue Band column (currently M) populated by Reinvest or Harvest and the Constraint Roadmap. Cohort submissions leave it empty.
+
+Write revenueRange to it for tool === "cohort-waitlist", using the same header-detection logic already built — resolve the column by header name, don't hardcode M.
+
+2. Add a Revenue Band column to the Cohort Waitlist tab
+
+Report the tab's current headers and range first. Then append a Revenue Band column at the far right — do not insert mid-sheet, the writer is positional and inserting shifts every subsequent value.
+
+Populate it with revenueRange. Leave the existing Answers JSON unchanged; revenue appearing in both places is fine and intentional.
+
+Do not backfill historical rows.
+
+3. Send a confirmation email to the applicant
+
+Currently only a notification to ekriczky@kriczkyvirtus.com is sent. Add a short confirmation to the applicant's own email address, in addition to it.
+
+From: Edward Kriczky, growth@kriczkyvirtus.com. Plain text, matching the existing results-email pattern.
+
+Subject: Got your application
+
+Body:
+
+Hi {firstName},
+
+Your cohort application came through — thanks for taking the time on it.
+
+I read every one of these personally. If there's a fit, I'll reach out when the next cohort opens with details on timing and seats. If there isn't, I'll tell you that too, and point you somewhere more useful.
+
+Rooting for you,
+— Edward
+
+Include the disclosure block used on other Kriczky Wealth Management sends.
+
+Reply Tracking must be OFF on this email. It overrides Reply-To with an unmodifiable activehosted address and triggers Gmail warnings.
+
+Do not add a CTA, link, or attachment. This is a receipt, not a pitch.
+
+Constraints
+
+Do not change ActiveCampaign tagging or field writes
+Do not change any other tool's Sheets ranges or handling
+Do not insert columns mid-sheet
+Do not modify Cohort.jsx
+Do not add dependencies
+
+Verify: submit one cohort application and confirm Aggregated column M populates, the new Cohort Waitlist column populates, the applicant receives the confirmation, you still receive the notification, and a Reinvest or Harvest submission still lands in the correct Aggregated columns.

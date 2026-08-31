@@ -22,6 +22,16 @@ function utmsFromReferer(req) {
   }
 }
 
+const COHORT_CONFIRMATION_DISCLOSURE = `You are receiving this email because you opted-in through our website.
+
+Kriczky Virtus, LLC
+237 Roosevelt Avenue
+Downingtown, PA 19335
+
+This message, including any hypothetical scenarios described, is provided for informational and illustrative purposes only and does not constitute professional advice. These scenarios are hypothetical and are not indicative of any specific outcome or past performance. Results will vary based on individual efforts and external factors. We make no promises or guarantees regarding your success or income level.
+
+Please note that individual successes are influenced by personal abilities, market conditions, and other external factors. We assume no responsibility for decisions made or actions taken based on the content of this email. Always consult with qualified professionals before making significant business decisions.`;
+
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -182,8 +192,8 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
       console.error("[AC] syncContact failed:", acErr.message);
     }
 
-    // Cohort applications get a dedicated notification with the four
-    // application answers. This branch is intentionally separate from the
+    // Cohort applications get a dedicated notification with the application
+    // answers. This branch is intentionally separate from the
     // existing result-email flows below.
     if (tool === "cohort-waitlist") {
       try {
@@ -214,6 +224,34 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         console.log(`[Email] Sent cohort application notification for ${name} <${email}>`);
       } catch (emailErr) {
         console.error("[Email] Failed to send cohort application notification:", emailErr.message);
+      }
+
+      try {
+        const { Resend } = require("resend");
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        const firstName = name.trim().split(/\s+/)[0] || name;
+        const confirmationText = `Hi ${firstName},
+
+Your cohort application came through — thanks for taking the time on it.
+
+I read every one of these personally. If there's a fit, I'll reach out when the next cohort opens with details on timing and seats. If there isn't, I'll tell you that too, and point you somewhere more useful.
+
+Rooting for you,
+— Edward
+
+${COHORT_CONFIRMATION_DISCLOSURE}`;
+
+        await resend.emails.send({
+          from: "Edward Kriczky <growth@kriczkyvirtus.com>",
+          // Intentionally omit replyTo so Reply Tracking cannot replace it
+          // with an activehosted address on this applicant receipt.
+          to: email,
+          subject: "Got your application",
+          text: confirmationText,
+        });
+        console.log(`[Email] Sent cohort application confirmation to ${name} <${email}>`);
+      } catch (emailErr) {
+        console.error("[Email] Failed to send cohort application confirmation:", emailErr.message);
       }
     }
 
