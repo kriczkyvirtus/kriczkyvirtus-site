@@ -439,9 +439,9 @@ export default function Cohort() {
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 16px", borderRadius: 100, background: "rgba(200,162,78,0.08)", border: "1px solid rgba(200,162,78,0.20)", marginBottom: 20 }}>
             <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: mob ? 10 : 12, fontWeight: 600, color: C.gold, letterSpacing: 0.3 }}>The Virtus Collective — Cohorts</span>
           </div>
-          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: mob ? "clamp(24px, 9.2vw, 34px)" : 52, color: C.text1, textTransform: "uppercase", letterSpacing: "0.01em", lineHeight: 1.05, margin: "0 0 20px" }}>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: mob ? "clamp(22px, 8.8vw, 34px)" : 52, color: C.text1, letterSpacing: "-0.02em", lineHeight: 1.08, margin: "0 0 20px" }}>
             Nine other owners at your{mob ? <br /> : " "}
-            <span style={{ whiteSpace: mob ? "nowrap" : "normal" }}>stage{mob ? " " : <br />}<span style={{ color: C.gold }}>who get it.</span></span>
+            <span style={{ whiteSpace: mob ? "nowrap" : "normal" }}>stage{mob ? " " : <br />}<span style={{ color: C.gold, fontStyle: "italic" }}>who get it.</span></span>
           </h1>
           <P mob={mob} style={{ fontSize: mob ? 14 : 16, maxWidth: 620, margin: "0 auto 14px" }}>
             You're making six-figure decisions with nobody looking at the whole picture. Your CPA sees last year. Your advisor sees a portfolio that's a fraction of your net worth. Your friends with W-2 jobs can't help, and your competitors aren't opening their books.
