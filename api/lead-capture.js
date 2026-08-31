@@ -30,12 +30,12 @@ module.exports = async function handler(req, res) {
   try {
     const { name, email, tool, summary, answers, timestamp, utmSource, utmCampaign, revenueBand } = req.body;
     const isPartial = req.body.partial === true;
-    const { revenueRange, businessConstraint, timeline, reason } = req.body;
+    const { revenueRange, ownership, tierInterest, businessConstraint, timeline, reason } = req.body;
     const refererUtms = tool === "reinvest-harvest" ? utmsFromReferer(req) : {};
     const resolvedUtmSource = utmSource || refererUtms.utmSource || null;
     const resolvedUtmCampaign = utmCampaign || refererUtms.utmCampaign || null;
     const sheetsAnswers = tool === "cohort-waitlist"
-      ? { revenueRange, businessConstraint, timeline, reason }
+      ? { revenueRange, ownership, tierInterest, businessConstraint, timeline, reason }
       : (answers || {});
 
     console.log("[Lead] businessName:", req.body.businessName);
@@ -149,6 +149,8 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         businessName: req.body.businessName || "",
         revenueBand,
         revenueRange,
+        ownership,
+        tierInterest,
         businessConstraint,
         timeline,
         reason,
@@ -169,6 +171,8 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         utmCampaign: resolvedUtmCampaign,
         revenueBand,
         revenueRange,
+        ownership,
+        tierInterest,
         businessConstraint,
         timeline,
         reason,
@@ -199,6 +203,8 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
   <p><strong>Email:</strong> ${email}</p>
   <hr>
   <p><strong>Revenue range:</strong> ${revenueRange || ""}</p>
+  <p><strong>Ownership:</strong> ${ownership || ""}</p>
+  <p><strong>Tier interest:</strong> ${tierInterest || ""}</p>
   <p><strong>Business constraint:</strong><br>${businessConstraint || ""}</p>
   <p><strong>Timeline:</strong> ${timeline || ""}</p>
   <p><strong>Interest reason:</strong><br>${reason || ""}</p>
