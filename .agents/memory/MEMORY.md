@@ -1,0 +1,1 @@
+- [GitHub push authentication](github-push-auth.md) — the GitHub connector can call APIs but does not authenticate this workspace’s local Git transport.
