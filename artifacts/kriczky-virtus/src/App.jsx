@@ -2591,8 +2591,8 @@ const Footer = () => {
         <div style={{ borderTop: `1px solid ${C.border1}`, paddingTop: mob ? 16 : 20, display: "flex", flexDirection: mob ? "column" : "row", justifyContent: "space-between", alignItems: mob ? "center" : "center", gap: mob ? 12 : 0 }}>
           <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, color: C.text4 }}>© {new Date().getFullYear()} Kriczky Virtus, LLC</span>
           <div style={{ display: "flex", gap: 24 }}>
-            {["Privacy Policy", "Terms of Service", "Disclaimer"].map(l => (
-              <a key={l} href="#" style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, color: C.text4, textDecoration: "none", transition: "color 0.2s" }}
+            {["Privacy Policy", "Terms of Service", "Disclaimer", "Disclosures"].map(l => (
+              <a key={l} href={l === "Disclosures" ? "/disclosures" : "#"} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, color: C.text4, textDecoration: "none", transition: "color 0.2s" }}
                 onMouseEnter={e => e.currentTarget.style.color = C.text2}
                 onMouseLeave={e => e.currentTarget.style.color = C.text4}
               >{l}</a>
