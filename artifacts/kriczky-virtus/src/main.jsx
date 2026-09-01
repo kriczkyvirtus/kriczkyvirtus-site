@@ -18,6 +18,7 @@ import EngageGiveaway2026 from './EngageGiveaway2026.jsx'
 import AcqVantageBonus from './AcqVantageBonus.jsx'
 import ValuationEstimate from './ValuationEstimate.jsx'
 import Cohort from './Cohort.jsx'
+import Disclosures from './Disclosures.jsx'
 import ReinvestHarvestScorecard from './tools/reinvest-harvest-scorecard.jsx'
 import './index.css'
 
@@ -65,6 +66,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/acq-vantage-bonus" element={<AcqVantageBonus />} />
         <Route path="/valuation-estimate" element={<ValuationEstimate />} />
         <Route path="/cohort" element={<Cohort />} />
+        <Route path="/disclosures" element={<Disclosures />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
