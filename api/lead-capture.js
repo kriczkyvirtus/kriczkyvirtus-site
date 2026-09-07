@@ -158,7 +158,7 @@ module.exports = async function handler(req, res) {
       });
       await syncContact({
         name, email, tool, summary: req.body.summary, utmSource: resolvedUtmSource,
-        utmCampaign: resolvedUtmCampaign, revenueBand,
+        utmCampaign: resolvedUtmCampaign, revenueBand, ownership,
       });
 
       const emailData = { firstName: first, company, email, token, quadrantKey, bizScore, persScore, guess, revenueBand, ownerTier };
