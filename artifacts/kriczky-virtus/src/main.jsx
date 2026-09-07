@@ -19,6 +19,8 @@ import AcqVantageBonus from './AcqVantageBonus.jsx'
 import ValuationEstimate from './ValuationEstimate.jsx'
 import Cohort from './Cohort.jsx'
 import Disclosures from './Disclosures.jsx'
+import ReinvestHarvestLanding from './tools/ReinvestHarvestLanding.jsx'
+import ReinvestHarvestFlow from './tools/ReinvestHarvestFlow.jsx'
 import './index.css'
 
 const TITLES = {
@@ -30,6 +32,8 @@ const TITLES = {
   '/constraint-roadmap':      'Constraint Roadmap',
   '/cohort':                  'Virtus Collective — Cohort Program',
   '/tools/reinvest-harvest':  'Reinvest or Harvest — Capital Allocation Scorecard',
+  '/reinvest-harvest':        'Reinvest or Harvest — Capital Allocation Scorecard',
+  '/reinvest-harvest/start':  'Reinvest or Harvest — Capital Allocation Scorecard',
 }
 
 const DEFAULT_TITLE = 'Build Businesses Worth Owning - Kriczky Virtus'
@@ -55,6 +59,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/tools/customer-capital" element={<CustomerCapital />} />
         <Route path="/tools/structural-capital" element={<StructuralCapital />} />
         <Route path="/tools/reinvest-harvest" element={<Navigate to="/reinvest-harvest" replace />} />
+        <Route path="/reinvest-harvest" element={<ReinvestHarvestLanding />} />
+        <Route path="/reinvest-harvest/start" element={<ReinvestHarvestFlow />} />
         <Route path="/constraint-roadmap" element={<ConstraintRoadmap />} />
         <Route path="/roadmap-session" element={<RoadmapSession />} />
         <Route path="/book-intensive" element={<BookIntensive />} />
