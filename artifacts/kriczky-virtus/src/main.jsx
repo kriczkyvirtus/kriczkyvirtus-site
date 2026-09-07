@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import App from './App.jsx'
 import ResourcesHub from './ResourcesHub.jsx'
 import WMBW from './tools/WMBW.jsx'
@@ -19,7 +19,6 @@ import AcqVantageBonus from './AcqVantageBonus.jsx'
 import ValuationEstimate from './ValuationEstimate.jsx'
 import Cohort from './Cohort.jsx'
 import Disclosures from './Disclosures.jsx'
-import ReinvestHarvestScorecard from './tools/reinvest-harvest-scorecard.jsx'
 import './index.css'
 
 const TITLES = {
@@ -55,7 +54,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/tools/human-capital" element={<HumanCapital />} />
         <Route path="/tools/customer-capital" element={<CustomerCapital />} />
         <Route path="/tools/structural-capital" element={<StructuralCapital />} />
-        <Route path="/tools/reinvest-harvest" element={<ReinvestHarvestScorecard />} />
+        <Route path="/tools/reinvest-harvest" element={<Navigate to="/reinvest-harvest" replace />} />
         <Route path="/constraint-roadmap" element={<ConstraintRoadmap />} />
         <Route path="/roadmap-session" element={<RoadmapSession />} />
         <Route path="/book-intensive" element={<BookIntensive />} />

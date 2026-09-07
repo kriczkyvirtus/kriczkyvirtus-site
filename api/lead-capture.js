@@ -7,6 +7,35 @@ const crypto = require("crypto");
 const { appendLead } = require("../lib/sheets");
 const { sendResultsEmail, sendCohortConfirmationEmail } = require("../lib/email");
 const { syncContact } = require("../lib/activecampaign");
+const { makeReportToken, writeReport } = require("../lib/reinvest-harvest-reports");
+
+async function sendReinvestHarvestEmail(data) {
+  const { google } = require("googleapis");
+  const credentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS);
+  const auth = new google.auth.GoogleAuth({ credentials, scopes: ["https://www.googleapis.com/auth/spreadsheets"] });
+  const sheets = google.sheets({ version: "v4", auth });
+  const unsubscribed = await sheets.spreadsheets.values.get({
+    spreadsheetId: process.env.GOOGLE_SHEETS_SPREADSHEET_ID,
+    range: "'Unsubscribed'!B:B",
+  });
+  const emails = (unsubscribed.data.values || []).flat().map(value => String(value).toLowerCase());
+  if (emails.includes(data.email.toLowerCase())) {
+    console.log(`[Email] Skipping Reinvest or Harvest send to ${data.email} — on unsubscribe list`);
+    return { skipped: true };
+  }
+
+  const { renderResultsEmail } = await import("../lib/reinvest-harvest-results-email.js");
+  const rendered = renderResultsEmail(data);
+  const { Resend } = require("resend");
+  return new Resend(process.env.RESEND_API_KEY).emails.send({
+    from: "Edward Kriczky <growth@kriczkyvirtus.com>",
+    replyTo: "ekriczky@kriczkyvirtus.com",
+    to: data.email,
+    subject: rendered.subject,
+    html: rendered.html,
+    text: rendered.text,
+  });
+}
 
 function utmsFromReferer(req) {
   const referer = req.headers?.referer || req.headers?.referrer;
@@ -46,6 +75,79 @@ module.exports = async function handler(req, res) {
 
     if (!name || !email) {
       return res.status(400).json({ error: "Missing required fields: name, email" });
+    }
+
+    if (tool === "reinvest-harvest") {
+      const {
+        first, last, company, phone, guess = null, industry, ownership,
+        ownerTier, timing, scores,
+      } = req.body;
+      const bizScore = req.body.summary?.bizScore;
+      const persScore = req.body.summary?.persScore;
+      const totalScore = req.body.summary?.totalScore;
+      const quadrantKey = req.body.summary?.quadrantKey;
+      const quadrant = req.body.summary?.quadrant;
+      const trackIntent = req.body.summary?.trackIntent;
+      const required = { first, last, company, email, phone, industry, ownership, ownerTier, timing, revenueBand, scores, bizScore, persScore, totalScore, quadrantKey, quadrant, trackIntent };
+      const missing = Object.entries(required)
+        .filter(([, value]) => value === undefined || value === null || value === "")
+        .map(([key]) => key);
+      if (missing.length) {
+        return res.status(400).json({ error: `Missing required fields: ${missing.join(", ")}` });
+      }
+
+      const token = makeReportToken();
+      const report = {
+        token,
+        createdAt: new Date().toISOString(),
+        firstName: first,
+        lastName: last,
+        company,
+        email,
+        phone,
+        guess,
+        industry,
+        ownership,
+        ownerTier,
+        timing,
+        revenueBand,
+        scores: {
+          b1: scores.b1, b2: scores.b2, b3: scores.b3, b4: scores.b4, b5: scores.b5,
+          p1: scores.p1, p2: scores.p2, p3: scores.p3, p4: scores.p4, p5: scores.p5,
+        },
+        bizScore,
+        persScore,
+        totalScore,
+        quadrantKey,
+        trackIntent,
+      };
+      await writeReport(report);
+
+      const host = req.headers["x-forwarded-host"] || req.headers.host;
+      const protocol = req.headers["x-forwarded-proto"] || "https";
+      const reportUrl = `${protocol}://${host}/r/${token}`;
+      await appendLead({
+        name, firstName: first, lastName: last, businessName: company, email, phone,
+        tool, revenueBand, ownerTier, industry, ownership, timing, guess, scores,
+        summary: { ...req.body.summary }, trackIntent, timestamp: timestamp || report.createdAt,
+        blobUrl: reportUrl, utmSource: resolvedUtmSource, utmCampaign: resolvedUtmCampaign,
+        answers: {},
+      });
+      await syncContact({
+        name, email, tool, summary: req.body.summary, utmSource: resolvedUtmSource,
+        utmCampaign: resolvedUtmCampaign, revenueBand,
+      });
+
+      const emailData = { firstName: first, company, email, token, quadrantKey, bizScore, persScore, guess, revenueBand, ownerTier };
+      try {
+        await sendReinvestHarvestEmail(emailData);
+      } catch (emailErr) {
+        console.error("[Email] Reinvest or Harvest send failed; retry queued:", emailErr.message);
+        setTimeout(() => sendReinvestHarvestEmail(emailData).catch(
+          retryErr => console.error("[Email] Reinvest or Harvest retry failed:", retryErr.message),
+        ), 0);
+      }
+      return res.status(200).json({ token });
     }
 
     console.log(`[Lead] ${name} <${email}> — ${tool || "unknown"} — ${constraintId || "n/a"}/${revenue || "n/a"} — score: ${totalScore || "n/a"}`);
