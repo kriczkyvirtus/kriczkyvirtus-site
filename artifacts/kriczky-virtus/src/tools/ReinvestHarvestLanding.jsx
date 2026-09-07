@@ -290,14 +290,12 @@ export default function ReinvestHarvestLanding() {
             <span style={{ color: C.gold, fontStyle: "italic" }}>back into the business</span>, or{" "}
             <span style={{ color: C.green, fontStyle: "italic" }}>out to you</span>?
           </h1>
-          {/* Each clause is its own block so a narrow screen wraps inside a clause
-              rather than orphaning the last word of the first one onto its own line. */}
-          <p style={{ ...BODY, margin: "20px auto 0", maxWidth: 700, fontSize: "clamp(15px, 2vw, 19px)" }}>
-            {/* textWrap balance splits each clause evenly instead of orphaning the
-                last word. Without it, "compound." sits alone on its own line at
-                phone width. Unsupported browsers just wrap normally — no regression. */}
-            <span style={{ display: "block", textWrap: "balance" }}>Get it right and your business and financial freedom compound.</span>
-            <span style={{ display: "block", textWrap: "balance" }}>Get it wrong and you just get busier.</span>
+          {/* One flowing paragraph rather than two blocks, so both sentences share
+              lines and the whole thing fits two. At 390px, 15px is the ceiling for
+              two lines with this text, and 375px (iPhone SE) needs ~14. Floor is 14,
+              desktop scales to 22. */}
+          <p style={{ ...BODY, margin: "20px auto 0", maxWidth: 700, fontSize: "clamp(14px, 3.8vw, 22px)", lineHeight: 1.5, textWrap: "balance" }}>
+            Get it right and your business and financial freedom compound. Get it wrong and you just get busier.
           </p>
         </section>
 

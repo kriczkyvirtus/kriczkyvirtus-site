@@ -349,10 +349,12 @@ export default function ReinvestHarvestThankYou({
              — which a visitor arriving on a bad token may not have. */
           <section style={{ padding: "52px 0 34px", textAlign: "center" }}>
             <div style={{ ...kicker, color: C.gold, marginBottom: 14 }}>Reinvest or Harvest</div>
-            <h1 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(30px,7vw,46px)", lineHeight: 1.12, color: C.text1, margin: "0 0 18px" }}>
+            {/* Sized to the resolved page's hero rather than the bridge section. Capped at
+                64px so the fallback never shouts louder than a real result page. */}
+            <h1 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(34px,8.4vw,64px)", lineHeight: 1.08, color: C.text1, margin: "0 0 22px" }}>
               Want help proactively reinvesting in your business?
             </h1>
-            <p style={{ fontSize: "clamp(13.5px,3.1vw,15px)", lineHeight: 1.6, color: C.text2, maxWidth: 1060, margin: "0 auto" }}>
+            <p style={{ fontSize: "clamp(16px,4vw,22px)", lineHeight: 1.55, color: C.text2, maxWidth: 760, margin: "0 auto" }}>
               The video shows you what to do. This is where you find out whether you're a fit to have me work on it with you — intentionally pursuing reinvestment opportunities inside your business, and building financial freedom outside of it.
             </p>
           </section>
