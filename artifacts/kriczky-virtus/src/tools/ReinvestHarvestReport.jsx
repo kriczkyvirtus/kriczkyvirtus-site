@@ -1002,7 +1002,10 @@ export default function ReinvestHarvestReport({
     const original = vp.getAttribute("content");
     const PAGE = 816;
     const apply = () => {
-      const w = window.screen && window.screen.width ? window.screen.width : window.innerWidth;
+      /* Use whichever is smaller. screen.width alone misses resized desktop browsers;
+         innerWidth alone misreads some mobile browsers during orientation change. */
+      const sw = window.screen && window.screen.width ? window.screen.width : Infinity;
+      const w = Math.min(sw, window.innerWidth || Infinity);
       if (w < PAGE) {
         const scale = Math.max(0.25, Math.round((w / PAGE) * 1000) / 1000);
         vp.setAttribute("content", `width=${PAGE}, initial-scale=${scale}, minimum-scale=${scale}, user-scalable=yes`);

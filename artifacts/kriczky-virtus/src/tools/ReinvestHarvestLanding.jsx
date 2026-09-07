@@ -285,7 +285,7 @@ export default function ReinvestHarvestLanding() {
             Exit Planning Institute, State of Owner Readiness
           </p>
 
-          <h1 style={{ ...H1, fontSize: "clamp(29px, 5.4vw, 56px)", maxWidth: 880, margin: "0 auto" }}>
+          <h1 style={{ ...H1, fontSize: "clamp(29px, 5.4vw, 56px)", maxWidth: 880, margin: "0 auto", textWrap: "balance" }}>
             Where should your next dollar of profit go —{" "}
             <span style={{ color: C.gold, fontStyle: "italic" }}>back into the business</span>, or{" "}
             <span style={{ color: C.green, fontStyle: "italic" }}>out to you</span>?
@@ -293,8 +293,11 @@ export default function ReinvestHarvestLanding() {
           {/* Each clause is its own block so a narrow screen wraps inside a clause
               rather than orphaning the last word of the first one onto its own line. */}
           <p style={{ ...BODY, margin: "20px auto 0", maxWidth: 700, fontSize: "clamp(15px, 2vw, 19px)" }}>
-            <span style={{ display: "block" }}>Get it right and your business and financial freedom compound.</span>
-            <span style={{ display: "block" }}>Get it wrong and you just get busier.</span>
+            {/* textWrap balance splits each clause evenly instead of orphaning the
+                last word. Without it, "compound." sits alone on its own line at
+                phone width. Unsupported browsers just wrap normally — no regression. */}
+            <span style={{ display: "block", textWrap: "balance" }}>Get it right and your business and financial freedom compound.</span>
+            <span style={{ display: "block", textWrap: "balance" }}>Get it wrong and you just get busier.</span>
           </p>
         </section>
 
