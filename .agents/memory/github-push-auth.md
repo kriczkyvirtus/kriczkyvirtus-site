@@ -7,4 +7,4 @@ The attached GitHub connector can access repository APIs, but local HTTPS `git p
 
 **Why:** Binding the authorized GitHub connector did not change Git or GitHub CLI authentication, and repeated pushes were rejected as an invalid username or token.
 
-**How to apply:** Use the connector for GitHub API operations. For an actual Git push, confirm Source Control authentication is active before retrying; never request or expose a personal access token in chat.
+**How to apply:** Try normal Git once. If authentication fails but the GitHub connector has repository write access, compare the live remote ref to the local base, then replay blobs, trees, and commits through GitHub's Git Data API with tree-hash verification and a non-forced ref update. Never request or expose a personal access token in chat.
