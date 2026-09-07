@@ -1,1 +1,2 @@
 - [GitHub push authentication](github-push-auth.md) — the GitHub connector can call APIs but does not authenticate this workspace’s local Git transport.
+- [Reinvest or Harvest ownership](reinvest-harvest-ownership.md) — flow, thank-you, and report components are repo-owned and must not be overwritten from uploads.
