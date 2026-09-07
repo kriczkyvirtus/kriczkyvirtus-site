@@ -334,7 +334,7 @@ const ParentCard = ({ tool, highlighted }) => {
       )}
 
       {/* CTA */}
-      <GoldBtn href={`/tools/${tool.id}`} color={tool.accent}>Start Assessment</GoldBtn>
+      <GoldBtn href={tool.href || `/tools/${tool.id}`} color={tool.accent}>Start Assessment</GoldBtn>
     </div>
   );
 };
@@ -412,7 +412,7 @@ const DeepCard = ({ tool, highlighted }) => {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <span style={{ fontSize: 10, color: C.text3 }}>{tool.duration}</span>
         {isLive ? (
-          <GoldBtn href={`/tools/${tool.id}`} color={tool.accent}>Start</GoldBtn>
+          <GoldBtn href={tool.href || `/tools/${tool.id}`} color={tool.accent}>Start</GoldBtn>
         ) : (
           <span style={{ padding: "8px 20px", borderRadius: 8, background: "rgba(255,255,255,0.02)",
             border: `1px solid ${C.border1}`, fontSize: 11, fontWeight: 600, color: C.text4 }}>Coming Soon</span>
@@ -993,7 +993,7 @@ const GranularCarousel = () => {
               {/* Meta + CTA */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <span style={{ fontSize: 10, color: C.text3 }}>{tool.duration}</span>
-                <GoldBtn href={`/tools/${tool.id}`} color={tool.accent}>Start</GoldBtn>
+                <GoldBtn href={tool.href || `/tools/${tool.id}`} color={tool.accent}>Start</GoldBtn>
               </div>
             </div>
           );
@@ -1166,7 +1166,7 @@ const StepAccordion = () => {
                   {s.deepDives ? (
                     <div style={{ display: "flex", flexDirection: mob ? "column" : "row", gap: 8, flexWrap: "wrap" }}>
                       {CAPITAL_DEEP_DIVES.map(dd => (
-                        <GoldBtn key={dd.id} href={`/tools/${dd.id}`} color={dd.accent} style={{ width: mob ? "100%" : "auto", textAlign: "center" }}>{dd.capital}</GoldBtn>
+                        <GoldBtn key={dd.id} href={dd.href || `/tools/${dd.id}`} color={dd.accent} style={{ width: mob ? "100%" : "auto", textAlign: "center" }}>{dd.capital}</GoldBtn>
                       ))}
                     </div>
                   ) : (
