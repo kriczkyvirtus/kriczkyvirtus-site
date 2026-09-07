@@ -181,6 +181,16 @@ const GRANULAR_TOOLS = [
   { id: "owner-dependency", title: "Owner Dependency Scorecard", subtitle: "Key-Person Risk Assessment", oneLiner: "How much does the business depend on you — and what breaks if you step away?", duration: "8 min", accent: C.amber, capital: "Human Capital", img: COVER_OD },
   { id: "12cs", title: "Recurring Revenue Roadmap", subtitle: "The 12 C's of Stickiness", oneLiner: "Score yourself across 12 dimensions of recurring revenue — from consumption to contracts.", duration: "10 min", accent: C.gold, capital: "Customer Capital", img: COVER_RR },
   { id: "cashflow", title: "Cash Flow Fortress", subtitle: "Liquidity & Runway Assessment", oneLiner: "Pinpoint where money leaks between revenue and your bank account.", duration: "8 min", accent: C.green, capital: "Structural Capital", img: COVER_CF },
+  {
+    id: "reinvest-harvest",
+    href: "/reinvest-harvest",
+    title: "Reinvest or Harvest",
+    subtitle: "Profit Allocation Scorecard",
+    oneLiner: "Should the next dollar of profit go back into the business, or out to you?",
+    duration: "12 min",
+    accent: C.gold,
+    capital: "Business & Personal",
+  },
 ];
 
 const CAROUSEL_COVERS = [
