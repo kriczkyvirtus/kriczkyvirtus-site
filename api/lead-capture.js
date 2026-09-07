@@ -57,8 +57,8 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { name, email, tool, summary, answers, timestamp, utmSource, utmCampaign, revenueBand } = req.body;
-    const isPartial = req.body.partial === true;
+    const { name, email, tool, summary, answers, timestamp, utmSource, utmCampaign, revenueBand, partial } = req.body;
+    const isPartial = partial === true;
     const { revenueRange, ownership, tierInterest, businessConstraint, timeline, reason } = req.body;
     const refererUtms = tool === "reinvest-harvest" ? utmsFromReferer(req) : {};
     const resolvedUtmSource = utmSource || refererUtms.utmSource || null;
@@ -75,6 +75,29 @@ module.exports = async function handler(req, res) {
 
     if (!name || !email) {
       return res.status(400).json({ error: "Missing required fields: name, email" });
+    }
+
+    if (tool === "reinvest-harvest" && partial === true) {
+      const { first, last, company, phone } = req.body;
+      const required = { first, last, company, email, phone };
+      const missing = Object.entries(required)
+        .filter(([, value]) => value === undefined || value === null || String(value).trim() === "")
+        .map(([key]) => key);
+      if (missing.length) {
+        return res.status(400).json({ error: `Missing required fields: ${missing.join(", ")}` });
+      }
+
+      await appendLead({
+        name, firstName: first, lastName: last, businessName: company, email, phone,
+        tool, summary: {}, answers: {}, timestamp: timestamp || new Date().toISOString(),
+        utmSource: resolvedUtmSource, utmCampaign: resolvedUtmCampaign,
+        notes: "PARTIAL",
+      });
+      await syncContact({
+        name, email, tool, summary: {}, utmSource: resolvedUtmSource,
+        utmCampaign: resolvedUtmCampaign, partial: true,
+      });
+      return res.status(200).json({ success: true });
     }
 
     if (tool === "reinvest-harvest") {

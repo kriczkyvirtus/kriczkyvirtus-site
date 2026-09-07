@@ -268,6 +268,7 @@ export default function ReinvestHarvestFlow() {
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
   const topRef = useRef(null);
+  const partialSent = useRef(false);
 
   useEffect(() => { topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }, [step]);
 
@@ -295,6 +296,30 @@ export default function ReinvestHarvestFlow() {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email)) return "Please enter a valid email address.";
     if (contact.phone.replace(/\D/g, "").length < 10) return "Please enter a valid phone number.";
     return "";
+  };
+
+  /* Capture valid contact details once without delaying progress into the flow. */
+  const sendPartial = () => {
+    if (partialSent.current) return;
+    partialSent.current = true;
+    const params = new URLSearchParams(window.location.search);
+    const body = {
+      tool: "reinvest-harvest",
+      partial: true,
+      first: contact.first.trim(),
+      last: contact.last.trim(),
+      name: `${contact.first} ${contact.last}`.trim(),
+      company: contact.company.trim(),
+      email: contact.email.trim(),
+      phone: contact.phone.trim(),
+      utmSource: params.get("utm_source") || null,
+      utmCampaign: params.get("utm_campaign") || null,
+      timestamp: new Date().toISOString(),
+    };
+    console.log("[reinvest-harvest] partial capture:", body.email);
+    fetch("/api/lead-capture", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+    }).catch(e => console.warn("[reinvest-harvest] partial capture failed", e));
   };
 
   const submit = async () => {
@@ -470,7 +495,12 @@ export default function ReinvestHarvestFlow() {
                 onBlur={e => e.target.style.borderColor = "rgba(255,255,255,.1)"} />
             ))}
             {err && <p style={{ color: C.red, fontSize: 13.5, margin: "4px 0 12px" }}>{err}</p>}
-            <button className="btn" onClick={() => { const e = contactValid(); e ? setErr(e) : next(); }}
+            <button className="btn" onClick={() => {
+              const e = contactValid();
+              if (e) { setErr(e); return; }
+              sendPartial();
+              next();
+            }}
               style={{ width: "100%", padding: "18px 0", marginTop: 8, borderRadius: 12, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 16, color: C.gold, background: `linear-gradient(135deg,${C.gold}22,${C.gold}0d)`, border: `1.5px solid ${C.gold}66`, transition: "all .25s ease" }}>
               Continue →
             </button>
