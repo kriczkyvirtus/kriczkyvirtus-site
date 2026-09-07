@@ -942,7 +942,7 @@ const GranularCarousel = () => {
         <style>{`
           .granular-scroll::-webkit-scrollbar { display: none; }
           @media (max-width: 430px) {
-            .granular-edge-fade { width: 20px !important; }
+            .granular-edge-fade { display: none; }
           }
         `}</style>
         {items.map((tool, i) => {
