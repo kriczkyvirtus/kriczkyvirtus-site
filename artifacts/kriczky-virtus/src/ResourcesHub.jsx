@@ -1485,6 +1485,9 @@ export default function ResourcesHubV3() {
           </Reveal>
 
           <StepAccordion />
+          <div style={{ marginTop: 40 }}>
+            <GranularCarousel />
+          </div>
         </div>
 
         {/* ═══════════ INTERACTIVE VALUE GAP CALCULATOR ═══════════ */}
