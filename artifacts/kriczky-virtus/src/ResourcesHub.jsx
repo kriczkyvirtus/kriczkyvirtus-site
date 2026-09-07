@@ -930,16 +930,21 @@ const GranularCarousel = () => {
     <div style={{ position: "relative" }}
       onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
       {/* Fade edges */}
-      <div style={{ position: "absolute", top: 0, left: 0, bottom: 0, width: 60, zIndex: 2,
+      <div className="granular-edge-fade" style={{ position: "absolute", top: 0, left: 0, bottom: 0, width: 60, zIndex: 2,
         background: "linear-gradient(90deg, #0A0E14, transparent)", pointerEvents: "none" }}/>
-      <div style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: 60, zIndex: 2,
+      <div className="granular-edge-fade" style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: 60, zIndex: 2,
         background: "linear-gradient(270deg, #0A0E14, transparent)", pointerEvents: "none" }}/>
 
       <div ref={scrollRef} style={{
         display: "flex", gap: 20, overflowX: "auto", scrollBehavior: "auto",
         paddingBottom: 4, msOverflowStyle: "none", scrollbarWidth: "none",
       }}>
-        <style>{`.granular-scroll::-webkit-scrollbar { display: none; }`}</style>
+        <style>{`
+          .granular-scroll::-webkit-scrollbar { display: none; }
+          @media (max-width: 430px) {
+            .granular-edge-fade { width: 20px !important; }
+          }
+        `}</style>
         {items.map((tool, i) => {
           const [hov, setHov] = useState(false);
           return (
