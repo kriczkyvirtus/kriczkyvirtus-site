@@ -383,6 +383,23 @@ const SECTIONS = [
   },
 ];
 
+
+/* Read UTMs from the URL at submit time. The other tools rely on a handler-side
+   Referer fallback that is scoped to reinvest-harvest, so this tool has to carry
+   its own. No navigation happens between landing and submitting, so the query
+   string is still intact when the capture bar is used. */
+const readUtms = () => {
+  try {
+    const q = new URLSearchParams(window.location.search);
+    return {
+      utmSource: q.get("utm_source") || "",
+      utmCampaign: q.get("utm_campaign") || "",
+    };
+  } catch (e) {
+    return { utmSource: "", utmCampaign: "" };
+  }
+};
+
 const MAX_SCORE = SECTIONS.length * 6; // 72
 
 const BANDS = [
@@ -530,8 +547,11 @@ export default function RecurringRevenueRoadmap() {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(capEmail)) { setCapErr("Please enter a valid email address."); return; }
     setCapErr(""); setCapSending(true);
 
+    const utms = readUtms();
     const payload = {
       tool: "recurring-revenue-12cs",
+      utmSource: utms.utmSource,
+      utmCampaign: utms.utmCampaign,
       toolName: "The 12 Cs of Recurring Revenue",
       name: capName.trim(),
       email: capEmail.trim(),
