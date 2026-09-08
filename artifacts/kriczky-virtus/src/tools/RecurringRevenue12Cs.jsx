@@ -492,7 +492,8 @@ export default function RecurringRevenueRoadmap() {
 
   /* Email capture — appears once all 12 are scored. Deliberately two fields:
      this is a post-completion ask, and every extra field costs conversions. */
-  const [capName, setCapName] = useState("");
+  const [capFirst, setCapFirst] = useState("");
+  const [capLast, setCapLast] = useState("");
   const [capEmail, setCapEmail] = useState("");
   const [capErr, setCapErr] = useState("");
   const [capSending, setCapSending] = useState(false);
@@ -543,7 +544,8 @@ export default function RecurringRevenueRoadmap() {
 
   const submitCapture = async () => {
     if (capSending || capSent) return;
-    if (!capName.trim()) { setCapErr("Please enter your name."); return; }
+    if (!capFirst.trim()) { setCapErr("Please enter your first name."); return; }
+    if (!capLast.trim()) { setCapErr("Please enter your last name."); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(capEmail)) { setCapErr("Please enter a valid email address."); return; }
     setCapErr(""); setCapSending(true);
 
@@ -553,7 +555,9 @@ export default function RecurringRevenueRoadmap() {
       utmSource: utms.utmSource,
       utmCampaign: utms.utmCampaign,
       toolName: "The 12 Cs of Recurring Revenue",
-      name: capName.trim(),
+      name: `${capFirst.trim()} ${capLast.trim()}`,
+      firstName: capFirst.trim(),
+      lastName: capLast.trim(),
       email: capEmail.trim(),
       scores: SECTIONS.reduce((acc, sec) => ({ ...acc, [sec.key]: scores[sec.key] || 0 }), {}),
       totalScore,
@@ -577,11 +581,23 @@ export default function RecurringRevenueRoadmap() {
          a saved report shouldn't contain a form asking for an email. */
       setSnapshotting(true);
       await new Promise(r => setTimeout(r, 60));
+
+      /* The live viewport meta has been rewritten by the hook above to an
+         initial-scale computed for THIS device. Freezing that into the stored
+         copy means it opens wrong on every other device — a snapshot taken on
+         desktop has no scale at all, so on a phone the 816px document opens
+         zoomed in and barely zoomable.
+         `width=816` with no initial-scale is device-independent: every mobile
+         browser fits 816 to its own screen width and picks the scale itself. */
+      const vpEl = document.querySelector('meta[name="viewport"]');
+      const vpLive = vpEl ? vpEl.getAttribute("content") : null;
+      if (vpEl) vpEl.setAttribute("content", "width=816");
+
       try {
         const snapRes = await fetch("/api/store-results", {
           method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            name: capName.trim(),
+            name: `${capFirst.trim()} ${capLast.trim()}`,
             email: capEmail.trim(),
             tool: "recurring-revenue-12cs",
             html: document.documentElement.outerHTML,
@@ -591,6 +607,7 @@ export default function RecurringRevenueRoadmap() {
       } catch (snapErr) {
         console.warn("[12cs] snapshot store failed", snapErr);
       } finally {
+        if (vpEl && vpLive) vpEl.setAttribute("content", vpLive);
         setSnapshotting(false);
       }
     } catch (e) {
@@ -751,14 +768,18 @@ export default function RecurringRevenueRoadmap() {
                   </button>
                 </div>
                 <div className="capture-fields" style={{ display: "flex", gap: 8 }}>
-                  <input type="text" placeholder="First name" value={capName}
-                    onChange={(e) => { setCapName(e.target.value); setCapErr(""); }}
+                  <input type="text" placeholder="First name" value={capFirst}
+                    onChange={(e) => { setCapFirst(e.target.value); setCapErr(""); }}
+                    style={{ flex: 1, minWidth: 0, padding: "12px 14px", borderRadius: 9, background: "#0F141C",
+                      border: `1px solid ${C.border2}`, color: C.text1, fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none" }}/>
+                  <input type="text" placeholder="Last name" value={capLast}
+                    onChange={(e) => { setCapLast(e.target.value); setCapErr(""); }}
                     style={{ flex: 1, minWidth: 0, padding: "12px 14px", borderRadius: 9, background: "#0F141C",
                       border: `1px solid ${C.border2}`, color: C.text1, fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none" }}/>
                   <input type="email" placeholder="Email address" value={capEmail}
                     onChange={(e) => { setCapEmail(e.target.value); setCapErr(""); }}
                     onKeyDown={(e) => { if (e.key === "Enter") submitCapture(); }}
-                    style={{ flex: 1.4, minWidth: 0, padding: "12px 14px", borderRadius: 9, background: "#0F141C",
+                    style={{ flex: 1.6, minWidth: 0, padding: "12px 14px", borderRadius: 9, background: "#0F141C",
                       border: `1px solid ${C.border2}`, color: C.text1, fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none" }}/>
                   <button onClick={submitCapture} disabled={capSending}
                     style={{ flexShrink: 0, padding: "12px 24px", borderRadius: 9, cursor: capSending ? "wait" : "pointer",
