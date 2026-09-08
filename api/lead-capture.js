@@ -58,6 +58,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const { name, email, tool, summary, answers, timestamp, utmSource, utmCampaign, revenueBand, partial } = req.body;
+    const { scores: submittedScores, totalScore: submittedTotalScore, maxScore, band: resultBand } = req.body;
     const isPartial = partial === true;
     const { revenueRange, ownership, tierInterest, businessConstraint, timeline, reason } = req.body;
     const refererUtms = tool === "reinvest-harvest" ? utmsFromReferer(req) : {};
@@ -279,6 +280,10 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         businessConstraint,
         timeline,
         reason,
+        scores: submittedScores,
+        totalScore: submittedTotalScore,
+        maxScore,
+        resultBand,
       });
     } catch (sheetsErr) {
       console.error("[Sheets] appendLead failed:", sheetsErr);

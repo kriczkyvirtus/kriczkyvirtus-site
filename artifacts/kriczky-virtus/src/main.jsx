@@ -22,6 +22,7 @@ import Disclosures from './Disclosures.jsx'
 import ReinvestHarvestLanding from './tools/ReinvestHarvestLanding.jsx'
 import ReinvestHarvestFlow from './tools/ReinvestHarvestFlow.jsx'
 import { ReinvestHarvestThankYouRoute, ReinvestHarvestReportRoute } from './tools/ReinvestHarvestRoutes.jsx'
+import RecurringRevenue12Cs from './tools/RecurringRevenue12Cs.jsx'
 import './index.css'
 
 const TITLES = {
@@ -36,6 +37,7 @@ const TITLES = {
   '/reinvest-harvest':        'Reinvest or Harvest — Capital Allocation Scorecard',
   '/reinvest-harvest/start':  'Reinvest or Harvest — Capital Allocation Scorecard',
   '/reinvest-harvest/next':   'Your Reinvest or Harvest Results',
+  '/12cs-recurring-revenue':  'The 12 Cs of Recurring Revenue',
 }
 
 const DEFAULT_TITLE = 'Build Businesses Worth Owning - Kriczky Virtus'
@@ -65,6 +67,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/reinvest-harvest/start" element={<ReinvestHarvestFlow />} />
         <Route path="/reinvest-harvest/next" element={<ReinvestHarvestThankYouRoute />} />
         <Route path="/r/:token" element={<ReinvestHarvestReportRoute />} />
+        <Route path="/12cs-recurring-revenue" element={<RecurringRevenue12Cs />} />
         <Route path="/constraint-roadmap" element={<ConstraintRoadmap />} />
         <Route path="/roadmap-session" element={<RoadmapSession />} />
         <Route path="/book-intensive" element={<BookIntensive />} />

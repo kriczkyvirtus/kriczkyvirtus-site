@@ -25,12 +25,17 @@ const TOOL_TO_TAB = {
   "customer-capital": "Customer Capital",
   "human-capital": "Human Capital",
   "reinvest-harvest": "Reinvest or Harvest",
+  "recurring-revenue-12cs": "Recurring Revenue",
 };
 
-// Column I is the Link column for all non-Constraint-Roadmap tool tabs.
+// Column I is the shared Link-column default. Tool-specific exceptions belong
+// in TOOL_LINK_COLS so changing one tool cannot move any existing tool's link.
 // Constraint Roadmap links are written by lead-capture.js (not this file).
 // Aggregated tab: Link = column I, Tools Completed = column J.
 const LINK_COL = "I";
+const TOOL_LINK_COLS = {
+  "recurring-revenue-12cs": "T",
+};
 
 async function findRowForEmail(rows, email, tabNameFilter) {
   for (let i = rows.length - 1; i >= 1; i--) {
@@ -47,12 +52,13 @@ async function updateLinkColumn(email, tool, blobUrl) {
   const sheets = getSheets();
   const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
   const tabName = TOOL_TO_TAB[tool] || tool;
+  const toolLinkCol = TOOL_LINK_COLS[tool] || LINK_COL;
 
   // ─── Update tool-specific tab ───────────────────────────────────────────────
   try {
     let rows = (await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: `'${tabName}'!A:${LINK_COL}`,
+      range: `'${tabName}'!A:${toolLinkCol}`,
     })).data.values || [];
 
     let targetRow = await findRowForEmail(rows, email, null);
@@ -64,7 +70,7 @@ async function updateLinkColumn(email, tool, blobUrl) {
       await new Promise(resolve => setTimeout(resolve, 3000));
       rows = (await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: `'${tabName}'!A:${LINK_COL}`,
+        range: `'${tabName}'!A:${toolLinkCol}`,
       })).data.values || [];
       targetRow = await findRowForEmail(rows, email, null);
     }
@@ -72,7 +78,7 @@ async function updateLinkColumn(email, tool, blobUrl) {
     if (targetRow > 0) {
       await sheets.spreadsheets.values.update({
         spreadsheetId,
-        range: `'${tabName}'!${LINK_COL}${targetRow}`,
+        range: `'${tabName}'!${toolLinkCol}${targetRow}`,
         valueInputOption: "USER_ENTERED",
         requestBody: { values: [[blobUrl]] },
       });
