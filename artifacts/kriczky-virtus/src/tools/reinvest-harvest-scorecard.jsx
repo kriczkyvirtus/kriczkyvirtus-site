@@ -336,7 +336,7 @@ const QUADRANTS = {
     watch: "The most common failure from here is quietly stopping the outside contributions during a strong stretch. The foundation you built is what earned you the right to reinvest — don't spend it to fund the reinvestment.",
   },
   split: {
-    key: "split", label: "Split — Pay Yourself First", color: C.gold,
+    key: "split", label: "Concentrated Inside", color: C.gold,
     headline: "The business earns well. Almost everything you own is in it.",
     body: "Your business scores well on absorption capacity — it can genuinely convert capital into return. The problem is on the other side: nearly everything you own depends on that one asset performing. This is the most seductive position in the entire matrix, because the business keeps offering the best visible return and reinvesting keeps looking like the obvious answer. It usually is, right up until it isn't. The concentration risk doesn't announce itself until something forces the issue.",
     posture: "Split deliberately. Establish a fixed, automatic share of profit that leaves the business before the reinvestment decision gets made.",
