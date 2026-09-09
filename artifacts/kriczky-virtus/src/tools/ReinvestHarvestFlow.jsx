@@ -48,7 +48,7 @@ const STEPS = [
   { type: "contact" },
 
   { type: "choice", key: "guess",
-    q: "Right now, which way are you leaning?",
+    q: "Right now, which way are you leaning? What do you think you should do with your profits?",
     sub: "No wrong answer. We'll compare it to what your answers actually say.",
     options: [
       { t: "Reinvest — put it back into the business", v: "reinvest" },
@@ -66,11 +66,11 @@ const STEPS = [
     foot: "Most diagnostics only look at one. The answer depends on both." },
 
   { type: "score", key: "b1", pillar: "biz",
-    q: "What did your last big investment in the business actually return?",
+    q: "Do you know what your last big investment in the business actually returned?",
     sub: "The equipment, the hire, the software, the buildout — any major spend in the last two years.",
     options: [
-      { t: "Set a target, then measured it", s: 6 },
-      { t: "Measured it, but after the fact", s: 5 },
+      { t: "We set an ROI target beforehand, then measured actual ROI afterwards", s: 6 },
+      { t: "Measured ROI only after the fact, didn't set a target", s: 5 },
       { t: "I could work it out from our numbers", s: 4 },
       { t: "Only for our largest purchases", s: 3 },
       { t: "I'd be guessing", s: 2 },
@@ -90,15 +90,15 @@ const STEPS = [
     ] },
 
   { type: "score", key: "b3", pillar: "biz",
-    q: "How sure are you what's actually capping your growth?",
+    q: "Do you know the one thing holding your growth back?",
     sub: "Not a list — the single thing that, if it improved, would let everything else move.",
     options: [
-      { t: "One thing, with data behind it", s: 6 },
-      { t: "One thing, and I'm confident", s: 5 },
-      { t: "A strong hunch", s: 4 },
-      { t: "Narrowed to two", s: 3 },
+      { t: "Yes — and I have data proving it", s: 6 },
+      { t: "Yes — confident, but no hard data", s: 5 },
+      { t: "I have a strong hunch", s: 4 },
+      { t: "I've narrowed it to two", s: 3 },
       { t: "Three or four candidates", s: 2 },
-      { t: "Everything needs work", s: 1 },
+      { t: "Honestly, everything needs work", s: 1 },
     ] },
 
   { type: "score", key: "b4", pillar: "biz",
@@ -132,8 +132,8 @@ const STEPS = [
     foot: "Nobody chooses that number — it accumulates one reasonable decision at a time. The next five questions are about the other side." },
 
   { type: "score", key: "p1", pillar: "pers",
-    q: "What happens to the money you take out of the business?",
-    sub: "Salary and distributions together — and where they go after they leave.",
+    q: "How intentional are you about paying yourself and building assets outside the business?",
+    sub: "Salary and distributions together — how much you take, and where it goes after it leaves.",
     options: [
       { t: "Set amount, automatically invested outside", s: 6 },
       { t: "Deliberate, and mostly invested", s: 5 },
@@ -183,9 +183,9 @@ const STEPS = [
     q: "Where do you want this business to take you?",
     sub: "Doesn't have to be a sale. But it has to be specific.",
     options: [
-      { t: "A specific lifestyle and monthly passive cash flow", s: 6 },
-      { t: "Clear lifestyle goal, but no passive cash flow amount defined", s: 5 },
-      { t: "A general direction", s: 4 },
+      { t: "I know the lifestyle I want and the monthly passive cash flow it needs", s: 6 },
+      { t: "I know the lifestyle, but not the passive cash flow it would need", s: 5 },
+      { t: "A general idea of the direction, but that's it", s: 4 },
       { t: "Some idea, but it shifts", s: 3 },
       { t: "Thought about it, nothing concrete", s: 2 },
       { t: "Haven't decided", s: 1 },

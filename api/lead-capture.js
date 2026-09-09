@@ -158,7 +158,7 @@ module.exports = async function handler(req, res) {
         answers: {},
       });
       await syncContact({
-        name, email, tool, summary: req.body.summary, utmSource: resolvedUtmSource,
+        name, email, phone, tool, summary: req.body.summary, utmSource: resolvedUtmSource,
         utmCampaign: resolvedUtmCampaign, revenueBand, ownership,
       });
 
