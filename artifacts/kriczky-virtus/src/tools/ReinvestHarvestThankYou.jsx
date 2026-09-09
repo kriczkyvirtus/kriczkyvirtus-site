@@ -304,7 +304,11 @@ export default function ReinvestHarvestThankYou({
     const p = new URLSearchParams();
     if (full) p.set("iclosedName", full);
     if (email && email !== "you@yourcompany.com") p.set("iclosedEmail", email);
-    if (phone) p.set("iclosedPhone", phone);
+    /* Digits only. We store 555-123-4567 for Sheets and AC, but iClosed's phone
+       field can't parse the dashes — their docs show iclosedPhone=1234567890.
+       Sheets and AC keep the formatted value; only iClosed gets the stripped one. */
+    const phoneDigits = String(phone || "").replace(/\D/g, "");
+    if (phoneDigits) p.set("iclosedPhone", phoneDigits);
     const q = p.toString();
     return q ? `${offer.url}?${q}` : offer.url;
   })();
