@@ -26,7 +26,7 @@ const THRESHOLD = 18;
 /* ── QUADRANTS ── */
 const QUADRANTS = {
   reinvest:  { key: "reinvest",  label: "Reinvest-Weighted",          color: C.green },
-  split:     { key: "split",     label: "Split — Pay Yourself First", color: C.gold },
+  split:     { key: "split",     label: "Concentrated Inside",        color: C.gold },
   harvest:   { key: "harvest",   label: "Harvest-Weighted",           color: C.cyan },
   stabilize: { key: "stabilize", label: "Stabilize First",            color: C.red },
 };

@@ -89,7 +89,7 @@ const Rule = () => (
    so only the quadrant NAME changes color per state.
    Defined at module scope so the interval doesn't remount it. */
 const SAMPLE_STATES = [
-  { name: "Split — Pay Yourself First", color: C.gold,  bc: 24, pf: 12 },
+  { name: "Concentrated Inside", color: C.gold,  bc: 24, pf: 12 },
   { name: "Reinvest-Weighted",          color: C.green, bc: 24, pf: 21 },
   { name: "Harvest-Weighted",           color: C.cyan,  bc: 13, pf: 23 },
   { name: "Stabilize First",            color: C.red,   bc: 11, pf: 10 },
@@ -387,7 +387,7 @@ export default function ReinvestHarvestLanding() {
               { n: "Harvest-Weighted", c: C.cyan, on: false },
               { n: "Reinvest-Weighted", c: C.green, on: false },
               { n: "Stabilize First", c: C.red, on: false },
-              { n: "Split — Pay Yourself First", c: C.gold, on: true },
+              { n: "Concentrated Inside", c: C.gold, on: true },
             ].map(q => (
               <div key={q.n} style={{
                 padding: "20px 15px", borderRadius: 12, minHeight: 92, display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center",

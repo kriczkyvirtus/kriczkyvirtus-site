@@ -29,12 +29,12 @@ const QUADRANTS = {
     line: "You've earned the right to be aggressive if you want to. Real opportunities inside, and enough outside that a bad year is a setback, not a reset. Few owners have both.",
   },
   split: {
-    label: "Split — Pay Yourself First", color: C.gold,
-    line: "The business keeps looking like the best place for every dollar, and it usually is. That's exactly why owners in this spot end up with everything they own in one place.",
+    label: "Concentrated Inside", color: C.gold,
+    line: "Almost every extra dollar has gone back into the business, and that's how you built this engine. It's also how owners in this spot end up with everything riding on one asset. Now the job is to start deliberately paying yourself first without stalling growth.",
   },
   harvest: {
     label: "Harvest-Weighted", color: C.cyan,
-    line: "You've built the outside, which most owners never do. Your highest-return reinvestment right now isn't growth — it's fixing the one thing capping what growth produces.",
+    line: "You've built the outside, which most owners never do. Your highest-return reinvestment now isn't more growth, it's fixing the one thing choking what your current growth produces.",
   },
   stabilize: {
     label: "Stabilize First", color: C.red,
@@ -63,7 +63,7 @@ const OFFERS = {
     kicker: "Your next step",
     title: "Map your next 90 days from your results.",
     body: "A free working session. We walk your two scores against your actual numbers and figure out where a reinvested dollar earns most in your specific business. No pitch, no deck.",
-    cta: "BOOK YOUR FIT CALL",
+    cta: "BOOK YOUR FREE WORKING SESSION",
     url: ICLOSED_QUALIFIED,
     bridge: "The video shows you what to do. This is where you find out whether you're a fit to have me work on it with you — intentionally pursuing reinvestment opportunities inside your business, and building financial freedom outside of it.",
     calHead: "Ready to stop guessing where the next dollar of profit goes?",
@@ -334,7 +334,7 @@ export default function ReinvestHarvestThankYou({
 
         {/* ── QUADRANT HERO ── */}
         {resolved ? (
-          <section style={{ padding: "52px 0 34px", textAlign: "center" }}>
+          <section style={{ padding: "38px 0 26px", textAlign: "center" }}>
             <div style={{ ...kicker, color: quad.color, marginBottom: 14 }}>You landed in</div>
             <h1 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(40px,9.6vw,64px)", textTransform: "uppercase", letterSpacing: ".01em", color: quad.color, lineHeight: 1.06, margin: "0 0 22px" }}>
               {quad.label}
@@ -342,6 +342,13 @@ export default function ReinvestHarvestThankYou({
             <p style={{ fontSize: "clamp(16px,3.9vw,20px)", lineHeight: 1.5, color: C.text1, maxWidth: 820, margin: "0 auto", fontWeight: 400 }}>
               {quad.line}
             </p>
+            {/* Qualifier — 1-on-1 branch only. On the Collective branch it would
+                describe an offer that isn't being made. */}
+            {offerKey === "oneToOne" && (
+              <p style={{ fontSize: "clamp(13.5px,3.1vw,15.5px)", lineHeight: 1.6, color: C.text3, maxWidth: 680, margin: "18px auto 0" }}>
+                For owners doing $1M&ndash;$10M who want a clear answer to &ldquo;how much stays in the business vs comes out to me&rdquo; in the next 12 months.
+              </p>
+            )}
           </section>
         ) : (
           /* Same copy as the resolved page's bridge section. Deliberate: it is
@@ -349,8 +356,10 @@ export default function ReinvestHarvestThankYou({
              — which a visitor arriving on a bad token may not have. */
           <section style={{ padding: "52px 0 34px", textAlign: "center" }}>
             <div style={{ ...kicker, color: C.gold, marginBottom: 14 }}>Reinvest or Harvest</div>
-            {/* Sized to the resolved page's hero rather than the bridge section. Capped at
-                64px so the fallback never shouts louder than a real result page. */}
+            {/* Sized to the resolved page's hero rather than the bridge section.
+                The bridge sits mid-page under a result; here this is the hero and
+                was reading far too small. Capped at 64px so the fallback never
+                shouts louder than a real result page. */}
             <h1 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(34px,8.4vw,64px)", lineHeight: 1.08, color: C.text1, margin: "0 0 22px" }}>
               Want help proactively reinvesting in your business?
             </h1>
@@ -360,86 +369,41 @@ export default function ReinvestHarvestThankYou({
           </section>
         )}
 
-        {/* ── VSL ── */}
-        <section style={{ ...wrap, paddingBottom: 40 }}>
-          <div className="vsl" onClick={() => setPlaying(true)}
-            style={{ position: "relative", aspectRatio: "16/9", borderRadius: 16, overflow: "hidden", cursor: "pointer", background: "linear-gradient(145deg,#141B26,#0B1017)", border: `1px solid ${C.gold}33`, boxShadow: `0 14px 46px rgba(0,0,0,.5), 0 0 60px ${C.gold}0d`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ textAlign: "center", padding: 20 }}>
-              <div className="play" style={{ width: 74, height: 74, borderRadius: "50%", border: `2px solid ${C.gold}99`, background: `${C.gold}16`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", boxShadow: `0 0 34px ${C.gold}33`, transition: "transform .25s ease" }}>
-                <svg width="25" height="28" viewBox="0 0 22 24" fill={C.gold}><path d="M21 12L0 24V0z" /></svg>
-              </div>
-              <div style={{ fontSize: 13.5, color: C.text2, letterSpacing: ".03em" }}>
-                {playing ? "VSL embed goes here — wide 16:9" : "Watch before your call"}
-              </div>
+        {/* ── BOOK (1-on-1) or JOIN (Collective) — deliberately above the fold ── */}
+        <section id="rh-scheduler" style={{ ...wrap, paddingTop: 4, paddingBottom: 44, scrollMarginTop: 24 }}>
+          {/* Hidden only on the resolved 1-on-1 page, where the quadrant hero sits
+              directly above and the heading would repeat it — and where its ~150px
+              is the difference between the calendar clearing the fold or not.
+              The Collective branch keeps it: that section is just a button, and
+              without a heading it reads as an orphan. */}
+          {!(resolved && offerKey === "oneToOne") && (
+            <div style={{ textAlign: "center", marginBottom: 26 }}>
+              <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(26px,6vw,38px)", lineHeight: 1.14, color: C.text1, margin: "0 0 12px" }}>
+                {offer.calHead}
+              </h2>
+              <p style={{ fontSize: 15.5, lineHeight: 1.6, color: C.text2, maxWidth: 560, margin: "0 auto" }}>
+                {offer.calSub}
+              </p>
             </div>
-          </div>
+          )}
+          {offerKey === "oneToOne" ? (
+            <div style={{ borderRadius: 16, overflow: "hidden", border: "1px solid rgba(255,255,255,.09)", background: C.bgCard, minHeight: 620 }}>
+              {/* Direct iframe. Do NOT use iClosed widget.js — it races the React render. */}
+              <iframe src={offer.url} title="Book your working session" width="100%" height="620"
+                style={{ border: "none", display: "block" }} loading="lazy" />
+            </div>
+          ) : (
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <a href={offer.url} className="cta" target="_blank" rel="noopener noreferrer"
+                style={{ display: "block", maxWidth: 460, width: "100%", padding: "21px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none",
+                  background: `linear-gradient(135deg,${C.gold}2e,${C.gold}12)`, border: `1.5px solid ${C.gold}88`, boxShadow: `0 0 34px ${C.gold}26`, transition: "all .25s ease" }}>
+                <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".02em", color: C.gold }}>{offer.cta} →</span>
+              </a>
+            </div>
+          )}
         </section>
 
-        {resolved && (<>
-        {/* ── BRIDGE + CTA — sits directly under the video, ahead of the roadmap ── */}
-        <section style={{ paddingBottom: 46, textAlign: "center" }}>
-          <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(30px,7vw,46px)", lineHeight: 1.12, color: C.text1, margin: "0 0 18px" }}>
-            Want help proactively reinvesting in your business?
-          </h2>
-          <p style={{ fontSize: "clamp(13.5px,3.1vw,15px)", lineHeight: 1.6, color: C.text2, maxWidth: 1060, margin: "0 auto 26px" }}>
-            {offer.bridge}
-          </p>
-          <a href={ctaHref} className="cta" {...ctaProps}
-            style={{ display: "block", maxWidth: 460, margin: "0 auto", padding: "21px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none", background: `linear-gradient(135deg,${C.gold}2e,${C.gold}12)`, border: `1.5px solid ${C.gold}88`, boxShadow: `0 0 34px ${C.gold}26`, transition: "all .25s ease" }}>
-            <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".02em", color: C.gold }}>{offer.cta} →</span>
-          </a>
-        </section>
 
-        </>)}
-
-        {!resolved && (
-          <section style={{ ...wrap, paddingBottom: 46, textAlign: "center" }}>
-            <a href="#rh-scheduler" className="cta" onClick={scrollToScheduler}
-              style={{ display: "block", maxWidth: 460, margin: "0 auto", padding: "21px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none",
-                background: `linear-gradient(135deg,${C.gold}2e,${C.gold}12)`, border: `1.5px solid ${C.gold}88`, boxShadow: `0 0 34px ${C.gold}26`, transition: "all .25s ease" }}>
-              <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".02em", color: C.gold }}>BOOK YOUR FIT CALL →</span>
-            </a>
-            <p style={{ fontSize: 13.5, color: C.text3, margin: "16px 0 0" }}>
-              <a href="/reinvest-harvest" style={{ color: C.text3 }}>Haven't taken the scorecard yet?</a>
-            </p>
-          </section>
-        )}
-
-        {/* ── ROADMAP — before the CTA, so it argues for it ── */}
-        <section style={{ maxWidth: 940, margin: "0 auto", padding: "10px 0 44px" }}>
-          <div style={{ textAlign: "center", marginBottom: 34 }}>
-            <div style={{ ...kicker, color: C.gold, marginBottom: 12 }}>Where this leads</div>
-            <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(28px,6.6vw,40px)", lineHeight: 1.14, color: C.text1, margin: "0 0 14px" }}>
-              The scorecard is <span style={{ color: C.gold, fontStyle: "italic", fontWeight: 400 }}>step one</span>
-            </h2>
-            <p style={{ fontSize: 15.5, lineHeight: 1.6, color: C.text2, maxWidth: 540, margin: "0 auto" }}>
-              It answers the reinvest-or-harvest question for where you are today. This is the system for how you keep answering it as the business changes.
-            </p>
-          </div>
-
-          <div className="roadmap">
-            {ROADMAP.map(r0 => {
-              /* "You Are Here" only makes sense if they just took it. Someone
-                 arriving on a bad token hasn't scored, so 01 reverts. */
-              const r = (resolved && r0.n === "01")
-                ? { ...r0, title: "You Are Here", desc: "The one decision everything else hangs on — the one you just scored." }
-                : r0;
-              return (
-              <div key={r.n} className="rcard" style={{ padding: "20px 16px 22px", borderRadius: 14, textAlign: "center",
-                background: `linear-gradient(160deg, ${r.tint}0a, rgba(255,255,255,.015))`,
-                border: `1px solid ${r.tint}22`,
-                /* per-card glow, driven off the icon's own colour */
-                "--glow": r.tint, "--glowSoft": `${r.tint}2e`, "--glowEdge": `${r.tint}70` }}>
-                <div style={{ height: 62, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}
-                  dangerouslySetInnerHTML={{ __html: r.icon.replace('width="512" height="512"', 'width="58" height="58"') }} />
-                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 13, fontWeight: 700, color: `${r.tint}88`, letterSpacing: ".06em", marginBottom: 5 }}>{r.n}</div>
-                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 19, fontWeight: 700, color: C.text1, lineHeight: 1.2, marginBottom: 7 }}>{r.title}</div>
-                <div style={{ fontSize: 12.5, lineHeight: 1.5, color: C.text3 }}>{r.desc}</div>
-              </div>
-              );
-            })}
-          </div>
-        </section>
 
         {resolved && (<>
         {/* ── OFFER ── */}
@@ -478,32 +442,97 @@ export default function ReinvestHarvestThankYou({
 
         </>)}
 
-        {/* ── BOOK (1-on-1) or JOIN (Collective) ── */}
-        <section id="rh-scheduler" style={{ ...wrap, paddingBottom: 44, scrollMarginTop: 24 }}>
-          <div style={{ textAlign: "center", marginBottom: 26 }}>
-            <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(26px,6vw,38px)", lineHeight: 1.14, color: C.text1, margin: "0 0 12px" }}>
-              {offer.calHead}
+
+        {/* ── VIDEO HEADING — reads as the heading and sub for the player below ── */}
+        {resolved && (
+        <section style={{ paddingBottom: 22, textAlign: "center" }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(30px,7vw,46px)", lineHeight: 1.12, color: C.text1, margin: "0 0 18px" }}>
+            Want help proactively reinvesting in your business?
+          </h2>
+          <p style={{ fontSize: "clamp(13.5px,3.1vw,15px)", lineHeight: 1.6, color: C.text2, maxWidth: 1060, margin: "0 auto" }}>
+            {offer.bridge}
+          </p>
+        </section>
+        )}
+
+        {/* ── VSL ── */}
+        <section style={{ ...wrap, paddingBottom: 40 }}>
+          <div className="vsl" onClick={() => setPlaying(true)}
+            style={{ position: "relative", aspectRatio: "16/9", borderRadius: 16, overflow: "hidden", cursor: "pointer", background: "linear-gradient(145deg,#141B26,#0B1017)", border: `1px solid ${C.gold}33`, boxShadow: `0 14px 46px rgba(0,0,0,.5), 0 0 60px ${C.gold}0d`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ textAlign: "center", padding: 20 }}>
+              <div className="play" style={{ width: 74, height: 74, borderRadius: "50%", border: `2px solid ${C.gold}99`, background: `${C.gold}16`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", boxShadow: `0 0 34px ${C.gold}33`, transition: "transform .25s ease" }}>
+                <svg width="25" height="28" viewBox="0 0 22 24" fill={C.gold}><path d="M21 12L0 24V0z" /></svg>
+              </div>
+              <div style={{ fontSize: 13.5, color: C.text2, letterSpacing: ".03em" }}>
+                {playing ? "VSL embed goes here — wide 16:9" : "Watch before your call"}
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+
+        {/* ── CTA — directly under the video it belongs to ── */}
+        {resolved && (
+        <section style={{ ...wrap, paddingBottom: 46, textAlign: "center" }}>
+          <a href={ctaHref} className="cta" {...ctaProps}
+            style={{ display: "block", maxWidth: 460, margin: "0 auto", padding: "21px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none", background: `linear-gradient(135deg,${C.gold}2e,${C.gold}12)`, border: `1.5px solid ${C.gold}88`, boxShadow: `0 0 34px ${C.gold}26`, transition: "all .25s ease" }}>
+            <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".02em", color: C.gold }}>{offer.cta} →</span>
+          </a>
+        </section>
+        )}
+
+        {!resolved && (
+          <section style={{ ...wrap, paddingBottom: 46, textAlign: "center" }}>
+            <a href="#rh-scheduler" className="cta" onClick={scrollToScheduler}
+              style={{ display: "block", maxWidth: 460, margin: "0 auto", padding: "21px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none",
+                background: `linear-gradient(135deg,${C.gold}2e,${C.gold}12)`, border: `1.5px solid ${C.gold}88`, boxShadow: `0 0 34px ${C.gold}26`, transition: "all .25s ease" }}>
+              <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".02em", color: C.gold }}>BOOK YOUR FREE WORKING SESSION →</span>
+            </a>
+            <p style={{ fontSize: 13.5, color: C.text3, margin: "16px 0 0" }}>
+              <a href="/reinvest-harvest" style={{ color: C.text3 }}>Haven't taken the scorecard yet?</a>
+            </p>
+          </section>
+        )}
+
+
+        {/* ── ROADMAP — supporting material, below the video ── */}
+        <section style={{ maxWidth: 940, margin: "0 auto", padding: "10px 0 44px" }}>
+          <div style={{ textAlign: "center", marginBottom: 34 }}>
+            <div style={{ ...kicker, color: C.gold, marginBottom: 12 }}>Where this leads</div>
+            <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(28px,6.6vw,40px)", lineHeight: 1.14, color: C.text1, margin: "0 0 14px" }}>
+              The scorecard is <span style={{ color: C.gold, fontStyle: "italic", fontWeight: 400 }}>step one</span>
             </h2>
-            <p style={{ fontSize: 15.5, lineHeight: 1.6, color: C.text2, maxWidth: 560, margin: "0 auto" }}>
-              {offer.calSub}
+            <p style={{ fontSize: 15.5, lineHeight: 1.6, color: C.text2, maxWidth: 540, margin: "0 auto" }}>
+              It answers the reinvest-or-harvest question for where you are today. This is the system for how you keep answering it as the business changes.
             </p>
           </div>
-          {offerKey === "oneToOne" ? (
-            <div style={{ borderRadius: 16, overflow: "hidden", border: "1px solid rgba(255,255,255,.09)", background: C.bgCard, minHeight: 620 }}>
-              {/* Direct iframe. Do NOT use iClosed widget.js — it races the React render. */}
-              <iframe src={offer.url} title="Book your working session" width="100%" height="620"
-                style={{ border: "none", display: "block" }} loading="lazy" />
-            </div>
-          ) : (
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <a href={offer.url} className="cta" target="_blank" rel="noopener noreferrer"
-                style={{ display: "block", maxWidth: 460, width: "100%", padding: "21px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none",
-                  background: `linear-gradient(135deg,${C.gold}2e,${C.gold}12)`, border: `1.5px solid ${C.gold}88`, boxShadow: `0 0 34px ${C.gold}26`, transition: "all .25s ease" }}>
-                <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".02em", color: C.gold }}>{offer.cta} →</span>
-              </a>
-            </div>
-          )}
+
+          <div className="roadmap">
+            {ROADMAP.map(r0 => {
+              /* "You Are Here" only makes sense if they just took it. Someone
+                 arriving on a bad token hasn't scored, so 01 reverts. */
+              const r = (resolved && r0.n === "01")
+                ? { ...r0, title: "You Are Here", desc: "The one decision everything else hangs on — the one you just scored." }
+                : r0;
+              return (
+              <div key={r.n} className="rcard" style={{ padding: "20px 16px 22px", borderRadius: 14, textAlign: "center",
+                background: `linear-gradient(160deg, ${r.tint}0a, rgba(255,255,255,.015))`,
+                border: `1px solid ${r.tint}22`,
+                /* per-card glow, driven off the icon's own colour */
+                "--glow": r.tint, "--glowSoft": `${r.tint}2e`, "--glowEdge": `${r.tint}70` }}>
+                <div style={{ height: 62, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}
+                  dangerouslySetInnerHTML={{ __html: r.icon.replace('width="512" height="512"', 'width="58" height="58"') }} />
+                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 13, fontWeight: 700, color: `${r.tint}88`, letterSpacing: ".06em", marginBottom: 5 }}>{r.n}</div>
+                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 19, fontWeight: 700, color: C.text1, lineHeight: 1.2, marginBottom: 7 }}>{r.title}</div>
+                <div style={{ fontSize: 12.5, lineHeight: 1.5, color: C.text3 }}>{r.desc}</div>
+              </div>
+              );
+            })}
+          </div>
         </section>
+
+
 
         {/* ── DISCLOSURE ── */}
         <footer style={{ ...wrap, paddingTop: 26, borderTop: "1px solid rgba(255,255,255,.06)" }}>
