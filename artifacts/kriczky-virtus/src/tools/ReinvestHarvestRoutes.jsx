@@ -49,6 +49,9 @@ export function ReinvestHarvestThankYouRoute() {
     <ReinvestHarvestThankYou
       key={token || "unresolved"}
       email={report?.email}
+      firstName={report?.firstName}
+      lastName={report?.lastName}
+      phone={report?.phone}
       quadrantKey={report?.quadrantKey}
       revenueBand={report?.revenueBand}
       ownerTier={report?.ownerTier}

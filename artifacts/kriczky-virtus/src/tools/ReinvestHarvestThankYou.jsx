@@ -265,6 +265,9 @@ const ROADMAP = [
    generic booking view rather than rendering a broken result. */
 export default function ReinvestHarvestThankYou({
   email = "you@yourcompany.com",
+  firstName = "",
+  lastName = "",
+  phone = "",
   quadrantKey = "split",
   revenueBand = "$3M - $10M",
   ownerTier = "Owner",
@@ -290,6 +293,22 @@ export default function ReinvestHarvestThankYou({
     const el = document.getElementById("rh-scheduler");
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+  /* Prefill the iClosed form from what they already gave us at step 1, so they
+     don't retype it. Params must go on the IFRAME src, not the page URL — a
+     cross-origin iframe can't read the parent's query string. Because the src is
+     built at render time with the values already in hand, there's no load race.
+     Blank when unresolved, which is correct: the form then asks as normal. */
+  const schedulerUrl = (() => {
+    if (offerKey !== "oneToOne") return offer.url;
+    const full = `${firstName} ${lastName}`.trim();
+    const p = new URLSearchParams();
+    if (full) p.set("iclosedName", full);
+    if (email && email !== "you@yourcompany.com") p.set("iclosedEmail", email);
+    if (phone) p.set("iclosedPhone", phone);
+    const q = p.toString();
+    return q ? `${offer.url}?${q}` : offer.url;
+  })();
+
   const ctaHref = offerKey === "oneToOne" ? "#rh-scheduler" : offer.url;
   const ctaProps = offerKey === "oneToOne"
     ? { onClick: scrollToScheduler }
@@ -389,7 +408,7 @@ export default function ReinvestHarvestThankYou({
           {offerKey === "oneToOne" ? (
             <div style={{ borderRadius: 16, overflow: "hidden", border: "1px solid rgba(255,255,255,.09)", background: C.bgCard, minHeight: 620 }}>
               {/* Direct iframe. Do NOT use iClosed widget.js — it races the React render. */}
-              <iframe src={offer.url} title="Book your working session" width="100%" height="620"
+              <iframe src={schedulerUrl} title="Book your working session" width="100%" height="620"
                 style={{ border: "none", display: "block" }} loading="lazy" />
             </div>
           ) : (
