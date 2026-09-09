@@ -95,7 +95,7 @@ module.exports = async function handler(req, res) {
         notes: "PARTIAL",
       });
       await syncContact({
-        name, email, tool, summary: {}, utmSource: resolvedUtmSource,
+        name, email, phone, tool, summary: {}, utmSource: resolvedUtmSource,
         utmCampaign: resolvedUtmCampaign, partial: true,
       });
       return res.status(200).json({ success: true });
