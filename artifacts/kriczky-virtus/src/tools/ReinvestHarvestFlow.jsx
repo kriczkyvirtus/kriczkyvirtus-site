@@ -267,6 +267,7 @@ export default function ReinvestHarvestFlow() {
   const [err, setErr] = useState("");
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
+  const [captureFailed, setCaptureFailed] = useState(false);
   const topRef = useRef(null);
   const partialSent = useRef(false);
 
@@ -324,6 +325,7 @@ export default function ReinvestHarvestFlow() {
 
   const submit = async () => {
     setSending(true);
+    setCaptureFailed(false);
     const payload = {
       tool: "reinvest-harvest", toolName: "Reinvest or Harvest Scorecard",
       ...contact,
@@ -352,7 +354,10 @@ export default function ReinvestHarvestFlow() {
       if (!response.ok) throw new Error(`Capture failed (${response.status})`);
       ({ token } = await response.json());
       if (!token) throw new Error("Capture response did not include a token");
-    } catch (e) { console.warn("[reinvest-harvest] lead-capture failed — payload logged above", e); }
+    } catch (e) {
+      setCaptureFailed(true);
+      console.warn("[reinvest-harvest] lead-capture failed — payload logged above", e);
+    }
     await new Promise(r => setTimeout(r, 600));
     setSending(false); setDone(true);
     if (token) {
@@ -440,6 +445,11 @@ export default function ReinvestHarvestFlow() {
           <p style={{ fontSize: 12.5, color: C.text4, marginTop: 26 }}>
             Taking you to a short video next — watch it before you check your email.
           </p>
+          {captureFailed && (
+            <a href="/reinvest-harvest/next" style={{ display: "inline-block", marginTop: 14, color: C.gold, fontSize: 15, fontWeight: 700, textDecoration: "none" }}>
+              Continue to your next step →
+            </a>
+          )}
         </div>
       </div>
     );

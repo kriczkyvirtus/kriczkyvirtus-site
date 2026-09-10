@@ -310,16 +310,53 @@ export default function ReinvestHarvestThankYou({
     window.addEventListener("touchmove", cancel, opts);
     window.addEventListener("keydown", cancel);
 
+    /* Custom easing instead of behavior:"smooth". The native duration isn't
+       controllable and runs ~400ms, which felt like a jump; this takes 1200ms. */
+    const glide = (to, ms) => {
+      const from = window.scrollY;
+      const dist = to - from;
+      if (Math.abs(dist) < 4) return;
+      const t0 = performance.now();
+      const ease = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+      const step = (now) => {
+        if (cancelled) return;
+        const p = Math.min(1, (now - t0) / ms);
+        window.scrollTo(0, from + dist * ease(p));
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+
+    const targetY = () => {
+      const frame = document.getElementById("rh-calendar");
+      if (!frame) return null;
+      return Math.max(0, frame.getBoundingClientRect().top + window.scrollY - 110);
+    };
+
+    let settled = null;
     const t = setTimeout(() => {
       if (cancelled) return;
-      const frame = document.getElementById("rh-calendar");
-      if (!frame) return;
-      const top = frame.getBoundingClientRect().top + window.scrollY - 110;
-      window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+      const y = targetY();
+      if (y === null) return;
+      settled = y;
+      glide(y, 1200);
     }, 2500);
+
+    /* iClosed focuses a time slot once it loads, and the browser scrolls the
+       PARENT to bring a focused element into view — dragging the reader past the
+       event name into a bare grid of times. We can't stop that from outside a
+       cross-origin iframe, so we reclaim the position once, quietly, if it drifts
+       and the reader hasn't touched anything. */
+    const guard = setInterval(() => {
+      if (cancelled || settled === null) return;
+      if (Math.abs(window.scrollY - settled) > 90) glide(settled, 600);
+    }, 400);
+    const stopGuard = setTimeout(() => clearInterval(guard), 12000);
 
     return () => {
       clearTimeout(t);
+      clearInterval(guard);
+      clearTimeout(stopGuard);
       window.removeEventListener("wheel", cancel);
       window.removeEventListener("touchmove", cancel);
       window.removeEventListener("keydown", cancel);
@@ -486,7 +523,7 @@ export default function ReinvestHarvestThankYou({
               <div id="rh-calendar" style={{ marginTop: 26, borderRadius: 14, overflow: "hidden", border: "1px solid rgba(255,255,255,.09)", background: C.bgCard, minHeight: 620 }}>
                 {/* Direct iframe. Do NOT use iClosed widget.js — it races the React render. */}
                 <iframe src={schedulerUrl} title="Book your working session" width="100%" height="620"
-                  style={{ border: "none", display: "block" }} loading="lazy" />
+                  style={{ border: "none", display: "block" }} />
               </div>
             ) : (
               <a href={offer.url} className="cta" target="_blank" rel="noopener noreferrer"
