@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 /* ═══════════════════════════════════════════════════════════════
    REINVEST OR HARVEST — THANK-YOU PAGE
@@ -279,9 +279,53 @@ export default function ReinvestHarvestThankYou({
   const [playing, setPlaying] = useState(false);
 
 
+
+
   const quad = QUADRANTS[q];
   const offerKey = routeTo(rev, tier);
   const offer = OFFERS[offerKey];
+
+  /* Gentle nudge to the calendar.
+     Deliberate, not accidental: there was no auto-scroll before — arriving from
+     the report's #rh-scheduler link let the browser jump once the lazy iframe
+     settled, which looked like a timed scroll but only happened on that one path.
+     This does it consistently, and only when it's wanted:
+       · a calendar actually exists (resolved 1-on-1)
+       · they didn't arrive with the hash — the browser already handled that
+       · they haven't started scrolling themselves; their intent wins
+       · prefers-reduced-motion is respected
+       · fires once
+     Targets the iframe minus 110px so the last step stays visible above it —
+     they land on "calendar, with context" rather than mid-page with no anchor. */
+  useEffect(() => {
+    if (!resolved || offerKey !== "oneToOne") return;
+    if (typeof window === "undefined") return;
+    if (window.location.hash === "#rh-scheduler") return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let cancelled = false;
+    const cancel = () => { cancelled = true; };
+    const opts = { passive: true };
+    window.addEventListener("wheel", cancel, opts);
+    window.addEventListener("touchmove", cancel, opts);
+    window.addEventListener("keydown", cancel);
+
+    const t = setTimeout(() => {
+      if (cancelled) return;
+      const frame = document.getElementById("rh-calendar");
+      if (!frame) return;
+      const top = frame.getBoundingClientRect().top + window.scrollY - 110;
+      window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    }, 2500);
+
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("wheel", cancel);
+      window.removeEventListener("touchmove", cancel);
+      window.removeEventListener("keydown", cancel);
+    };
+  }, [resolved, offerKey]);
+
 
   /* Booking lives on this page, so the fit-call CTAs scroll rather than navigate.
      href is the in-page anchor, not the iClosed URL — that way a middle-click or
@@ -439,7 +483,7 @@ export default function ReinvestHarvestThankYou({
 
             {/* The calendar sits directly under the reasons to use it. */}
             {offerKey === "oneToOne" ? (
-              <div style={{ marginTop: 26, borderRadius: 14, overflow: "hidden", border: "1px solid rgba(255,255,255,.09)", background: C.bgCard, minHeight: 620 }}>
+              <div id="rh-calendar" style={{ marginTop: 26, borderRadius: 14, overflow: "hidden", border: "1px solid rgba(255,255,255,.09)", background: C.bgCard, minHeight: 620 }}>
                 {/* Direct iframe. Do NOT use iClosed widget.js — it races the React render. */}
                 <iframe src={schedulerUrl} title="Book your working session" width="100%" height="620"
                   style={{ border: "none", display: "block" }} loading="lazy" />
