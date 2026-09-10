@@ -434,7 +434,8 @@ export default function ReinvestHarvestThankYou({
             <h1 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(34px,8.4vw,64px)", lineHeight: 1.08, color: C.text1, margin: "0 0 22px" }}>
               Want help proactively reinvesting in your business?
             </h1>
-            <p style={{ fontSize: "clamp(16px,4vw,22px)", lineHeight: 1.55, color: C.text2, maxWidth: 760, margin: "0 auto" }}>
+            {/* balance + a wider measure: at 760 the last line was just "of it." */}
+            <p style={{ fontSize: "clamp(16px,4vw,22px)", lineHeight: 1.55, color: C.text2, maxWidth: 900, margin: "0 auto", textWrap: "balance" }}>
               The video shows you what to do. This is where you find out whether you're a fit to have me work on it with you — intentionally pursuing reinvestment opportunities inside your business, and building financial freedom outside of it.
             </p>
           </section>
@@ -447,41 +448,30 @@ export default function ReinvestHarvestThankYou({
         <section id="rh-scheduler" style={{ ...wrap, padding: "4px 0 40px", scrollMarginTop: 24 }}>
           <div style={{ padding: "32px 24px", borderRadius: 18, background: "linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,.02))", border: `1px solid ${C.gold}2e`, borderTop: "1px solid rgba(255,255,255,.12)", boxShadow: "0 10px 40px rgba(0,0,0,.45)" }}>
 
-            {resolved ? (
-              <>
-                <div style={{ ...kicker, color: C.gold, marginBottom: 12, textAlign: "center" }}>{offer.kicker}</div>
-                <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(24px,5.6vw,32px)", lineHeight: 1.18, color: C.text1, textAlign: "center", margin: "0 0 14px" }}>
-                  {offer.title}
-                </h2>
-                <p style={{ fontSize: 15, lineHeight: 1.65, color: C.text2, textAlign: "center", maxWidth: 520, margin: "0 auto 24px" }}>
-                  {offer.body}
-                </p>
+            {/* Same block in both states. Someone on a bad token has almost always
+                taken the scorecard — a forwarded or mangled link — so the steps and
+                the ask read correctly for them too. */}
+            <div style={{ ...kicker, color: C.gold, marginBottom: 12, textAlign: "center" }}>{offer.kicker}</div>
+            <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(24px,5.6vw,32px)", lineHeight: 1.18, color: C.text1, textAlign: "center", margin: "0 0 14px" }}>
+              {offer.title}
+            </h2>
+            <p style={{ fontSize: 15, lineHeight: 1.65, color: C.text2, textAlign: "center", maxWidth: 520, margin: "0 auto 24px" }}>
+              {offer.body}
+            </p>
 
-                {offer.steps.map((s, i) => (
-                  <div key={s.t} style={{ display: "flex", gap: 15, alignItems: "flex-start", padding: "14px 0", borderBottom: i < 2 ? "1px solid rgba(255,255,255,.06)" : "none" }}>
-                    <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 23, fontWeight: 700, color: `${C.gold}66`, lineHeight: 1, minWidth: 30 }}>0{i + 1}</span>
-                    <div>
-                      <div style={{ fontSize: 15, fontWeight: 700, color: C.text1, marginBottom: 3 }}>{s.t}</div>
-                      <div style={{ fontSize: 14, lineHeight: 1.55, color: C.text2 }}>{s.d}</div>
-                    </div>
-                  </div>
-                ))}
+            {offer.steps.map((s, i) => (
+              <div key={s.t} style={{ display: "flex", gap: 15, alignItems: "flex-start", padding: "14px 0", borderBottom: i < 2 ? "1px solid rgba(255,255,255,.06)" : "none" }}>
+                <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 23, fontWeight: 700, color: `${C.gold}66`, lineHeight: 1, minWidth: 30 }}>0{i + 1}</span>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: C.text1, marginBottom: 3 }}>{s.t}</div>
+                  <div style={{ fontSize: 14, lineHeight: 1.55, color: C.text2 }}>{s.d}</div>
+                </div>
+              </div>
+            ))}
 
-                {offer.note && (
-                  <div style={{ marginTop: 18, padding: "11px 16px", borderRadius: 9, background: `${C.gold}0d`, border: `1px solid ${C.gold}2e`, textAlign: "center" }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: C.gold }}>{offer.note}</span>
-                  </div>
-                )}
-              </>
-            ) : (
-              /* No result to explain, so the standalone heading carries it. */
-              <div style={{ textAlign: "center", marginBottom: 24 }}>
-                <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(26px,6vw,38px)", lineHeight: 1.14, color: C.text1, margin: "0 0 12px" }}>
-                  {offer.calHead}
-                </h2>
-                <p style={{ fontSize: 15.5, lineHeight: 1.6, color: C.text2, maxWidth: 560, margin: "0 auto" }}>
-                  {offer.calSub}
-                </p>
+            {offer.note && (
+              <div style={{ marginTop: 18, padding: "11px 16px", borderRadius: 9, background: `${C.gold}0d`, border: `1px solid ${C.gold}2e`, textAlign: "center" }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: C.gold }}>{offer.note}</span>
               </div>
             )}
 
