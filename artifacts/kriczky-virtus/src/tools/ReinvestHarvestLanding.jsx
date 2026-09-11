@@ -154,6 +154,26 @@ const SampleResultCard = () => {
         </div>
       ))}
 
+      {/* What they actually get — static, so it sits below the cycling scores
+          rather than inside them. Gold numerals match the thank-you page's
+          "Your next step" block, so the two read as one system. */}
+      <div style={{ marginTop: 22, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,.07)" }}>
+        <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: C.gold, textAlign: "center", marginBottom: 18 }}>
+          Your scorecard shows
+        </div>
+        {[
+          "A score for your business capacity",
+          "A score for your personal foundation",
+          "Which of the four positions you're in",
+          "Three next moves based on how you actually answered",
+        ].map((t, n) => (
+          <div key={t} style={{ display: "flex", gap: 14, alignItems: "baseline", padding: "10px 0", borderBottom: n < 3 ? "1px solid rgba(255,255,255,.05)" : "none" }}>
+            <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 25, fontWeight: 700, color: `${C.gold}66`, lineHeight: 1, minWidth: 36 }}>0{n + 1}</span>
+            <span style={{ fontSize: 20, lineHeight: 1.5, color: C.text2 }}>{t}</span>
+          </div>
+        ))}
+      </div>
+
       {/* Cycle indicator */}
       <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 18 }}>
         {SAMPLE_STATES.map((st, n) => (
@@ -172,7 +192,7 @@ const CTA = () => (
   <div style={{ textAlign: "center" }}>
     <a href="/reinvest-harvest/start" className="cta"
       style={{
-        display: "inline-block", padding: "20px 58px", borderRadius: 999, textDecoration: "none",
+        display: "inline-block", padding: "24px 67px", borderRadius: 999, textDecoration: "none",
         background: `linear-gradient(135deg, ${C.gold}22, ${C.gold}0d)`,
         border: `1.5px solid ${C.gold}66`,
         boxShadow: `0 0 34px ${C.gold}1f, 0 6px 18px rgba(0,0,0,.35)`,
@@ -184,7 +204,7 @@ const CTA = () => (
       <span className="ctaLabel"
         style={{
           position: "relative", display: "inline-block",
-          fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 24,
+          fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: "clamp(24px, 3.2vw, 35px)",
           letterSpacing: ".02em", color: C.gold, whiteSpace: "nowrap", lineHeight: 1.1,
         }}>
         GET MY SCORECARD
@@ -195,10 +215,12 @@ const CTA = () => (
         </svg>
       </span>
     </a>
-    <p style={{ fontSize: 12.5, color: C.text2, margin: "14px 0 0" }}>
+    {/* Up from 12.5/12, then back 20%. Clamped rather than flat so both lines
+        still fit a narrow phone. */}
+    <p style={{ fontSize: "clamp(15px, 2.9vw, 20px)", lineHeight: 1.4, color: C.text2, margin: "18px 0 0" }}>
       20 questions · about 7 minutes · free
     </p>
-    <p style={{ fontSize: 12, color: C.text3, margin: "6px 0 0" }}>
+    <p style={{ fontSize: "clamp(14px, 2.7vw, 19px)", lineHeight: 1.4, color: C.text3, margin: "8px 0 0" }}>
       Your scorecard is emailed the moment you finish.
     </p>
   </div>
@@ -226,13 +248,15 @@ export default function ReinvestHarvestLanding() {
         .cta:hover { box-shadow: 0 0 48px ${C.gold}33, 0 8px 22px rgba(0,0,0,.45) !important; border-color: ${C.gold}99 !important; transform: translateY(-1px); }
         .ctaArrow { transform: translateY(-50%); transition: transform .3s cubic-bezier(.4,0,.2,1); }
         .cta:hover .ctaArrow { transform: translateY(-50%) translateX(5px); }
+        /* Scaled with the button, but sized so the pill stays inside the
+           viewport — at 30px the label alone overran a 390px screen. */
         @media (max-width: 520px) {
-          .cta { padding: 17px 44px !important; }
-          .ctaLabel { font-size: 19px !important; }
+          .cta { padding: 19px 32px !important; }
+          .ctaLabel { font-size: 24px !important; }
         }
         @media (max-width: 380px) {
-          .cta { padding: 15px 36px !important; }
-          .ctaLabel { font-size: 16px !important; }
+          .cta { padding: 17px 22px !important; }
+          .ctaLabel { font-size: 20px !important; }
         }
         @media (prefers-reduced-motion: reduce) {
           .cta:hover { transform: none; }
@@ -297,30 +321,56 @@ export default function ReinvestHarvestLanding() {
           <p style={{ ...BODY, margin: "20px auto 0", maxWidth: 700, fontSize: "clamp(14px, 3.8vw, 22px)", lineHeight: 1.5, textWrap: "balance" }}>
             Get it right and your business and financial freedom compound. Get it wrong and you just get busier.
           </p>
+          {/* Qualifier — mirrors the thank-you page, widened to "targeting or
+              already doing" so aspiring owners aren't screened out at the door. */}
+          <p style={{ fontSize: "clamp(13px, 3.2vw, 16px)", lineHeight: 1.6, color: C.text3, maxWidth: 720, margin: "18px auto 0", textWrap: "balance" }}>
+            Built for owners targeting or already doing $1M&ndash;$10M a year who want a clear answer to &ldquo;how much stays in the business vs comes out to me&rdquo; in the next 12 months.
+          </p>
         </section>
 
-        {/* 2 — VIDEO */}
-        <section className="col" style={{ padding: "0 22px 26px", position: "relative", zIndex: 2 }}>
+        {/* 2 — PRIMARY CTA — ahead of the video: the ready ones shouldn't have to
+             sit through 90 seconds to find the button. */}
+        <section className="col" style={{ padding: "26px 22px 54px", position: "relative", zIndex: 2 }}>
+          <CTA />
+        </section>
+
+        {/* 3 — VIDEO — now optional rather than the gate before the button */}
+        {/* Heading sits outside .col so it gets the 940px wrapper instead of the
+            680px reading column — at 52px the first sentence needs 789px and
+            would wrap inside col. Two explicit blocks, so the break is where it
+            should be rather than wherever the text happens to run out. */}
+        <div style={{ padding: "0 22px 34px", position: "relative", zIndex: 2, textAlign: "center" }}>
+          <p style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(20px, 5.2vw, 52px)", lineHeight: 1.22, color: C.text1, margin: 0 }}>
+            <span style={{ display: "block" }}>Prefer to see why this matters first?</span>
+            <span style={{ display: "block" }}>Watch 90 seconds below.</span>
+          </p>
+        </div>
+
+        {/* Matches the thank-you page player exactly: 1080px container, so the
+            16:9 frame renders 1040x585 on desktop. Breaks out of .col, which caps
+            at 680 — the page wrapper is 940, so this uses a viewport-bounded
+            breakout rather than a plain maxWidth. */}
+        <section style={{ marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)", width: "100vw", maxWidth: "100vw", padding: "0 20px 26px", boxSizing: "border-box", position: "relative", zIndex: 2 }}>
+          <div style={{ maxWidth: 1040, margin: "0 auto" }}>
           <div onClick={() => setPlaying(true)}
             style={{ position: "relative", aspectRatio: "16/9", borderRadius: 14, overflow: "hidden", cursor: "pointer", background: "linear-gradient(145deg,#141B26,#0C1119)", border: `1px solid ${C.gold}2e`, boxShadow: "0 8px 28px rgba(0,0,0,.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <div style={{ textAlign: "center" }}>
-              <div style={{ width: 62, height: 62, borderRadius: "50%", border: `2px solid ${C.gold}88`, background: `${C.gold}14`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", boxShadow: `0 0 26px ${C.gold}33` }}>
-                <svg width="22" height="24" viewBox="0 0 22 24" fill={C.gold}><path d="M21 12L0 24V0z" /></svg>
+              <div style={{ width: 96, height: 96, borderRadius: "50%", border: `2px solid ${C.gold}88`, background: `${C.gold}14`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", boxShadow: `0 0 26px ${C.gold}33` }}>
+                <svg width="33" height="37" viewBox="0 0 22 24" fill={C.gold}><path d="M21 12L0 24V0z" /></svg>
               </div>
-              <div style={{ fontSize: 12.5, color: C.text2, letterSpacing: ".04em" }}>
+              <div style={{ fontSize: 16, color: C.text2, letterSpacing: ".04em" }}>
                 {playing ? "VSL embed goes here" : "Watch: 90 seconds on why this matters"}
               </div>
             </div>
           </div>
-        </section>
-
-        {/* 3 — PRIMARY CTA */}
-        <section className="col" style={{ padding: "0 22px 30px", position: "relative", zIndex: 2 }}>
-          <CTA />
+          </div>
         </section>
 
         {/* 4 — SAMPLE RESULT CARD (cycles through all four quadrants) */}
-        <section className="col" style={{ padding: "0 22px 20px", position: "relative", zIndex: 2 }}>
+        {/* 50px top: the video section already contributes 26px below itself, so
+            26 + 50 = 76px — matching the 76px gap below this card (its own 20px
+            plus the pain section's 56px top). */}
+        <section className="col" style={{ padding: "50px 22px 20px", position: "relative", zIndex: 2 }}>
           <SampleResultCard />
         </section>
 
@@ -329,7 +379,7 @@ export default function ReinvestHarvestLanding() {
           <div style={{ padding: "28px 24px", borderRadius: 16, background: "linear-gradient(145deg, rgba(255,255,255,.04), rgba(255,255,255,.015) 50%, rgba(255,255,255,.025))", backdropFilter: "blur(16px)", border: `1px solid ${C.border2}`, borderTop: "1px solid rgba(255,255,255,.10)", boxShadow: "0 2px 4px rgba(0,0,0,.2), 0 8px 24px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.05)" }}>
             <p style={BODY}>You had a good year. The money came in.</p>
             <p style={BODY}>Some went back into the business — a truck, a hire, new equipment, more space. The rest went somewhere.</p>
-            <p style={BODY}>Ask most owners what that spending actually returned and they can't tell you. Ask what they'd have today if they'd kept it instead, and they can't tell you that either.</p>
+            <p style={BODY}><strong style={{ color: C.text1, fontWeight: 700 }}>Ask most owners what that spending actually returned and they can't tell you.</strong> Ask what they'd have today if they'd kept it instead, and they can't tell you that either.</p>
             <p style={BODY}>Meanwhile the business gets bigger. Your life doesn't change much. You're earning more than you ever have and you don't feel any richer.</p>
             <div style={{ padding: "22px 24px", borderRadius: 14, background: `linear-gradient(135deg, ${C.gold}08, ${C.gold}03)`, border: `1px solid ${C.gold}25`, margin: "26px 0" }}>
               <p style={{ ...BODY, margin: 0, color: C.text1, fontSize: 17, fontWeight: 500 }}>

@@ -496,8 +496,15 @@ export default function ReinvestHarvestThankYou({
         {/* ── VIDEO HEADING — reads as the heading and sub for the player below.
              Runs on both states: the copy no longer references the result. ── */}
         {(
-        <section style={{ paddingBottom: 22, textAlign: "center" }}>
-          <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(34px,8.4vw,60px)", lineHeight: 1.1, color: C.text1, margin: "0 0 20px" }}>
+        /* Breaks out of the 1120px page shell — the 60px line needs ~1301px.
+           Negative margins are the only way out of a maxWidth parent; the width
+           calc keeps it inside the viewport so nothing overflows. */
+        <section style={{ textAlign: "center", marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)", width: "100vw", maxWidth: "100vw", padding: "0 20px 22px", boxSizing: "border-box" }}>
+          {/* Back to 60px. The line measures ~21.7x the font size, so at 60px it
+              needs 1301px — wider than the 1080 column. The heading gets its own
+              1400px container and the 4.4vw term keeps it on one line all the way
+              down to 1024px, where it lands at 45px. */}
+          <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(28px,4.4vw,60px)", lineHeight: 1.1, color: C.text1, margin: "0 auto 20px", maxWidth: 1400, textWrap: "balance" }}>
             Want to see what we'll do in your working session?
           </h2>
           <p style={{ fontSize: "clamp(17px,4vw,22px)", lineHeight: 1.55, color: C.text2, maxWidth: 900, margin: "0 auto" }}>
