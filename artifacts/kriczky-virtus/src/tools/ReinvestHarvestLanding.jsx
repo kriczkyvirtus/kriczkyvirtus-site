@@ -247,15 +247,25 @@ export default function ReinvestHarvestLanding() {
         .col { max-width: 680px; margin: 0 auto; }
         .cta:hover { box-shadow: 0 0 48px ${C.gold}33, 0 8px 22px rgba(0,0,0,.45) !important; border-color: ${C.gold}99 !important; transform: translateY(-1px); }
         .ctaArrow { transform: translateY(-50%); transition: transform .3s cubic-bezier(.4,0,.2,1); }
+        /* The arrow is absolutely positioned past the label's right edge, so its
+           clearance is (button padding-right − arrow width − its own offset).
+           Desktop has 34px to spare; the phone paddings did not, and the arrow
+           was hanging over the pill edge. Shrink both the arrow and its gap. */
+        @media (max-width: 520px) {
+          .ctaArrow { width: 14px !important; height: 14px !important; margin-left: 7px !important; }
+        }
+        @media (max-width: 380px) {
+          .ctaArrow { width: 13px !important; height: 13px !important; margin-left: 6px !important; }
+        }
         .cta:hover .ctaArrow { transform: translateY(-50%) translateX(5px); }
         /* Scaled with the button, but sized so the pill stays inside the
            viewport — at 30px the label alone overran a 390px screen. */
         @media (max-width: 520px) {
-          .cta { padding: 19px 32px !important; }
+          .cta { padding: 19px 34px !important; }
           .ctaLabel { font-size: 24px !important; }
         }
         @media (max-width: 380px) {
-          .cta { padding: 17px 22px !important; }
+          .cta { padding: 17px 32px !important; }
           .ctaLabel { font-size: 20px !important; }
         }
         @media (prefers-reduced-motion: reduce) {
