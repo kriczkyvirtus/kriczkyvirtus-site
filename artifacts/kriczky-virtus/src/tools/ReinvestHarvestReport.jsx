@@ -1315,7 +1315,7 @@ export default function ReinvestHarvestReport({
             <img src={HEADSHOT} alt="" style={{ width:84, height:84, borderRadius:"50%", flexShrink:0, objectFit:"cover", outline:`2px solid ${C.gold}40`, outlineOffset:2 }}/>
             <div>
               <div style={{ fontSize:13.5, fontWeight:700, color:C.text1 }}>
-                Edward Kriczky, CEPA<sup style={{ fontSize:8.5, fontWeight:600, top:"-.45em", position:"relative", marginLeft:1 }}>&#174;</sup>
+                Edward Kriczky, CEPA<sup style={{ fontSize:9, fontWeight:600, marginLeft:1 }}>&#174;</sup>
               </div>
               <div style={{ fontSize:11, color:C.gold, marginBottom:7 }}>Founder, Kriczky Virtus</div>
               <div style={{ fontSize:10.5, lineHeight:1.6, color:C.text2 }}>

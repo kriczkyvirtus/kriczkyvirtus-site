@@ -461,7 +461,7 @@ export default function ReinvestHarvestLanding() {
               style={{ width: 120, height: 120, borderRadius: "50%", objectFit: "cover", border: `3px solid ${C.gold}50`, marginBottom: -28, boxShadow: `0 0 24px ${C.gold}20, 0 4px 16px rgba(0,0,0,0.4)`, position: "relative", zIndex: 2 }} />
             <div style={{ width: "100%", padding: "44px 24px 24px", background: `linear-gradient(135deg, ${C.gold}08, ${C.gold}03)`, border: `1px solid ${C.gold}25`, borderRadius: 14, textAlign: "center" }}>
               <div style={{ fontSize: 16, fontWeight: 700, color: C.text1 }}>
-                Edward Kriczky, CEPA<sup style={{ fontSize: 10, fontWeight: 600, top: "-0.45em", position: "relative", marginLeft: 1 }}>&#174;</sup>
+                Edward Kriczky, CEPA<sup style={{ fontSize: 10, fontWeight: 600, marginLeft: 1 }}>&#174;</sup>
               </div>
               <div style={{ fontSize: 11, color: C.gold, marginBottom: 10 }}>Founder, Kriczky Virtus</div>
               <p style={{ fontSize: 13, lineHeight: 1.65, color: C.text2, margin: 0, maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
