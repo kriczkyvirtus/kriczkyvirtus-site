@@ -514,8 +514,10 @@ export default function ReinvestHarvestFlow() {
               style={{ width: "100%", padding: "18px 0", marginTop: 8, borderRadius: 12, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 16, color: C.gold, background: `linear-gradient(135deg,${C.gold}22,${C.gold}0d)`, border: `1.5px solid ${C.gold}66`, transition: "all .25s ease" }}>
               Continue →
             </button>
-            <p style={{ fontSize: 11.5, lineHeight: 1.55, color: C.text4, textAlign: "center", marginTop: 14 }}>
-              By continuing, you agree to receive emails and texts about your results. Message and data rates may apply.
+            {/* Matches the consent wording on /free-session. Privacy Policy and Terms are
+                named but not linked — neither page exists as a route yet. */}
+            <p style={{ fontSize: 10.5, lineHeight: 1.55, color: C.text4, textAlign: "center", marginTop: 14 }}>
+              By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our Privacy Policy and Terms of Service.
             </p>
           </>
         )}
