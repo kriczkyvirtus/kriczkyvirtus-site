@@ -193,7 +193,7 @@ const SampleResultCard = () => {
   );
 };
 
-const CTA = () => (
+const CTA = ({ compact = false }) => (
   <div style={{ textAlign: "center" }}>
     <a href="/reinvest-harvest/start" className="cta"
       style={{
@@ -221,13 +221,18 @@ const CTA = () => (
       </span>
     </a>
     {/* Up from 12.5/12, then back 20%. Clamped rather than flat so both lines
-        still fit a narrow phone. */}
-    <p style={{ fontSize: "clamp(15px, 2.9vw, 20px)", lineHeight: 1.4, color: C.text2, margin: "18px 0 0" }}>
-      20 questions · about 7 minutes · free
-    </p>
-    <p style={{ fontSize: "clamp(14px, 2.7vw, 19px)", lineHeight: 1.4, color: C.text3, margin: "8px 0 0" }}>
-      Your scorecard is emailed the moment you finish.
-    </p>
+        still fit a narrow phone. Suppressed on the post-video CTA — the same two
+        lines 600px further down reads as filler, not reassurance. */}
+    {!compact && (
+      <>
+        <p style={{ fontSize: "clamp(15px, 2.9vw, 20px)", lineHeight: 1.4, color: C.text2, margin: "18px 0 0" }}>
+          20 questions · about 7 minutes · free
+        </p>
+        <p style={{ fontSize: "clamp(14px, 2.7vw, 19px)", lineHeight: 1.4, color: C.text3, margin: "8px 0 0" }}>
+          Your scorecard is emailed the moment you finish.
+        </p>
+      </>
+    )}
   </div>
 );
 
@@ -409,6 +414,13 @@ export default function ReinvestHarvestLanding() {
                 </span>
               </button>
             )}
+          </div>
+
+          {/* Second CTA. The one above the video catches people who are already
+              convinced; this one catches people the video just convinced. Without
+              it they have to scroll back up past the player to act. */}
+          <div style={{ maxWidth: 1040, margin: "34px auto 0", textAlign: "center" }}>
+            <CTA compact />
           </div>
           </div>
         </section>
