@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 /* ═══════════════════════════════════════════════════════════════
    REINVEST OR HARVEST — THANK-YOU PAGE
@@ -13,6 +13,13 @@ const PREVIEW = false;
    widget.js does not work in React SPAs. */
 const ICLOSED_QUALIFIED = "https://app.iclosed.io/e/kriczkyvirtus/free-reinvest-or-harvest-working-session";
 const SKOOL_COLLECTIVE = "https://www.skool.com/virtus-collective";
+
+/* VSL. Raw MP4 rather than an embed so the unmute overlay can control the
+   element directly — with YouTube or Vimeo this would mean loading their
+   player API and talking to an iframe. Poster fills the 16:9 box while the
+   video decodes, otherwise it's a black rectangle for a beat. */
+const VSL_SRC = "/video/reinvest-harvest-next.mp4";
+const VSL_POSTER = "/video/reinvest-harvest-next-poster.jpg";
 
 const C = {
   bgDeep: "#0A0E14", bgCard: "#111720",
@@ -277,6 +284,22 @@ export default function ReinvestHarvestThankYou({
   const [rev, setRev] = useState(revenueBand);
   const [tier, setTier] = useState(ownerTier);
   const [playing, setPlaying] = useState(false);
+  const vidRef = useRef(null);
+
+  /* Unmute restarts from zero. The first ten seconds are the hook and they're
+     written to be heard — someone who watched forty seconds silently hasn't
+     really started. Also drops the loop and hands over native controls. */
+  const unmuteVideo = () => {
+    const v = vidRef.current;
+    if (v) {
+      v.muted = false;
+      v.currentTime = 0;
+      v.loop = false;
+      const p = v.play();
+      if (p && p.catch) p.catch(() => {});
+    }
+    setPlaying(true);
+  };
 
 
 
@@ -377,7 +400,10 @@ export default function ReinvestHarvestThankYou({
       <style>{`
         *{box-sizing:border-box}
         .cta:hover{box-shadow:0 0 44px ${C.gold}3d,0 6px 22px rgba(0,0,0,.45)!important;border-color:${C.gold}!important}
-        .vsl:hover .play{transform:scale(1.07)}
+        .vsl-panel{animation:vslPulse 2.4s ease-in-out infinite}
+        .vsl-unmute:hover .vsl-panel{transform:scale(1.04)}
+        @keyframes vslPulse{0%,100%{transform:scale(1);box-shadow:0 10px 40px rgba(0,0,0,.45)}50%{transform:scale(1.035);box-shadow:0 10px 52px rgba(0,0,0,.5),0 0 34px rgba(200,162,78,.45)}}
+        @media(prefers-reduced-motion:reduce){.vsl-panel{animation:none}}
         .roadmap{display:grid;grid-template-columns:1fr 1fr;gap:12px}
         .rcard{transition:box-shadow .3s ease,border-color .3s ease,background .3s ease}
         .rcard:hover{
@@ -518,16 +544,51 @@ export default function ReinvestHarvestThankYou({
             the player is 16:9 the height scales with it. Capped at 1080 so it
             stays inside the 1120px page shell. */}
         <section style={{ maxWidth: 1080, margin: "0 auto", padding: "0 20px 40px" }}>
-          <div className="vsl" onClick={() => setPlaying(true)}
-            style={{ position: "relative", aspectRatio: "16/9", borderRadius: 16, overflow: "hidden", cursor: "pointer", background: "linear-gradient(145deg,#141B26,#0B1017)", border: `1px solid ${C.gold}33`, boxShadow: `0 14px 46px rgba(0,0,0,.5), 0 0 60px ${C.gold}0d`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ textAlign: "center", padding: 20 }}>
-              <div className="play" style={{ width: 96, height: 96, borderRadius: "50%", border: `2px solid ${C.gold}99`, background: `${C.gold}16`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", boxShadow: `0 0 34px ${C.gold}33`, transition: "transform .25s ease" }}>
-                <svg width="33" height="37" viewBox="0 0 22 24" fill={C.gold}><path d="M21 12L0 24V0z" /></svg>
-              </div>
-              <div style={{ fontSize: 16, color: C.text2, letterSpacing: ".03em" }}>
-                {playing ? "VSL embed goes here — wide 16:9" : "Watch before your call"}
-              </div>
-            </div>
+          <div className="vsl"
+            style={{ position: "relative", aspectRatio: "16/9", borderRadius: 16, overflow: "hidden", background: "#0B1017", border: `1px solid ${C.gold}33`, boxShadow: `0 14px 46px rgba(0,0,0,.5), 0 0 60px ${C.gold}0d` }}>
+
+            <video
+              ref={vidRef}
+              src={VSL_SRC}
+              poster={VSL_POSTER}
+              autoPlay
+              muted
+              loop={!playing}
+              playsInline
+              preload="auto"
+              controls={playing}
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            />
+
+            {/* Overlay sits on top until the first tap. The video is visible
+                through it, so there's motion drawing the eye before anyone clicks. */}
+            {!playing && (
+              <button
+                onClick={unmuteVideo}
+                aria-label="Unmute video"
+                className="vsl-unmute"
+                style={{
+                  position: "absolute", inset: 0, width: "100%", height: "100%",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  background: "transparent", border: "none", cursor: "pointer", padding: 0,
+                }}>
+                <span className="vsl-panel" style={{
+                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                  width: "58%", maxWidth: 520, padding: "6% 4%", borderRadius: 20,
+                  background: `${C.gold}d9`, border: `1px solid ${C.gold}`,
+                  boxShadow: `0 10px 40px rgba(0,0,0,.45)`,
+                }}>
+                  <svg width="13%" viewBox="0 0 24 24" fill="#0A0E14" style={{ minWidth: 34, maxWidth: 66, marginBottom: "5%" }}>
+                    <path d="M3 9v6h4l5 5V4L7 9H3z" />
+                    <path d="M16.5 12c0-1.8-1-3.3-2.5-4v8c1.5-.7 2.5-2.2 2.5-4z" />
+                    <path d="M14 3.2v2.1c2.9.9 5 3.5 5 6.7s-2.1 5.8-5 6.7v2.1c4-1 7-4.5 7-8.8s-3-7.8-7-8.8z" />
+                  </svg>
+                  <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, color: "#0A0E14", lineHeight: 1.25, textAlign: "center", fontSize: "clamp(15px,2.6vw,26px)" }}>
+                    Your video is playing<br />Click to unmute
+                  </span>
+                </span>
+              </button>
+            )}
           </div>
         </section>
 
