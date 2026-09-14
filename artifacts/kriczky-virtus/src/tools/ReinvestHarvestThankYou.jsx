@@ -462,7 +462,7 @@ export default function ReinvestHarvestThankYou({
             </h1>
             {/* balance + a wider measure: at 760 the last line was just "of it." */}
             <p style={{ fontSize: "clamp(16px,4vw,22px)", lineHeight: 1.55, color: C.text2, maxWidth: 900, margin: "0 auto", textWrap: "balance" }}>
-              The video shows you what to do. This is where you find out whether you're a fit to have me work on it with you — intentionally pursuing reinvestment opportunities inside your business, and building financial freedom outside of it.
+              This is where you find out whether you're a fit to have me work on it with you — intentionally pursuing reinvestment opportunities inside your business, and building financial freedom outside of it.
             </p>
           </section>
         )}
