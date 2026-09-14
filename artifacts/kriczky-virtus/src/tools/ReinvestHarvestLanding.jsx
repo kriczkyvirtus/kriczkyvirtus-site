@@ -312,7 +312,7 @@ export default function ReinvestHarvestLanding() {
             border: `1px solid ${C.gold}33`, marginBottom: 6,
           }}>
             <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 500, color: C.text2, lineHeight: 1.45 }}>
-              <b style={{ color: C.gold, fontWeight: 700 }}>80%</b> of the average owner's net worth sits inside their own company
+              <b style={{ color: C.gold, fontWeight: 700 }}>80%</b> of the average owner's net worth sits <b style={{ color: C.gold, fontWeight: 700 }}>stuck</b> inside their own company
             </span>
           </div>
           <p style={{ fontSize: 10, color: C.text4, margin: "0 0 22px", fontStyle: "italic" }}>
