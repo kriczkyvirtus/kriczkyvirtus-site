@@ -519,9 +519,9 @@ export default function ReinvestHarvestThankYou({
 
 
 
-        {/* ── VIDEO HEADING — reads as the heading and sub for the player below.
-             Runs on both states: the copy no longer references the result. ── */}
-        {(
+        {/* ── VIDEO HEADING — 1-on-1 only: it names a working session the
+             Collective branch does not offer. ── */}
+        {offerKey === "oneToOne" && (
         /* Breaks out of the 1120px page shell — the 60px line needs ~1301px.
            Negative margins are the only way out of a maxWidth parent; the width
            calc keeps it inside the viewport so nothing overflows. */
@@ -534,15 +534,18 @@ export default function ReinvestHarvestThankYou({
             Want to see what we'll do in your working session?
           </h2>
           <p style={{ fontSize: "clamp(17px,4vw,22px)", lineHeight: 1.55, color: C.text2, maxWidth: 900, margin: "0 auto" }}>
-            This short video walks through how we use your two scores and real numbers to map your next 90 days.
+            1 minute 40 seconds on how we use your two scores and real numbers to map your next 90 days.
           </p>
         </section>
         )}
 
-        {/* ── VSL ── */}
-        {/* Breaks out of the 720px reading column to 1080 — 50% wider, and since
-            the player is 16:9 the height scales with it. Capped at 1080 so it
-            stays inside the 1120px page shell. */}
+        {/* ── VSL — 1-on-1 only ──
+            The video sells the working session. On the Collective branch that's
+            an offer they can't take, so it would build appetite for the wrong
+            thing and push the Skool button further down the page.
+            Breaks out of the 720px reading column to 1080; it's 16:9 so the
+            height follows, capped at 1080 to stay inside the 1120px shell. ── */}
+        {offerKey === "oneToOne" && (<>
         <section style={{ maxWidth: 1080, margin: "0 auto", padding: "0 20px 40px" }}>
           <div className="vsl"
             style={{ position: "relative", aspectRatio: "16/9", borderRadius: 16, overflow: "hidden", background: "#0B1017", border: `1px solid ${C.gold}33`, boxShadow: `0 14px 46px rgba(0,0,0,.5), 0 0 60px ${C.gold}0d` }}>
@@ -575,7 +578,7 @@ export default function ReinvestHarvestThankYou({
                 <span className="vsl-panel" style={{
                   display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
                   width: "58%", maxWidth: 520, padding: "6% 4%", borderRadius: 20,
-                  background: `${C.gold}d9`, border: `1px solid ${C.gold}`,
+                  background: `${C.gold}b3`, border: `1px solid ${C.gold}`,
                   boxShadow: `0 10px 40px rgba(0,0,0,.45)`,
                 }}>
                   <svg width="13%" viewBox="0 0 24 24" fill="#0A0E14" style={{ minWidth: 34, maxWidth: 66, marginBottom: "5%" }}>
@@ -586,16 +589,24 @@ export default function ReinvestHarvestThankYou({
                   <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, color: "#0A0E14", lineHeight: 1.25, textAlign: "center", fontSize: "clamp(15px,2.6vw,26px)" }}>
                     Your video is playing<br />Click to unmute
                   </span>
+                  {/* Quiet third line — the panel's job is one instruction, so the
+                      runtime sits under it rather than competing with it. */}
+                  <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, color: "#0A0E14", opacity: .72, letterSpacing: ".05em", marginTop: "3%", fontSize: "clamp(11px,1.5vw,15px)" }}>
+                    1 MIN 40 SEC
+                  </span>
                 </span>
               </button>
             )}
           </div>
         </section>
+        </>)}
 
 
 
-        {/* ── CTA — directly under the video it belongs to ── */}
-        {resolved && (
+        {/* ── CTA — belongs to the video above it, so it goes with the video.
+             Without this gate the Collective branch shows two identical JOIN
+             buttons 134px apart, since the card already carries one. ── */}
+        {resolved && offerKey === "oneToOne" && (
         <section style={{ ...wrap, paddingBottom: 46, textAlign: "center" }}>
           <a href={ctaHref} className="cta" {...ctaProps}
             style={{ display: "block", maxWidth: 460, margin: "0 auto", padding: "21px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none", background: `linear-gradient(135deg,${C.gold}2e,${C.gold}12)`, border: `1.5px solid ${C.gold}88`, boxShadow: `0 0 34px ${C.gold}26`, transition: "all .25s ease" }}>
