@@ -1,5 +1,5 @@
 {
-  "buildCommand": "node scripts/compile-shared.cjs && pnpm --filter @workspace/kriczky-virtus build",
+  "buildCommand": "pnpm test && node scripts/compile-shared.cjs && pnpm --filter @workspace/kriczky-virtus build",
   "outputDirectory": "artifacts/kriczky-virtus/dist/public",
   "framework": "vite",
   "redirects": [
