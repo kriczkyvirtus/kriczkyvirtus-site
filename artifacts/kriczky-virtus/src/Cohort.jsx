@@ -115,7 +115,7 @@ const Mark = ({ kind }) => (
 
 const INCLUDED = [
   { icon: "people", title: "Biweekly working sessions", desc: "Ten owners in the same revenue tier — the weekly community call is open to every member, this is the small room. We work through your actual constraints with accountability from Kriczky Virtus and from nine people who understand the problem because they're living it." },
-  { icon: "calendar", title: "Quarterly Tax and Business Reinvestment Workshops", desc: "The levers most owners at your level have never had walked through, and how they connect to what the business is doing. Educational, and coordinated with your CPA — not tax advice." },
+  { icon: "calendar", title: "Quarterly “Reinvest or Harvest” Workshops — Tactical 90-Day Sprints", desc: "Every quarter, you and your cohort sit down with your real numbers and decide exactly where the next dollar goes for the next 90 days — back into the business, or out to you. These are tactical working sessions where you leave with a focused reinvestment roadmap for the business, made with your tax situation and what you are building outside the company in view. Not generic advice, and coordinated with your CPA — not tax advice." },
 ];
 
 const VIP_INCLUDED = [
@@ -124,16 +124,17 @@ const VIP_INCLUDED = [
 ];
 
 const NOT_FOR = [
-  "You want someone to hand you a plan and leave.",
-  "You aren't willing to share real numbers with the room.",
-  "You are content with your business staying where it is today.",
+  "You want broad tax tips or theory, not a working session built around your actual P&L, balance sheet, and tax return.",
+  "You aren't comfortable sharing real numbers with a vetted cohort, or letting us coordinate with your CPA.",
+  "You're looking for someone to hand you a plan and disappear, instead of committing to execute a 90-day sprint.",
+  "You're content with the business staying roughly where it is over the next year.",
 ];
 
 const FOR = [
-  "You're profitable but you can't explain why the profit isn't higher.",
-  "You're the bottleneck and you know it.",
-  "Your advisors each do one thing well but nobody is connecting them, so you know growth and money are leaking out the bottom.",
-  "You want a room of owners at your scale, not a mastermind full of people selling courses.",
+  "Your business is doing real revenue and profit, but you can't clearly see where the next dollar should go.",
+  "You want one room where reinvestment, tax, and what you are building outside the business get looked at together, instead of three advisors giving conflicting answers.",
+  "You're willing to share real numbers with a small group of owners at your level so you can pressure-test decisions together.",
+  "You like operating in 90-day sprints and want to walk out of each workshop with two or three concrete moves to execute before the next one.",
 ];
 
 const REVENUE_OPTIONS = [
