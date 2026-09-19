@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 /* Growth & Harvest Partnership — offer page.
    Single source of truth for pricing lives in PRICE / AUM_TIERS below. */
@@ -513,15 +513,18 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
   );
 
   const [lightbox, setLightbox] = useState(null);
+  const [zoomed, setZoomed] = useState(false);
+  const touchX = useRef(null);
 
-  /* Full-screen view. The dashboards are unreadable at card size, especially on
-     a phone, so the frame is a button. Escape and a tap anywhere closes it. */
+  const stepLightbox = (dir) =>
+    setLightbox(i => (i + dir + ROADMAP_SHOTS.length) % ROADMAP_SHOTS.length);
+
   useEffect(() => {
     if (lightbox === null) return;
     const onKey = (e) => {
       if (e.key === "Escape") setLightbox(null);
-      if (e.key === "ArrowLeft") setLightbox(i => (i - 1 + ROADMAP_SHOTS.length) % ROADMAP_SHOTS.length);
-      if (e.key === "ArrowRight") setLightbox(i => (i + 1) % ROADMAP_SHOTS.length);
+      if (e.key === "ArrowLeft") { setZoomed(false); stepLightbox(-1); }
+      if (e.key === "ArrowRight") { setZoomed(false); stepLightbox(1); }
     };
     window.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
@@ -529,31 +532,68 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
     return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
   }, [lightbox]);
 
+  useEffect(() => { setZoomed(false); }, [lightbox]);
+
+  /* Two modes. Fit: the image sits on screen and a horizontal swipe moves to the
+     next screen. Zoomed: the image is larger than the viewport and drag pans it,
+     so swiping is disabled. Tapping the image toggles between them — the same
+     pattern as a phone photo viewer. */
+  const onTouchStart = (e) => { touchX.current = zoomed ? null : e.touches[0].clientX; };
+  const onTouchEnd = (e) => {
+    if (touchX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchX.current;
+    touchX.current = null;
+    if (Math.abs(dx) > 45) stepLightbox(dx < 0 ? 1 : -1);
+  };
+
+  const LbNav = ({ dir }) => (
+    <button onClick={(e) => { e.stopPropagation(); setZoomed(false); stepLightbox(dir); }}
+      aria-label={dir < 0 ? "Previous screen" : "Next screen"} className="lbnav"
+      style={{
+        position: "fixed", top: "50%", transform: "translateY(-50%)", zIndex: 4,
+        [dir < 0 ? "left" : "right"]: "clamp(8px,1.8vw,22px)",
+        width: "clamp(40px,4vw,52px)", height: "clamp(40px,4vw,52px)", borderRadius: "50%",
+        display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0,
+        background: "rgba(10,14,20,.88)", border: `1px solid ${C.gold}88`, transition: "all .2s ease",
+      }}>
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
+        <path d={dir < 0 ? "M15 5L8 12L15 19" : "M9 5L16 12L9 19"} stroke={C.gold} strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </button>
+  );
+
   const Lightbox = () => lightbox === null ? null : (
     <div onClick={() => setLightbox(null)} role="dialog" aria-modal="true" aria-label="Wealth Roadmap screen"
-      className="lightbox"
+      className={`lightbox${zoomed ? " zoomed" : ""}`}
       style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(6,9,13,.975)",
-        display: "flex", alignItems: "center", justifyContent: "center", padding: "clamp(10px,3vw,40px)", cursor: "zoom-out" }}>
-      {/* On a phone the dashboards are unreadable at fit-to-screen width, so the
-          image renders wider than the viewport and the overlay scrolls. Desktop
-          just fits it to the screen. */}
+        display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "clamp(56px,8vw,64px) clamp(8px,7vw,80px)", cursor: "zoom-out",
+        overflow: zoomed ? "auto" : "hidden", WebkitOverflowScrolling: "touch" }}>
+
       <img src={ROADMAP_SHOTS[lightbox].src} alt={ROADMAP_SHOTS[lightbox].alt}
         className="lightboximg"
-        onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: 10, cursor: "default", background: "#fff" }} />
+        onClick={(e) => { e.stopPropagation(); setZoomed(z => !z); }}
+        onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}
+        style={{ borderRadius: 8, background: "#fff", flexShrink: 0,
+          cursor: zoomed ? "zoom-out" : "zoom-in",
+          ...(zoomed ? {} : { maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }) }} />
+
+      <LbNav dir={-1} />
+      <LbNav dir={1} />
+
       <button onClick={(e) => { e.stopPropagation(); setLightbox(null); }} aria-label="Close"
         style={{ position: "fixed", top: "clamp(12px,2.5vw,24px)", right: "clamp(12px,2.5vw,24px)",
-          width: 46, height: 46, borderRadius: "50%", cursor: "pointer", padding: 0, zIndex: 3,
+          width: 46, height: 46, borderRadius: "50%", cursor: "pointer", padding: 0, zIndex: 5,
           background: "rgba(10,14,20,.88)", border: `1px solid ${C.gold}88` }}>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ display: "block", margin: "0 auto" }}>
           <path d="M6 6L18 18M18 6L6 18" stroke={C.gold} strokeWidth="2.2" strokeLinecap="round" />
         </svg>
       </button>
+
       <div style={{ position: "fixed", bottom: "clamp(12px,2.5vw,26px)", left: 0, right: 0, textAlign: "center",
-        fontSize: 12.5, letterSpacing: ".06em", color: C.text3, pointerEvents: "none", zIndex: 3 }}>
-        {lightbox + 1} / {ROADMAP_SHOTS.length}
-        <span className="lbhint-d"> &middot; click outside to close</span>
-        <span className="lbhint-m"> &middot; drag to explore</span>
+        fontSize: 12.5, letterSpacing: ".05em", color: C.text3, pointerEvents: "none", zIndex: 5 }}>
+        {lightbox + 1} / {ROADMAP_SHOTS.length} &middot; {zoomed ? "tap image to zoom out" : "tap image to zoom"}
+        <span className="lbhint-m">{zoomed ? "" : " \u00b7 swipe to browse"}</span>
       </div>
     </div>
   );
@@ -934,12 +974,12 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
         /* Six stations need ~550px side by side. Below that it becomes a plain
            vertical list, numeral first. */
         .lbhint-m { display: none; }
+        /* Zoomed: wide enough to read the dashboard text, and the overlay pans.
+           Fit mode keeps the image on screen so a swipe can change screens. */
+        .lightbox.zoomed { align-items: flex-start; justify-content: flex-start; }
+        .lightbox.zoomed .lightboximg { width: 190vw; height: auto; max-width: none; max-height: none; }
         @media (max-width: 760px) {
-          .lightbox { align-items: flex-start !important; justify-content: flex-start !important;
-            overflow: auto !important; padding: 64px 0 !important; -webkit-overflow-scrolling: touch; }
-          .lightboximg { max-width: none !important; max-height: none !important;
-            width: 320vw !important; height: auto !important; border-radius: 0 !important; }
-          .lbhint-d { display: none; }
+          .lightbox.zoomed .lightboximg { width: 300vw; }
           .lbhint-m { display: inline; }
         }
         @media (max-width: 700px) {
