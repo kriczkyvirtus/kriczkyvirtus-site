@@ -319,7 +319,7 @@ const VARIANTS = {
     ),
     roadmapPrice: "$6,000",
     roadmapLine: (C) => (
-      <>The business-owner engagement fee is $6,000, and it&rsquo;s included with a first 90-day sprint in the Partnership. <strong style={{ color: C.text2, fontWeight: 600 }}>Available separately at any time.</strong></>
+      <>The business-owner engagement fee is $6,000, and <strong style={{ color: C.green, fontWeight: 600 }}>it&rsquo;s included with a first 90-day sprint in the Partnership. Available separately at any time.</strong></>
     ),
     legendFirst: "Your working session",
     legendSecond: "Inside the Collective",
@@ -428,7 +428,6 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
             position: "absolute", left: `${st.x}%`, top: `${st.y}%`, transform: "translate(-50%,-50%)",
             display: "flex", flexDirection: "column",
             alignItems: "center", gap: 10, width: "clamp(96px,14vw,146px)",
-            "--stc": `${st.c}66`,
           }}>
             <div className="stationicon" style={{ order: st.up ? 3 : 1, marginBottom: st.up ? 0 : 30, marginTop: st.up ? 30 : 0 }}>
               <st.Icon size={78} />
@@ -878,22 +877,18 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
         }
         /* Six stations need ~550px to sit side by side. Below that the labels
            collide, so the path becomes a vertical list instead. */
-        /* Six stations need ~550px side by side. Below that the path becomes a
-           vertical list: numeral first, with a dotted connector running down
-           through the numbers. */
+        /* Six stations need ~550px side by side. Below that it becomes a plain
+           vertical list, numeral first. */
         @media (max-width: 700px) {
           .pathbox { height: auto !important; display: flex; flex-direction: column; gap: 0; }
           .pathbox > svg { display: none; }
           .station { position: static !important; transform: none !important;
             flex-direction: row !important; width: 100% !important; align-items: center !important;
-            gap: 14px !important; padding: 14px 0 14px 26px !important; margin-left: 20px;
-            border-left: 2px dotted var(--stc); }
-          .station:first-of-type { border-left-color: transparent; }
+            gap: 14px !important; padding: 12px 0 !important; }
           .stationicon { order: 2 !important; margin: 0 !important; }
           .stationicon svg { width: 58px !important; height: 58px !important; }
           .stationnum { order: 1 !important; font-size: 28px !important;
-            min-width: 44px; text-align: center; margin-left: -48px;
-            background: #0D1119; padding: 6px 0; }
+            min-width: 44px; text-align: left; }
           .stationlabel { order: 3 !important; text-align: left !important; font-size: 14.5px !important; }
         }
         @media (max-width: 720px) {
