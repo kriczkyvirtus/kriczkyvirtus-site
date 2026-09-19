@@ -38,6 +38,7 @@ const TITLES = {
   '/reinvest-harvest':        'Reinvest or Harvest — Capital Allocation Scorecard',
   '/reinvest-harvest/start':  'Reinvest or Harvest — Capital Allocation Scorecard',
   '/reinvest-harvest/next':   'Your Reinvest or Harvest Results',
+  '/partnership':             'Growth & Harvest Partnership',
   '/partnership/workshop':    'Growth & Harvest Partnership',
   '/partnership/collective':  'Growth & Harvest Partnership',
   '/12cs-recurring-revenue':  'The 12 Cs of Recurring Revenue',
@@ -49,6 +50,18 @@ function TitleManager() {
   const { pathname } = useLocation()
   useEffect(() => {
     document.title = TITLES[pathname] ?? DEFAULT_TITLE
+
+    let robots = document.querySelector('meta[name="robots"]')
+    if (pathname === '/partnership') {
+      if (!robots) {
+        robots = document.createElement('meta')
+        robots.name = 'robots'
+        document.head.appendChild(robots)
+      }
+      robots.content = 'noindex, nofollow'
+    } else {
+      robots?.remove()
+    }
   }, [pathname])
   return null
 }
@@ -69,6 +82,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/reinvest-harvest" element={<ReinvestHarvestLanding />} />
         <Route path="/reinvest-harvest/start" element={<ReinvestHarvestFlow />} />
         <Route path="/reinvest-harvest/next" element={<ReinvestHarvestThankYouRoute />} />
+        <Route path="/partnership" element={<GrowthHarvestPartnership variant="session" />} />
         <Route path="/partnership/workshop" element={<GrowthHarvestPartnership variant="workshop" />} />
         <Route path="/partnership/collective" element={<GrowthHarvestPartnership variant="collective" />} />
         <Route path="/r/:token" element={<ReinvestHarvestReportRoute />} />

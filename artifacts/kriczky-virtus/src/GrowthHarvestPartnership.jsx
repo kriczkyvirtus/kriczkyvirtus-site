@@ -288,14 +288,17 @@ const VARIANTS = {
 
   session: {
     ctaLabel: "Start Your First Sprint",
-    /* ⚠️ PLACEHOLDER — this should be the onboarding step, not the
-       working-session scheduler. They have just had that conversation. */
-    ctaHref: "/partnership/start",
+    /* Straight to Stripe. This reader has already been qualified face to face
+       in a working session, so a form between "yes" and paying is pure friction.
+       ⚠️ The page must be noindex — there is no gate in front of a $3,000/month
+       subscription. */
+    ctaHref: "https://buy.stripe.com/aFa6oH3gzc1H3sjg2ycEw07",
+    ctaExternal: true,
     stickyLabel: "Start Your First Sprint",
     stickyLine: "Month one is refundable.",
     ctaSub: (C) => (
       <>You&rsquo;ve got the plan. This starts the work &mdash; first sprint, first working session, first measurable move.<br />
-      <span style={{ color: C.green }}>Your Personalized Wealth Roadmap is included with the first 90-day sprint.</span></>
+      <span style={{ color: C.green }}>Month one is refundable, and your Personalized Wealth Roadmap is included with the first 90-day sprint.</span></>
     ),
     roadmapPrice: "Included",
     roadmapLine: (C) => (
