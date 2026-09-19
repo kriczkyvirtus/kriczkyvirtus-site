@@ -315,7 +315,7 @@ const VARIANTS = {
     stickyLine: "Free to join. Start where you are.",
     ctaSub: (C) => (
       <>The Collective runs the same six stations as a group, at your own pace, with other owners working the same decisions.<br />
-      <span style={{ color: C.text3 }}>The Partnership below is what one-to-one looks like when you&rsquo;re ready for it.</span></>
+      <span style={{ color: C.green }}>Everything above is what one to one looks like when you&rsquo;re ready for it.</span></>
     ),
     roadmapPrice: "$6,000",
     roadmapLine: (C) => (
@@ -426,18 +426,18 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
         {STATIONS.map((st, i) => (
           <div key={st.label} className="station" style={{
             position: "absolute", left: `${st.x}%`, top: `${st.y}%`, transform: "translate(-50%,-50%)",
-            display: "flex", flexDirection: st.up ? "column-reverse" : "column",
-            alignItems: "center", gap: 40, width: "clamp(96px,14vw,146px)",
-            paddingTop: st.up ? 0 : 0, paddingBottom: st.up ? 0 : 0,
+            display: "flex", flexDirection: "column",
+            alignItems: "center", gap: 10, width: "clamp(96px,14vw,146px)",
+            "--stc": `${st.c}66`,
           }}>
-            <st.Icon size={78} />
-            <div className="stationtext" style={{ textAlign: "center", minHeight: 78 }}>
-              <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 36, lineHeight: 1, fontWeight: 700, color: `${st.c}99`, marginBottom: 6 }}>
-                {String(i + 1).padStart(2, "0")}
-              </div>
-              <div style={{ fontSize: "clamp(11.5px,1.6vw,13.5px)", fontWeight: 600, lineHeight: 1.3, color: C.text2 }}>
-                {st.label}
-              </div>
+            <div className="stationicon" style={{ order: st.up ? 3 : 1, marginBottom: st.up ? 0 : 30, marginTop: st.up ? 30 : 0 }}>
+              <st.Icon size={78} />
+            </div>
+            <div className="stationnum" style={{ order: 2, fontFamily: "'Playfair Display',serif", fontSize: 36, lineHeight: 1, fontWeight: 700, color: `${st.c}99` }}>
+              {String(i + 1).padStart(2, "0")}
+            </div>
+            <div className="stationlabel" style={{ order: st.up ? 1 : 3, fontSize: "clamp(11.5px,1.6vw,13.5px)", fontWeight: 600, lineHeight: 1.3, color: C.text2, textAlign: "center" }}>
+              {st.label}
             </div>
           </div>
         ))}
@@ -502,9 +502,8 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
     <button onClick={() => stepShot(dir)} aria-label={dir < 0 ? "Previous screen" : "Next screen"}
       className="shotarrow"
       style={{
-        position: "absolute", top: "50%", transform: "translateY(-50%)",
-        [dir < 0 ? "left" : "right"]: "clamp(6px,1.4vw,14px)",
-        width: "clamp(34px,4.4vw,46px)", height: "clamp(34px,4.4vw,46px)", borderRadius: "50%",
+        flex: "0 0 auto",
+        width: "clamp(30px,4vw,44px)", height: "clamp(30px,4vw,44px)", borderRadius: "50%",
         display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
         background: "rgba(10,14,20,.72)", border: `1px solid ${C.gold}66`, backdropFilter: "blur(6px)", padding: 0, zIndex: 3,
       }}>
@@ -516,7 +515,10 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
 
   const RoadmapCarousel = () => (
     <div>
-      <div style={{ position: "relative", borderRadius: 14, overflow: "hidden", border: `1px solid ${C.border2}`, background: "#fff", aspectRatio: "16/9" }}>
+      {/* Arrows sit outside the frame so they never cover a dashboard. */}
+      <div className="shotrow" style={{ display: "flex", alignItems: "center", gap: "clamp(6px,1.4vw,14px)" }}>
+      <ShotArrow dir={-1} />
+      <div style={{ position: "relative", flex: 1, minWidth: 0, borderRadius: 14, overflow: "hidden", border: `1px solid ${C.border2}`, background: "#fff", aspectRatio: "16/9" }}>
         {ROADMAP_SHOTS.map((s2, i) => (
           <img key={s2.src} src={s2.src} alt={s2.alt} loading={i === 0 ? "eager" : "lazy"}
             style={{
@@ -524,8 +526,8 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
               opacity: i === shot ? 1 : 0, transition: "opacity .55s ease", display: "block",
             }} />
         ))}
-        <ShotArrow dir={-1} />
-        <ShotArrow dir={1} />
+      </div>
+      <ShotArrow dir={1} />
       </div>
 
       <div style={{ display: "flex", justifyContent: "center", gap: 7, marginTop: 14 }}>
@@ -562,7 +564,7 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
 
   const CTA = ({ label = V.ctaLabel, sub }) => (
     <div style={{ textAlign: "center" }}>
-      <a href={V.ctaHref} className="cta" {...(V.ctaExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      <a href={V.ctaHref} className="cta ctamain" {...(V.ctaExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
         style={{ display: "inline-block", padding: "20px 52px", borderRadius: 999, textDecoration: "none",
           background: `linear-gradient(135deg, ${C.gold}2e, ${C.gold}12)`, border: `1.5px solid ${C.gold}88`,
           boxShadow: `0 0 34px ${C.gold}26`, transition: "all .25s ease" }}>
@@ -591,7 +593,7 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
         background: "rgba(10,14,20,.94)", backdropFilter: "blur(14px)",
         borderTop: `1px solid ${C.gold}33`, padding: "13px 20px",
       }}>
-        <div style={{ maxWidth: 940, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+        <div className="stickyrow" style={{ maxWidth: 940, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
           {/* Was "$3,000/month · no contract · first month refundable", which read
               as though clicking started a $3,000 subscription. It starts a free
               scorecard, and nothing is charged at any point on this path. */}
@@ -868,7 +870,7 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
         .cta:hover { box-shadow: 0 0 48px ${C.gold}33, 0 8px 22px rgba(0,0,0,.45) !important; border-color: ${C.gold}99 !important; transform: translateY(-1px); }
         .cta { transition: all .25s ease; }
         .shotarrow { transition: all .2s ease; }
-        .shotarrow:hover { background: rgba(10,14,20,.9) !important; border-color: ${C.gold} !important; transform: translateY(-50%) scale(1.07); }
+        .shotarrow:hover { background: rgba(10,14,20,.9) !important; border-color: ${C.gold} !important; transform: scale(1.07); }
         @media (max-width: 880px) {
           .fitgrid, .workgrid, .vizgrid { grid-template-columns: 1fr !important; }
           .barbellrow { flex-direction: column !important; gap: 14px !important; }
@@ -876,18 +878,39 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
         }
         /* Six stations need ~550px to sit side by side. Below that the labels
            collide, so the path becomes a vertical list instead. */
+        /* Six stations need ~550px side by side. Below that the path becomes a
+           vertical list: numeral first, with a dotted connector running down
+           through the numbers. */
         @media (max-width: 700px) {
-          .pathbox { height: auto !important; display: flex; flex-direction: column; gap: 4px; padding-left: 4px; }
+          .pathbox { height: auto !important; display: flex; flex-direction: column; gap: 0; }
           .pathbox > svg { display: none; }
           .station { position: static !important; transform: none !important;
             flex-direction: row !important; width: 100% !important; align-items: center !important;
-            gap: 16px !important; padding: 10px 0 10px 16px !important;
-            border-left: 1px solid rgba(255,255,255,.07); }
-          .station .stationtext { min-height: 0 !important; }
+            gap: 14px !important; padding: 14px 0 14px 26px !important; margin-left: 20px;
+            border-left: 2px dotted var(--stc); }
           .station:first-of-type { border-left-color: transparent; }
-          .stationtext { text-align: left !important; }
-          .stationtext > div:first-child { display: inline-block; margin-right: 8px; }
-          .stationtext > div:last-child { display: inline; }
+          .stationicon { order: 2 !important; margin: 0 !important; }
+          .stationicon svg { width: 58px !important; height: 58px !important; }
+          .stationnum { order: 1 !important; font-size: 28px !important;
+            min-width: 44px; text-align: center; margin-left: -48px;
+            background: #0D1119; padding: 6px 0; }
+          .stationlabel { order: 3 !important; text-align: left !important; font-size: 14.5px !important; }
+        }
+        @media (max-width: 720px) {
+          /* Button above, caption centred beneath it — side by side leaves the
+             button squeezed against the text at phone width. */
+          .stickyrow { flex-direction: column-reverse !important; gap: 10px !important; text-align: center; }
+          .stickyrow .cta { width: auto !important; }
+          .stickytext { text-align: center !important; }
+          .stickybreak { display: none; }
+          /* Labels stay either side of the barbell, just smaller. */
+          .barbellrow { flex-direction: row !important; gap: 10px !important; }
+          .barbellrow span { font-size: 11px !important; letter-spacing: .08em !important; }
+          .barbellrow > div { width: clamp(96px,30vw,150px) !important; }
+          /* The bottom CTA ran wider than the viewport and stopped centring. */
+          .cta { max-width: 100%; }
+          .ctamain { padding: 18px 20px !important; }
+          .ctamain span { font-size: clamp(15px,4.2vw,20px) !important; white-space: normal !important; }
         }
         @media (max-width: 520px) {
           .stickytext { font-size: 12.5px !important; }
