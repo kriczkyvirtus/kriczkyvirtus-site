@@ -299,7 +299,7 @@ const VARIANTS = {
     stickyLine: "Month one is refundable.",
     stickySecond: "No contract. Cancel any time.",
     ctaSub: (C) => (
-      <>You&rsquo;ve got the plan. This starts the work.<br />
+      <>You&rsquo;ve got the plan. This starts the hands-on work &mdash; executing against today&rsquo;s constraint, and as it moves.<br />
       <span style={{ color: C.green }}>Month one is refundable, and your Wealth Roadmap comes with the first sprint.</span></>
     ),
     roadmapPrice: "Included",
