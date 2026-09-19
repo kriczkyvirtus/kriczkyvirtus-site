@@ -400,7 +400,7 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
     { x: 6,  y: 70, c: C.gold,  Icon: IcStartHere,    label: "Reinvest Or Harvest?",  up: false },
     { x: 23, y: 42, c: C.gold,  Icon: IcKnowNumbers,  label: "Know Your Numbers",     up: true  },
     { x: 40, y: 62, c: C.gold,  Icon: IcConstraint,   label: "Find The Constraint",   up: false },
-    { x: 57, y: 34, c: C.green, Icon: IcProfitSplit,  label: "The Profit Split",      up: true  },
+    { x: 57, y: 34, c: C.green, Icon: IcProfitSplit,  label: "The Profit Split System", up: true  },
     { x: 74, y: 56, c: C.green, Icon: IcBuildOutside, label: "Build The Outside",     up: false },
     { x: 92, y: 24, c: C.cyan,  Icon: IcNorthStar,    label: "Your Wealth North Star", up: true },
   ];
@@ -512,12 +512,59 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
     </button>
   );
 
+  const [lightbox, setLightbox] = useState(null);
+
+  /* Full-screen view. The dashboards are unreadable at card size, especially on
+     a phone, so the frame is a button. Escape and a tap anywhere closes it. */
+  useEffect(() => {
+    if (lightbox === null) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") setLightbox(null);
+      if (e.key === "ArrowLeft") setLightbox(i => (i - 1 + ROADMAP_SHOTS.length) % ROADMAP_SHOTS.length);
+      if (e.key === "ArrowRight") setLightbox(i => (i + 1) % ROADMAP_SHOTS.length);
+    };
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+  }, [lightbox]);
+
+  const Lightbox = () => lightbox === null ? null : (
+    <div onClick={() => setLightbox(null)} role="dialog" aria-modal="true" aria-label="Wealth Roadmap screen"
+      className="lightbox"
+      style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(6,9,13,.975)",
+        display: "flex", alignItems: "center", justifyContent: "center", padding: "clamp(10px,3vw,40px)", cursor: "zoom-out" }}>
+      {/* On a phone the dashboards are unreadable at fit-to-screen width, so the
+          image renders wider than the viewport and the overlay scrolls. Desktop
+          just fits it to the screen. */}
+      <img src={ROADMAP_SHOTS[lightbox].src} alt={ROADMAP_SHOTS[lightbox].alt}
+        className="lightboximg"
+        onClick={(e) => e.stopPropagation()}
+        style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: 10, cursor: "default", background: "#fff" }} />
+      <button onClick={(e) => { e.stopPropagation(); setLightbox(null); }} aria-label="Close"
+        style={{ position: "fixed", top: "clamp(12px,2.5vw,24px)", right: "clamp(12px,2.5vw,24px)",
+          width: 46, height: 46, borderRadius: "50%", cursor: "pointer", padding: 0, zIndex: 3,
+          background: "rgba(10,14,20,.88)", border: `1px solid ${C.gold}88` }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ display: "block", margin: "0 auto" }}>
+          <path d="M6 6L18 18M18 6L6 18" stroke={C.gold} strokeWidth="2.2" strokeLinecap="round" />
+        </svg>
+      </button>
+      <div style={{ position: "fixed", bottom: "clamp(12px,2.5vw,26px)", left: 0, right: 0, textAlign: "center",
+        fontSize: 12.5, letterSpacing: ".06em", color: C.text3, pointerEvents: "none", zIndex: 3 }}>
+        {lightbox + 1} / {ROADMAP_SHOTS.length}
+        <span className="lbhint-d"> &middot; click outside to close</span>
+        <span className="lbhint-m"> &middot; drag to explore</span>
+      </div>
+    </div>
+  );
+
   const RoadmapCarousel = () => (
     <div>
       {/* Arrows sit outside the frame so they never cover a dashboard. */}
       <div className="shotrow" style={{ display: "flex", alignItems: "center", gap: "clamp(6px,1.4vw,14px)" }}>
       <ShotArrow dir={-1} />
-      <div style={{ position: "relative", flex: 1, minWidth: 0, borderRadius: 14, overflow: "hidden", border: `1px solid ${C.border2}`, background: "#fff", aspectRatio: "16/9" }}>
+      <button onClick={() => { setAutoShots(false); setLightbox(shot); }} aria-label="Open full screen"
+        style={{ position: "relative", flex: 1, minWidth: 0, borderRadius: 14, overflow: "hidden", border: `1px solid ${C.border2}`, background: "#fff", aspectRatio: "16/9", padding: 0, cursor: "zoom-in", display: "block" }}>
         {ROADMAP_SHOTS.map((s2, i) => (
           <img key={s2.src} src={s2.src} alt={s2.alt} loading={i === 0 ? "eager" : "lazy"}
             style={{
@@ -525,7 +572,7 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
               opacity: i === shot ? 1 : 0, transition: "opacity .55s ease", display: "block",
             }} />
         ))}
-      </div>
+      </button>
       <ShotArrow dir={1} />
       </div>
 
@@ -537,7 +584,10 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
         ))}
       </div>
 
-      <p style={{ fontSize: "clamp(10px,1.4vw,11.5px)", lineHeight: 1.6, color: C.text4, margin: "18px 0 0", textAlign: "left" }}>
+      <p style={{ fontSize: "clamp(11px,1.5vw,12.5px)", color: C.text3, margin: "12px 0 0", textAlign: "center" }}>
+        Tap any screen to view it full size.
+      </p>
+      <p style={{ fontSize: "clamp(10px,1.4vw,11.5px)", lineHeight: 1.6, color: C.text4, margin: "16px 0 0", textAlign: "left" }}>
         {ROADMAP_DISCLOSURE}
       </p>
     </div>
@@ -597,8 +647,10 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
               as though clicking started a $3,000 subscription. It starts a free
               scorecard, and nothing is charged at any point on this path. */}
           <span className="stickytext" style={{ fontSize: "clamp(12.5px,1.9vw,15px)", color: C.text2, lineHeight: 1.4 }}>
-            {V.stickyLine}<br className="stickybreak" />
-            <span style={{ color: C.text3 }}> Nothing to pay, nothing to sign.</span>
+            {/* Two spans rather than a <br> — the caption must break between the
+                sentences, not wherever the second one happens to run out. */}
+            <span style={{ display: "inline" }}>{V.stickyLine}</span>{" "}
+            <span className="stickysecond" style={{ color: C.text3 }}>Nothing to pay, nothing to sign.</span>
           </span>
           <a href={V.ctaHref} className="cta" {...(V.ctaExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
             style={{ flexShrink: 0, padding: "18px 34px", borderRadius: 999, textDecoration: "none",
@@ -607,6 +659,8 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
           </a>
         </div>
       </div>
+
+      <Lightbox />
 
       <div style={{ position: "relative", zIndex: 2 }}>
 
@@ -879,6 +933,15 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
            collide, so the path becomes a vertical list instead. */
         /* Six stations need ~550px side by side. Below that it becomes a plain
            vertical list, numeral first. */
+        .lbhint-m { display: none; }
+        @media (max-width: 760px) {
+          .lightbox { align-items: flex-start !important; justify-content: flex-start !important;
+            overflow: auto !important; padding: 64px 0 !important; -webkit-overflow-scrolling: touch; }
+          .lightboximg { max-width: none !important; max-height: none !important;
+            width: 320vw !important; height: auto !important; border-radius: 0 !important; }
+          .lbhint-d { display: none; }
+          .lbhint-m { display: inline; }
+        }
         @media (max-width: 700px) {
           .pathbox { height: auto !important; display: flex; flex-direction: column; gap: 0; }
           .pathbox > svg { display: none; }
@@ -897,7 +960,7 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
           .stickyrow { flex-direction: column-reverse !important; gap: 10px !important; text-align: center; }
           .stickyrow .cta { width: auto !important; }
           .stickytext { text-align: center !important; }
-          .stickybreak { display: none; }
+          .stickysecond { display: block; }
           /* Labels stay either side of the barbell, just smaller. */
           .barbellrow { flex-direction: row !important; gap: 10px !important; }
           .barbellrow span { font-size: 11px !important; letter-spacing: .08em !important; }
