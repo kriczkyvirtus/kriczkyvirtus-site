@@ -272,6 +272,7 @@ const VARIANTS = {
     ctaHref: "/reinvest-harvest/next",
     stickyLabel: "Book Your Execution Debrief",
     stickyLine: "The debrief is free.",
+    stickySecond: "Nothing to pay, nothing to sign.",
     ctaSub: (C) => (
       <>60 minutes, free. What your real options are for executing the plan, how you&rsquo;ll know it&rsquo;s working week by week rather than at day 90, and where this first sprint sits in the next 24 months.<br />
       <span style={{ color: C.green }}>This is how you start the Wealth Roadmap that came with your ticket.</span></>
@@ -296,9 +297,10 @@ const VARIANTS = {
     ctaExternal: true,
     stickyLabel: "Start Your First Sprint",
     stickyLine: "Month one is refundable.",
+    stickySecond: "No contract. Cancel any time.",
     ctaSub: (C) => (
-      <>You&rsquo;ve got the plan. This starts the work &mdash; first sprint, first working session, first measurable move.<br />
-      <span style={{ color: C.green }}>Month one is refundable, and your Personalized Wealth Roadmap is included with the first 90-day sprint.</span></>
+      <>You&rsquo;ve got the plan. This starts the work.<br />
+      <span style={{ color: C.green }}>Month one is refundable, and your Wealth Roadmap comes with the first sprint.</span></>
     ),
     roadmapPrice: "Included",
     roadmapLine: (C) => (
@@ -316,6 +318,7 @@ const VARIANTS = {
     ctaExternal: true,
     stickyLabel: "Join Your Cohort",
     stickyLine: "Free to join. Start where you are.",
+    stickySecond: "Nothing to pay, nothing to sign.",
     ctaSub: (C) => (
       <>The Collective runs the same six stations as a group, at your own pace, with other owners working the same decisions.<br />
       <span style={{ color: C.green }}>Everything above is what one to one looks like when you&rsquo;re ready for it.</span></>
@@ -664,7 +667,7 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
           {label} <span style={{ marginLeft: 6 }}>&#8594;</span>
         </span>
       </a>
-      {sub && <p style={{ fontSize: "clamp(13px,1.9vw,15px)", color: C.text3, margin: "16px 0 0", lineHeight: 1.5 }}>{sub}</p>}
+      {sub && <p style={{ fontSize: "clamp(13px,1.9vw,15px)", color: C.text3, margin: "16px auto 0", lineHeight: 1.55, maxWidth: 560, textWrap: "balance" }}>{sub}</p>}
     </div>
   );
 
@@ -693,7 +696,7 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
             {/* Two spans rather than a <br> — the caption must break between the
                 sentences, not wherever the second one happens to run out. */}
             <span style={{ display: "inline" }}>{V.stickyLine}</span>{" "}
-            <span className="stickysecond" style={{ color: C.text3 }}>Nothing to pay, nothing to sign.</span>
+            <span className="stickysecond" style={{ color: C.text3 }}>{V.stickySecond}</span>
           </span>
           <a href={V.ctaHref} className="cta" {...(V.ctaExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
             style={{ flexShrink: 0, padding: "18px 34px", borderRadius: 999, textDecoration: "none",
