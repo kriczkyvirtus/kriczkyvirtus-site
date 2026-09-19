@@ -19,6 +19,7 @@ import AcqVantageBonus from './AcqVantageBonus.jsx'
 import ValuationEstimate from './ValuationEstimate.jsx'
 import Cohort from './Cohort.jsx'
 import Disclosures from './Disclosures.jsx'
+import GrowthHarvestPartnership from './GrowthHarvestPartnership.jsx'
 import ReinvestHarvestLanding from './tools/ReinvestHarvestLanding.jsx'
 import ReinvestHarvestFlow from './tools/ReinvestHarvestFlow.jsx'
 import { ReinvestHarvestThankYouRoute, ReinvestHarvestReportRoute } from './tools/ReinvestHarvestRoutes.jsx'
@@ -37,6 +38,8 @@ const TITLES = {
   '/reinvest-harvest':        'Reinvest or Harvest — Capital Allocation Scorecard',
   '/reinvest-harvest/start':  'Reinvest or Harvest — Capital Allocation Scorecard',
   '/reinvest-harvest/next':   'Your Reinvest or Harvest Results',
+  '/partnership/workshop':    'Growth & Harvest Partnership',
+  '/partnership/collective':  'Growth & Harvest Partnership',
   '/12cs-recurring-revenue':  'The 12 Cs of Recurring Revenue',
 }
 
@@ -66,6 +69,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/reinvest-harvest" element={<ReinvestHarvestLanding />} />
         <Route path="/reinvest-harvest/start" element={<ReinvestHarvestFlow />} />
         <Route path="/reinvest-harvest/next" element={<ReinvestHarvestThankYouRoute />} />
+        <Route path="/partnership/workshop" element={<GrowthHarvestPartnership variant="workshop" />} />
+        <Route path="/partnership/collective" element={<GrowthHarvestPartnership variant="collective" />} />
         <Route path="/r/:token" element={<ReinvestHarvestReportRoute />} />
         <Route path="/12cs-recurring-revenue" element={<RecurringRevenue12Cs />} />
         <Route path="/constraint-roadmap" element={<ConstraintRoadmap />} />

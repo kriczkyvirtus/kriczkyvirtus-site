@@ -443,7 +443,7 @@ export default function ReinvestHarvestThankYou({
                 describe an offer that isn't being made. */}
             {offerKey === "oneToOne" && (
               <p style={{ fontSize: "clamp(13.5px,3.1vw,15.5px)", lineHeight: 1.6, color: C.text3, maxWidth: 680, margin: "18px auto 0" }}>
-                For owners doing $1M&ndash;$10M who want a clear answer to &ldquo;how much stays in the business vs comes out to me&rdquo; in the next 12 months.
+                For owners doing $1M&ndash;$10M who want a clear answer to &ldquo;how much stays in the business vs comes out to me&rdquo; and hands-on help executing it as the constraint moves.
               </p>
             )}
           </section>
