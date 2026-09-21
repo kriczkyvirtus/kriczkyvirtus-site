@@ -273,6 +273,9 @@ const VARIANTS = {
        NOT point at /reinvest-harvest/next — that calendar's Zap applies tag 5,
        which exits people from the RH nurture and miscounts the conversion. */
     ctaHref: "/execution-debrief",
+    /* New tab, so the Partnership page stays open. They may want the fee
+       schedule, Roadmap or guarantee in front of them while they book. */
+    ctaExternal: true,
     stickyLabel: "Book Your Execution Debrief",
     stickyLine: "The debrief is free.",
     stickySecond: "Nothing to pay, nothing to sign.",
@@ -298,6 +301,7 @@ const VARIANTS = {
        subscription. */
     ctaHref: "https://buy.stripe.com/aFa6oH3gzc1H3sjg2ycEw07",
     ctaExternal: true,
+    ctaRel: "noopener noreferrer",
     stickyLabel: "Start Your First Sprint",
     stickyLine: "Month one is refundable.",
     stickySecond: "No contract. Cancel any time.",
@@ -361,6 +365,11 @@ const Shield = ({ size = 32 }) => (
 
 export default function GrowthHarvestPartnership({ variant = "workshop" }) {
   const V = VARIANTS[variant] || VARIANTS.workshop;
+  /* rel is set per variant rather than derived from the URL. noreferrer strips
+     the referrer header, so it's only used where hiding the source matters. */
+  const ctaTarget = V.ctaExternal
+    ? { target: "_blank", rel: V.ctaRel || "noopener" }
+    : {};
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -662,7 +671,7 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
 
   const CTA = ({ label = V.ctaLabel, sub }) => (
     <div style={{ textAlign: "center" }}>
-      <a href={V.ctaHref} className="cta ctamain" {...(V.ctaExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      <a href={V.ctaHref} className="cta ctamain" {...ctaTarget}
         style={{ display: "inline-block", padding: "20px 52px", borderRadius: 999, textDecoration: "none",
           background: `linear-gradient(135deg, ${C.gold}2e, ${C.gold}12)`, border: `1.5px solid ${C.gold}88`,
           boxShadow: `0 0 34px ${C.gold}26`, transition: "all .25s ease" }}>
@@ -701,7 +710,7 @@ export default function GrowthHarvestPartnership({ variant = "workshop" }) {
             <span style={{ display: "inline" }}>{V.stickyLine}</span>{" "}
             <span className="stickysecond" style={{ color: C.text3 }}>{V.stickySecond}</span>
           </span>
-          <a href={V.ctaHref} className="cta" {...(V.ctaExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          <a href={V.ctaHref} className="cta" {...ctaTarget}
             style={{ flexShrink: 0, padding: "18px 34px", borderRadius: 999, textDecoration: "none",
               background: `linear-gradient(135deg, ${C.gold}2e, ${C.gold}12)`, border: `1.5px solid ${C.gold}88` }}>
             <span style={{ fontWeight: 700, fontSize: "clamp(13px,1.9vw,19px)", letterSpacing: ".02em", color: C.gold, whiteSpace: "nowrap" }}>{V.stickyLabel} &#8594;</span>
