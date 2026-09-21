@@ -51,7 +51,7 @@ export default function ExecutionDebrief() {
   const COVERS = [
     "What your real options are for executing the plan you built.",
     "How you\u2019ll know it\u2019s working week by week, rather than at day 90.",
-    "Where this first sprint sits in the next 24 months.",
+    "Where this first 90-day sprint fits into the next 24 months of building both the business and your personal wealth.",
   ];
 
   return (
