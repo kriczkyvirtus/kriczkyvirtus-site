@@ -269,7 +269,10 @@ const IcBarbell = ({ width = 300 }) => (
 const VARIANTS = {
   workshop: {
     ctaLabel: "Book Your Execution Debrief",
-    ctaHref: "/reinvest-harvest/next",
+    /* The Execution Debrief has its own page and its own iClosed event. It must
+       NOT point at /reinvest-harvest/next — that calendar's Zap applies tag 5,
+       which exits people from the RH nurture and miscounts the conversion. */
+    ctaHref: "/execution-debrief",
     stickyLabel: "Book Your Execution Debrief",
     stickyLine: "The debrief is free.",
     stickySecond: "Nothing to pay, nothing to sign.",
