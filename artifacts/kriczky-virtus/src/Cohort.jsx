@@ -156,7 +156,7 @@ const OWNERSHIP_OPTIONS = [
 
 const TIER_OPTIONS = [
   "Premium - $797/mo",
-  "VIP - $1,997/mo",
+  "VIP - $3,000/mo",
   "Either - help me choose",
   "Not sure yet",
 ];
@@ -539,7 +539,7 @@ export default function Cohort() {
             <div style={{ ...CARD, flex: 1, padding: mob ? "26px 20px" : "32px 28px", textAlign: "center" }}>
               <Eyebrow>VIP &mdash; founding</Eyebrow>
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 7, marginBottom: 10 }}>
-                <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: mob ? 42 : 54, fontWeight: 700, color: C.text1, lineHeight: 1 }}>$1,997</span>
+                <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: mob ? 42 : 54, fontWeight: 700, color: C.text1, lineHeight: 1 }}>$3,000</span>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: C.text2 }}>/month</span>
               </div>
               <P mob={mob} style={{ fontSize: 13, marginBottom: 16 }}>
