@@ -74,6 +74,39 @@ module.exports = async function handler(req, res) {
     const categories = summary?.categories;
     const totalScore = summary?.totalScore;
 
+    if (tool === "workshop-registration") {
+      const { firstName, lastName, phone, company, printName, revenue, outcome, appetite } = req.body;
+      const required = { firstName, lastName, email, phone, company, printName, revenue, outcome, appetite };
+      if (Object.values(required).some(value => typeof value !== "string" || !value.trim())) {
+        return res.status(400).json({ error: "All workshop registration fields are required" });
+      }
+      const fullName = `${firstName.trim()} ${lastName.trim()}`;
+      if (printName.trim() !== fullName || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+        return res.status(400).json({ error: "Invalid workshop registration details" });
+      }
+      const revenueBands = ["Under $500K", "$500K – $1M", "$1M – $3M", "$3M – $10M", "$10M+"];
+      if (!revenueBands.includes(revenue)) {
+        return res.status(400).json({ error: "Invalid revenue band" });
+      }
+      try {
+        await appendLead({
+          name: fullName, firstName: firstName.trim(), lastName: lastName.trim(),
+          email: email.trim(), phone: phone.trim(), businessName: company.trim(),
+          tool, printName: fullName, revenueBand: revenue,
+          outcome, appetite,
+          summary: {}, answers: {}, timestamp: new Date().toISOString(),
+        });
+        await syncContact({
+          name: fullName, email: email.trim(), phone: phone.trim(), tool,
+          revenueBand: revenue, outcome, appetite,
+        });
+      } catch (registrationError) {
+        console.error("[Workshop] Registration capture failed:", registrationError);
+        return res.status(503).json({ error: "Registration could not be saved. Please try again." });
+      }
+      return res.status(200).json({ success: true });
+    }
+
     if (!name || !email) {
       return res.status(400).json({ error: "Missing required fields: name, email" });
     }

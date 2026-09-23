@@ -20,6 +20,7 @@ import ValuationEstimate from './ValuationEstimate.jsx'
 import Cohort from './Cohort.jsx'
 import Disclosures from './Disclosures.jsx'
 import GrowthHarvestPartnership from './GrowthHarvestPartnership.jsx'
+import WorkshopPage from './WorkshopPage.jsx'
 import ExecutionDebrief from './ExecutionDebrief.jsx'
 import ReinvestHarvestLanding from './tools/ReinvestHarvestLanding.jsx'
 import ReinvestHarvestFlow from './tools/ReinvestHarvestFlow.jsx'
@@ -42,6 +43,7 @@ const TITLES = {
   '/partnership':             'Growth & Harvest Partnership',
   '/partnership/workshop':    'Growth & Harvest Partnership',
   '/partnership/collective':  'Growth & Harvest Partnership',
+  '/workshop-rh':             'Reinvest or Harvest Workshop — Kriczky Virtus',
   '/execution-debrief':       'Execution Debrief — Kriczky Virtus',
   '/12cs-recurring-revenue':  'The 12 Cs of Recurring Revenue',
 }
@@ -87,6 +89,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/partnership" element={<GrowthHarvestPartnership variant="session" />} />
         <Route path="/partnership/workshop" element={<GrowthHarvestPartnership variant="workshop" />} />
         <Route path="/partnership/collective" element={<GrowthHarvestPartnership variant="collective" />} />
+        <Route path="/workshop-rh" element={<WorkshopPage />} />
         <Route path="/execution-debrief" element={<ExecutionDebrief />} />
         <Route path="/r/:token" element={<ReinvestHarvestReportRoute />} />
         <Route path="/12cs-recurring-revenue" element={<RecurringRevenue12Cs />} />
