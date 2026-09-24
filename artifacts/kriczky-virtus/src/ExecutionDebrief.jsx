@@ -104,7 +104,7 @@ export default function ExecutionDebrief() {
               {/* The Roadmap is already theirs — this is redemption, not an offer. */}
               <div style={{ marginTop: 24, padding: "20px 20px", borderRadius: 13, background: `${C.green}0d`, border: `1px solid ${C.green}3d` }}>
                 <p style={{ fontSize: "clamp(14.5px,2.1vw,16.5px)", lineHeight: 1.6, color: C.text1, margin: 0 }}>
-                  Booking this is also how you start the <strong style={{ color: C.green, fontWeight: 700 }}>Personalized Wealth Roadmap</strong> that came with your ticket.
+                  Booking this is also how you start the <span style={{ color: C.text3, textDecoration: "line-through" }}>$6,000</span> <strong style={{ color: C.green, fontWeight: 700 }}>Personalized Wealth Roadmap</strong> that came with your ticket.
                 </p>
               </div>
             </div>
@@ -136,7 +136,7 @@ export default function ExecutionDebrief() {
             </span>
           </div>
           <p style={{ fontSize: 11.5, lineHeight: 1.65, color: C.text4, textAlign: "center", maxWidth: 780, margin: "0 auto" }}>
-            Business advisory services are provided by Kriczky Virtus, LLC. Investment advisory services are provided by Kriczky Wealth Management LLC, a registered investment advisor. Edward Kriczky owns both firms, which is a conflict of interest disclosed in Form ADV. You are never required to engage either firm to work with the other, and you may use any business consultant or investment advisor you choose. Form ADV is provided before any investment advisory agreement is signed. Nothing on this page is individualized financial, tax, legal, or accounting advice, or a recommendation to pursue any particular course of action. No outcome is projected or guaranteed. Coordinate any decision with your CPA, attorney, and other advisors before acting.
+            Business advisory services are provided by Kriczky Virtus, LLC. Investment advisory services are provided by Kriczky Wealth Management LLC, an Investment Advisor in the state of Pennsylvania and Virginia. Professionals are registered with Kriczky Wealth Management LLC. Edward Kriczky owns both firms, which is a conflict of interest disclosed in Form ADV. You are never required to engage either firm to work with the other, and you may use any business consultant or investment advisor you choose. Form ADV is provided before any investment advisory agreement is signed. Nothing on this page is individualized financial, tax, legal, or accounting advice, or a recommendation to pursue any particular course of action. No outcome is projected or guaranteed. Coordinate any decision with your CPA, attorney, and other advisors before acting.
           </p>
         </div>
       </div>
