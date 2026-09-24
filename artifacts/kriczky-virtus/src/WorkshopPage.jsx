@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 /* Lucide — ISC licensed, professionally drawn on a 24px grid: consistent stroke
    weight and optical balance across the set, which hand-drawn paths can't match.
    ⚠️ REPLIT: npm i lucide-react */
 import {
   TreeDeciduous, Hammer, Wrench, HeartPulse, Calculator, Home, Stethoscope, Store, Briefcase, GraduationCap,
+  Magnet, Handshake, PackageCheck,
 } from "lucide-react";
 
 /* Reinvest or Harvest Workshop — /workshop-rh
@@ -54,17 +55,17 @@ const GRAIN = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http:
 
 /* Each stage carries what sits underneath it — shown on the back of the card. */
 const STAGES = [
-  { n: "1", name: "Qualified Leads", c: C.gold, icon: "StartHere",
+  { n: "1", name: "Qualified Leads", c: C.gold, icon: Magnet,
     what: "Not enough of the right customers.",
     tell: "Capacity sits idle, or you take work you shouldn’t.",
     sub: ["Improving your offer", "Spending more on ads", "Fixing ad targeting"],
     mines: ["Acquisition channel dependency", "Client concentration", "Growing into customers you don’t want"] },
-  { n: "2", name: "Capacity to Sell", c: C.green, icon: "KnowNumbers",
+  { n: "2", name: "Capacity to Sell", c: C.green, icon: Handshake,
     what: "Leads arrive faster than you can convert them.",
     tell: "Good leads go cold waiting for a reply or a proposal.",
     sub: ["Hiring the right sales role", "Talent compensation structure", "A sales motion that’s easy to buy from"],
     mines: ["Revenue that grows only through you", "Sales comp crushing margins", "No recurring revenue offer"] },
-  { n: "3", name: "Capacity to Fulfill", c: C.cyan, icon: "Constraint",
+  { n: "3", name: "Capacity to Fulfill", c: C.cyan, icon: PackageCheck,
     what: "You can’t fulfill more without breaking.",
     tell: "Quality slips or lead times grow as volume rises.",
     sub: ["Equipping your team with better tools", "Workflow automation", "Margin structure"],
@@ -79,7 +80,7 @@ const LEAVE_WITH = [
 ];
 
 const SLIDES = [
-  ["/img/workshop/roadmap.jpg", "Stations 01 to 03, done"],
+  ["/img/workshop/roadmap.png", "Stations 01 to 03, done"],
   ["/img/workshop/sprint.jpg", "Your 90-day sprint"],
   ["/img/workshop/books.png", "Your workbook and Sprint Ledger"],
   ["/img/workshop/wealth.jpg", "Your Personalized Wealth Roadmap"],
@@ -89,9 +90,9 @@ const AGENDA = [
   ["12:00", "Lunch — provided"],
   ["1:00", "Where your next dollar of profit actually goes"],
   ["1:30", "Your two scores, and the direction they’re heading"],
-  ["2:10", "Your three gaps, your value drivers, your SWOT"],
+  ["2:10", "Your three gaps and your value drivers"],
   ["2:55", "The one stage capping everything else"],
-  ["3:35", "Your vision, and the One Thing that decides next year"],
+  ["3:35", "Your vision, and the “One Thing” that decides next year"],
   ["4:05", "Your 90-day plan, and the first move this week"],
   ["5:00", "Happy hour — food and drinks provided"],
 ];
@@ -443,49 +444,117 @@ const Arrow = ({ c, w = 44 }) => (
   </svg>
 );
 
-// Keep section identity stable across carousel ticks so observed story nodes
-// are not replaced while IntersectionObserver still watches the old element.
+const wrap = { maxWidth: 1260, margin: "0 auto", padding: "0 24px" };
+const col = { maxWidth: 820, margin: "0 auto", padding: "0 24px" };
+const KICKER = { fontSize: 11.5, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", margin: "0 0 14px", color: C.gold };
+const H2 = { fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(36px,6.2vw,62px)", lineHeight: 1.03, letterSpacing: "-.015em", color: C.text1, margin: "0 0 16px", textWrap: "balance" };
+const EM = { color: C.gold, fontStyle: "italic", fontWeight: 400 };
+const P = { fontSize: "clamp(15.5px,2.1vw,17.5px)", lineHeight: 1.7, color: C.text2, margin: 0 };
+const card = { padding: "clamp(22px,3.4vw,30px)", borderRadius: 18, background: "linear-gradient(145deg, rgba(255,255,255,.045), rgba(255,255,255,.015))",
+  border: `1px solid ${C.border2}`, borderTop: "1px solid rgba(255,255,255,.12)", boxShadow: "0 10px 40px rgba(0,0,0,.42)" };
+const input = { width: "100%", boxSizing: "border-box", padding: "14px 16px", borderRadius: 10, fontSize: 16, fontFamily: "'DM Sans',sans-serif",
+  background: "rgba(255,255,255,.04)", border: `1px solid ${C.border2}`, color: C.text1, outline: "none", colorScheme: "dark" };
+const label = { display: "block", fontSize: 12.5, fontWeight: 600, color: C.text2, margin: "0 0 7px" };
+const errStyle = { color: C.red, fontSize: 12.5, lineHeight: 1.4, margin: "6px 0 0" };
+const Err = ({ msg }) => (msg ? <p style={errStyle}>{msg}</p> : null);
 const Sec = ({ children, style, id }) => <section id={id} style={{ padding: "clamp(34px,5.5vw,62px) 0", ...style }}>{children}</section>;
+
+/* Lives at module scope so it isn't a new component on every render — a new
+   identity remounts the subtree and kills focus in whatever input is being typed in. */
+const toForm = (e) => {
+  e.preventDefault();
+  document.getElementById("register")?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+const CTA = ({ note = true, align = "center" }) => (
+  <div style={{ textAlign: align }}>
+    <a href="#register" onClick={toForm} className="cta" style={{ display: "inline-block", padding: "24px 60px", borderRadius: 999, textDecoration: "none",
+      background: `linear-gradient(135deg, ${C.gold}2e, ${C.gold}12)`, border: `1.5px solid ${C.gold}88`, boxShadow: `0 0 40px ${C.gold}1f` }}>
+      <span style={{ fontWeight: 700, fontSize: "clamp(17.5px,2.5vw,21.5px)", color: C.gold }}>Reserve Your Seat &#8594;</span>
+    </a>
+    {note && <p style={{ fontSize: 13.5, color: C.text3, margin: "13px 0 0" }}>
+      Free. Limited to {EVENT.seats} owners. A $250 deposit holds your seat, and you get it back when you walk in.</p>}
+  </div>
+);
+
+const Head = ({ kicker, children, align = "left", sub, subWide }) => (
+  <div style={{ textAlign: align, maxWidth: align === "center" ? 780 : "none", margin: align === "center" ? "0 auto" : 0 }}>
+    {kicker ? <div style={KICKER}>{kicker}</div> : null}
+    <h2 style={H2}>{children}</h2>
+    {sub && <p style={{ ...P, maxWidth: subWide ? 1000 : 620, margin: align === "center" ? "0 auto" : (align === "right" ? "0 0 0 auto" : 0) }}>{sub}</p>}
+  </div>
+);
+
+const Meta = ({ k, v, href, note }) => (
+  <div style={{ padding: "14px 16px", borderRadius: 12, border: `1px solid ${C.border2}`, background: "rgba(255,255,255,.025)" }}>
+    <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: C.text3, marginBottom: 5 }}>{k}</div>
+    {href ? <a href={href} target="_blank" rel="noopener" style={{ color: C.text1, fontSize: 15, fontWeight: 600, textDecoration: "none", lineHeight: 1.35, display: "block" }}>{v}</a>
+          : <div style={{ color: C.text1, fontSize: 15, fontWeight: 600, lineHeight: 1.35 }}>{v}</div>}
+    {note && <div style={{ color: C.text3, fontSize: 12.5, lineHeight: 1.4, marginTop: 6 }}>{note}</div>}
+  </div>
+);
+
+const Tick = ({ children, no }) => (
+  <li style={{ display: "flex", gap: 11, alignItems: "flex-start", marginBottom: 12, fontSize: "clamp(15px,2vw,16.5px)", lineHeight: 1.6, color: no ? "#C98B8B" : C.text2 }}>
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 3 }}>
+      {no ? <path d="M6 6L18 18M18 6L6 18" stroke={C.red} strokeWidth="2.2" strokeLinecap="round" />
+          : <path d="M4 12.5L9.5 18L20 6.5" stroke={C.green} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />}
+    </svg><span>{children}</span></li>
+);
+
+const StageChip = ({ n, small }) => {
+  const s = STAGES.find(x => x.n === n);
+  return <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", height: small ? 28 : 34, padding: small ? "0 12px" : "0 15px", borderRadius: 999,
+    border: `1px solid ${s.c}55`, background: `${s.c}12`, fontSize: small ? 12.5 : 14, fontWeight: 600, color: s.c, whiteSpace: "nowrap", boxSizing: "border-box" }}>
+    Stage {s.n} &middot; {s.name}</span>;
+};
 
 export default function WorkshopPage() {
   const [f, setF] = useState({ firstName: "", lastName: "", email: "", phone: "", business: "",
                                revenue: "", outcome: "", appetite: "" });
   const [state, setState] = useState("idle");
-  const [openQ, setOpenQ] = useState(0);
+  const [openQ, setOpenQ] = useState(null);   /* all closed until clicked */
   const [flipped, setFlipped] = useState([]);  /* tap-to-flip, for touch screens */
   const [slide, setSlide] = useState(0);
   const [slideHeld, setSlideHeld] = useState(false);
-  const [openStory, setOpenStory] = useState(null);
-  const storiesRef = useRef(null);
-  /* The first story opens itself once the section comes into view — an invitation
-     to read rather than a wall of text already sitting there. */
-  useEffect(() => {
-    const el = storiesRef.current;
-    if (!el || typeof IntersectionObserver === "undefined") { setOpenStory(0); return; }
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { setOpenStory(v => (v === null ? 0 : v)); io.disconnect(); }
-    }, { threshold: 0.2 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+  const [openStory, setOpenStory] = useState(null);   /* all closed until clicked */
+  const [touched, setTouched] = useState(false);   /* errors appear only after a submit attempt */
   useEffect(() => {
     if (slideHeld) return;
-    const t = setInterval(() => setSlide(i => (i + 1) % SLIDES.length), 4200);
-    return () => clearInterval(t);
+    const timer = setInterval(() => setSlide(i => (i + 1) % SLIDES.length), 4200);
+    return () => clearInterval(timer);
   }, [slideHeld]);
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
-  const valid = f.firstName && f.lastName && /\S+@\S+\.\S+/.test(f.email) && f.phone && f.business
-                && f.revenue && f.outcome && f.appetite;
 
-  /* Every CTA scrolls to the form rather than jumping. */
-  const toForm = (e) => {
-    e.preventDefault();
-    document.getElementById("register")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  /* Dashes appear as they type; we keep only digits and cap at a US number. */
+  const setPhone = (e) => {
+    const d = e.target.value.replace(/\D/g, "").slice(0, 10);
+    const out = d.length > 6 ? `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6)}`
+              : d.length > 3 ? `${d.slice(0, 3)}-${d.slice(3)}`
+              : d;
+    setF({ ...f, phone: out });
   };
 
+  const errors = {
+    firstName: f.firstName.trim() ? "" : "Please add your first name",
+    lastName:  f.lastName.trim()  ? "" : "Please add your last name",
+    email:     /^\S+@\S+\.\S{2,}$/.test(f.email.trim()) ? "" : "Please enter a valid email address",
+    phone:     f.phone.replace(/\D/g, "").length === 10 ? "" : "Please enter a 10-digit phone number",
+    business:  f.business.trim()  ? "" : "Please add your business name",
+    revenue:   f.revenue  ? "" : "Please choose one",
+    outcome:   f.outcome  ? "" : "Please choose one",
+    appetite:  f.appetite ? "" : "Please choose one",
+  };
+  const valid = !Object.values(errors).some(Boolean);
+
+  const fieldStyle = (k) => ({ ...input, borderColor: touched && errors[k] ? `${C.red}99` : C.border2 });
+
   const submit = async () => {
-    if (!valid || state === "sending") return;
+    if (state === "sending") return;
+    if (!valid) { setTouched(true); return; }   /* show what's missing rather than doing nothing */
     setState("sending");
+    /* Opened before the await: a tab opened after an async gap gets blocked as a popup. */
+    const tab = window.open("", "_blank");
     try {
       const r = await fetch("/api/lead-capture", {
         method: "POST", headers: { "Content-Type": "application/json" },
@@ -499,63 +568,13 @@ export default function WorkshopPage() {
       });
       if (!r.ok) throw new Error(String(r.status));
       const q = new URLSearchParams({ prefilled_email: f.email.trim(), client_reference_id: "workshop" });
-      window.location.href = `${DEPOSIT_URL}?${q}`;
-    } catch { setState("error"); }
-  };
-
-  const wrap = { maxWidth: 1260, margin: "0 auto", padding: "0 24px" };
-  const col = { maxWidth: 820, margin: "0 auto", padding: "0 24px" };
-  const KICKER = { fontSize: 11.5, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", margin: "0 0 14px", color: C.gold };
-  const H2 = { fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(36px,6.2vw,62px)", lineHeight: 1.03, letterSpacing: "-.015em", color: C.text1, margin: "0 0 16px", textWrap: "balance" };
-  const EM = { color: C.gold, fontStyle: "italic", fontWeight: 400 };
-  const P = { fontSize: "clamp(15.5px,2.1vw,17.5px)", lineHeight: 1.7, color: C.text2, margin: 0 };
-  const card = { padding: "clamp(22px,3.4vw,30px)", borderRadius: 18, background: "linear-gradient(145deg, rgba(255,255,255,.045), rgba(255,255,255,.015))",
-    border: `1px solid ${C.border2}`, borderTop: "1px solid rgba(255,255,255,.12)", boxShadow: "0 10px 40px rgba(0,0,0,.42)" };
-  const input = { width: "100%", boxSizing: "border-box", padding: "14px 16px", borderRadius: 10, fontSize: 16, fontFamily: "'DM Sans',sans-serif",
-    background: "rgba(255,255,255,.04)", border: `1px solid ${C.border2}`, color: C.text1, outline: "none", colorScheme: "dark" };
-  const label = { display: "block", fontSize: 12.5, fontWeight: 600, color: C.text2, margin: "0 0 7px" };
-
-  const CTA = ({ note = true, align = "center" }) => (
-    <div style={{ textAlign: align }}>
-      <a href="#register" onClick={toForm} className="cta" style={{ display: "inline-block", padding: "24px 60px", borderRadius: 999, textDecoration: "none",
-        background: `linear-gradient(135deg, ${C.gold}2e, ${C.gold}12)`, border: `1.5px solid ${C.gold}88`, boxShadow: `0 0 40px ${C.gold}1f` }}>
-        <span style={{ fontWeight: 700, fontSize: "clamp(17.5px,2.5vw,21.5px)", color: C.gold }}>Reserve Your Seat &#8594;</span>
-      </a>
-      {note && <p style={{ fontSize: 13.5, color: C.text3, margin: "13px 0 0" }}>
-        Free. Limited to {EVENT.seats} owners. A $250 deposit holds your seat, and you get it back when you walk in.</p>}
-    </div>
-  );
-
-  const Head = ({ kicker, children, align = "left", sub, subWide }) => (
-    <div style={{ textAlign: align, maxWidth: align === "center" ? 780 : "none", margin: align === "center" ? "0 auto" : 0 }}>
-      {kicker ? <div style={KICKER}>{kicker}</div> : null}
-      <h2 style={H2}>{children}</h2>
-      {sub && <p style={{ ...P, maxWidth: subWide ? 1000 : 620, margin: align === "center" ? "0 auto" : (align === "right" ? "0 0 0 auto" : 0) }}>{sub}</p>}
-    </div>
-  );
-
-  const Meta = ({ k, v, href, note }) => (
-    <div style={{ padding: "14px 16px", borderRadius: 12, border: `1px solid ${C.border2}`, background: "rgba(255,255,255,.025)" }}>
-      <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: C.text3, marginBottom: 5 }}>{k}</div>
-      {href ? <a href={href} target="_blank" rel="noopener" style={{ color: C.text1, fontSize: 15, fontWeight: 600, textDecoration: "none", lineHeight: 1.35, display: "block" }}>{v}</a>
-            : <div style={{ color: C.text1, fontSize: 15, fontWeight: 600, lineHeight: 1.35 }}>{v}</div>}
-      {note && <div style={{ color: C.text3, fontSize: 12.5, lineHeight: 1.4, marginTop: 6 }}>{note}</div>}
-    </div>
-  );
-
-  const Tick = ({ children, no }) => (
-    <li style={{ display: "flex", gap: 11, alignItems: "flex-start", marginBottom: 12, fontSize: "clamp(15px,2vw,16.5px)", lineHeight: 1.6, color: no ? "#C98B8B" : C.text2 }}>
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 3 }}>
-        {no ? <path d="M6 6L18 18M18 6L6 18" stroke={C.red} strokeWidth="2.2" strokeLinecap="round" />
-            : <path d="M4 12.5L9.5 18L20 6.5" stroke={C.green} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />}
-      </svg><span>{children}</span></li>
-  );
-
-  const StageChip = ({ n, small }) => {
-    const s = STAGES.find(x => x.n === n);
-    return <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", height: small ? 28 : 34, padding: small ? "0 12px" : "0 15px", borderRadius: 999,
-      border: `1px solid ${s.c}55`, background: `${s.c}12`, fontSize: small ? 12.5 : 14, fontWeight: 600, color: s.c, whiteSpace: "nowrap", boxSizing: "border-box" }}>
-      Stage {s.n} &middot; {s.name}</span>;
+      const url = `${DEPOSIT_URL}?${q}`;
+      if (tab) { tab.location = url; tab.focus(); } else { window.location.href = url; }
+      setState("sent");
+    } catch {
+      if (tab) tab.close();
+      setState("error");
+    }
   };
 
   return (
@@ -648,7 +667,10 @@ export default function WorkshopPage() {
                     onClick={() => setFlipped(p => p.includes(s.n) ? p.filter(x => x !== s.n) : [...p, s.n])}>
                     <div className={`flip-inner${flipped.includes(s.n) ? " flipped" : ""}`} style={{ minHeight: 340 }}>
                       <div className="face" style={{ ...card, borderColor: `${s.c}44`, display: "flex", flexDirection: "column" }}>
-                        <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 700, fontSize: 38, color: s.c, lineHeight: 1 }}>{s.n}</div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 700, fontSize: 38, color: s.c, lineHeight: 1 }}>{s.n}</div>
+                          <s.icon size={46} strokeWidth={1.4} color={s.c} style={{ filter: `drop-shadow(0 0 12px ${s.c}66)` }} />
+                        </div>
                         <div style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(22px,2.6vw,27px)", color: C.text1, margin: "12px 0 10px", lineHeight: 1.1 }}>{s.name}</div>
                         <p style={{ fontSize: 15, lineHeight: 1.6, color: C.text2, margin: 0 }}>{s.what}</p>
                         <p style={{ fontSize: 13.5, lineHeight: 1.55, color: C.text3, fontStyle: "italic", margin: "auto 0 0", paddingTop: 12 }}>The tell: {s.tell}</p>
@@ -698,7 +720,7 @@ export default function WorkshopPage() {
             <div style={{ flex: "1 1 0" }}>
               <Head kicker="What you leave with">Not notes. <span style={EM}>A plan.</span></Head>
               {LEAVE_WITH.map(([t, d], i) => (
-                <div key={t} onMouseEnter={() => { setSlide(i); setSlideHeld(true); }}
+                <div key={t} onMouseEnter={() => setSlide(i)}
                   style={{ padding: "13px 16px", margin: "0 -16px", borderRadius: 10, cursor: "default",
                     borderBottom: i < 3 ? `1px solid ${C.border1}` : "none",
                     background: slide === i ? "rgba(255,255,255,.04)" : "transparent", transition: "background .3s ease" }}>
@@ -731,7 +753,7 @@ export default function WorkshopPage() {
               </p>
             </div>
             <div style={{ flex: "0 0 auto", width: "min(44%, 420px)" }} className="splitvis">
-              <img src="/img/workshop/roadmap.jpg" alt="The Owner’s Virtus Roadmap" style={{ width: "100%", borderRadius: 10, border: `1px solid ${C.border2}`, boxShadow: "0 18px 50px rgba(0,0,0,.6)" }} />
+              <img src="/img/workshop/roadmap.png" alt="The Owner’s Virtus Roadmap" style={{ width: "100%", display: "block" }} />
               <p style={{ fontSize: 12.5, color: C.text3, textAlign: "center", margin: "12px 0 0" }}>The Owner’s Virtus Roadmap. The workshop covers the first three stations.</p>
             </div>
           </div>
@@ -739,10 +761,14 @@ export default function WorkshopPage() {
 
         {/* ── WHO'S RUNNING IT — headshot left, text right, equal height ── */}
         <Sec>
-          <div style={{ ...wrap, display: "flex", gap: "clamp(24px,4vw,52px)", alignItems: "stretch" }} className="split">
-            <div style={{ flex: "0 0 auto", width: "min(40%, 380px)" }} className="splitvis">
-              {/* ⚠️ REPLIT: /img/edward.jpg — the headshot from the Virtus Collective slide. */}
-              <img src="/img/edward.jpg" alt="Edward Kriczky" style={{ width: "100%", height: "100%", minHeight: 420, objectFit: "cover", borderRadius: 14, border: `1px solid ${C.border2}`, boxShadow: "0 18px 50px rgba(0,0,0,.55)" }} />
+          <div style={{ ...wrap, display: "flex", gap: "clamp(24px,4vw,52px)", alignItems: "center" }} className="split">
+            <div style={{ flex: "0 0 auto", width: "min(38%, 400px)" }} className="splitvis">
+              {/* ⚠️ REPLIT: /img/edward.jpg — the headshot from the Virtus Collective slide.
+                  Square by design: aspectRatio 1 with object-fit cover, so any source crops
+                  to a square rather than stretching into a tall strip. */}
+              <img src="/img/edward.jpg" alt="Edward Kriczky"
+                style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", objectPosition: "center top",
+                  borderRadius: 18, border: `1px solid ${C.border2}`, boxShadow: "0 18px 50px rgba(0,0,0,.55)", display: "block" }} />
             </div>
             <div style={{ flex: "1 1 0", display: "flex", flexDirection: "column", justifyContent: "center" }}>
               <Head kicker="Who’s running it">A quarterback for every domain of <span style={EM}>your wealth</span></Head>
@@ -767,7 +793,7 @@ export default function WorkshopPage() {
               What this looks like <span style={EM}>in practice</span>
             </Head>
             {STORIES.map((s, i) => (
-              <div key={s.kicker} ref={i === 0 ? storiesRef : null}
+              <div key={s.kicker} className="storycard"
                 style={{ ...card, marginTop: i ? 16 : 30, padding: 0, overflow: "hidden",
                   borderColor: openStory === i ? `${C.gold}3d` : C.border2 }}>
                 <button onClick={() => setOpenStory(openStory === i ? null : i)} className="storybtn"
@@ -781,20 +807,20 @@ export default function WorkshopPage() {
                       <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: C.text3, marginTop: 5 }}>{s.industry} Business</div>
                     </div>
                   </div>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, transform: openStory === i ? "rotate(45deg)" : "none", transition: "transform .25s ease" }}>
-                    <path d="M12 5v14M5 12h14" stroke={openStory === i ? C.gold : C.text3} strokeWidth="2" strokeLinecap="round" /></svg>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, transform: openStory === i ? "rotate(180deg)" : "none", transition: "transform .3s ease" }}>
+                    <path d="M6 9.5L12 15.5L18 9.5" stroke={openStory === i ? C.gold : C.text3} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </button>
                 <div style={{ maxHeight: openStory === i ? 2600 : 0, opacity: openStory === i ? 1 : 0, overflow: "hidden",
                   transition: "max-height .6s cubic-bezier(.4,0,.2,1), opacity .4s ease" }}>
                  <div style={{ padding: "0 clamp(22px,3.2vw,32px) clamp(24px,3.4vw,34px)" }}>
 
                 {/* thought vs actual, shown rather than described */}
-                <div style={{ display: "flex", gap: 14, alignItems: "center", flexWrap: "wrap", padding: "14px 16px", borderRadius: 12, background: "rgba(255,255,255,.03)", border: `1px solid ${C.border1}`, marginBottom: 18 }}>
+                <div className="pillrow" style={{ display: "flex", gap: 14, alignItems: "center", flexWrap: "wrap", padding: "14px 16px", borderRadius: 12, background: "rgba(255,255,255,.03)", border: `1px solid ${C.border1}`, marginBottom: 18 }}>
                   <div><div style={{ fontSize: 10.5, letterSpacing: ".14em", textTransform: "uppercase", color: C.text4, marginBottom: 6 }}>They thought</div>
                     <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", height: 34, padding: "0 15px", borderRadius: 999,
                       border: `1px solid ${C.border2}`, background: "rgba(255,255,255,.03)", fontSize: 14, fontWeight: 600, color: C.text3,
                       textDecoration: "line-through", whiteSpace: "nowrap", boxSizing: "border-box" }}>{s.thought}</span></div>
-                  <Arrow c={C.text4} w={30} />
+                  <div className="pillarrow"><Arrow c={C.text4} w={30} /></div>
                   <div><div style={{ fontSize: 10.5, letterSpacing: ".14em", textTransform: "uppercase", color: C.text4, marginBottom: 6 }}>Actually binding</div>
                     <StageChip n={s.actual} /></div>
                 </div>
@@ -814,12 +840,12 @@ export default function WorkshopPage() {
                 </ol>
 
                 {/* the order of stages, as a path */}
-                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", margin: "18px 0 0", padding: "14px 16px", borderRadius: 12, background: "rgba(255,255,255,.03)", border: `1px solid ${C.border1}` }}>
+                <div className="pillrow orderrow" style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", margin: "18px 0 0", padding: "14px 16px", borderRadius: 12, background: "rgba(255,255,255,.03)", border: `1px solid ${C.border1}` }}>
                   <span style={{ fontSize: 10.5, letterSpacing: ".14em", textTransform: "uppercase", color: C.text4, marginRight: 4 }}>The order we worked it</span>
                   {s.order.map((n, idx) => (
-                    <div key={idx} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <div key={idx} className="orderitem" style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <StageChip n={n} small />
-                      {idx < s.order.length - 1 && <Arrow c={C.text4} w={22} />}
+                      {idx < s.order.length - 1 && <div className="pillarrow"><Arrow c={C.text4} w={22} /></div>}
                     </div>
                   ))}
                 </div>
@@ -879,9 +905,9 @@ export default function WorkshopPage() {
                   <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>{NOT_FIT.map(t => <Tick key={t} no>{t}</Tick>)}</ul></div>
               </div>
             </div>
-            <div style={{ flex: "0 0 auto", width: "min(38%, 350px)", display: "flex", flexDirection: "column" }} className="splitvis">
+            <div style={{ flex: "0 0 auto", width: "min(38%, 350px)", display: "flex", flexDirection: "column" }} className="splitvis nichecol">
               <p style={{ fontSize: 13.5, letterSpacing: ".06em", color: C.text3, margin: "0 0 18px" }}>Example niches of owners we have helped</p>
-              <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignContent: "space-between" }}>
+              <div className="nichegrid" style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignContent: "space-between" }}>
                 {INDUSTRIES.map(([name, d]) => (
                   <div key={name} style={{ display: "flex", alignItems: "center", gap: 13 }}>
                     <Mark of={d} size={34} />
@@ -938,34 +964,37 @@ export default function WorkshopPage() {
            <div style={{ flex: "1 1 0", minWidth: 0 }}>
             <div style={card}>
               <div className="grid2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-                <div><label style={label}>First name</label><input style={input} value={f.firstName} onChange={set("firstName")} autoComplete="given-name" /></div>
-                <div><label style={label}>Last name</label><input style={input} value={f.lastName} onChange={set("lastName")} autoComplete="family-name" /></div>
-                <div><label style={label}>Email</label><input style={input} type="email" value={f.email} onChange={set("email")} autoComplete="email" /></div>
-                <div><label style={label}>Phone</label><input style={input} type="tel" value={f.phone} onChange={set("phone")} autoComplete="tel" /></div>
+                <div><label style={label}>First name</label><input style={fieldStyle("firstName")} value={f.firstName} onChange={set("firstName")} autoComplete="given-name" /><Err msg={touched && errors.firstName} /></div>
+                <div><label style={label}>Last name</label><input style={fieldStyle("lastName")} value={f.lastName} onChange={set("lastName")} autoComplete="family-name" /><Err msg={touched && errors.lastName} /></div>
+                <div><label style={label}>Email</label><input style={fieldStyle("email")} type="email" value={f.email} onChange={set("email")} autoComplete="email" /><Err msg={touched && errors.email} /></div>
+                <div><label style={label}>Phone</label><input style={fieldStyle("phone")} type="tel" inputMode="numeric" placeholder="610-555-0100" value={f.phone} onChange={setPhone} autoComplete="tel" /><Err msg={touched && errors.phone} /></div>
               </div>
               <div style={{ marginTop: 14 }}><label style={label}>Business name</label>
-                <input style={input} value={f.business} onChange={set("business")} autoComplete="organization" /></div>
+                <input style={fieldStyle("business")} value={f.business} onChange={set("business")} autoComplete="organization" /><Err msg={touched && errors.business} /></div>
               <div style={{ marginTop: 14 }}><label style={label}>Where is your business revenue today?</label>
-                <select style={input} value={f.revenue} onChange={set("revenue")}>
+                <select style={fieldStyle("revenue")} value={f.revenue} onChange={set("revenue")}>
                   <option value="" style={{ background: C.bgDeep, color: C.text3 }}>Select…</option>
-                  {REVENUE.map(r => <option key={r} value={r} style={{ background: C.bgDeep, color: C.text1 }}>{r}</option>)}</select></div>
+                  {REVENUE.map(r => <option key={r} value={r} style={{ background: C.bgDeep, color: C.text1 }}>{r}</option>)}</select><Err msg={touched && errors.revenue} /></div>
               <div style={{ marginTop: 14 }}><label style={label}>What’s the single biggest money outcome you want in the next 12 months?</label>
-                <select style={input} value={f.outcome} onChange={set("outcome")}>
+                <select style={fieldStyle("outcome")} value={f.outcome} onChange={set("outcome")}>
                   <option value="" style={{ background: C.bgDeep, color: C.text3 }}>Select…</option>
-                  {OUTCOMES.map(r => <option key={r} value={r} style={{ background: C.bgDeep, color: C.text1 }}>{r}</option>)}</select></div>
+                  {OUTCOMES.map(r => <option key={r} value={r} style={{ background: C.bgDeep, color: C.text1 }}>{r}</option>)}</select><Err msg={touched && errors.outcome} /></div>
               <div style={{ marginTop: 14 }}><label style={label}>If you leave with a 90-day plan you believe in, what’s your appetite for getting help executing it?</label>
-                <select style={input} value={f.appetite} onChange={set("appetite")}>
+                <select style={fieldStyle("appetite")} value={f.appetite} onChange={set("appetite")}>
                   <option value="" style={{ background: C.bgDeep, color: C.text3 }}>Select…</option>
-                  {APPETITE.map(r => <option key={r} value={r} style={{ background: C.bgDeep, color: C.text1 }}>{r}</option>)}</select></div>
+                  {APPETITE.map(r => <option key={r} value={r} style={{ background: C.bgDeep, color: C.text1 }}>{r}</option>)}</select><Err msg={touched && errors.appetite} /></div>
 
-              <button onClick={submit} disabled={!valid || state === "sending"} className="cta"
-                style={{ width: "100%", marginTop: 24, padding: "22px 24px", borderRadius: 999, cursor: valid ? "pointer" : "not-allowed",
+              <button onClick={submit} disabled={state === "sending"} className="cta"
+                style={{ width: "100%", marginTop: 24, padding: "22px 18px", borderRadius: 999, cursor: "pointer",
                   background: valid ? `linear-gradient(135deg, ${C.gold}2e, ${C.gold}12)` : "rgba(255,255,255,.04)",
                   border: `1.5px solid ${valid ? C.gold + "88" : C.border2}`, opacity: state === "sending" ? .7 : 1 }}>
-                <span style={{ fontWeight: 700, fontSize: 18.5, color: valid ? C.gold : C.text3 }}>
+                <span style={{ fontWeight: 700, fontSize: "clamp(14.5px,3.6vw,18.5px)", color: valid ? C.gold : C.text2, whiteSpace: "nowrap" }}>
                   {state === "sending" ? "Holding your seat…" : "Continue to the $250 deposit →"}</span>
               </button>
+              {touched && !valid && state !== "error" &&
+                <p style={{ ...errStyle, textAlign: "center", marginTop: 12 }}>Please fix the fields marked above.</p>}
               {state === "error" && <p style={{ color: C.red, fontSize: 14, textAlign: "center", margin: "12px 0 0" }}>Something went wrong. Please try again, or email growth@kriczkyvirtus.com.</p>}
+              {state === "sent" && <p style={{ color: C.green, fontSize: 14, textAlign: "center", margin: "12px 0 0" }}>Your deposit page opened in a new tab. This page stays here.</p>}
 
               <p style={{ fontSize: 11.5, lineHeight: 1.6, color: C.text3, margin: "16px 0 0" }}>
                 By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our Privacy Policy and Terms of Service.
@@ -979,7 +1008,7 @@ export default function WorkshopPage() {
         <div style={{ ...wrap, paddingBottom: 60 }}>
           <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${C.border1}, transparent)`, marginBottom: 24 }} />
           <p style={{ fontSize: 11.5, lineHeight: 1.65, color: C.text4, textAlign: "center", maxWidth: 820, margin: "0 auto" }}>
-            The workshop is provided by Kriczky Virtus, LLC. The Personalized Wealth Roadmap is an investment advisory service provided by Kriczky Wealth Management LLC, a registered investment advisor, and requires an advisory agreement; Form ADV is provided before any agreement is signed. Edward Kriczky owns both firms, which is a conflict of interest disclosed in Form ADV. You are never required to engage either firm, and you may use any business consultant or investment advisor you choose. Client examples describe individual engagements; individual results vary and are not representative of all clients. No outcome is projected or guaranteed. Nothing on this page is individualized financial, tax, legal, or accounting advice.
+            The workshop is provided by Kriczky Virtus, LLC. The Personalized Wealth Roadmap is an investment advisory service provided by Kriczky Wealth Management LLC, an Investment Advisor in the state of Pennsylvania and Virginia, and requires an advisory agreement; Form ADV is provided before any agreement is signed. Professionals are registered with Kriczky Wealth Management LLC. Edward Kriczky owns both firms, which is a conflict of interest disclosed in Form ADV. You are never required to engage either firm, and you may use any business consultant or investment advisor you choose. Client examples describe individual engagements; individual results vary and are not representative of all clients. No outcome is projected or guaranteed. Nothing on this page is individualized financial, tax, legal, or accounting advice.
           </p>
         </div>
       </div>
@@ -996,6 +1025,8 @@ export default function WorkshopPage() {
         input:focus, select:focus { border-color: ${C.gold}88 !important; }
         select option { background: ${C.bgDeep}; color: ${C.text1}; }
         .faqbtn:hover span { color: ${C.gold}; }
+        .storycard { transition: box-shadow .3s ease, border-color .3s ease; }
+        .storycard:hover { border-color: rgba(200,162,78,.55) !important; box-shadow: 0 0 34px rgba(200,162,78,.22), 0 10px 40px rgba(0,0,0,.42) !important; }
         .storybtn:hover { background: rgba(255,255,255,.02); }
 
         .flip { perspective: 1400px; }
@@ -1012,6 +1043,16 @@ export default function WorkshopPage() {
           .stagerow { flex-direction: column !important; }
           .stagearrow { transform: rotate(90deg); align-self: center; padding: 4px 0; }
           .grid3 { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 980px) {
+          /* stacked pills need the arrow pointing at the next one, not off to the side */
+          .pillrow { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
+          .orderitem { flex-direction: column !important; align-items: flex-start !important; }
+          .pillarrow { transform: rotate(90deg); margin: 2px 0 2px 14px; }
+          /* the niche list reads better centred once it's no longer beside the cards */
+          .nichecol { text-align: center; }
+          .nichegrid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 20px 14px !important; }
+          .nichegrid > div { justify-content: center; }
         }
         @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr !important; } }
         @media (hover: none) { .cue-hover { display: none; } .cue-tap { display: inline; } }
