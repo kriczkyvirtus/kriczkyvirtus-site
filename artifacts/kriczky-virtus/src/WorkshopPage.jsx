@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
-/* Lucide — ISC licensed, professionally drawn on a 24px grid: consistent stroke
-   weight and optical balance across the set, which hand-drawn paths can't match.
-   ⚠️ REPLIT: npm i lucide-react */
-import {
-  TreeDeciduous, Hammer, Wrench, HeartPulse, Calculator, Home, Stethoscope, Store, Briefcase, GraduationCap,
-  Magnet, Handshake, PackageCheck,
-} from "lucide-react";
+/* Icons are the Virtus metallic set — three-pass SVGs from the icon recipe,
+   served as files. They carry their own gradients, filters and glow, so they
+   are referenced as <img> rather than inlined: inlining several would collide
+   their gradient IDs. No icon library is needed. */
+const ICON = (slug) => `/img/icons/${slug}-metallic.svg`;
 
 /* Reinvest or Harvest Workshop — /workshop-rh
    Cold-traffic build: problem → framework → what you leave with → authority →
@@ -55,17 +53,17 @@ const GRAIN = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http:
 
 /* Each stage carries what sits underneath it — shown on the back of the card. */
 const STAGES = [
-  { n: "1", name: "Qualified Leads", c: C.gold, icon: Magnet,
+  { n: "1", name: "Qualified Leads", c: C.gold, icon: "stage-leads",
     what: "Not enough of the right customers.",
     tell: "Capacity sits idle, or you take work you shouldn’t.",
     sub: ["Improving your offer", "Spending more on ads", "Fixing ad targeting"],
     mines: ["Acquisition channel dependency", "Client concentration", "Growing into customers you don’t want"] },
-  { n: "2", name: "Capacity to Sell", c: C.green, icon: Handshake,
+  { n: "2", name: "Capacity to Sell", c: C.green, icon: "stage-sell",
     what: "Leads arrive faster than you can convert them.",
     tell: "Good leads go cold waiting for a reply or a proposal.",
     sub: ["Hiring the right sales role", "Talent compensation structure", "A sales motion that’s easy to buy from"],
     mines: ["Revenue that grows only through you", "Sales comp crushing margins", "No recurring revenue offer"] },
-  { n: "3", name: "Capacity to Fulfill", c: C.cyan, icon: PackageCheck,
+  { n: "3", name: "Capacity to Fulfill", c: C.cyan, icon: "stage-fulfill",
     what: "You can’t fulfill more without breaking.",
     tell: "Quality slips or lead times grow as volume rises.",
     sub: ["Equipping your team with better tools", "Workflow automation", "Margin structure"],
@@ -99,19 +97,20 @@ const AGENDA = [
 
 /* One mark per niche. */
 const INDUSTRIES = [
-  ["Landscaping", TreeDeciduous], ["Residential remodeling", Hammer],
-  ["Manufacturing", "M3.6 20.4V11.6l5 3.2v-3.2l5 3.2v-3.2l5 3.2v5.6ZM2 20.4h20M15.6 11.6v-7h3.1v7"],     ["Auto repair", Wrench],
-  ["Physical therapy", HeartPulse], ["SaaS", "M7.5 18.5a4.2 4.2 0 0 1-.4-8.4 5.6 5.6 0 0 1 10.7 1.2 3.6 3.6 0 0 1-.5 7.2H7.5Z"],
-  ["Accounting", Calculator],     ["Marketing agency", "M3.5 10.6v2.8a1 1 0 0 0 1 1h1.8l5.4 4.2V5.4L6.3 9.6H4.5a1 1 0 0 0-1 1ZM15.6 9.4a4 4 0 0 1 0 5.2M18.4 6.9a8 8 0 0 1 0 10.2"],
+  ["Landscaping", "landscaping"], ["Residential remodeling", "remodeling"],
+  ["Manufacturing", "manufacturing"], ["Auto repair", "auto-repair"],
+  ["Physical therapy", "physical-therapy"], ["SaaS", "saas"],
+  ["Accounting", "accounting"], ["Marketing agency", "marketing"],
 ];
 const INDUSTRY_ICON = Object.fromEntries(INDUSTRIES);
 
 /* Broader categories, for the scrolling banner and the fit FAQ. */
 const SECTORS = [
-  ["Home Services", Home], ["Manufacturing", "M3.6 20.4V11.6l5 3.2v-3.2l5 3.2v-3.2l5 3.2v5.6ZM2 20.4h20M15.6 11.6v-7h3.1v7"], ["In-Person Medical Practices", Stethoscope],
-  ["Ecommerce", "M5.4 8h13.2l1 12.4H4.4ZM9 8V5.9a3 3 0 0 1 6 0V8"], ["Local Services", Store], ["Professional Services", Briefcase],
-  ["B2B SaaS", "M7.5 18.5a4.2 4.2 0 0 1-.4-8.4 5.6 5.6 0 0 1 10.7 1.2 3.6 3.6 0 0 1-.5 7.2H7.5Z"], ["Financial Services", "M3.4 9.6 12 4.6l8.6 5M5.6 9.6V18M9.9 9.6V18M14.1 9.6V18M18.4 9.6V18M3 20.4h18"], ["Marketing Agencies", "M3.5 10.6v2.8a1 1 0 0 0 1 1h1.8l5.4 4.2V5.4L6.3 9.6H4.5a1 1 0 0 0-1 1ZM15.6 9.4a4 4 0 0 1 0 5.2M18.4 6.9a8 8 0 0 1 0 10.2"],
-  ["Education", GraduationCap],
+  ["Home Services", "home-services"], ["Manufacturing", "manufacturing"],
+  ["In-Person Medical Practices", "medical"], ["Ecommerce", "ecommerce"],
+  ["Local Services", "local-services"], ["Professional Services", "professional-services"],
+  ["B2B SaaS", "saas"], ["Financial Services", "financial-services"],
+  ["Marketing Agencies", "marketing"], ["Education", "education"],
 ];
 const TIERS = ["Under $500K", "$500K–$1M", "$1M–$3M", "$3M–$10M", "$10M–$50M"];
 
@@ -429,14 +428,10 @@ const Shield = ({ size = 30 }) => (
 );
 
 /* One place decides how every icon on the page is stroked and lit. */
-const Mark = ({ of: Glyph, size = 34, inline }) => {
-  const st = { flexShrink: 0, display: inline ? "inline-block" : "block", filter: "drop-shadow(0 0 9px rgba(200,162,78,.45))" };
-  /* A string is one of our own drawings; anything else is a lucide component. */
-  return typeof Glyph === "string"
-    ? <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={st}>
-        <path d={Glyph} stroke="#C8A24E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-    : <Glyph size={size} strokeWidth={1.5} color="#C8A24E" style={st} />;
-};
+const Mark = ({ of: slug, size = 40 }) => (
+  <img src={ICON(slug)} alt="" width={size} height={size}
+    style={{ flexShrink: 0, display: "block", width: size, height: size }} />
+);
 
 const Arrow = ({ c, w = 44 }) => (
   <svg viewBox="0 0 26 16" style={{ width: w, height: "auto", flexShrink: 0 }}>
@@ -518,12 +513,14 @@ export default function WorkshopPage() {
   const [slide, setSlide] = useState(0);
   const [slideHeld, setSlideHeld] = useState(false);
   const [openStory, setOpenStory] = useState(null);   /* all closed until clicked */
-  const [touched, setTouched] = useState(false);   /* errors appear only after a submit attempt */
+
+  /* Carousel autoplay. Stops for good the moment someone takes control. */
   useEffect(() => {
     if (slideHeld) return;
-    const timer = setInterval(() => setSlide(i => (i + 1) % SLIDES.length), 4200);
-    return () => clearInterval(timer);
+    const t = setInterval(() => setSlide(i => (i + 1) % SLIDES.length), 4200);
+    return () => clearInterval(t);
   }, [slideHeld]);
+  const [touched, setTouched] = useState(false);   /* errors appear only after a submit attempt */
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
 
   /* Dashes appear as they type; we keep only digits and cap at a US number. */
@@ -626,7 +623,7 @@ export default function WorkshopPage() {
                 <div key={pass} style={{ display: "flex", flexShrink: 0 }} aria-hidden={pass === 1}>
                   {SECTORS.map(([name, d]) => (
                     <div key={name} style={{ display: "flex", alignItems: "center", gap: 12, padding: "0 30px", whiteSpace: "nowrap" }}>
-                      <Mark of={d} size={30} />
+                      <Mark of={d} size={44} />
                       <span style={{ fontSize: 16, fontWeight: 500, color: C.text1 }}>{name}</span>
                     </div>
                   ))}
@@ -669,7 +666,7 @@ export default function WorkshopPage() {
                       <div className="face" style={{ ...card, borderColor: `${s.c}44`, display: "flex", flexDirection: "column" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                           <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 700, fontSize: 38, color: s.c, lineHeight: 1 }}>{s.n}</div>
-                          <s.icon size={46} strokeWidth={1.4} color={s.c} style={{ filter: `drop-shadow(0 0 12px ${s.c}66)` }} />
+                          <Mark of={s.icon} size={64} />
                         </div>
                         <div style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(22px,2.6vw,27px)", color: C.text1, margin: "12px 0 10px", lineHeight: 1.1 }}>{s.name}</div>
                         <p style={{ fontSize: 15, lineHeight: 1.6, color: C.text2, margin: 0 }}>{s.what}</p>
@@ -801,7 +798,7 @@ export default function WorkshopPage() {
                     padding: "clamp(20px,2.8vw,28px) clamp(22px,3.2vw,32px)", background: "transparent", border: "none",
                     cursor: "pointer", textAlign: "left", fontFamily: "'DM Sans',sans-serif" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 18, minWidth: 0 }}>
-                    <Mark of={INDUSTRY_ICON[s.industry]} size={38} />
+                    <Mark of={INDUSTRY_ICON[s.industry]} size={52} />
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(21px,3vw,29px)", lineHeight: 1.14, color: C.text1 }}>{s.kicker}</div>
                       <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: C.text3, marginTop: 5 }}>{s.industry} Business</div>
@@ -910,7 +907,7 @@ export default function WorkshopPage() {
               <div className="nichegrid" style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignContent: "space-between" }}>
                 {INDUSTRIES.map(([name, d]) => (
                   <div key={name} style={{ display: "flex", alignItems: "center", gap: 13 }}>
-                    <Mark of={d} size={34} />
+                    <Mark of={d} size={48} />
                     <span style={{ fontSize: 15, fontWeight: 500, color: C.text1, lineHeight: 1.25 }}>{name}</span>
                   </div>
                 ))}
