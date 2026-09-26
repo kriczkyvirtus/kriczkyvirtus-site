@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 /* Icons are the Virtus metallic set — three-pass SVGs from the icon recipe,
    served as files. They carry their own gradients, filters and glow, so they
    are referenced as <img> rather than inlined: inlining several would collide
@@ -514,6 +514,31 @@ export default function WorkshopPage() {
   const [slideHeld, setSlideHeld] = useState(false);
   const [openStory, setOpenStory] = useState(null);   /* all closed until clicked */
 
+  /* A soft light that trails the cursor. The whole page is metal lit from a
+     fixed point; letting the reader move that point is the thematic version of
+     a hover effect. Written straight to the DOM through a ref and an rAF loop —
+     a mousemove that calls setState re-renders the page on every pixel. */
+  const lampRef = useRef(null);
+  useEffect(() => {
+    const lamp = lampRef.current;
+    if (!lamp) return;
+    const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!fine || still) return;            // no cursor, or the reader asked for calm
+
+    let tx = innerWidth / 2, ty = innerHeight * 0.3, x = tx, y = ty, frame = 0;
+    const onMove = (e) => { tx = e.clientX; ty = e.clientY; };
+    const tick = () => {
+      x += (tx - x) * 0.09;                // trails rather than sticks to the pointer
+      y += (ty - y) * 0.09;
+      lamp.style.transform = `translate3d(${x - 340}px, ${y - 340}px, 0)`;
+      frame = requestAnimationFrame(tick);
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    frame = requestAnimationFrame(tick);
+    return () => { window.removeEventListener("mousemove", onMove); cancelAnimationFrame(frame); };
+  }, []);
+
   /* Carousel autoplay. Stops for good the moment someone takes control. */
   useEffect(() => {
     if (slideHeld) return;
@@ -580,6 +605,10 @@ export default function WorkshopPage() {
       <div style={{ position: "fixed", inset: 0, backgroundImage: GRAIN, backgroundSize: "128px 128px", opacity: .05, mixBlendMode: "overlay", pointerEvents: "none", zIndex: 1 }} />
       <div style={{ position: "fixed", top: "-14%", left: "50%", transform: "translateX(-50%)", width: "min(1100px,150vw)", height: 560,
         background: `radial-gradient(ellipse at center, ${C.gold}14 0%, transparent 66%)`, pointerEvents: "none", zIndex: 0 }} />
+      {/* the travelling light */}
+      <div ref={lampRef} aria-hidden="true" data-lamp style={{ position: "fixed", top: 0, left: 0, width: 680, height: 680, borderRadius: "50%",
+        background: `radial-gradient(circle, ${C.gold}22 0%, ${C.gold}0e 32%, transparent 66%)`,
+        pointerEvents: "none", zIndex: 1, willChange: "transform" }} />
 
       <div style={{ position: "relative", zIndex: 2 }}>
         <div style={{ ...wrap, paddingTop: 30, display: "flex", justifyContent: "center", alignItems: "center", gap: 12 }}>
