@@ -1092,8 +1092,10 @@ export default function WorkshopPage() {
         .storycard { transition: box-shadow .3s ease, border-color .3s ease; }
         .storycard:hover { border-color: rgba(200,162,78,.55) !important; box-shadow: 0 0 34px rgba(200,162,78,.22), 0 10px 40px rgba(0,0,0,.42) !important; }
         /* the same edge, given by scroll position rather than by a cursor */
-        [data-lit] { transition: border-color .35s ease, box-shadow .35s ease; }
-        [data-lit].lit { border-color: rgba(200,162,78,.5) !important; box-shadow: 0 0 30px rgba(200,162,78,.18), 0 10px 40px rgba(0,0,0,.42) !important; }
+        [data-lit]:not(.flip), .flip .face { transition: border-color .35s ease, box-shadow .35s ease; }
+        [data-lit]:not(.flip).lit { border-color: rgba(200,162,78,.5) !important; box-shadow: 0 0 30px rgba(200,162,78,.18), 0 10px 40px rgba(0,0,0,.42) !important; }
+        /* Keep the highlight on the rotating faces, not the stationary flip wrapper behind them. */
+        .flip.lit .face { border-color: rgba(200,162,78,.5) !important; box-shadow: 0 0 30px rgba(200,162,78,.18) !important; }
         .storybtn:hover { background: rgba(255,255,255,.02); }
 
         .flip { perspective: 1400px; }
