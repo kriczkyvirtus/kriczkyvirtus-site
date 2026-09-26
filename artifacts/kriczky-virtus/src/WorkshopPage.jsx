@@ -514,6 +514,44 @@ export default function WorkshopPage() {
   const [slideHeld, setSlideHeld] = useState(false);
   const [openStory, setOpenStory] = useState(null);   /* all closed until clicked */
 
+  /* On a phone there's no cursor, so scroll position decides what's lit: the card
+     nearest the middle of the screen picks up the same gold edge the story cards
+     take on hover, and hands it to the next one as you scroll past. It marks where
+     you are on a long page, which is the thing a phone reader otherwise loses. */
+  useEffect(() => {
+    const coarse = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+    if (!coarse) return;                     // the cursor light already covers fine pointers
+    const cards = [...document.querySelectorAll("[data-lit]")];
+    if (!cards.length) return;
+
+    let frame = 0, queued = false;
+    const settle = () => {
+      queued = false;
+      const mid = innerHeight / 2;
+      let best = null, bestGap = Infinity;
+      for (const el of cards) {
+        const r = el.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > innerHeight) continue;
+        const gap = Math.abs(r.top + r.height / 2 - mid);
+        if (gap < bestGap) { bestGap = gap; best = el; }
+      }
+      /* Only when it's genuinely near the middle — otherwise something stays lit
+         while the reader is looking at a different part of the page. */
+      if (best && bestGap > innerHeight * 0.42) best = null;
+      for (const el of cards) el.classList.toggle("lit", el === best);
+    };
+    const onScroll = () => { if (!queued) { queued = true; frame = requestAnimationFrame(settle); } };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    settle();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      cancelAnimationFrame(frame);
+      for (const el of cards) el.classList.remove("lit");
+    };
+  }, []);
+
   /* A soft light that trails the cursor. The whole page is metal lit from a
      fixed point; letting the reader move that point is the thematic version of
      a hover effect. Written straight to the DOM through a ref and an rAF loop —
@@ -689,7 +727,7 @@ export default function WorkshopPage() {
             <div className="stagerow" style={{ display: "flex", alignItems: "stretch", gap: 10, marginTop: 34 }}>
               {STAGES.map((s, i) => (
                 <div key={s.n} style={{ display: "contents" }}>
-                  <div className="flip" style={{ flex: "1 1 0", minWidth: 0 }}
+                  <div className="flip" data-lit style={{ flex: "1 1 0", minWidth: 0 }}
                     onClick={() => setFlipped(p => p.includes(s.n) ? p.filter(x => x !== s.n) : [...p, s.n])}>
                     <div className={`flip-inner${flipped.includes(s.n) ? " flipped" : ""}`} style={{ minHeight: 340 }}>
                       <div className="face" style={{ ...card, borderColor: `${s.c}44`, display: "flex", flexDirection: "column" }}>
@@ -819,7 +857,7 @@ export default function WorkshopPage() {
               What this looks like <span style={EM}>in practice</span>
             </Head>
             {STORIES.map((s, i) => (
-              <div key={s.kicker} className="storycard"
+              <div key={s.kicker} className="storycard" data-lit
                 style={{ ...card, marginTop: i ? 16 : 30, padding: 0, overflow: "hidden",
                   borderColor: openStory === i ? `${C.gold}3d` : C.border2 }}>
                 <button onClick={() => setOpenStory(openStory === i ? null : i)} className="storybtn"
@@ -925,9 +963,9 @@ export default function WorkshopPage() {
             <div style={{ display: "flex", gap: "clamp(24px,4vw,56px)", alignItems: "stretch", marginTop: 6 }} className="split rev">
              <div style={{ flex: "1 1 0" }}>
               <div className="grid2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-                <div style={card}><div style={{ ...KICKER, color: C.green, marginBottom: 12 }}>This is for you if</div>
+                <div style={card} data-lit><div style={{ ...KICKER, color: C.green, marginBottom: 12 }}>This is for you if</div>
                   <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>{FIT.map(t => <Tick key={t}>{t}</Tick>)}</ul></div>
-                <div style={card}><div style={{ ...KICKER, color: C.red, marginBottom: 12 }}>It isn’t if</div>
+                <div style={card} data-lit><div style={{ ...KICKER, color: C.red, marginBottom: 12 }}>It isn’t if</div>
                   <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>{NOT_FIT.map(t => <Tick key={t} no>{t}</Tick>)}</ul></div>
               </div>
             </div>
@@ -1053,6 +1091,9 @@ export default function WorkshopPage() {
         .faqbtn:hover span { color: ${C.gold}; }
         .storycard { transition: box-shadow .3s ease, border-color .3s ease; }
         .storycard:hover { border-color: rgba(200,162,78,.55) !important; box-shadow: 0 0 34px rgba(200,162,78,.22), 0 10px 40px rgba(0,0,0,.42) !important; }
+        /* the same edge, given by scroll position rather than by a cursor */
+        [data-lit] { transition: border-color .35s ease, box-shadow .35s ease; }
+        [data-lit].lit { border-color: rgba(200,162,78,.5) !important; box-shadow: 0 0 30px rgba(200,162,78,.18), 0 10px 40px rgba(0,0,0,.42) !important; }
         .storybtn:hover { background: rgba(255,255,255,.02); }
 
         .flip { perspective: 1400px; }
