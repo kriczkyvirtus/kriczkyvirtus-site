@@ -81,7 +81,7 @@ const SLIDES = [
   ["/img/workshop/roadmap.png", "Stations 01 to 03, done"],
   ["/img/workshop/sprint.jpg", "Your 90-day sprint"],
   ["/img/workshop/books.png", "Your workbook and Sprint Ledger"],
-  ["/img/workshop/wealth.jpg", "Your Personalized Wealth Roadmap"],
+  ["/img/workshop/wealth.png", "Your Personalized Wealth Roadmap"],
 ];
 
 const AGENDA = [
@@ -97,10 +97,10 @@ const AGENDA = [
 
 /* One mark per niche. */
 const INDUSTRIES = [
-  ["Landscaping", "landscaping"], ["Residential remodeling", "remodeling"],
-  ["Manufacturing", "manufacturing"], ["Auto repair", "auto-repair"],
-  ["Physical therapy", "physical-therapy"], ["SaaS", "saas"],
-  ["Accounting", "accounting"], ["Marketing agency", "marketing"],
+  ["Landscaping", "landscaping"], ["Residential Remodeling", "remodeling"],
+  ["Manufacturing", "manufacturing"], ["Auto Repair", "auto-repair"],
+  ["Physical Therapy", "physical-therapy"], ["SaaS", "saas"],
+  ["Accounting", "accounting"], ["Marketing Agency", "marketing"],
 ];
 const INDUSTRY_ICON = Object.fromEntries(INDUSTRIES);
 
@@ -134,7 +134,7 @@ const STORIES = [
   },
   {
     kicker: "They thought they needed to Brute Force growth",
-    industry: "Residential remodeling",
+    industry: "Residential Remodeling",
     thought: "Stage 3 · Capacity to Fulfill",
     actual: "2",
     open: "A residential remodeling company (kitchen, bathroom, basement, and more) was convinced the problem was Stage 3, and was about to take on a lot of debt to bring in new technicians, trucks, and inventory.",
@@ -458,7 +458,13 @@ const Sec = ({ children, style, id }) => <section id={id} style={{ padding: "cla
    identity remounts the subtree and kills focus in whatever input is being typed in. */
 const toForm = (e) => {
   e.preventDefault();
-  document.getElementById("register")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  /* On desktop the form sits beside the heading, so the section top is right.
+     On a phone it sits below the deposit card — landing there shows a wall of
+     prose and no inputs, so aim at the venue block instead: a line of context,
+     then the fields. */
+  const coarse = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+  const target = (coarse && document.getElementById("venue-block")) || document.getElementById("register");
+  target?.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 
 const CTA = ({ note = true, align = "center" }) => (
@@ -513,6 +519,7 @@ export default function WorkshopPage() {
   const [slide, setSlide] = useState(0);
   const [slideHeld, setSlideHeld] = useState(false);
   const [openStory, setOpenStory] = useState(null);   /* all closed until clicked */
+  const [bioOpen, setBioOpen] = useState(false);      /* mobile only — desktop shows it all */
 
   /* On a phone there's no cursor, so scroll position decides what's lit: the card
      nearest the middle of the screen picks up the same gold edge the story cards
@@ -742,7 +749,10 @@ export default function WorkshopPage() {
                           <span className="cue-hover">Hover</span><span className="cue-tap">Tap</span> to see what’s underneath</div>
                       </div>
                       <div className="face back" style={{ ...card, borderColor: `${s.c}44`, overflow: "hidden" }}>
-                        <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: s.c, marginBottom: 8 }}>Sub-bottlenecks</div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                          <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: s.c }}>Sub-bottlenecks</div>
+                          <Mark of={s.icon} size={34} />
+                        </div>
                         {s.sub.map(t => <div key={t} style={{ fontSize: 13.5, lineHeight: 1.45, color: C.text2, padding: "4px 0", borderBottom: `1px solid ${C.border1}` }}>{t}</div>)}
                         <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: C.red, margin: "14px 0 8px" }}>Landmines</div>
                         {s.mines.map(t => <div key={t} style={{ fontSize: 13.5, lineHeight: 1.45, color: "#C98B8B", padding: "4px 0", borderBottom: `1px solid ${C.border1}` }}>{t}</div>)}
@@ -818,34 +828,45 @@ export default function WorkshopPage() {
             </div>
             <div style={{ flex: "0 0 auto", width: "min(44%, 420px)" }} className="splitvis">
               <img src="/img/workshop/roadmap.png" alt="The Owner’s Virtus Roadmap" style={{ width: "100%", display: "block" }} />
-              <p style={{ fontSize: 12.5, color: C.text3, textAlign: "center", margin: "12px 0 0" }}>The Owner’s Virtus Roadmap. The workshop covers the first three stations.</p>
+              <p className="roadcap" style={{ fontSize: 11.5, color: C.text3, textAlign: "center", margin: "12px 0 0", whiteSpace: "nowrap" }}>
+                The Owner’s Virtus Roadmap. <span className="capline2">The workshop covers the first three stations.</span></p>
             </div>
           </div>
         </Sec>
 
-        {/* ── WHO'S RUNNING IT — headshot left, text right, equal height ── */}
-        <Sec>
-          <div style={{ ...wrap, display: "flex", gap: "clamp(24px,4vw,52px)", alignItems: "center" }} className="split">
-            <div style={{ flex: "0 0 auto", width: "min(38%, 400px)" }} className="splitvis">
-              {/* ⚠️ REPLIT: /img/edward.jpg — the headshot from the Virtus Collective slide.
-                  Square by design: aspectRatio 1 with object-fit cover, so any source crops
-                  to a square rather than stretching into a tall strip. */}
-              <img src="/img/edward.jpg" alt="Edward Kriczky"
-                style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", objectPosition: "center top",
-                  borderRadius: 18, border: `1px solid ${C.border2}`, boxShadow: "0 18px 50px rgba(0,0,0,.55)", display: "block" }} />
-            </div>
-            <div style={{ flex: "1 1 0", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-              <Head kicker="Who’s running it">A quarterback for every domain of <span style={EM}>your wealth</span></Head>
-              <p style={P}>I started out as an aerospace engineer, designing weapons integration systems for US special forces. I went from entry level to co-leading a team of 25 — hiring, scaling the team, and building the comp plans that kept them.</p>
-              <p style={{ ...P, marginTop: 13 }}>Then I left to start my own firm. Three years of eighty-hour weeks, married, three kids and a fourth on the way.</p>
-              <p style={{ ...P, marginTop: 13 }}>Before any of that, my wife and I finished college with over $100,000 of student debt and went from two incomes to one. For years every dollar went to that debt. We couldn’t buy a home. I ate less than I needed to because I was frightened of the bills, and lost fifteen pounds doing it. I felt like a loser in front of my wife.</p>
-              <p style={{ ...P, marginTop: 13 }}>I climbed out of that with almost no help. I don’t want another family in it, and I especially don’t want it for owners, who carry more risk than anyone I know.</p>
-              <p style={{ ...P, marginTop: 13, color: C.text1 }}>Here’s what managing money for them taught me: <strong style={{ color: C.gold, fontWeight: 600 }}>roughly 80% of an owner’s net worth sits inside the business.</strong> You can compound the other 20% perfectly and it still won’t decide anything. Almost nobody helps with the 80% — and almost nobody gets the two sides working together instead of rowing in opposite directions.</p>
-              <p style={{ ...P, marginTop: 13 }}>Most owners end up with five or ten advisors — an accountant, an attorney, an insurance broker, a banker, someone managing investments — none of whom speak to each other. Each one is paid separately, each sees one slice, and the advice comes back contradicting itself. You end up being the one coordinating all of it, on top of running the company.</p>
-              <p style={{ ...P, marginTop: 13, color: C.text1 }}>My job is to be the quarterback across every domain of your financial life, the business included: keeping your existing advisors rowing in the same direction rather than opposite ones. That’s why I built both sides. That’s the barbell.</p>
-              <p style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: 22, color: C.text1, margin: "20px 0 0" }}>
+        {/* ── WHO'S RUNNING IT — headshot floated, so the text wraps beside and
+               under it and the whole section fits one desktop screen ── */}
+        <Sec style={{ padding: "clamp(24px,3.4vw,42px) 0" }}>
+          <div style={col}>
+            <img src="/img/edward.jpg" alt="Edward Kriczky" className="biopic"
+              style={{ float: "left", width: "min(38%, 290px)", aspectRatio: "1 / 1", objectFit: "cover", objectPosition: "center top",
+                borderRadius: 18, border: `1px solid ${C.border2}`, boxShadow: "0 18px 50px rgba(0,0,0,.55)",
+                margin: "6px 26px 18px 0", shapeOutside: "inset(0 round 18px)" }} />
+            <div style={KICKER}>Who’s running it</div>
+            <h2 style={{ ...H2, fontSize: "clamp(28px,4.1vw,42px)", margin: "0 0 12px" }}>A quarterback for every domain of <span style={EM}>your wealth</span></h2>
+            <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58 }}>I started out as an aerospace engineer, designing weapons integration systems for US special forces. I went from entry level to co-leading a team of 25 — hiring, scaling the team, and building the comp plans that kept them.</p>
+            <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>Then I left to start my own firm. Three years of eighty-hour weeks, married, three kids and a fourth on the way.</p>
+
+            <div className={`biomore${bioOpen ? " open" : ""}`}>
+              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>Before any of that, my wife and I finished college with over $100,000 of student debt and went from two incomes to one. For years every dollar went to that debt. We couldn’t buy a home. I ate less than I needed to because I was frightened of the bills, and lost fifteen pounds doing it. I felt like a loser in front of my wife.</p>
+              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>I climbed out of that with almost no help. I don’t want another family in it, and I especially don’t want it for owners, who carry more risk than anyone I know.</p>
+              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10, color: C.text1 }}>Here’s what managing money for them taught me: <strong style={{ color: C.gold, fontWeight: 600 }}>roughly 80% of an owner’s net worth sits inside the business.</strong> You can compound the other 20% perfectly and it still won’t decide anything. Almost nobody helps with the 80% — and almost nobody gets the two sides working together instead of rowing in opposite directions.</p>
+              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>Most owners end up with five or ten advisors — an accountant, an attorney, an insurance broker, a banker, someone managing investments — none of whom speak to each other. Each one is paid separately, each sees one slice, and the advice comes back contradicting itself. You end up being the one coordinating all of it, on top of running the company.</p>
+              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10, color: C.text1 }}>My job is to be the quarterback across every domain of your financial life, the business included: keeping your existing advisors rowing in the same direction rather than opposite ones. That’s why I built both sides. That’s the barbell.</p>
+              <p style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: 22, color: C.text1, margin: "18px 0 0" }}>
                 Edward Kriczky, <span style={{ color: C.gold }}>CEPA&reg;</span></p>
             </div>
+
+            <button onClick={() => setBioOpen(!bioOpen)} className="biotoggle"
+              style={{ display: "none", width: "100%", marginTop: 14, padding: "12px 18px", borderRadius: 999, cursor: "pointer",
+                background: "transparent", border: `1px solid ${C.border2}`, fontFamily: "'DM Sans',sans-serif" }}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 14.5, fontWeight: 600, color: C.gold }}>
+                {bioOpen ? "Show less" : "Read the rest"}
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ transform: bioOpen ? "rotate(180deg)" : "none", transition: "transform .3s ease" }}>
+                  <path d="M6 9.5L12 15.5L18 9.5" stroke={C.gold} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </span>
+            </button>
+            <div style={{ clear: "both" }} />
           </div>
         </Sec>
 
@@ -1018,7 +1039,7 @@ export default function WorkshopPage() {
               <p style={{ ...P, fontSize: 15.5, marginTop: 12, color: C.text1 }}>So the deposit is a commitment, not a booking fee. <strong style={{ color: C.green, fontWeight: 600 }}>You get it back in full when you arrive.</strong> <strong style={{ color: C.text1, fontWeight: 600 }}>If you don’t attend, it isn’t refunded.</strong></p>
             </div>
 
-            <div style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "16px 18px", borderRadius: 12, border: `1px solid ${C.border2}` }}>
+            <div id="venue-block" style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "16px 18px", borderRadius: 12, border: `1px solid ${C.border2}`, scrollMarginTop: 14 }}>
               <Icon name="NorthStarGold" size={44} style={{ flexShrink: 0, marginTop: -2 }} />
               <div><div style={{ color: C.text1, fontWeight: 600, fontSize: 15 }}>{EVENT.venueLine1}, {EVENT.venueLine2}</div>
                 <div style={{ color: C.text3, fontSize: 13.5, marginTop: 4 }}>Happy hour afterward is a short walk into town.</div></div>
@@ -1120,10 +1141,26 @@ export default function WorkshopPage() {
           .pillarrow { transform: rotate(90deg); margin: 2px 0 2px 14px; }
           /* the niche list reads better centred once it's no longer beside the cards */
           .nichecol { text-align: center; }
+          /* the niche list lines up with the cards above it rather than floating centred */
+          .nichecol { max-width: none !important; margin: 0 !important; text-align: left; }
           .nichegrid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 20px 14px !important; }
-          .nichegrid > div { justify-content: center; }
+          .nichegrid > div { justify-content: flex-start; }
+          .capline2 { display: block; }
+          .roadcap { white-space: normal !important; }
         }
         @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr !important; } }
+
+        /* The bio runs long. On a phone show the opening and let the reader choose
+           the rest, rather than handing them a wall of text mid-page. */
+        @media (max-width: 760px) {
+          .biopic { float: none !important; width: 100% !important; max-width: 280px; margin: 0 auto 18px !important; display: block; }
+          .biomore { position: relative; max-height: 210px; overflow: hidden; }
+          .biomore::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 130px;
+            background: linear-gradient(to bottom, rgba(10,14,20,0), rgba(10,14,20,.86) 60%, #0A0E14); pointer-events: none; }
+          .biomore.open { max-height: none; }
+          .biomore.open::after { display: none; }
+          .biotoggle { display: block !important; }
+        }
         @media (hover: none) { .cue-hover { display: none; } .cue-tap { display: inline; } }
       `}</style>
     </div>
