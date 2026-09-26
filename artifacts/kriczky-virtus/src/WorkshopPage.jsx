@@ -736,7 +736,7 @@ export default function WorkshopPage() {
                 <div key={s.n} style={{ display: "contents" }}>
                   <div className="flip" data-lit style={{ flex: "1 1 0", minWidth: 0 }}
                     onClick={() => setFlipped(p => p.includes(s.n) ? p.filter(x => x !== s.n) : [...p, s.n])}>
-                    <div className={`flip-inner${flipped.includes(s.n) ? " flipped" : ""}`} style={{ minHeight: 340 }}>
+                    <div className={`flip-inner${flipped.includes(s.n) ? " flipped" : ""}`} style={{ minHeight: 392 }}>
                       <div className="face" style={{ ...card, borderColor: `${s.c}44`, display: "flex", flexDirection: "column" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                           <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 700, fontSize: 38, color: s.c, lineHeight: 1 }}>{s.n}</div>
@@ -751,7 +751,7 @@ export default function WorkshopPage() {
                       <div className="face back" style={{ ...card, borderColor: `${s.c}44`, overflow: "hidden" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
                           <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: s.c }}>Sub-bottlenecks</div>
-                          <Mark of={s.icon} size={34} />
+                          <Mark of={s.icon} size={64} />
                         </div>
                         {s.sub.map(t => <div key={t} style={{ fontSize: 13.5, lineHeight: 1.45, color: C.text2, padding: "4px 0", borderBottom: `1px solid ${C.border1}` }}>{t}</div>)}
                         <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: C.red, margin: "14px 0 8px" }}>Landmines</div>

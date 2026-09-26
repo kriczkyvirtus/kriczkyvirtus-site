@@ -259,7 +259,7 @@ const ROADMAP = [
   { n: "03", icon: ICON_C3, title: "Find The Constraint",   desc: "The one thing capping sustainable growth.",                     tint: C.gold },
   { n: "04", icon: ICON_C4, title: "The Profit Split System", desc: "What goes back in, what holds in reserve, what comes out to you.", tint: C.green },
   { n: "05", icon: ICON_C5, title: "Build The Outside",     desc: "Assets that aren't the company, and a tax plan that isn't paperwork.", tint: C.green },
-  { n: "06", icon: ICON_C6, title: "Where This Is Going",   desc: "The destination that makes every future decision answerable.",  tint: C.cyan },
+  { n: "06", icon: ICON_C6, title: "Your Wealth North Star", desc: "The one thing that makes every Reinvest-or-Harvest decision answerable.", tint: C.cyan },
 ];
 
 /* Reached two ways:
