@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import ValueDriversFlow from "./ValueDriversFlow.jsx";
 import ValueDriversNext from "./ValueDriversNext.jsx";
-import WMBW from "./WMBW.jsx";
+import ValueDriversReport from "./ValueDriversReport.jsx";
 
 /* Routes for the Value Drivers flow (the replacement for the long /tools/wmbw page).
      /tools/wmbw                       → flow, website door
      /tools/wmbw/next?t=               → book a call
-     /tools/wmbw/r/:token              → full report (the WMBW document, pre-filled)
+     /tools/wmbw/r/:token              → full report (ValueDriversReport, letter pages)
      /workshop-rh/value-drivers        → flow, workshop door (?e=&n= skips contact)
      /workshop-rh/value-drivers/next?t= → workshop VSL + workbook scores */
 
@@ -55,5 +55,5 @@ export function ValueDriversReportRoute() {
       </main>
     );
   }
-  return <WMBW key={token} initialScores={report.scores} initialChecks={report.checks || null} />;
+  return <ValueDriversReport key={token} report={report} token={token} />;
 }
