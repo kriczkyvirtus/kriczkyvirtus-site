@@ -53,7 +53,9 @@ const glowCard = (tone, extra = {}) => ({
 
 const CSS = `
   .vdr *{box-sizing:border-box}
-  .vdr{background:${L.desk};color:${L.ink};font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  .vdr{background:${L.desk};color:${L.ink};font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;
+    -webkit-text-size-adjust:100%;text-size-adjust:100%}
+  .vdr .page *{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   .vdr .pw{margin:0 auto;position:relative}
   .vdr .page{position:absolute;top:0;left:0;width:${PAGE_W}px;height:${PAGE_H}px;transform-origin:top left;overflow:hidden;
     background:${L.page};box-shadow:0 1px 3px rgba(10,14,20,.10),0 14px 40px rgba(10,14,20,.16);padding:58px 64px 0}
@@ -74,17 +76,22 @@ const CSS = `
   .vdr .tile img{display:block}
   .vdr .num{font-family:'Playfair Display',serif;font-weight:700;line-height:1}
   .vdr .drow{transition:box-shadow .3s ease,border-color .3s ease,transform .3s ease}
-  .vdr .drow:hover{box-shadow:0 0 0 1px var(--edge),0 0 34px var(--glowHi),0 14px 34px rgba(10,14,20,.10)!important;border-color:var(--edge)!important;transform:translateY(-1px)}
   .vdr .cta{transition:box-shadow .3s ease,transform .3s ease}
-  .vdr .cta:hover{box-shadow:0 0 44px rgba(200,162,78,.55),0 10px 26px rgba(10,14,20,.25)!important;transform:translateY(-1px)}
+  /* Hover glows only on devices with a real pointer. On phones a tap would
+     trigger them, and the relayout let the browser re-inflate the text. */
+  @media (hover:hover) and (pointer:fine){
+    .vdr .drow:hover{box-shadow:0 0 0 1px var(--edge),0 0 34px var(--glowHi),0 14px 34px rgba(10,14,20,.10)!important;border-color:var(--edge)!important;transform:translateY(-1px)}
+    .vdr .cta:hover{box-shadow:0 0 44px rgba(200,162,78,.55),0 10px 26px rgba(10,14,20,.25)!important;transform:translateY(-1px)}
+  }
   .vdr .bar{position:sticky;top:0;z-index:5;display:flex;justify-content:center;gap:10px;padding:10px 12px;background:rgba(221,214,200,.92);backdrop-filter:blur(6px)}
+  .vdr .bar button:disabled{opacity:.7;cursor:progress}
   .vdr .bar button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:.04em;padding:9px 18px;border-radius:9px;cursor:pointer;
     color:#F2EEE6;background:#0A0E14;border:1px solid #0A0E14}
   @page{size:letter;margin:0}
   @media print{
     html,body{background:#fff!important}
     .vdr{background:#fff;min-height:0}
-    .vdr .bar{display:none!important}
+    .vdr .bar,.vdr .glow{display:none!important}
     .vdr .pages{padding:0!important}
     .vdr .pw{width:8.5in!important;height:11in!important;margin:0!important;page-break-after:always;break-after:page}
     .vdr .page{transform:none!important;box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -150,7 +157,7 @@ function CoverPage({ s, report, zone }) {
   const label = { fontSize: 12, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8A94A3", marginBottom: 8 };
   return (
     <Page s={s} dark>
-      <div style={{ position: "absolute", top: "-12%", left: "8%", width: "84%", height: "62%", background: "radial-gradient(ellipse at center, rgba(200,162,78,.17) 0%, transparent 62%)", pointerEvents: "none" }} />
+      <div className="glow" style={{ position: "absolute", top: "-12%", left: "8%", width: "84%", height: "62%", background: "radial-gradient(ellipse at center, rgba(200,162,78,.17) 0%, transparent 62%)", pointerEvents: "none" }} />
       <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", paddingBottom: 64 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: 11, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#8A94A3" }}>
           <b style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 15, letterSpacing: ".14em", color: "#C8A24E", fontWeight: 600 }}>Kriczky Virtus</b>
@@ -560,10 +567,10 @@ const NEXT = {
 
 /* The bio card: dark glass on the cream page, like the workbook's offer cards. */
 const BioCard = () => (
-  <div style={{ position: "relative", overflow: "hidden", display: "flex", gap: 18, alignItems: "flex-start", padding: "18px 22px", borderRadius: 16, marginBottom: 12,
+  <div className="bio" style={{ position: "relative", overflow: "hidden", display: "flex", gap: 18, alignItems: "flex-start", padding: "18px 22px", borderRadius: 16, marginBottom: 12,
     background: "linear-gradient(160deg,#141B26 0%,#0A0E14 72%)", color: "#E8ECF1", border: `1px solid ${L.goldFill}55`,
     boxShadow: `inset 0 1px 0 rgba(255,255,255,.07), 0 0 30px ${L.goldFill}26, 0 18px 40px rgba(10,14,20,.30)` }}>
-    <div style={{ position: "absolute", top: "-50%", left: "10%", width: "80%", height: "120%", background: "radial-gradient(ellipse at center, rgba(200,162,78,.16) 0%, transparent 62%)", pointerEvents: "none" }} />
+    <div className="glow" style={{ position: "absolute", top: "-50%", left: "10%", width: "80%", height: "120%", background: "radial-gradient(ellipse at center, rgba(200,162,78,.16) 0%, transparent 62%)", pointerEvents: "none" }} />
     <img src="/images/edward-kriczky-headshot-240.jpg" alt="Edward Kriczky" width="92" height="92"
       style={{ position: "relative", width: 92, height: 92, borderRadius: "50%", objectFit: "cover", flexShrink: 0, border: `2px solid ${L.goldFill}88` }} />
     <div style={{ position: "relative" }}>
@@ -602,17 +609,57 @@ function NextPage({ s, n, total, report, token }) {
   );
 }
 
+/* The PDF is built from the pages themselves: each letter page is drawn at
+   2x and placed full-bleed on a letter sheet. That gives the same file on
+   every device. Browser printing can't: iPhone Safari adds its own margins
+   and header lines, and drops the soft glows on the cover and bio card. */
+const fileName = (r) => ("Value Drivers Report" + (r.company ? " - " + r.company : "")).replace(/[\\/:*?"<>|]+/g, "") + ".pdf";
+
+async function buildPdf(root, filename) {
+  if (document.fonts && document.fonts.ready) await document.fonts.ready;
+  const [h2c, jspdf] = await Promise.all([import("html2canvas"), import("jspdf")]);
+  const html2canvas = h2c.default || h2c;
+  const JsPDF = jspdf.jsPDF || jspdf.default;
+  const pages = Array.from(root.querySelectorAll(".page"));
+  const pdf = new JsPDF({ unit: "pt", format: "letter", compress: true });
+  for (let i = 0; i < pages.length; i++) {
+    const canvas = await html2canvas(pages[i], {
+      scale: 2, useCORS: true, logging: false, backgroundColor: "#ffffff",
+      width: PAGE_W, height: PAGE_H, windowWidth: PAGE_W + 200,
+      onclone: (doc, el) => {
+        el.style.transform = "none"; el.style.boxShadow = "none";
+        /* the soft radial glows draw as flat boxes in the image, so leave them out */
+        el.querySelectorAll(".glow").forEach(g => { g.style.display = "none"; });
+        /* an inset highlight draws as a pale inner box, so keep only the outer glow */
+        el.querySelectorAll(".bio").forEach(b => { b.style.boxShadow = "0 0 30px rgba(200,162,78,.15), 0 18px 40px rgba(10,14,20,.30)"; });
+      },
+    });
+    if (i) pdf.addPage("letter", "portrait");
+    pdf.addImage(canvas.toDataURL("image/jpeg", 0.85), "JPEG", 0, 0, 612, 792, undefined, "FAST");
+    canvas.width = 0; canvas.height = 0;
+  }
+  pdf.save(filename);
+}
+
 /* ── the report ── */
 export default function ValueDriversReport({ report, token = null }) {
   const zone = zoneByKey(report.zoneKey) || ZONES[0];
   const [ref, s] = usePageScale();
+  const [busy, setBusy] = useState(false);
   const order = ranked(report.scores);
   const TOTAL = 7 + order.length + 1;
   return (
     <div className="vdr" ref={ref}>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
       <style>{CSS}</style>
-      <div className="bar"><button onClick={() => window.print()}>Download PDF</button></div>
+      <div className="bar">
+        <button disabled={busy} onClick={async () => {
+          setBusy(true);
+          try { await buildPdf(ref.current, fileName(report)); }
+          catch (e) { window.print(); }
+          finally { setBusy(false); }
+        }}>{busy ? "Preparing your PDF..." : "Download PDF"}</button>
+      </div>
       <div className="pages" style={{ padding: "14px 0 30px" }}>
         <CoverPage s={s} report={report} zone={zone} />
         <ZonePage s={s} n={2} total={TOTAL} report={report} zone={zone} />
