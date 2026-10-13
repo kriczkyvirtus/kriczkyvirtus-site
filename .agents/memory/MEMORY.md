@@ -1,2 +1,9 @@
 - [GitHub push authentication](github-push-auth.md) — the GitHub connector can call APIs but does not authenticate this workspace’s local Git transport.
 - [Reinvest or Harvest ownership](reinvest-harvest-ownership.md) — flow, thank-you, and report components are repo-owned and must not be overwritten from uploads.
+- [SPA legal-route validation](spa-legal-route-validation.md) — catch-all rewrites return 200 for undefined routes; verify legal links in the React router before publishing.
+- [VSL codec testing](vsl-codec-testing.md) — the automated Chromium lacks the VSL’s H.264/AAC codecs; validate integrity separately and use real-device playback QA.
+- [Workspace package installs](workspace-package-installs.md) — the generic Node package installer targets the workspace root; install artifact dependencies with a filtered pnpm command.
+- [Popup-flow browser checks](popup-flow-browser-checks.md) — a blank payment tab in automation may mean intercepted capture never resolved; distinguish it from app navigation failure.
+- [Managed workflow port conflicts](managed-workflow-port-conflicts.md) — failed restarts can coexist with older servers still holding the port; inspect listeners before changing config.
+- [Fine-pointer browser checks](fine-pointer-browser-checks.md) — headless Chromium can report no fine pointer even when CDP mouse events work; simulate that media query to test cursor-only effects.
+- [Workshop upload reconciliation](workshop-upload-reconciliation.md) — successive uploaded page files can carry older regressions; preserve verified live fixes while applying the requested changes.
