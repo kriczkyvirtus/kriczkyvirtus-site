@@ -3,7 +3,10 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import App from './App.jsx'
 import ResourcesHub from './ResourcesHub.jsx'
-import WMBW from './tools/WMBW.jsx'
+import {
+  ValueDriversSiteFlow, ValueDriversWorkshopFlow, ValueDriversSiteNext,
+  ValueDriversWorkshopNext, ValueDriversReportRoute,
+} from './tools/ValueDriversRoutes.jsx'
 import BIB from './tools/BIB.jsx'
 import HumanCapital from './tools/HumanCapital.jsx'
 import CustomerCapital from './tools/CustomerCapital.jsx'
@@ -29,7 +32,10 @@ import RecurringRevenue12Cs from './tools/RecurringRevenue12Cs.jsx'
 import './index.css'
 
 const TITLES = {
-  '/tools/wmbw':              "What's My Business Worth?",
+  '/tools/wmbw':              "Value Drivers — What's My Business Worth?",
+  '/tools/wmbw/next':         'Your Value Drivers Results',
+  '/workshop-rh/value-drivers': 'Value Drivers — Workshop Pre-work',
+  '/workshop-rh/value-drivers/next': 'Your Value Drivers Results',
   '/tools/bib':               'Business Independence Blueprint',
   '/tools/human-capital':     'Attracting Top Employees',
   '/tools/customer-capital':  'Getting More Valuable Customers',
@@ -77,7 +83,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/tools" element={<ResourcesHub />} />
-        <Route path="/tools/wmbw" element={<WMBW />} />
+        <Route path="/tools/wmbw" element={<ValueDriversSiteFlow />} />
+        <Route path="/tools/wmbw/next" element={<ValueDriversSiteNext />} />
+        <Route path="/tools/wmbw/r/:token" element={<ValueDriversReportRoute />} />
+        <Route path="/workshop-rh/value-drivers" element={<ValueDriversWorkshopFlow />} />
+        <Route path="/workshop-rh/value-drivers/next" element={<ValueDriversWorkshopNext />} />
         <Route path="/tools/bib" element={<BIB />} />
         <Route path="/tools/human-capital" element={<HumanCapital />} />
         <Route path="/tools/customer-capital" element={<CustomerCapital />} />

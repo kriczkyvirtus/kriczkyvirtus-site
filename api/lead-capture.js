@@ -8,6 +8,42 @@ const { appendLead } = require("../lib/sheets");
 const { sendResultsEmail, sendCohortConfirmationEmail } = require("../lib/email");
 const { syncContact } = require("../lib/activecampaign");
 const { makeReportToken, writeReport } = require("../lib/reinvest-harvest-reports");
+const valueDriversReports = require("../lib/value-drivers-reports");
+
+const VALUE_DRIVER_KEYS = [
+  "marketPosition", "revenueQuality", "financialPerformance", "customerConcentration", "managementTeam",
+  "documentation", "contingency", "financialInfra", "revPredictability", "succession",
+];
+
+async function isUnsubscribed(email) {
+  const { google } = require("googleapis");
+  const credentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS);
+  const auth = new google.auth.GoogleAuth({ credentials, scopes: ["https://www.googleapis.com/auth/spreadsheets"] });
+  const sheets = google.sheets({ version: "v4", auth });
+  const unsubscribed = await sheets.spreadsheets.values.get({
+    spreadsheetId: process.env.GOOGLE_SHEETS_SPREADSHEET_ID,
+    range: "'Unsubscribed'!B:B",
+  });
+  return (unsubscribed.data.values || []).flat().map(value => String(value).toLowerCase()).includes(email.toLowerCase());
+}
+
+async function sendValueDriversEmail(data) {
+  if (await isUnsubscribed(data.email)) {
+    console.log(`[Email] Skipping Value Drivers send to ${data.email} — on unsubscribe list`);
+    return { skipped: true };
+  }
+  const { renderResultsEmail } = await import("../lib/value-drivers-results-email.js");
+  const rendered = renderResultsEmail(data);
+  const { Resend } = require("resend");
+  return new Resend(process.env.RESEND_API_KEY).emails.send({
+    from: "Edward Kriczky <growth@kriczkyvirtus.com>",
+    replyTo: "ekriczky@kriczkyvirtus.com",
+    to: data.email,
+    subject: rendered.subject,
+    html: rendered.html,
+    text: rendered.text,
+  });
+}
 
 async function sendReinvestHarvestEmail(data) {
   const { google } = require("googleapis");
@@ -61,7 +97,7 @@ module.exports = async function handler(req, res) {
     const { scores: submittedScores, totalScore: submittedTotalScore, maxScore, band: resultBand } = req.body;
     const isPartial = partial === true;
     const { revenueRange, ownership, tierInterest, businessConstraint, timeline, reason } = req.body;
-    const refererUtms = tool === "reinvest-harvest" ? utmsFromReferer(req) : {};
+    const refererUtms = (tool === "reinvest-harvest" || tool === "value-drivers") ? utmsFromReferer(req) : {};
     const resolvedUtmSource = utmSource || refererUtms.utmSource || null;
     const resolvedUtmCampaign = utmCampaign || refererUtms.utmCampaign || null;
     const sheetsAnswers = tool === "cohort-waitlist"
@@ -109,6 +145,93 @@ module.exports = async function handler(req, res) {
 
     if (!name || !email) {
       return res.status(400).json({ error: "Missing required fields: name, email" });
+    }
+
+    // ── VALUE DRIVERS (/tools/wmbw and /workshop-rh/value-drivers) ─────────────
+    // Two doors share one branch. `door` decides tags and where the email points:
+    //   site     → website lead, partial capture at step 1, call page next
+    //   workshop → pre-work for a ticket-holder: no Website Lead tag (keeps them
+    //              out of the sales nurture), no partial capture, VSL page next
+    if (tool === "value-drivers") {
+      const door = req.body.door === "workshop" ? "workshop" : "site";
+      const { first, last, company, phone } = req.body;
+
+      if (partial === true) {
+        if (door !== "site") return res.status(200).json({ success: true });
+        const required = { first, last, company, email, phone };
+        const missing = Object.entries(required)
+          .filter(([, value]) => value === undefined || value === null || String(value).trim() === "")
+          .map(([key]) => key);
+        if (missing.length) {
+          return res.status(400).json({ error: `Missing required fields: ${missing.join(", ")}` });
+        }
+        await appendLead({
+          name, firstName: first, lastName: last, businessName: company, email, phone,
+          tool, summary: {}, answers: {}, timestamp: timestamp || new Date().toISOString(),
+          utmSource: resolvedUtmSource, utmCampaign: resolvedUtmCampaign, notes: "PARTIAL", door,
+        });
+        await syncContact({
+          name, email, phone, tool, door, summary: {}, utmSource: resolvedUtmSource,
+          utmCampaign: resolvedUtmCampaign, partial: true,
+        });
+        return res.status(200).json({ success: true });
+      }
+
+      const { guess = null, industry, ownership, ownerTier, timing = null, scores } = req.body;
+      const s = req.body.summary || {};
+      const required = {
+        first, email, industry, ownership, ownerTier, scores,
+        attractScore: s.attractScore, readyScore: s.readyScore, totalScore: s.totalScore, zoneKey: s.zoneKey, zone: s.zone,
+        ...(door === "site" ? { last, company, phone, timing, revenueBand } : {}),
+      };
+      const missing = Object.entries(required)
+        .filter(([, value]) => value === undefined || value === null || value === "")
+        .map(([key]) => key);
+      const badScores = VALUE_DRIVER_KEYS.filter(k => !Number.isInteger(scores?.[k]) || scores[k] < 1 || scores[k] > 6);
+      if (missing.length || badScores.length) {
+        return res.status(400).json({ error: `Missing or invalid fields: ${[...missing, ...badScores].join(", ")}` });
+      }
+
+      const token = valueDriversReports.makeReportToken();
+      const report = {
+        token, door, createdAt: new Date().toISOString(),
+        firstName: first, lastName: last || "", company: company || "", email, phone: phone || "",
+        guess, industry, ownership, ownerTier, timing, revenueBand: revenueBand || null,
+        scores: Object.fromEntries(VALUE_DRIVER_KEYS.map(k => [k, scores[k]])),
+        /* "Check what's true today" ticks — optional, four per driver, booleans only. */
+        checks: Object.fromEntries(VALUE_DRIVER_KEYS.map(k => [k, [0, 1, 2, 3].map(i => Boolean(req.body.checks?.[k]?.[i]))])),
+        attractScore: s.attractScore, readyScore: s.readyScore, totalScore: s.totalScore,
+        zoneKey: s.zoneKey, zone: s.zone,
+      };
+      await valueDriversReports.writeReport(report);
+
+      const host = req.headers["x-forwarded-host"] || req.headers.host;
+      const protocol = req.headers["x-forwarded-proto"] || "https";
+      const reportUrl = `${protocol}://${host}/tools/wmbw/r/${token}`;
+      await appendLead({
+        name, firstName: first, lastName: last, businessName: company, email, phone,
+        tool, revenueBand, ownerTier, industry, ownership, timing, guess, scores: report.scores,
+        summary: s, timestamp: timestamp || report.createdAt, blobUrl: reportUrl,
+        utmSource: resolvedUtmSource, utmCampaign: resolvedUtmCampaign, answers: {}, door,
+      });
+      await syncContact({
+        name, email, phone, tool, door, summary: s, utmSource: resolvedUtmSource,
+        utmCampaign: resolvedUtmCampaign, revenueBand, ownership,
+      });
+
+      const emailData = {
+        firstName: first, company, email, token, door, zoneKey: s.zoneKey,
+        attractScore: s.attractScore, readyScore: s.readyScore, guess, scores: report.scores,
+      };
+      try {
+        await sendValueDriversEmail(emailData);
+      } catch (emailErr) {
+        console.error("[Email] Value Drivers send failed; retry queued:", emailErr.message);
+        setTimeout(() => sendValueDriversEmail(emailData).catch(
+          retryErr => console.error("[Email] Value Drivers retry failed:", retryErr.message),
+        ), 0);
+      }
+      return res.status(200).json({ token });
     }
 
     if (tool === "reinvest-harvest" && partial === true) {

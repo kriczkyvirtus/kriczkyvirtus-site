@@ -338,17 +338,19 @@ const DIMENSIONS = [...ATTRACT_DIMS, ...READY_DIMS];
 
 /* =================== BANDING =================== */
 
+/* Zones match workbook page 7 and the Value Drivers flow: growth-framed names,
+   non-overlapping point ranges, Green Zone green and Best-in-Class cyan. */
 const BANDS = [
-  { label: "Liquidation Zone", range: [10, 26], color: C.red,
-    desc: "Not attractive or ready. The business can't scale or transfer in this state. A forced exit here means liquidation pricing at best." },
-  { label: "Discount Zone", range: [27, 34], color: C.amber,
-    desc: "Below average. Growth is constrained by foundational gaps. A transition would come with discounted multiples and unfavorable terms." },
-  { label: "Market Zone", range: [35, 40], color: C.amberDark,
-    desc: "Average. The model works but isn't nailed yet. Scaling from here amplifies both strengths and dysfunctions. Significant value is left on the table." },
-  { label: "Green Zone", range: [40, 43], color: C.cyan,
-    desc: "Attractive and ready. The model is nailed — ready to scale aggressively or command a premium multiple in a transition." },
-  { label: "Best-In-Class", range: [43, 60], color: C.green,
-    desc: "The model is a machine. Scalable, resilient, and transferable. Multiple buyers would compete. You have maximum optionality." },
+  { label: "Foundation Zone", range: [10, 26], color: C.red,
+    desc: "The business can't grow unless you carry it. Build the base first — it's where the fewest changes produce the largest visible difference." },
+  { label: "Constrained Zone", range: [27, 34], color: C.amber,
+    desc: "Growing, but gaps in the foundation constrain how far and how fast. A transition from here would come with discounted terms." },
+  { label: "Midpoint Zone", range: [35, 39], color: C.gold,
+    desc: "The model works but isn't nailed yet. Scaling from here amplifies both strengths and dysfunctions. Significant value is left on the table." },
+  { label: "Green Zone", range: [40, 42], color: C.green,
+    desc: "Attractive and ready. The model is nailed — built to scale, and to command a premium if you ever chose to." },
+  { label: "Best-in-Class", range: [43, 60], color: C.cyan,
+    desc: "Scalable, resilient, and it runs without you. You have maximum optionality." },
 ];
 
 const getBand = (total) => {
@@ -562,10 +564,13 @@ const EmailGate = ({ toolName, toolSlug, accentColor, scores, summary, onUnlock,
 
 /* =================== MAIN APP =================== */
 
-export default function BusinessWorthDiagnostic() {
-  const [scores, setScores] = useState({});
-  const [checks, setChecks] = useState({});
-  const [gateUnlocked, setGateUnlocked] = useState(false);
+/* `initialScores` turns this document into a Value Drivers report: it opens
+   already scored and unlocked, from the answers stored behind the owner's link.
+   With no props it behaves exactly as the stand-alone tool did. */
+export default function BusinessWorthDiagnostic({ initialScores = null, initialChecks = null }) {
+  const [scores, setScores] = useState(initialScores || {});
+  const [checks, setChecks] = useState(initialChecks || {});
+  const [gateUnlocked, setGateUnlocked] = useState(Boolean(initialScores));
   const toolRef = useRef(null);
 
   useEffect(() => {
@@ -1026,7 +1031,7 @@ export default function BusinessWorthDiagnostic() {
               </div>
               {/* Gauge bar */}
               <div style={{ position: "relative", height: 22, borderRadius: 11, overflow: "hidden", marginBottom: 8,
-                background: `linear-gradient(90deg, ${C.red} 0%, ${C.amber} 35%, ${C.amberDark} 55%, ${C.cyan} 72%, ${C.green} 100%)`, opacity: 0.85 }}>
+                background: `linear-gradient(90deg, ${C.red} 0%, ${C.amber} 35%, ${C.gold} 55%, ${C.green} 72%, ${C.cyan} 100%)`, opacity: 0.85 }}>
                 <div style={{ position: "absolute", top: -2, bottom: -2, width: 3, borderRadius: 2, background: C.text1,
                   boxShadow: `0 0 8px rgba(255,255,255,0.8)`,
                   left: `${Math.max(2, Math.min(98, ((overallPct - 17) / (100 - 17)) * 100))}%`,
@@ -1034,20 +1039,20 @@ export default function BusinessWorthDiagnostic() {
               </div>
               {/* Zone labels under gauge */}
               <div style={{ display: "flex", fontSize: 8.5, textTransform: "uppercase", letterSpacing: "0.04em", fontWeight: 600, marginBottom: 12 }}>
-                <div style={{ width: "28%", color: C.red, textAlign: "center" }}>Not Sellable<br/><span style={{ fontWeight: 400, fontSize: 8 }}>{"< 45%"}</span></div>
-                <div style={{ width: "13%", color: C.amber, textAlign: "center" }}>Discount<br/><span style={{ fontWeight: 400, fontSize: 8 }}>45–57%</span></div>
-                <div style={{ width: "14%", color: C.amberDark, textAlign: "center" }}>Market<br/><span style={{ fontWeight: 400, fontSize: 8 }}>58–67%</span></div>
-                <div style={{ width: "17%", color: C.cyan, textAlign: "center" }}>Green Zone<br/><span style={{ fontWeight: 400, fontSize: 8 }}>67–71%</span></div>
-                <div style={{ width: "28%", color: C.green, textAlign: "center" }}>Best-In-Class<br/><span style={{ fontWeight: 400, fontSize: 8 }}>72%+</span></div>
+                <div style={{ width: "28%", color: C.red, textAlign: "center" }}>Foundation<br/><span style={{ fontWeight: 400, fontSize: 8 }}>{"< 45%"}</span></div>
+                <div style={{ width: "13%", color: C.amber, textAlign: "center" }}>Constrained<br/><span style={{ fontWeight: 400, fontSize: 8 }}>45–57%</span></div>
+                <div style={{ width: "14%", color: C.gold, textAlign: "center" }}>Midpoint<br/><span style={{ fontWeight: 400, fontSize: 8 }}>58–66%</span></div>
+                <div style={{ width: "17%", color: C.green, textAlign: "center" }}>Green Zone<br/><span style={{ fontWeight: 400, fontSize: 8 }}>67–71%</span></div>
+                <div style={{ width: "28%", color: C.cyan, textAlign: "center" }}>Best-in-Class<br/><span style={{ fontWeight: 400, fontSize: 8 }}>72%+</span></div>
               </div>
               {/* Multiple range mapping — 2x2 + 1 spanning */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 12 }}>
                 {[
-                  { label: "Not Sellable", mult: "0×", color: C.red, active: overallPct < 45, desc: "The private capital market places little to no transferable value on the business." },
-                  { label: "Discount", mult: "3–4×", color: C.amber, active: overallPct >= 45 && overallPct <= 57, desc: "Below-average placement. Discounted multiple with unfavorable deal terms." },
-                  { label: "Market", mult: "~5×", color: C.amberDark, active: overallPct >= 58 && overallPct <= 67, desc: "Average multiple for your industry — sellable but leaving significant value on the table." },
-                  { label: "Green Zone", mult: "5–6×", color: C.cyan, active: overallPct >= 67 && overallPct <= 71, desc: "Above average. Attractive and ready — premium multiple with favorable terms." },
-                  { label: "Best-In-Class", mult: "7–8×", color: C.green, active: overallPct >= 72, desc: "Highest multiples, best terms, multiple buyers competing for your business." },
+                  { label: "Foundation", mult: "0×", color: C.red, active: band.label === "Foundation Zone", desc: "The private capital market places little to no transferable value on the business." },
+                  { label: "Constrained", mult: "3–4×", color: C.amber, active: band.label === "Constrained Zone", desc: "Below-average placement. Discounted multiple with unfavorable deal terms." },
+                  { label: "Midpoint", mult: "~5×", color: C.gold, active: band.label === "Midpoint Zone", desc: "Average multiple for your industry — sellable but leaving significant value on the table." },
+                  { label: "Green Zone", mult: "5–6×", color: C.green, active: band.label === "Green Zone", desc: "Above average. Attractive and ready — premium multiple with favorable terms." },
+                  { label: "Best-in-Class", mult: "7–8×", color: C.cyan, active: band.label === "Best-in-Class", desc: "Highest multiples, best terms, multiple buyers competing for your business." },
                 ].map((z, zi, arr) => (
                   <div key={z.label} style={{ padding: "8px 10px", borderRadius: 8, textAlign: "center",
                     background: z.active ? `${z.color}15` : `${z.color}04`,
@@ -1203,7 +1208,7 @@ export default function BusinessWorthDiagnostic() {
             {solidNotPremium.length > 0 && (
               <div style={{ padding: "12px 16px", borderRadius: 10, marginBottom: 10, background: `linear-gradient(135deg, ${C.cyan}06, ${C.cyan}02)`, border: `1px solid ${C.cyan}18` }}>
                 <div style={{ fontSize: 9.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: C.cyan, marginBottom: 8 }}>
-                  Phase 3 — Capture Premium Value · Move from Market to Green Zone
+                  Phase 3 — Capture Premium Value · Move from Midpoint to Green Zone
                 </div>
                 <p style={{ fontSize: 10.5, color: C.text3, lineHeight: 1.5, marginBottom: 8 }}>
                   Scoring 4 is solid — you're above the midpoint. But the difference between a 4 and a 5 is where premium multiples live. This is where systematic value acceleration creates the most dollar impact per unit of effort.
