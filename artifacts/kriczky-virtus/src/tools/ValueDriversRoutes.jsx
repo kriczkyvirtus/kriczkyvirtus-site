@@ -26,8 +26,8 @@ function useReport(token) {
   return state;
 }
 
-const Loading = () => (
-  <main style={{ minHeight: "100vh", background: "#0A0E14", color: "#E8ECF1", display: "grid", placeItems: "center", fontFamily: "DM Sans, sans-serif" }}>
+const Loading = ({ light = false }) => (
+  <main style={{ minHeight: "100vh", background: light ? "#F2EEE6" : "#0A0E14", color: light ? "#3E4652" : "#E8ECF1", display: "grid", placeItems: "center", fontFamily: "DM Sans, sans-serif" }}>
     Loading…
   </main>
 );
@@ -38,7 +38,7 @@ export const ValueDriversWorkshopFlow = () => <ValueDriversFlow door="workshop" 
 function NextRoute({ door }) {
   const token = new URLSearchParams(useLocation().search).get("t");
   const { loading, report } = useReport(token);
-  if (loading) return <Loading />;
+  if (loading) return <Loading light={door === "workshop"} />;
   return <ValueDriversNext key={token || "unresolved"} door={door} report={report} token={report ? token : null} />;
 }
 export const ValueDriversSiteNext = () => <NextRoute door="site" />;
@@ -47,7 +47,7 @@ export const ValueDriversWorkshopNext = () => <NextRoute door="workshop" />;
 export function ValueDriversReportRoute() {
   const { token } = useParams();
   const { loading, report } = useReport(token);
-  if (loading) return <Loading />;
+  if (loading) return <Loading light />;
   if (!report) {
     return (
       <main style={{ minHeight: "100vh", background: "#0A0E14", color: "#E8ECF1", display: "grid", placeItems: "center", textAlign: "center", fontFamily: "DM Sans, sans-serif" }}>

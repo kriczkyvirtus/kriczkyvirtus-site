@@ -24,6 +24,7 @@ import Cohort from './Cohort.jsx'
 import Disclosures from './Disclosures.jsx'
 import GrowthHarvestPartnership from './GrowthHarvestPartnership.jsx'
 import WorkshopPage from './WorkshopPage.jsx'
+import WorkshopPageCream from './WorkshopPageCream.jsx'
 import ExecutionDebrief from './ExecutionDebrief.jsx'
 import ReinvestHarvestLanding from './tools/ReinvestHarvestLanding.jsx'
 import ReinvestHarvestFlow from './tools/ReinvestHarvestFlow.jsx'
@@ -100,6 +101,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/partnership/workshop" element={<GrowthHarvestPartnership variant="workshop" />} />
         <Route path="/partnership/collective" element={<GrowthHarvestPartnership variant="collective" />} />
         <Route path="/workshop-rh" element={<WorkshopPage />} />
+        {/* Cream preview for review — unlinked, noindex. Remove once decided. */}
+        <Route path="/workshop-rh/cream" element={<WorkshopPageCream />} />
         <Route path="/execution-debrief" element={<ExecutionDebrief />} />
         <Route path="/r/:token" element={<ReinvestHarvestReportRoute />} />
         <Route path="/12cs-recurring-revenue" element={<RecurringRevenue12Cs />} />

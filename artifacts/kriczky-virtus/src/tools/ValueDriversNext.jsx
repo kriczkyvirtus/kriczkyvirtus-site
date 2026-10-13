@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { DARK, LIGHT, ThemeProvider, useT } from "./kvTheme.js";
 import {
-  C, GRAIN, PILLARS, PILLAR_MAX, DRIVER_KEYS, DRIVER_NAMES,
+  GRAIN, PILLARS, PILLAR_MAX, DRIVER_KEYS, DRIVER_NAMES,
   zoneByKey, routeTo, scoreColor,
 } from "./valueDriversData.js";
 
@@ -32,10 +33,10 @@ const WORKSHOP_VSL_LENGTH = "";     // e.g. "2 MIN 10 SEC"
 /* Hero copy per zone — the fuller version of the one-liners in valueDriversData,
    written to the same length and voice as the Reinvest or Harvest quadrant lines. */
 const ZONE_HERO = {
-  foundation: "Right now the business runs on you. That's normal at this stage, and it's also why a buyer — or a bad month — would hit it hard. The good news: this is where small, unglamorous fixes move your number the most.",
-  constrained: "You've built real momentum, and a few gaps are starting to hold it back. Left alone, the business gets busier without getting more valuable. Close the two weakest drivers and the growth starts compounding instead of leaking.",
-  midpoint: "The model works. It just isn't nailed down yet, so scaling now would amplify the gaps along with the strengths. This is the zone where a focused 90 days does the most for what the business is worth.",
-  green: "Attractive from the outside and ready on the inside. Few owners get here. The job now is protecting what you've built while you push into Best-in-Class — and making sure the value is actually yours to capture.",
+  foundation: "Right now the business runs on you. That's normal at this stage, but it's also why a bad month would hit hard. The good news: this is where small, unsexy fixes might improve your business the most.",
+  constrained: "You've built real momentum, and a few gaps are starting to hold it back. Left alone, the business gets busier without improving sustainable growth potential. Close the two weakest drivers and the growth starts compounding instead of leaking.",
+  midpoint: "The model works. It just isn't nailed down yet, so scaling now would amplify the gaps along with the strengths. This is the zone where a focused 90 days can do the most to set up your next stage of growth.",
+  green: "Attractive from the outside and ready on the inside. Few owners get here. The job now is protecting what you've built while you push into Best-in-Class, and making sure the growth keeps paying you, not just the business.",
   bestInClass: "Scalable, resilient, and it runs without you. That's rare. The question now isn't how to fix the business — it's what you want the business to do for you, and how to keep it here while you decide.",
 };
 
@@ -74,34 +75,40 @@ const kicker = { fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTrans
 const wrap = { maxWidth: 720, margin: "0 auto", padding: "0 20px" };
 const wide = { maxWidth: 1120, margin: "0 auto", padding: "0 20px" };
 const serif = "'Cormorant Garamond',serif";
-const glassCard = { padding: "32px 24px", borderRadius: 18, background: "linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,.02))", border: `1px solid ${C.gold}2e`, borderTop: "1px solid rgba(255,255,255,.12)", boxShadow: "0 10px 40px rgba(0,0,0,.45)" };
-const ctaStyle = { display: "block", maxWidth: 460, margin: "0 auto", padding: "21px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none", background: `linear-gradient(135deg,${C.gold}2e,${C.gold}12)`, border: `1.5px solid ${C.gold}88`, boxShadow: `0 0 34px ${C.gold}26`, transition: "all .25s ease" };
+/* Theme-dependent styles are built from the active theme (see kvTheme.js). */
+const glassCardOf = (C) => C.light
+  ? { padding: "32px 24px", borderRadius: 18, background: "#FFFFFF", border: `1px solid ${C.goldLight}55`, boxShadow: `0 0 26px ${C.goldLight}1f, 0 10px 30px rgba(10,14,20,.08)` }
+  : { padding: "32px 24px", borderRadius: 18, background: "linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,.02))", border: `1px solid ${C.gold}2e`, borderTop: "1px solid rgba(255,255,255,.12)", boxShadow: "0 10px 40px rgba(0,0,0,.45)" };
+const ctaStyleOf = (C) => ({ display: "block", maxWidth: 460, margin: "0 auto", padding: "21px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none",
+  background: C.light ? C.btnBg : `linear-gradient(135deg,${C.gold}2e,${C.gold}12)`, border: `1.5px solid ${C.light ? C.btnLine : `${C.gold}88`}`,
+  boxShadow: C.light ? `0 0 30px ${C.goldLight}33, 0 10px 24px rgba(10,14,20,.18)` : `0 0 34px ${C.gold}26`, transition: "all .25s ease" });
 
-const CSS = `
+const cssOf = (C) => `
   *{box-sizing:border-box}
-  .cta:hover{box-shadow:0 0 44px ${C.gold}3d,0 6px 22px rgba(0,0,0,.45)!important;border-color:${C.gold}!important}
+  body{background:${C.bgDeep}}
+  .cta:hover{box-shadow:0 0 44px ${C.goldLight}55,0 6px 22px rgba(0,0,0,.35)!important;border-color:${C.goldLight}!important}
   .vsl-panel{animation:vslPulse 2.4s ease-in-out infinite}
   .vsl-unmute:hover .vsl-panel{transform:scale(1.04)}
   @keyframes vslPulse{0%,100%{transform:scale(1);box-shadow:0 10px 40px rgba(0,0,0,.45)}50%{transform:scale(1.035);box-shadow:0 10px 52px rgba(0,0,0,.5),0 0 34px rgba(200,162,78,.45)}}
   @media(prefers-reduced-motion:reduce){.vsl-panel{animation:none}}
   .drivers{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .rcard{transition:box-shadow .3s ease,border-color .3s ease,background .3s ease}
-  .rcard:hover{border-color:var(--glowEdge)!important;background:linear-gradient(160deg,var(--glowSoft),rgba(255,255,255,.02))!important;box-shadow:0 0 30px var(--glowSoft),0 0 60px var(--glowSoft),inset 0 0 22px rgba(255,255,255,.02)}
+  .rcard:hover{border-color:var(--glowEdge)!important;background:${C.light ? "linear-gradient(160deg,#FFFFFF 40%,var(--glowSoft))" : "linear-gradient(160deg,var(--glowSoft),rgba(255,255,255,.02))"}!important;box-shadow:0 0 30px var(--glowSoft),0 0 60px var(--glowSoft)}
   @media(min-width:700px){.drivers{grid-template-columns:repeat(5,1fr);gap:14px}}
 `;
 
 /* ── Module-scope pieces (see the remount note in ValueDriversFlow) ── */
 
-const Shell = ({ children }) => (
+const Shell = ({ children }) => { const C = useT(); return (
   <div style={{ background: C.bgDeep, minHeight: "100vh", fontFamily: "'DM Sans',sans-serif", color: C.text1, paddingBottom: 40 }}>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
-    <style>{CSS}</style>
-    <div style={{ position: "fixed", inset: 0, pointerEvents: "none", opacity: .05, mixBlendMode: "overlay", backgroundImage: GRAIN, backgroundSize: "128px 128px", zIndex: 0 }} />
+    <style>{cssOf(C)}</style>
+    {C.grain ? <div style={{ position: "fixed", inset: 0, pointerEvents: "none", opacity: C.grain, mixBlendMode: "overlay", backgroundImage: GRAIN, backgroundSize: "128px 128px", zIndex: 0 }} /> : null}
     {children}
   </div>
-);
+); };
 
-const ConfirmBar = ({ email }) => (
+const ConfirmBar = ({ email }) => { const C = useT(); return (
   <div style={{ background: `linear-gradient(90deg, ${C.green}16, ${C.green}09)`, borderBottom: `1px solid ${C.green}33`, padding: "14px 20px", position: "relative", zIndex: 2 }}>
     <div style={{ ...wrap, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, textAlign: "center" }}>
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
@@ -112,25 +119,25 @@ const ConfirmBar = ({ email }) => (
       </span>
     </div>
   </div>
-);
+); };
 
-const PillarCards = ({ attract, ready }) => (
+const PillarCards = ({ attract, ready }) => { const C = useT(); return (
   <div style={{ display: "flex", gap: 12, margin: "26px auto 0", maxWidth: 440 }}>
-    {[{ p: PILLARS.attract, v: attract }, { p: PILLARS.ready, v: ready }].map(({ p, v }) => (
-      <div key={p.label} style={{ flex: 1, padding: "14px 10px", borderRadius: 12, background: `${p.color}0d`, border: `1px solid ${p.color}33` }}>
-        <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: p.color, marginBottom: 6 }}>{p.label}</div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 30, fontWeight: 700, color: p.color, lineHeight: 1 }}>
+    {[{ p: PILLARS.attract, v: attract }, { p: PILLARS.ready, v: ready }].map(({ p, v }) => { const pc = C.t(p.color); return (
+      <div key={p.label} style={{ flex: 1, padding: "14px 10px", borderRadius: 12, background: C.light ? `linear-gradient(135deg,#FFFFFF 55%,${pc}12)` : `${pc}0d`, border: `1px solid ${pc}33`, boxShadow: C.shadowCard }}>
+        <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: pc, marginBottom: 6 }}>{p.label}</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 30, fontWeight: 700, color: pc, lineHeight: 1 }}>
           {v}<span style={{ fontSize: 14, color: C.text3 }}>/{PILLAR_MAX}</span>
         </div>
       </div>
-    ))}
+    ); })}
   </div>
-);
+); };
 
-const ZoneHero = ({ report, zone, reportUrl, qualifier }) => (
+const ZoneHero = ({ report, zone, reportUrl, qualifier }) => { const C = useT(); const zc = C.t(zone.color); return (
   <section style={{ padding: "38px 0 26px", textAlign: "center" }}>
-    <div style={{ ...kicker, color: zone.color, marginBottom: 14 }}>You landed in</div>
-    <h1 style={{ fontFamily: serif, fontWeight: 700, fontSize: "clamp(40px,9.6vw,64px)", textTransform: "uppercase", letterSpacing: ".01em", color: zone.color, lineHeight: 1.06, margin: "0 0 22px" }}>
+    <div style={{ ...kicker, color: zc, marginBottom: 14 }}>You landed in</div>
+    <h1 style={{ fontFamily: serif, fontWeight: 700, fontSize: "clamp(40px,9.6vw,64px)", textTransform: "uppercase", letterSpacing: ".01em", color: zc, lineHeight: 1.06, margin: "0 0 22px" }}>
       {zone.label}
     </h1>
     <p style={{ fontSize: "clamp(16px,3.9vw,20px)", lineHeight: 1.5, color: C.text1, maxWidth: 820, margin: "0 auto" }}>
@@ -146,27 +153,28 @@ const ZoneHero = ({ report, zone, reportUrl, qualifier }) => (
       </a>
     )}
   </section>
-);
+); };
 
-const NumberedSteps = ({ steps }) => steps.map((s, i) => (
-  <div key={s.t} style={{ display: "flex", gap: 15, alignItems: "flex-start", padding: "14px 0", borderBottom: i < steps.length - 1 ? "1px solid rgba(255,255,255,.06)" : "none" }}>
-    <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 23, fontWeight: 700, color: `${C.gold}66`, lineHeight: 1, minWidth: 30 }}>0{i + 1}</span>
+const NumberedSteps = ({ steps }) => { const C = useT(); return steps.map((s, i) => (
+  <div key={s.t} style={{ display: "flex", gap: 15, alignItems: "flex-start", padding: "14px 0", borderBottom: i < steps.length - 1 ? `1px solid ${C.lineSoft}` : "none" }}>
+    <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 23, fontWeight: 700, color: C.light ? C.goldLight : `${C.gold}66`, lineHeight: 1, minWidth: 30 }}>0{i + 1}</span>
     <div>
       <div style={{ fontSize: 15, fontWeight: 700, color: C.text1, marginBottom: 3 }}>{s.t}</div>
       <div style={{ fontSize: 14, lineHeight: 1.55, color: C.text2 }}>{s.d}</div>
     </div>
   </div>
-));
+)); };
 
-const CardHead = ({ k, title, body }) => (
+const CardHead = ({ k, title, body }) => { const C = useT(); return (
   <>
     <div style={{ ...kicker, color: C.gold, marginBottom: 12, textAlign: "center" }}>{k}</div>
     <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: "clamp(24px,5.6vw,32px)", lineHeight: 1.18, color: C.text1, textAlign: "center", margin: "0 0 14px" }}>{title}</h2>
     {body && <p style={{ fontSize: 15, lineHeight: 1.65, color: C.text2, textAlign: "center", maxWidth: 520, margin: "0 auto 24px" }}>{body}</p>}
   </>
-);
+); };
 
 function Vsl({ src, poster, length, placeholder }) {
+  const C = useT();
   const [playing, setPlaying] = useState(false);
   const vidRef = useRef(null);
   /* Unmute restarts from zero — same behaviour as the Reinvest or Harvest page. */
@@ -177,7 +185,7 @@ function Vsl({ src, poster, length, placeholder }) {
   };
   return (
     <section style={{ maxWidth: 1080, margin: "0 auto", padding: "0 20px 40px" }}>
-      <div style={{ position: "relative", aspectRatio: "16/9", borderRadius: 16, overflow: "hidden", background: "#0B1017", border: `1px solid ${C.gold}33`, boxShadow: `0 14px 46px rgba(0,0,0,.5), 0 0 60px ${C.gold}0d` }}>
+      <div style={{ position: "relative", aspectRatio: "16/9", borderRadius: 16, overflow: "hidden", background: C.light ? "#E9E3D7" : "#0B1017", border: `1px solid ${C.gold}33`, boxShadow: C.light ? `0 12px 32px rgba(10,14,20,.14), 0 0 40px ${C.goldLight}1a` : `0 14px 46px rgba(0,0,0,.5), 0 0 60px ${C.gold}0d` }}>
         {src ? (
           <>
             <video ref={vidRef} src={src} poster={poster || undefined} autoPlay muted loop={!playing} playsInline preload="auto" controls={playing}
@@ -185,7 +193,7 @@ function Vsl({ src, poster, length, placeholder }) {
             {!playing && (
               <button onClick={unmute} aria-label="Unmute video" className="vsl-unmute"
                 style={{ position: "absolute", inset: 0, width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", border: "none", cursor: "pointer", padding: 0 }}>
-                <span className="vsl-panel" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "58%", maxWidth: 520, padding: "6% 4%", borderRadius: 20, background: `${C.gold}b3`, border: `1px solid ${C.gold}`, boxShadow: "0 10px 40px rgba(0,0,0,.45)" }}>
+                <span className="vsl-panel" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "58%", maxWidth: 520, padding: "6% 4%", borderRadius: 20, background: `${C.goldLight}b3`, border: `1px solid ${C.goldLight}`, boxShadow: "0 10px 40px rgba(0,0,0,.45)" }}>
                   <svg width="13%" viewBox="0 0 24 24" fill="#0A0E14" style={{ minWidth: 34, maxWidth: 66, marginBottom: "5%" }}>
                     <path d="M3 9v6h4l5 5V4L7 9H3z" />
                     <path d="M16.5 12c0-1.8-1-3.3-2.5-4v8c1.5-.7 2.5-2.2 2.5-4z" />
@@ -212,6 +220,7 @@ function Vsl({ src, poster, length, placeholder }) {
    six-course roadmap on the Reinvest or Harvest page. Each card is coloured by
    its own score (red 1–2, gold 3–4, green 5, cyan 6). The two lowest are flagged. */
 function DriverGrid({ scores }) {
+  const C = useT();
   const ranked = DRIVER_KEYS.filter(k => Number.isInteger(scores?.[k]))
     .sort((a, b) => scores[a] - scores[b] || DRIVER_KEYS.indexOf(a) - DRIVER_KEYS.indexOf(b));
   const lowest = new Set(ranked.slice(0, 2));
@@ -219,14 +228,14 @@ function DriverGrid({ scores }) {
     <div className="drivers">
       {DRIVER_KEYS.map((k, i) => {
         const v = scores?.[k];
-        const tint = scoreColor(v);
+        const tint = C.t(scoreColor(v));
         const flag = lowest.has(k);
         return (
           <div key={k} className="rcard" style={{ position: "relative", padding: "18px 12px 18px", borderRadius: 14, textAlign: "center",
-            background: `linear-gradient(160deg, ${tint}${flag ? "14" : "0a"}, rgba(255,255,255,.015))`,
-            border: `1px solid ${flag ? `${tint}77` : `${tint}2e`}`,
+            background: C.light ? `linear-gradient(160deg, #FFFFFF 45%, ${tint}${flag ? "1c" : "10"})` : `linear-gradient(160deg, ${tint}${flag ? "14" : "0a"}, rgba(255,255,255,.015))`,
+            border: `1px solid ${flag ? `${tint}77` : `${tint}${C.light ? "40" : "2e"}`}`, boxShadow: C.light ? `0 0 18px ${tint}1c, 0 6px 16px rgba(10,14,20,.06)` : "none",
             "--glowSoft": `${tint}2e`, "--glowEdge": `${tint}70` }}>
-            {flag && <div style={{ position: "absolute", top: -9, left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap", fontSize: 8.5, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: C.gold, background: "#2A2213", border: `1px solid ${C.gold}66`, padding: "3px 9px", borderRadius: 5, boxShadow: "0 2px 10px rgba(0,0,0,.45)" }}>Start here</div>}
+            {flag && <div style={{ position: "absolute", top: -9, left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap", fontSize: 8.5, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: C.goldLight, background: "#2A2213", border: `1px solid ${C.goldLight}66`, padding: "3px 9px", borderRadius: 5, boxShadow: C.light ? "0 2px 8px rgba(10,14,20,.25)" : "0 2px 10px rgba(0,0,0,.45)" }}>Start here</div>}
             <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 13, fontWeight: 700, color: `${tint}88`, letterSpacing: ".06em", marginBottom: 6 }}>{String(i + 1).padStart(2, "0")}</div>
             <div style={{ fontFamily: serif, fontSize: 18, fontWeight: 700, color: C.text1, lineHeight: 1.15, minHeight: 42, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 10 }}>{DRIVER_NAMES[k]}</div>
             <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 28, fontWeight: 700, color: tint, lineHeight: 1 }}>
@@ -234,7 +243,7 @@ function DriverGrid({ scores }) {
             </div>
             <div style={{ display: "flex", gap: 3, justifyContent: "center", marginTop: 10 }}>
               {[1, 2, 3, 4, 5, 6].map(n => (
-                <span key={n} style={{ width: 10, height: 4, borderRadius: 2, background: v && n <= v ? tint : "rgba(255,255,255,.1)", boxShadow: v && n <= v ? `0 0 6px ${tint}66` : "none" }} />
+                <span key={n} style={{ width: 10, height: 4, borderRadius: 2, background: v && n <= v ? tint : C.light ? C.line : "rgba(255,255,255,.1)", boxShadow: v && n <= v ? `0 0 6px ${tint}66` : "none" }} />
               ))}
             </div>
           </div>
@@ -244,7 +253,7 @@ function DriverGrid({ scores }) {
   );
 }
 
-const SectionHead = ({ k, title, accent, body }) => (
+const SectionHead = ({ k, title, accent, body }) => { const C = useT(); return (
   <div style={{ textAlign: "center", marginBottom: 34 }}>
     <div style={{ ...kicker, fontSize: 15, color: C.gold, marginBottom: 14 }}>{k}</div>
     <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: "clamp(32px,7.9vw,60px)", lineHeight: 1.1, color: C.text1, margin: "0 0 16px" }}>
@@ -252,10 +261,10 @@ const SectionHead = ({ k, title, accent, body }) => (
     </h2>
     {body && <p style={{ fontSize: "clamp(17px,4vw,23px)", lineHeight: 1.55, color: C.text2, maxWidth: 800, margin: "0 auto" }}>{body}</p>}
   </div>
-);
+); };
 
-const Footer = () => (
-  <footer style={{ ...wrap, paddingTop: 26, borderTop: "1px solid rgba(255,255,255,.06)" }}>
+const Footer = () => { const C = useT(); return (
+  <footer style={{ ...wrap, paddingTop: 26, borderTop: `1px solid ${C.lineSoft}` }}>
     <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center", marginBottom: 14 }}>
       <svg width="19" height="19" viewBox="0 0 64 64" fill="none">
         <path d="M32 8L14 16V30C14 42 22 52 32 56C42 52 50 42 50 30V16L32 8Z" fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinejoin="round" />
@@ -268,7 +277,7 @@ const Footer = () => (
       Value Drivers is an educational self-assessment tool from Kriczky Virtus. It is general in nature, is based entirely on your own self-reported answers, and produces an estimate, not a valuation. It does not constitute individualized financial, tax, legal, or accounting advice, nor a recommendation to pursue any particular course of action. No outcome is projected or guaranteed. Coordinate any decision with your CPA, attorney, and other advisors before acting.
     </p>
   </footer>
-);
+); };
 
 /* Gentle nudge to the calendar — same rules as the Reinvest or Harvest page:
    only when a calendar exists, not on a #hash arrival, not once they've started
@@ -298,7 +307,15 @@ function useCalendarNudge(active) {
   }, [active]);
 }
 
-export default function ValueDriversNext({ door = "site", report = null, token = null }) {
+export default function ValueDriversNext(props) {
+  /* The workshop door is cream, like the workbooks attendees use on the day. */
+  const C = props.door === "workshop" ? LIGHT : DARK;
+  return <ThemeProvider value={C}><NextBody {...props} C={C} /></ThemeProvider>;
+}
+
+function NextBody({ door = "site", report = null, token = null, C }) {
+  const glassCard = glassCardOf(C);
+  const ctaStyle = ctaStyleOf(C);
   const zone = report ? zoneByKey(report.zoneKey) : null;
   const resolved = Boolean(report && zone);
   const reportUrl = resolved && token ? `/tools/wmbw/r/${encodeURIComponent(token)}` : null;
@@ -397,7 +414,7 @@ export default function ValueDriversNext({ door = "site", report = null, token =
             <CardHead k={offer.kicker} title={offer.title} body={offer.body} />
             <NumberedSteps steps={offer.steps} />
             {offerKey === "oneToOne" ? (
-              <div id="vd-calendar" style={{ marginTop: 26, borderRadius: 14, overflow: "hidden", border: "1px solid rgba(255,255,255,.09)", background: C.bgCard, minHeight: 620 }}>
+              <div id="vd-calendar" style={{ marginTop: 26, borderRadius: 14, overflow: "hidden", border: `1px solid ${C.line}`, background: C.bgCard, minHeight: 620 }}>
                 {/* Direct iframe. Do NOT use iClosed widget.js — it races the React render. */}
                 <iframe src={schedulerUrl} title="Book your free working session" width="100%" height="620"
                   style={{ border: "none", display: "block" }} loading="lazy" />
@@ -405,7 +422,7 @@ export default function ValueDriversNext({ door = "site", report = null, token =
             ) : (
               <a href={SKOOL_COLLECTIVE} className="cta" target="_blank" rel="noopener noreferrer"
                 style={{ ...ctaStyle, maxWidth: "none", marginTop: 26, padding: "20px 24px" }}>
-                <span style={{ fontSize: 16.5, fontWeight: 700, letterSpacing: ".02em", color: C.gold }}>{offer.cta} →</span>
+                <span style={{ fontSize: 16.5, fontWeight: 700, letterSpacing: ".02em", color: C.btnText }}>{offer.cta} →</span>
               </a>
             )}
           </div>
@@ -425,7 +442,7 @@ export default function ValueDriversNext({ door = "site", report = null, token =
         {offerKey === "oneToOne" && (
           <section style={{ ...wrap, paddingBottom: 46, textAlign: "center" }}>
             <a href="#vd-scheduler" className="cta" onClick={scrollToScheduler} style={ctaStyle}>
-              <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".02em", color: C.gold }}>{offer.cta} →</span>
+              <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".02em", color: C.btnText }}>{offer.cta} →</span>
             </a>
             {!resolved && (
               <p style={{ fontSize: 13.5, color: C.text3, margin: "16px 0 0" }}>

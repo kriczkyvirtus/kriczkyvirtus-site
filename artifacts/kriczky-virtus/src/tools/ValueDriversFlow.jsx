@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
+import { DARK, LIGHT, ThemeProvider, useT } from "./kvTheme.js";
 import {
-  C, GRAIN, PILLARS, PILLAR_MAX, DRIVER_KEYS, DRIVER_NAMES, ATTRACT_KEYS,
+  GRAIN, PILLARS, PILLAR_MAX, DRIVER_KEYS, DRIVER_NAMES, ATTRACT_KEYS,
   zoneByKey, score, buildSteps, NEXT_PATH, scoreColor,
 } from "./valueDriversData.js";
 
@@ -64,31 +65,31 @@ const ALPHA = "ABCDEFGH";
 
 /* Module scope, never inside the page function — a component defined inside
    remounts on every state change (the SliderBlock bug). */
-const OptionCard = ({ label, selected, onClick, letter, compact }) => (
+const OptionCard = ({ label, selected, onClick, letter, compact }) => { const C = useT(); return (
   <div onClick={onClick} className="opt"
     style={{
       display: "flex", alignItems: "center", gap: 14, padding: compact ? "14px 16px" : "17px 16px", marginBottom: compact ? 8 : 10,
       borderRadius: 12, cursor: "pointer", userSelect: "none", transition: "all .18s ease",
-      background: selected ? `${C.gold}18` : "rgba(255,255,255,.025)",
-      border: `1.5px solid ${selected ? C.gold : "rgba(255,255,255,.09)"}`,
-      boxShadow: selected ? `0 0 20px ${C.gold}22` : "none",
+      background: selected ? `${C.gold}18` : C.surface,
+      border: `1.5px solid ${selected ? C.gold : C.line}`,
+      boxShadow: selected ? `0 0 20px ${C.gold}22` : C.shadowCard,
     }}>
     <span style={{
       flexShrink: 0, width: 30, height: 30, borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center",
       fontSize: 12, fontWeight: 700, transition: "all .18s ease",
       background: selected ? C.gold : "transparent",
-      border: `1.5px solid ${selected ? C.gold : "rgba(255,255,255,.16)"}`,
-      color: selected ? C.bgDeep : C.text3,
+      border: `1.5px solid ${selected ? C.gold : C.lineHi}`,
+      color: selected ? C.onAccent : C.text3,
     }}>{letter}</span>
     <span style={{ fontSize: 15.5, lineHeight: 1.35, color: selected ? C.text1 : C.text2 }}>{label}</span>
   </div>
-);
+); };
 
 /* Example characteristics (the WMBW checklist). Doesn't score; it's there
    to make the 1–6 rating an honest one. Carried into the full report. */
-const CheckRow = ({ text, sub, checked, onToggle }) => (
+const CheckRow = ({ text, sub, checked, onToggle }) => { const C = useT(); return (
   <div onClick={onToggle} className="chk"
-    style={{ display: "flex", gap: 13, padding: "12px 0", cursor: "pointer", userSelect: "none", alignItems: "flex-start", borderBottom: "1px solid rgba(255,255,255,.05)" }}>
+    style={{ display: "flex", gap: 13, padding: "12px 0", cursor: "pointer", userSelect: "none", alignItems: "flex-start", borderBottom: `1px solid ${C.lineSoft}` }}>
     <svg width="20" height="20" viewBox="0 0 14 14" style={{ flexShrink: 0, marginTop: 1 }}>
       <rect x="0.75" y="0.75" width="12.5" height="12.5" rx="3"
         fill={checked ? `${C.cyan}26` : "transparent"} stroke={checked ? C.cyan : `${C.cyan}55`} strokeWidth="1.3" />
@@ -99,13 +100,14 @@ const CheckRow = ({ text, sub, checked, onToggle }) => (
       {sub && <div style={{ fontSize: 13, lineHeight: 1.5, color: C.text3, marginTop: 4 }}>{sub}</div>}
     </div>
   </div>
-);
+); };
 
 /* Example characteristics, collapsed to one full row plus a faded preview of
    the next. Opening and closing animate the height, and closing glides the box
    back into view so the reader isn't left stranded lower down the page.
    Keyed by driver in the parent, so each driver starts collapsed. */
 function Characteristics({ items, checked, onToggle }) {
+  const C = useT();
   const [open, setOpen] = useState(false);
   const [full, setFull] = useState(0);
   const boxRef = useRef(null);
@@ -132,7 +134,7 @@ function Characteristics({ items, checked, onToggle }) {
   const count = checked.filter(Boolean).length;
   const [first, ...rest] = items;
   return (
-    <div ref={boxRef} style={{ scrollMarginTop: 64, padding: "14px 16px 6px", borderRadius: 14, background: `linear-gradient(135deg, ${C.cyan}0a, ${C.cyan}03)`, border: `1px solid ${C.cyan}24` }}>
+    <div ref={boxRef} style={{ scrollMarginTop: 64, padding: "14px 16px 6px", borderRadius: 14, background: C.light ? `linear-gradient(135deg, #FFFFFF 55%, ${C.cyan}0d)` : `linear-gradient(135deg, ${C.cyan}0a, ${C.cyan}03)`, border: `1px solid ${C.cyan}${C.light ? "33" : "24"}`, boxShadow: C.shadowCard }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12 }}>
         <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: C.cyan, lineHeight: 1.45 }}>Example characteristics of a dominant business</span>
         {count > 0 && <span style={{ flexShrink: 0, fontSize: 12, color: C.text3 }}>{count} of {items.length}</span>}
@@ -149,7 +151,7 @@ function Characteristics({ items, checked, onToggle }) {
               ))}
             </div>
             <div style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity: open ? 0 : 1, transition: "opacity .3s ease",
-              background: "linear-gradient(180deg, rgba(10,18,24,.15) 0%, rgba(10,18,24,.8) 45%, #0A1218 90%)" }} />
+              background: `linear-gradient(180deg, rgba(${C.fadeRgb},.15) 0%, rgba(${C.fadeRgb},.8) 45%, ${C.fadeSolid} 90%)` }} />
           </div>
           <button onClick={toggle} className="more"
             style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7, width: "100%", margin: "8px 0 6px", padding: "11px 0", borderRadius: 10, cursor: "pointer",
@@ -169,6 +171,7 @@ function Characteristics({ items, checked, onToggle }) {
    on desktop the clamp and the button are switched off by CSS (.desc-clamp /
    .desc-more in the flow's style block). Keyed by driver in the parent. */
 function Description({ text }) {
+  const C = useT();
   const [open, setOpen] = useState(false);
   return (
     <div style={{ margin: "0 0 20px" }}>
@@ -187,12 +190,13 @@ function Description({ text }) {
 
 /* Rate Yourself, 1–6 — the WMBW selector, sized for a thumb. */
 const RateYourself = ({ value, onChange, lowLabel, highLabel }) => {
-  const ac = value ? scoreColor(value) : C.gold;
+  const C = useT();
+  const ac = value ? C.t(scoreColor(value)) : C.gold;
   return (
     <div style={{ padding: "18px 16px 16px", borderRadius: 14, marginTop: 18,
-      background: value ? `linear-gradient(145deg, ${ac}10, ${ac}04)` : "rgba(255,255,255,.025)",
+      background: value ? (C.light ? `linear-gradient(145deg, #FFFFFF 50%, ${ac}12)` : `linear-gradient(145deg, ${ac}10, ${ac}04)`) : C.surface,
       border: `1.5px solid ${value ? `${ac}66` : `${C.gold}55`}`,
-      boxShadow: value ? `0 0 24px ${ac}1f` : "none", transition: "all .3s ease" }}>
+      boxShadow: value ? `0 0 24px ${ac}1f` : C.shadowCard, transition: "all .3s ease" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
         <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".14em", color: value ? ac : C.gold }}>Rate yourself</span>
         <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, fontWeight: 700, color: ac, minHeight: 26 }}>
@@ -201,7 +205,7 @@ const RateYourself = ({ value, onChange, lowLabel, highLabel }) => {
       </div>
       <div style={{ display: "flex", gap: 7, marginBottom: 10 }}>
         {[1, 2, 3, 4, 5, 6].map(n => {
-          const sc = scoreColor(n);
+          const sc = C.t(scoreColor(n));
           const sel = value === n;
           return (
             <button key={n} onClick={() => onChange(n)} className="rate" aria-label={`Rate ${n} of 6`}
@@ -219,27 +223,27 @@ const RateYourself = ({ value, onChange, lowLabel, highLabel }) => {
   );
 };
 
-const GoldButton = ({ onClick, children, disabled, big }) => (
+const GoldButton = ({ onClick, children, disabled, big }) => { const C = useT(); return (
   <button className="btn" onClick={onClick} disabled={disabled}
     style={{ width: "100%", padding: big ? "20px 0" : "18px 0", marginTop: 8, borderRadius: 12, cursor: disabled ? "wait" : "pointer",
-      fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: big ? 17 : 16, color: C.gold,
-      background: `linear-gradient(135deg,${C.gold}22,${C.gold}0d)`, border: `1.5px solid ${C.gold}66`,
+      fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: big ? 17 : 16, color: C.btnText,
+      background: C.btnBg, border: `1.5px solid ${C.btnLine}`,
       opacity: disabled ? .7 : 1, transition: "all .25s ease" }}>
     {children}
   </button>
-);
+); };
 
 /* The ten scores laid out in workbook page 7 order, so a workshop attendee
    can copy them straight onto the page. */
-const WorkbookCard = ({ scores, attract, ready, zone }) => (
-  <div style={{ textAlign: "left", padding: "18px 18px 14px", borderRadius: 12, marginBottom: 22, background: "rgba(255,255,255,.03)", border: `1px solid ${C.gold}33` }}>
+const WorkbookCard = ({ scores, attract, ready, zone }) => { const C = useT(); return (
+  <div style={{ textAlign: "left", padding: "18px 18px 14px", borderRadius: 12, marginBottom: 22, background: C.surfaceCard, border: `1px solid ${C.gold}33`, boxShadow: C.shadowCard }}>
     <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: C.gold, marginBottom: 4 }}>For your workbook · page 7</div>
     <div style={{ fontSize: 13.5, color: C.text3, marginBottom: 12 }}>Copy these onto Station 02 before the workshop.</div>
     {DRIVER_KEYS.map((k, i) => (
       <div key={k}>
-        {i === 0 && <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: PILLARS.attract.color, margin: "2px 0 6px" }}>Attractiveness</div>}
-        {i === ATTRACT_KEYS.length && <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: PILLARS.ready.color, margin: "12px 0 6px" }}>Readiness</div>}
-        <div style={{ display: "flex", alignItems: "baseline", gap: 10, padding: "6px 0", borderBottom: "1px solid rgba(255,255,255,.06)" }}>
+        {i === 0 && <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: C.t(PILLARS.attract.color), margin: "2px 0 6px" }}>Attractiveness</div>}
+        {i === ATTRACT_KEYS.length && <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: C.t(PILLARS.ready.color), margin: "12px 0 6px" }}>Readiness</div>}
+        <div style={{ display: "flex", alignItems: "baseline", gap: 10, padding: "6px 0", borderBottom: `1px solid ${C.lineSoft}` }}>
           <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 13, color: C.gold, width: 22 }}>{String(i + 1).padStart(2, "0")}</span>
           <span style={{ flex: 1, fontSize: 14.5, color: C.text2 }}>{DRIVER_NAMES[k]}</span>
           <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 18, fontWeight: 700, color: C.text1 }}>{scores[k]}</span>
@@ -247,14 +251,20 @@ const WorkbookCard = ({ scores, attract, ready, zone }) => (
       </div>
     ))}
     <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginTop: 12, fontSize: 13.5, color: C.text2 }}>
-      <span>Attractiveness <b style={{ color: PILLARS.attract.color }}>{attract}/30</b></span>
-      <span>Readiness <b style={{ color: PILLARS.ready.color }}>{ready}/30</b></span>
-      <span>Total <b style={{ color: zone.color }}>{attract + ready}/60</b></span>
+      <span>Attractiveness <b style={{ color: C.t(PILLARS.attract.color) }}>{attract}/30</b></span>
+      <span>Readiness <b style={{ color: C.t(PILLARS.ready.color) }}>{ready}/30</b></span>
+      <span>Total <b style={{ color: C.t(zone.color) }}>{attract + ready}/60</b></span>
     </div>
   </div>
-);
+); };
 
 export default function ValueDriversFlow({ door = "site" }) {
+  /* The workshop door is cream, like the workbooks attendees use on the day. */
+  const C = door === "workshop" ? LIGHT : DARK;
+  return <ThemeProvider value={C}><FlowBody door={door} C={C} /></ThemeProvider>;
+}
+
+function FlowBody({ door, C }) {
   /* Contact handed over by the workshop email link, if present. */
   const linked = useMemo(() => {
     if (typeof window === "undefined") return null;
@@ -418,17 +428,18 @@ export default function ValueDriversFlow({ door = "site" }) {
     <style>{`
       *{box-sizing:border-box}
       input,select{font-family:'DM Sans',sans-serif}
-      .opt:hover{background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.18)!important}
-      .prev:hover{color:#E8ECF1!important;border-color:rgba(255,255,255,.28)!important;background:rgba(255,255,255,.06)!important}
-      .chk:hover > div > div:first-child{color:#E8ECF1!important}
+      body{background:${C.bgDeep}}
+      .opt:hover{background:${C.surfaceHi}!important;border-color:${C.lineHover}!important}
+      .prev:hover{color:${C.text1}!important;border-color:${C.lineHover}!important;background:${C.surfaceHi}!important}
+      .chk:hover > div > div:first-child{color:${C.text1}!important}
       .rate:hover{transform:translateY(-1px)}
       .desc-more{display:none}
       @media (max-width:600px){
         .desc-clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
         .desc-more{display:inline-flex}
       }
-      .more:hover{background:rgba(34,211,238,.14)!important;border-color:rgba(34,211,238,.5)!important}
-      .btn:hover{box-shadow:0 0 34px ${C.gold}33!important;border-color:${C.gold}!important}
+      .more:hover{background:${C.cyan}24!important;border-color:${C.cyan}80!important}
+      .btn:hover{box-shadow:0 0 34px ${C.btnGlow}!important;border-color:${C.btnLineHover}!important}
       @media (max-width:430px) and (max-height:860px){
         .flow-wrap{padding-top:18px!important}
         .opt{padding:12px 14px!important;margin-bottom:7px!important}
@@ -436,12 +447,12 @@ export default function ValueDriversFlow({ door = "site" }) {
       }
     `}</style>
   );
-  const grain = <div style={{ position: "fixed", inset: 0, pointerEvents: "none", opacity: .05, mixBlendMode: "overlay", backgroundImage: GRAIN, backgroundSize: "128px 128px", zIndex: 0 }} />;
+  const grain = C.grain ? <div style={{ position: "fixed", inset: 0, pointerEvents: "none", opacity: C.grain, mixBlendMode: "overlay", backgroundImage: GRAIN, backgroundSize: "128px 128px", zIndex: 0 }} /> : null;
 
   const PrevButton = step === 0 ? null : (
     <button onClick={back} className="prev"
       style={{ display: "inline-block", marginTop: 16, padding: "9px 24px", borderRadius: 10,
-        background: "rgba(255,255,255,.03)", border: "1.5px solid rgba(255,255,255,.14)",
+        background: C.surfaceCard, border: `1.5px solid ${C.lineHi}`,
         cursor: "pointer", color: C.text2, fontSize: 20, fontWeight: 700,
         fontFamily: "'DM Sans',sans-serif", lineHeight: 1.1, transition: "all .2s ease" }}>
       Previous
@@ -454,40 +465,41 @@ export default function ValueDriversFlow({ door = "site" }) {
     const agreed = guessZone ? guessZone.key === zone.key : null;
     const gap = attract - ready;
     const carrying = gap >= 6 ? PILLARS.attract : gap <= -6 ? PILLARS.ready : null;
+    const zc = C.t(zone.color);
     const to = token ? `${nextPath}?t=${encodeURIComponent(token)}` : nextPath;
     return (
       <div style={shell} ref={topRef}>
         {fonts}{css}{grain}
         <div style={{ ...wrap, paddingTop: 70, textAlign: "center", position: "relative", zIndex: 1 }}>
-          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: zone.color, marginBottom: 14 }}>Your zone</div>
-          <h1 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(34px,8.4vw,52px)", lineHeight: 1.1, textTransform: "uppercase", letterSpacing: ".01em", color: zone.color, margin: "0 0 18px" }}>
+          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: zc, marginBottom: 14 }}>Your zone</div>
+          <h1 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(34px,8.4vw,52px)", lineHeight: 1.1, textTransform: "uppercase", letterSpacing: ".01em", color: zc, margin: "0 0 18px" }}>
             {zone.label}
           </h1>
           <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 20, fontStyle: "italic", lineHeight: 1.5, color: C.text1, margin: "0 0 30px" }}>
             {agreed === null && <>{zone.line}</>}
             {agreed === true && <>You guessed {guessZone.label} — and your answers agree. That's a clear-eyed read.</>}
-            {agreed === false && <>You guessed <b style={{ fontStyle: "normal" }}>{guessZone.label}</b>. Your answers put you in <b style={{ fontStyle: "normal", color: zone.color }}>{zone.label}</b>.</>}
+            {agreed === false && <>You guessed <b style={{ fontStyle: "normal" }}>{guessZone.label}</b>. Your answers put you in <b style={{ fontStyle: "normal", color: zc }}>{zone.label}</b>.</>}
           </p>
 
           <div style={{ display: "flex", gap: 12, marginBottom: carrying ? 14 : 30 }}>
-            {[{ p: PILLARS.attract, v: attract }, { p: PILLARS.ready, v: ready }].map(({ p, v }) => (
-              <div key={p.label} style={{ flex: 1, padding: "18px 12px", borderRadius: 12, background: `${p.color}0d`, border: `1px solid ${p.color}33` }}>
-                <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: p.color, marginBottom: 6 }}>{p.label}</div>
-                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 34, fontWeight: 700, color: p.color, lineHeight: 1 }}>
+            {[{ p: PILLARS.attract, v: attract }, { p: PILLARS.ready, v: ready }].map(({ p, v }) => { const pc = C.t(p.color); return (
+              <div key={p.label} style={{ flex: 1, padding: "18px 12px", borderRadius: 12, background: C.light ? `linear-gradient(135deg,#FFFFFF 55%,${pc}12)` : `${pc}0d`, border: `1px solid ${pc}33`, boxShadow: C.shadowCard }}>
+                <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: pc, marginBottom: 6 }}>{p.label}</div>
+                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 34, fontWeight: 700, color: pc, lineHeight: 1 }}>
                   {v}<span style={{ fontSize: 15, color: C.text3 }}>/{PILLAR_MAX}</span>
                 </div>
               </div>
-            ))}
+            ); })}
           </div>
           {carrying && (
             <p style={{ fontSize: 14, lineHeight: 1.55, color: C.text2, margin: "0 0 30px" }}>
-              <b style={{ color: carrying.color }}>{carrying.label}</b> is carrying your score — {Math.abs(gap)} points ahead of the other side.
+              <b style={{ color: C.t(carrying.color) }}>{carrying.label}</b> is carrying your score — {Math.abs(gap)} points ahead of the other side.
             </p>
           )}
 
           {door === "workshop" && <WorkbookCard scores={scores} attract={attract} ready={ready} zone={zone} />}
 
-          <div style={{ padding: "18px 20px", borderRadius: 12, background: "rgba(255,255,255,.03)", border: "1px solid rgba(255,255,255,.08)" }}>
+          <div style={{ padding: "18px 20px", borderRadius: 12, background: C.surfaceCard, border: `1px solid ${C.line}`, boxShadow: C.shadowCard }}>
             <div style={{ fontSize: 15, color: C.text1, marginBottom: 4 }}>Your full results are on their way.</div>
             <div style={{ fontSize: 13.5, color: C.text3 }}>Sent to <b style={{ color: C.text2 }}>{contact.email}</b></div>
           </div>
@@ -497,7 +509,7 @@ export default function ValueDriversFlow({ door = "site" }) {
           )}
           {door === "workshop" && (
             <div style={{ marginTop: 24 }}>
-              <a href={to} className="btn" style={{ display: "block", padding: "18px 0", borderRadius: 12, textDecoration: "none", fontWeight: 700, fontSize: 16, color: C.gold, background: `linear-gradient(135deg,${C.gold}22,${C.gold}0d)`, border: `1.5px solid ${C.gold}66` }}>
+              <a href={to} className="btn" style={{ display: "block", padding: "18px 0", borderRadius: 12, textDecoration: "none", fontWeight: 700, fontSize: 16, color: C.btnText, background: C.btnBg, border: `1.5px solid ${C.btnLine}` }}>
                 Continue to your workshop video →
               </a>
             </div>
@@ -519,8 +531,8 @@ export default function ValueDriversFlow({ door = "site" }) {
 
       {/* progress */}
       <div style={{ position: "sticky", top: 0, zIndex: 10, background: `${C.bgDeep}f2`, backdropFilter: "blur(8px)" }}>
-        <div style={{ height: 3, background: "rgba(255,255,255,.06)" }}>
-          <div style={{ height: "100%", width: `${((step + 1) / TOTAL) * 100}%`, background: `linear-gradient(90deg,${C.gold},${C.goldLight})`, transition: "width .35s ease", boxShadow: `0 0 10px ${C.gold}66` }} />
+        <div style={{ height: 3, background: C.lineSoft }}>
+          <div style={{ height: "100%", width: `${((step + 1) / TOTAL) * 100}%`, background: C.light ? `linear-gradient(90deg,${C.goldLight},${C.gold})` : `linear-gradient(90deg,${C.gold},${C.goldLight})`, transition: "width .35s ease", boxShadow: `0 0 10px ${C.gold}66` }} />
         </div>
         <div style={{ maxWidth: 620, margin: "0 auto", padding: "14px 20px", display: "flex", justifyContent: "space-between" }}>
           <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: C.text4 }}>
@@ -561,9 +573,9 @@ export default function ValueDriversFlow({ door = "site" }) {
               <input key={f.k} type={f.type} placeholder={f.ph} value={contact[f.k]}
                 onChange={e => { const v = f.k === "phone" ? fmtPhone(e.target.value) : e.target.value; setContact(c => ({ ...c, [f.k]: v })); setErr(""); }}
                 inputMode={f.k === "phone" ? "tel" : undefined} maxLength={f.k === "phone" ? 12 : undefined}
-                style={{ width: "100%", padding: "16px 16px", marginBottom: 10, borderRadius: 11, background: "#0F141C", border: "1px solid rgba(255,255,255,.1)", color: C.text1, fontSize: 15.5, outline: "none" }}
+                style={{ width: "100%", padding: "16px 16px", marginBottom: 10, borderRadius: 11, background: C.input, border: `1px solid ${C.inputLine}`, color: C.text1, fontSize: 15.5, outline: "none" }}
                 onFocus={e => e.target.style.borderColor = `${C.gold}88`}
-                onBlur={e => e.target.style.borderColor = "rgba(255,255,255,.1)"} />
+                onBlur={e => e.target.style.borderColor = C.inputLine} />
             ))}
             {err && <p style={{ color: C.red, fontSize: 13.5, margin: "4px 0 12px" }}>{err}</p>}
             <GoldButton onClick={() => {
@@ -583,8 +595,8 @@ export default function ValueDriversFlow({ door = "site" }) {
         {(S.type === "score" || S.type === "choice") && (
           <>
             {S.pillar && (
-              <div style={{ display: "inline-block", padding: "4px 11px", borderRadius: 5, marginBottom: 14, background: `${PILLARS[S.pillar].color}14`, border: `1px solid ${PILLARS[S.pillar].color}40` }}>
-                <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: PILLARS[S.pillar].color }}>
+              <div style={{ display: "inline-block", padding: "4px 11px", borderRadius: 5, marginBottom: 14, background: `${C.t(PILLARS[S.pillar].color)}14`, border: `1px solid ${C.t(PILLARS[S.pillar].color)}40` }}>
+                <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: C.t(PILLARS[S.pillar].color) }}>
                   {PILLARS[S.pillar].long}
                 </span>
               </div>
@@ -603,7 +615,7 @@ export default function ValueDriversFlow({ door = "site" }) {
 
         {/* ── DRIVER: check what's true, then rate 1–6 ── */}
         {S.type === "rate" && (() => {
-          const p = PILLARS[S.pillar];
+          const p = { ...PILLARS[S.pillar], color: C.t(PILLARS[S.pillar].color) };
           const n = DRIVER_KEYS.indexOf(S.key) + 1;
           return (
             <>
@@ -631,8 +643,8 @@ export default function ValueDriversFlow({ door = "site" }) {
           <>
             <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: C.gold, marginBottom: 16 }}>{S.kicker}</div>
             {S.stat && (
-              <div style={{ display: "inline-block", padding: "14px 24px 16px", marginBottom: 16, borderRadius: 14, background: "#2A2213", border: `1px solid ${C.gold}66`, boxShadow: "0 6px 24px rgba(0,0,0,.45)" }}>
-                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(40px,11vw,58px)", fontWeight: 700, color: C.gold, lineHeight: 1, whiteSpace: "nowrap" }}>
+              <div style={{ display: "inline-block", padding: "14px 24px 16px", marginBottom: 16, borderRadius: 14, background: C.statBg, border: `1px solid ${C.goldLight}66`, boxShadow: C.statShadow }}>
+                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(40px,11vw,58px)", fontWeight: 700, color: C.statText, lineHeight: 1, whiteSpace: "nowrap" }}>
                   {S.statPre ? `${S.statPre} ${S.stat}` : S.stat}
                 </div>
               </div>
@@ -641,12 +653,12 @@ export default function ValueDriversFlow({ door = "site" }) {
             {S.cite && <p style={{ fontSize: 12, fontStyle: "italic", color: C.text4, margin: "0 0 22px" }}>{S.cite}</p>}
             {S.body && (
               <div style={{ margin: "22px 0" }}>
-                {S.body.map(b => (
-                  <div key={b.label} style={{ padding: "16px 18px", marginBottom: 12, borderRadius: 12, background: `${b.color}0a`, border: `1px solid ${b.color}2e` }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: b.color, marginBottom: 6 }}>{b.label}</div>
+                {S.body.map(b => { const bc = C.t(b.color); return (
+                  <div key={b.label} style={{ padding: "16px 18px", marginBottom: 12, borderRadius: 12, background: C.light ? `linear-gradient(135deg,#FFFFFF 55%,${bc}10)` : `${bc}0a`, border: `1px solid ${bc}2e`, boxShadow: C.shadowCard }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: bc, marginBottom: 6 }}>{b.label}</div>
                     <div style={{ fontSize: 15, lineHeight: 1.5, color: C.text2 }}>{b.text}</div>
                   </div>
-                ))}
+                ); })}
               </div>
             )}
             {S.list && (
@@ -663,7 +675,7 @@ export default function ValueDriversFlow({ door = "site" }) {
             )}
             {S.foot && <p style={{ fontSize: 15, lineHeight: 1.6, color: C.text2, margin: "0 0 8px" }}>{S.foot}</p>}
             {S.note && (
-              <div style={{ marginTop: 18, padding: "14px 16px", borderRadius: 12, background: `${C.cyan}08`, border: `1px solid ${C.cyan}26` }}>
+              <div style={{ marginTop: 18, padding: "14px 16px", borderRadius: 12, background: C.light ? `linear-gradient(135deg,#FFFFFF 55%,${C.cyan}0d)` : `${C.cyan}08`, border: `1px solid ${C.cyan}26`, boxShadow: C.shadowCard }}>
                 <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: C.cyan, marginBottom: 6 }}>{S.note.label}</div>
                 <div style={{ fontSize: 14, lineHeight: 1.55, color: C.text2 }}>{S.note.text}</div>
               </div>

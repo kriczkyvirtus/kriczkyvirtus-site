@@ -35,7 +35,7 @@ function useReport(token) {
 }
 
 const Loading = () => (
-  <main style={{ minHeight: "100vh", background: "#0A0E14", color: "#E8ECF1", display: "grid", placeItems: "center", fontFamily: "DM Sans, sans-serif" }}>
+  <main style={{ minHeight: "100vh", background: "#F2EEE6", color: "#3E4652", display: "grid", placeItems: "center", fontFamily: "DM Sans, sans-serif" }}>
     Loading…
   </main>
 );
@@ -66,7 +66,7 @@ export function ReinvestHarvestReportRoute() {
   if (loading) return <Loading />;
   if (!report) {
     return (
-      <main style={{ minHeight: "100vh", background: "#0A0E14", color: "#E8ECF1", display: "grid", placeItems: "center", textAlign: "center", fontFamily: "DM Sans, sans-serif" }}>
+      <main style={{ minHeight: "100vh", background: "#F2EEE6", color: "#3E4652", display: "grid", placeItems: "center", textAlign: "center", fontFamily: "DM Sans, sans-serif" }}>
         <div><h1>404</h1><p>Report not found.</p></div>
       </main>
     );
@@ -75,12 +75,7 @@ export function ReinvestHarvestReportRoute() {
   return (
     <ReinvestHarvestReport
       key={token}
-      name={report.firstName}
-      email={report.email}
-      scores={report.scores}
-      guess={report.guess}
-      revenueBand={report.revenueBand}
-      ownerTier={report.ownerTier}
+      report={report}
       token={token}
       shareUrl={`${window.location.origin}/r/${token}`}
     />

@@ -1,4 +1,7 @@
 import { useState, useEffect, useRef } from "react";
+/* Cream, like the report and the printed workbooks. Accents are the deeper
+   "ink" versions (see kvTheme.js) so they stay readable on cream. */
+import { LIGHT as C } from "./kvTheme.js";
 
 /* ═══════════════════════════════════════════════════════════════
    REINVEST OR HARVEST — 20-STEP FLOW
@@ -10,15 +13,6 @@ import { useState, useEffect, useRef } from "react";
    Set false for explicit Next buttons (fewer mis-taps, ~2x the taps). */
 const AUTO_ADVANCE = true;
 const ADVANCE_MS = 340;
-
-const C = {
-  bgDeep: "#0A0E14", bgCard: "#111720", bgElev: "#1A2130",
-  gold: "#C8A24E", goldLight: "#D4B665",
-  green: "#34D399", cyan: "#22D3EE", red: "#F87171", amber: "#FBBF24",
-  text1: "#E8ECF1", text2: "#8B95A5", text3: "#5A6474", text4: "#3D4654",
-};
-
-const GRAIN = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
 
 const PILLAR_MAX = 30;
 const THRESHOLD = 18;
@@ -378,16 +372,16 @@ export default function ReinvestHarvestFlow() {
       style={{
         display: "flex", alignItems: "center", gap: 14, padding: compact ? "14px 16px" : "17px 16px", marginBottom: compact ? 8 : 10,
         borderRadius: 12, cursor: "pointer", userSelect: "none", transition: "all .18s ease",
-        background: selected ? `${C.gold}18` : "rgba(255,255,255,.025)",
-        border: `1.5px solid ${selected ? C.gold : "rgba(255,255,255,.09)"}`,
-        boxShadow: selected ? `0 0 20px ${C.gold}22` : "none",
+        background: selected ? `${C.gold}18` : C.surface,
+        border: `1.5px solid ${selected ? C.gold : C.line}`,
+        boxShadow: selected ? `0 0 20px ${C.gold}22` : C.shadowCard,
       }}>
       <span style={{
         flexShrink: 0, width: 30, height: 30, borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center",
         fontSize: 12, fontWeight: 700, transition: "all .18s ease",
         background: selected ? C.gold : "transparent",
-        border: `1.5px solid ${selected ? C.gold : "rgba(255,255,255,.16)"}`,
-        color: selected ? C.bgDeep : C.text3,
+        border: `1.5px solid ${selected ? C.gold : C.lineHi}`,
+        color: selected ? C.onAccent : C.text3,
       }}>{letter}</span>
       <span style={{ fontSize: 15.5, lineHeight: 1.35, color: selected ? C.text1 : C.text2 }}>{label}</span>
     </div>
@@ -398,7 +392,7 @@ export default function ReinvestHarvestFlow() {
   const PrevButton = () => step === 0 ? null : (
     <button onClick={back} className="prev"
       style={{ display: "inline-block", marginTop: 16, padding: "9px 24px", borderRadius: 10,
-        background: "rgba(255,255,255,.03)", border: "1.5px solid rgba(255,255,255,.14)",
+        background: C.surfaceCard, border: `1.5px solid ${C.lineHi}`,
         cursor: "pointer", color: C.text2, fontSize: 20, fontWeight: 700,
         fontFamily: "'DM Sans',sans-serif", lineHeight: 1.1, transition: "all .2s ease" }}>
       Previous
@@ -413,7 +407,6 @@ export default function ReinvestHarvestFlow() {
     return (
       <div style={shell}>
         <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
-        <div style={{ position: "fixed", inset: 0, pointerEvents: "none", opacity: .05, mixBlendMode: "overlay", backgroundImage: GRAIN, backgroundSize: "128px 128px" }} />
         <div style={{ ...wrap, paddingTop: 80, textAlign: "center" }}>
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: quadrant.color, marginBottom: 14 }}>Your position</div>
           <h1 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(34px,8.4vw,52px)", lineHeight: 1.1, textTransform: "uppercase", letterSpacing: ".01em", color: quadrant.color, margin: "0 0 22px" }}>
@@ -428,7 +421,7 @@ export default function ReinvestHarvestFlow() {
 
           <div style={{ display: "flex", gap: 12, marginBottom: 36 }}>
             {[{ l: "Business Capacity", v: bizScore, c: C.gold }, { l: "Personal Foundation", v: persScore, c: C.green }].map(p => (
-              <div key={p.l} style={{ flex: 1, padding: "18px 12px", borderRadius: 12, background: `${p.c}0d`, border: `1px solid ${p.c}33` }}>
+              <div key={p.l} style={{ flex: 1, padding: "18px 12px", borderRadius: 12, background: `linear-gradient(135deg,#FFFFFF 55%,${p.c}12)`, border: `1px solid ${p.c}33`, boxShadow: C.shadowCard }}>
                 <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: p.c, marginBottom: 6 }}>{p.l}</div>
                 <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 34, fontWeight: 700, color: p.c, lineHeight: 1 }}>
                   {p.v}<span style={{ fontSize: 15, color: C.text3 }}>/{PILLAR_MAX}</span>
@@ -437,7 +430,7 @@ export default function ReinvestHarvestFlow() {
             ))}
           </div>
 
-          <div style={{ padding: "18px 20px", borderRadius: 12, background: "rgba(255,255,255,.03)", border: "1px solid rgba(255,255,255,.08)" }}>
+          <div style={{ padding: "18px 20px", borderRadius: 12, background: C.surfaceCard, border: `1px solid ${C.line}`, boxShadow: C.shadowCard }}>
             <div style={{ fontSize: 15, color: C.text1, marginBottom: 4 }}>Your full scorecard is on its way.</div>
             <div style={{ fontSize: 13.5, color: C.text3 }}>Sent to <b style={{ color: C.text2 }}>{contact.email}</b></div>
           </div>
@@ -462,21 +455,21 @@ export default function ReinvestHarvestFlow() {
       <style>{`
         *{box-sizing:border-box}
         input,select{font-family:'DM Sans',sans-serif}
-        .opt:hover{background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.18)!important}
-        .prev:hover{color:#E8ECF1!important;border-color:rgba(255,255,255,.28)!important;background:rgba(255,255,255,.06)!important}
-        .btn:hover{box-shadow:0 0 34px ${C.gold}33!important;border-color:${C.gold}!important}
+        body{background:${C.bgDeep}}
+        .opt:hover{background:${C.surfaceHi}!important;border-color:${C.lineHover}!important}
+        .prev:hover{color:${C.text1}!important;border-color:${C.lineHover}!important;background:${C.surfaceHi}!important}
+        .btn:hover{box-shadow:0 0 34px ${C.btnGlow}!important;border-color:${C.btnLineHover}!important}
          @media (max-width:430px) and (max-height:860px){
            .flow-wrap{padding-top:18px!important}
            .opt{padding:12px 14px!important;margin-bottom:7px!important}
            .prev{margin-top:10px!important}
          }
       `}</style>
-      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", opacity: .05, mixBlendMode: "overlay", backgroundImage: GRAIN, backgroundSize: "128px 128px", zIndex: 0 }} />
 
       {/* progress */}
       <div style={{ position: "sticky", top: 0, zIndex: 10, background: `${C.bgDeep}f2`, backdropFilter: "blur(8px)" }}>
-        <div style={{ height: 3, background: "rgba(255,255,255,.06)" }}>
-          <div style={{ height: "100%", width: `${((step + 1) / TOTAL) * 100}%`, background: `linear-gradient(90deg,${C.gold},${C.goldLight})`, transition: "width .35s ease", boxShadow: `0 0 10px ${C.gold}66` }} />
+        <div style={{ height: 3, background: C.lineSoft }}>
+          <div style={{ height: "100%", width: `${((step + 1) / TOTAL) * 100}%`, background: `linear-gradient(90deg,${C.goldLight},${C.gold})`, transition: "width .35s ease", boxShadow: `0 0 10px ${C.gold}66` }} />
         </div>
         <div style={{ maxWidth: 620, margin: "0 auto", padding: "14px 20px", textAlign: "right" }}>
           <span style={{ fontSize: 13, color: C.text3 }}>{step + 1} <span style={{ color: C.text4 }}>of</span> {TOTAL}</span>
@@ -500,9 +493,9 @@ export default function ReinvestHarvestFlow() {
               <input key={f.k} type={f.type} placeholder={f.ph} value={contact[f.k]}
                 onChange={e => { const v = f.k === "phone" ? fmtPhone(e.target.value) : e.target.value; setContact(c => ({ ...c, [f.k]: v })); setErr(""); }}
                 inputMode={f.k === "phone" ? "tel" : undefined} maxLength={f.k === "phone" ? 12 : undefined}
-                style={{ width: "100%", padding: "16px 16px", marginBottom: 10, borderRadius: 11, background: "#0F141C", border: "1px solid rgba(255,255,255,.1)", color: C.text1, fontSize: 15.5, outline: "none" }}
+                style={{ width: "100%", padding: "16px 16px", marginBottom: 10, borderRadius: 11, background: C.input, border: `1px solid ${C.inputLine}`, color: C.text1, fontSize: 15.5, outline: "none" }}
                 onFocus={e => e.target.style.borderColor = `${C.gold}88`}
-                onBlur={e => e.target.style.borderColor = "rgba(255,255,255,.1)"} />
+                onBlur={e => e.target.style.borderColor = C.inputLine} />
             ))}
             {err && <p style={{ color: C.red, fontSize: 13.5, margin: "4px 0 12px" }}>{err}</p>}
             <button className="btn" onClick={() => {
@@ -511,7 +504,7 @@ export default function ReinvestHarvestFlow() {
               sendPartial();
               next();
             }}
-              style={{ width: "100%", padding: "18px 0", marginTop: 8, borderRadius: 12, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 16, color: C.gold, background: `linear-gradient(135deg,${C.gold}22,${C.gold}0d)`, border: `1.5px solid ${C.gold}66`, transition: "all .25s ease" }}>
+              style={{ width: "100%", padding: "18px 0", marginTop: 8, borderRadius: 12, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 16, color: C.btnText, background: C.btnBg, border: `1.5px solid ${C.btnLine}`, transition: "all .25s ease" }}>
               Continue →
             </button>
             {/* Matches the consent wording on /free-session. Privacy Policy and Terms are
@@ -543,7 +536,7 @@ export default function ReinvestHarvestFlow() {
             })}
             {!AUTO_ADVANCE && (
               <button className="btn" onClick={next}
-                style={{ width: "100%", padding: "17px 0", marginTop: 14, borderRadius: 12, cursor: "pointer", fontWeight: 700, fontSize: 16, color: C.gold, background: `linear-gradient(135deg,${C.gold}22,${C.gold}0d)`, border: `1.5px solid ${C.gold}66` }}>
+                style={{ width: "100%", padding: "17px 0", marginTop: 14, borderRadius: 12, cursor: "pointer", fontWeight: 700, fontSize: 16, color: C.btnText, background: C.btnBg, border: `1.5px solid ${C.btnLine}` }}>
                 Next →
               </button>
             )}
@@ -556,7 +549,9 @@ export default function ReinvestHarvestFlow() {
           <>
             <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: C.gold, marginBottom: 16 }}>{S.kicker}</div>
             {S.stat && (
-              <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 66, fontWeight: 700, color: C.gold, lineHeight: 1, textShadow: `0 0 40px ${C.gold}44`, marginBottom: 10 }}>{S.stat}</div>
+              <div style={{ display: "inline-block", padding: "14px 24px 16px", marginBottom: 16, borderRadius: 14, background: C.statBg, border: `1px solid ${C.goldLight}66`, boxShadow: C.statShadow }}>
+                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(44px,13vw,66px)", fontWeight: 700, color: C.statText, lineHeight: 1, whiteSpace: "nowrap" }}>{S.stat}</div>
+              </div>
             )}
             <h1 style={{ ...qStyle, fontSize: S.stat ? "clamp(20px,4.8vw,26px)" : "clamp(27px,6.6vw,38px)", fontWeight: S.stat ? 500 : 700 }}>{S.title}</h1>
             {S.cite && <p style={{ fontSize: 12, fontStyle: "italic", color: C.text4, margin: "0 0 22px" }}>{S.cite}</p>}
@@ -564,7 +559,7 @@ export default function ReinvestHarvestFlow() {
             {S.body && (
               <div style={{ margin: "22px 0" }}>
                 {S.body.map(b => (
-                  <div key={b.label} style={{ padding: "16px 18px", marginBottom: 12, borderRadius: 12, background: `${b.color}0a`, border: `1px solid ${b.color}2e` }}>
+                  <div key={b.label} style={{ padding: "16px 18px", marginBottom: 12, borderRadius: 12, background: `linear-gradient(135deg,#FFFFFF 55%,${b.color}10)`, border: `1px solid ${b.color}2e`, boxShadow: C.shadowCard }}>
                     <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: b.color, marginBottom: 6 }}>{b.label}</div>
                     <div style={{ fontSize: 15, lineHeight: 1.5, color: C.text2 }}>{b.text}</div>
                   </div>
@@ -588,7 +583,7 @@ export default function ReinvestHarvestFlow() {
             {S.foot && <p style={{ fontSize: 15, lineHeight: 1.6, color: C.text2, margin: "0 0 8px" }}>{S.foot}</p>}
 
             <button className="btn" onClick={next}
-              style={{ width: "100%", padding: "18px 0", marginTop: 26, borderRadius: 12, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 16, color: C.gold, background: `linear-gradient(135deg,${C.gold}22,${C.gold}0d)`, border: `1.5px solid ${C.gold}66`, transition: "all .25s ease" }}>
+              style={{ width: "100%", padding: "18px 0", marginTop: 26, borderRadius: 12, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 16, color: C.btnText, background: C.btnBg, border: `1.5px solid ${C.btnLine}`, transition: "all .25s ease" }}>
               Continue →
             </button>
             <PrevButton />
@@ -603,7 +598,7 @@ export default function ReinvestHarvestFlow() {
               Your position and your full scorecard are ready. We'll show you where you landed, then email the complete report to <b style={{ color: C.text2 }}>{contact.email}</b>.
             </p>
             <button className="btn" onClick={submit} disabled={sending}
-              style={{ width: "100%", padding: "20px 0", borderRadius: 12, cursor: sending ? "wait" : "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 17, color: C.gold, background: `linear-gradient(135deg,${C.gold}26,${C.gold}0f)`, border: `1.5px solid ${C.gold}88`, boxShadow: `0 0 26px ${C.gold}1f`, opacity: sending ? .7 : 1, transition: "all .25s ease" }}>
+              style={{ width: "100%", padding: "20px 0", borderRadius: 12, cursor: sending ? "wait" : "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 17, color: C.btnText, background: C.btnBg, border: `1.5px solid ${C.btnLine}`, boxShadow: `0 0 26px ${C.btnGlow}`, opacity: sending ? .7 : 1, transition: "all .25s ease" }}>
               {sending ? "Scoring your answers…" : "SHOW ME MY POSITION →"}
             </button>
             <p style={{ fontSize: 11.5, lineHeight: 1.55, color: C.text4, textAlign: "center", marginTop: 16 }}>

@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+/* Cream, like the report and the printed workbooks (see kvTheme.js). */
+import { LIGHT as C } from "./kvTheme.js";
 
 /* ═══════════════════════════════════════════════════════════════
    REINVEST OR HARVEST — THANK-YOU PAGE
@@ -20,15 +22,6 @@ const SKOOL_COLLECTIVE = "https://www.skool.com/virtus-collective";
    video decodes, otherwise it's a black rectangle for a beat. */
 const VSL_SRC = "/video/reinvest-harvest-next.mp4";
 const VSL_POSTER = "/video/reinvest-harvest-next-poster.jpg";
-
-const C = {
-  bgDeep: "#0A0E14", bgCard: "#111720",
-  gold: "#C8A24E", goldLight: "#D4B665",
-  green: "#34D399", cyan: "#22D3EE", red: "#F87171",
-  text1: "#E8ECF1", text2: "#8B95A5", text3: "#5A6474", text4: "#3D4654",
-};
-
-const GRAIN = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
 
 const QUADRANTS = {
   reinvest: {
@@ -399,7 +392,8 @@ export default function ReinvestHarvestThankYou({
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
       <style>{`
         *{box-sizing:border-box}
-        .cta:hover{box-shadow:0 0 44px ${C.gold}3d,0 6px 22px rgba(0,0,0,.45)!important;border-color:${C.gold}!important}
+        body{background:${C.bgDeep}}
+        .cta:hover{box-shadow:0 0 44px ${C.goldLight}66,0 8px 22px rgba(10,14,20,.25)!important;border-color:${C.goldLight}!important}
         .vsl-panel{animation:vslPulse 2.4s ease-in-out infinite}
         .vsl-unmute:hover .vsl-panel{transform:scale(1.04)}
         @keyframes vslPulse{0%,100%{transform:scale(1);box-shadow:0 10px 40px rgba(0,0,0,.45)}50%{transform:scale(1.035);box-shadow:0 10px 52px rgba(0,0,0,.5),0 0 34px rgba(200,162,78,.45)}}
@@ -408,12 +402,11 @@ export default function ReinvestHarvestThankYou({
         .rcard{transition:box-shadow .3s ease,border-color .3s ease,background .3s ease}
         .rcard:hover{
           border-color:var(--glowEdge)!important;
-          background:linear-gradient(160deg,var(--glowSoft),rgba(255,255,255,.02))!important;
-          box-shadow:0 0 30px var(--glowSoft),0 0 60px var(--glowSoft),inset 0 0 22px rgba(255,255,255,.02);
+          background:linear-gradient(160deg,#FFFFFF 40%,var(--glowSoft))!important;
+          box-shadow:0 0 30px var(--glowSoft),0 0 60px var(--glowSoft);
         }
         @media(min-width:700px){.roadmap{grid-template-columns:repeat(3,1fr);gap:16px}}
       `}</style>
-      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", opacity: .05, mixBlendMode: "overlay", backgroundImage: GRAIN, backgroundSize: "128px 128px", zIndex: 0 }} />
 
       {/* ── CONFIRMATION BAR ── */}
       {resolved && <div style={{ background: `linear-gradient(90deg, ${C.green}16, ${C.green}09)`, borderBottom: `1px solid ${C.green}33`, padding: "14px 20px", position: "relative", zIndex: 2 }}>
@@ -472,7 +465,7 @@ export default function ReinvestHarvestThankYou({
              underneath. The calendar on its own, above any reason to book, was
              asking before explaining. */}
         <section id="rh-scheduler" style={{ ...wrap, padding: "4px 0 40px", scrollMarginTop: 24 }}>
-          <div style={{ padding: "32px 24px", borderRadius: 18, background: "linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,.02))", border: `1px solid ${C.gold}2e`, borderTop: "1px solid rgba(255,255,255,.12)", boxShadow: "0 10px 40px rgba(0,0,0,.45)" }}>
+          <div style={{ padding: "32px 24px", borderRadius: 18, background: "#FFFFFF", border: `1px solid ${C.goldLight}55`, boxShadow: `0 0 26px ${C.goldLight}1f, 0 10px 30px rgba(10,14,20,.08)` }}>
 
             {/* Same block in both states. Someone on a bad token has almost always
                 taken the scorecard — a forwarded or mangled link — so the steps and
@@ -486,8 +479,8 @@ export default function ReinvestHarvestThankYou({
             </p>
 
             {offer.steps.map((s, i) => (
-              <div key={s.t} style={{ display: "flex", gap: 15, alignItems: "flex-start", padding: "14px 0", borderBottom: i < 2 ? "1px solid rgba(255,255,255,.06)" : "none" }}>
-                <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 23, fontWeight: 700, color: `${C.gold}66`, lineHeight: 1, minWidth: 30 }}>0{i + 1}</span>
+              <div key={s.t} style={{ display: "flex", gap: 15, alignItems: "flex-start", padding: "14px 0", borderBottom: i < 2 ? `1px solid ${C.lineSoft}` : "none" }}>
+                <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 23, fontWeight: 700, color: C.goldLight, lineHeight: 1, minWidth: 30 }}>0{i + 1}</span>
                 <div>
                   <div style={{ fontSize: 15, fontWeight: 700, color: C.text1, marginBottom: 3 }}>{s.t}</div>
                   <div style={{ fontSize: 14, lineHeight: 1.55, color: C.text2 }}>{s.d}</div>
@@ -503,15 +496,15 @@ export default function ReinvestHarvestThankYou({
 
             {/* The calendar sits directly under the reasons to use it. */}
             {offerKey === "oneToOne" ? (
-              <div id="rh-calendar" style={{ marginTop: 26, borderRadius: 14, overflow: "hidden", border: "1px solid rgba(255,255,255,.09)", background: C.bgCard, minHeight: 620 }}>
+              <div id="rh-calendar" style={{ marginTop: 26, borderRadius: 14, overflow: "hidden", border: `1px solid ${C.line}`, background: C.bgCard, minHeight: 620 }}>
                 {/* Direct iframe. Do NOT use iClosed widget.js — it races the React render. */}
                 <iframe src={schedulerUrl} title="Book your working session" width="100%" height="620"
                   style={{ border: "none", display: "block" }} loading="lazy" />
               </div>
             ) : (
               <a href={offer.url} className="cta" target="_blank" rel="noopener noreferrer"
-                style={{ display: "block", marginTop: 26, padding: "20px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none", background: `linear-gradient(135deg,${C.gold}26,${C.gold}0f)`, border: `1.5px solid ${C.gold}77`, boxShadow: `0 0 30px ${C.gold}1f`, transition: "all .25s ease" }}>
-                <span style={{ fontSize: 16.5, fontWeight: 700, letterSpacing: ".02em", color: C.gold }}>{offer.cta} →</span>
+                style={{ display: "block", marginTop: 26, padding: "20px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none", background: C.btnBg, border: `1.5px solid ${C.btnLine}`, boxShadow: `0 0 30px ${C.goldLight}33, 0 10px 24px rgba(10,14,20,.18)`, transition: "all .25s ease" }}>
+                <span style={{ fontSize: 16.5, fontWeight: 700, letterSpacing: ".02em", color: C.btnText }}>{offer.cta} →</span>
               </a>
             )}
           </div>
@@ -548,7 +541,7 @@ export default function ReinvestHarvestThankYou({
         {offerKey === "oneToOne" && (<>
         <section style={{ maxWidth: 1080, margin: "0 auto", padding: "0 20px 40px" }}>
           <div className="vsl"
-            style={{ position: "relative", aspectRatio: "16/9", borderRadius: 16, overflow: "hidden", background: "#0B1017", border: `1px solid ${C.gold}33`, boxShadow: `0 14px 46px rgba(0,0,0,.5), 0 0 60px ${C.gold}0d` }}>
+            style={{ position: "relative", aspectRatio: "16/9", borderRadius: 16, overflow: "hidden", background: "#E9E3D7", border: `1px solid ${C.gold}33`, boxShadow: `0 12px 32px rgba(10,14,20,.14), 0 0 40px ${C.goldLight}1a` }}>
 
             <video
               ref={vidRef}
@@ -578,7 +571,7 @@ export default function ReinvestHarvestThankYou({
                 <span className="vsl-panel" style={{
                   display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
                   width: "58%", maxWidth: 520, padding: "6% 4%", borderRadius: 20,
-                  background: `${C.gold}b3`, border: `1px solid ${C.gold}`,
+                  background: `${C.goldLight}b3`, border: `1px solid ${C.goldLight}`,
                   boxShadow: `0 10px 40px rgba(0,0,0,.45)`,
                 }}>
                   <svg width="13%" viewBox="0 0 24 24" fill="#0A0E14" style={{ minWidth: 34, maxWidth: 66, marginBottom: "5%" }}>
@@ -609,8 +602,8 @@ export default function ReinvestHarvestThankYou({
         {resolved && offerKey === "oneToOne" && (
         <section style={{ ...wrap, paddingBottom: 46, textAlign: "center" }}>
           <a href={ctaHref} className="cta" {...ctaProps}
-            style={{ display: "block", maxWidth: 460, margin: "0 auto", padding: "21px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none", background: `linear-gradient(135deg,${C.gold}2e,${C.gold}12)`, border: `1.5px solid ${C.gold}88`, boxShadow: `0 0 34px ${C.gold}26`, transition: "all .25s ease" }}>
-            <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".02em", color: C.gold }}>{offer.cta} →</span>
+            style={{ display: "block", maxWidth: 460, margin: "0 auto", padding: "21px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none", background: C.btnBg, border: `1.5px solid ${C.btnLine}`, boxShadow: `0 0 30px ${C.goldLight}33, 0 10px 24px rgba(10,14,20,.18)`, transition: "all .25s ease" }}>
+            <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".02em", color: C.btnText }}>{offer.cta} →</span>
           </a>
         </section>
         )}
@@ -619,8 +612,8 @@ export default function ReinvestHarvestThankYou({
           <section style={{ ...wrap, paddingBottom: 46, textAlign: "center" }}>
             <a href="#rh-scheduler" className="cta" onClick={scrollToScheduler}
               style={{ display: "block", maxWidth: 460, margin: "0 auto", padding: "21px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none",
-                background: `linear-gradient(135deg,${C.gold}2e,${C.gold}12)`, border: `1.5px solid ${C.gold}88`, boxShadow: `0 0 34px ${C.gold}26`, transition: "all .25s ease" }}>
-              <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".02em", color: C.gold }}>BOOK YOUR FREE WORKING SESSION →</span>
+                background: C.btnBg, border: `1.5px solid ${C.btnLine}`, boxShadow: `0 0 30px ${C.goldLight}33, 0 10px 24px rgba(10,14,20,.18)`, transition: "all .25s ease" }}>
+              <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".02em", color: C.btnText }}>BOOK YOUR FREE WORKING SESSION →</span>
             </a>
             <p style={{ fontSize: 13.5, color: C.text3, margin: "16px 0 0" }}>
               <a href="/reinvest-harvest" style={{ color: C.text3 }}>Haven't taken the scorecard yet?</a>
@@ -652,8 +645,8 @@ export default function ReinvestHarvestThankYou({
                 : r0;
               return (
               <div key={r.n} className="rcard" style={{ padding: "20px 16px 22px", borderRadius: 14, textAlign: "center",
-                background: `linear-gradient(160deg, ${r.tint}0a, rgba(255,255,255,.015))`,
-                border: `1px solid ${r.tint}22`,
+                background: `linear-gradient(160deg, #FFFFFF 45%, ${r.tint}10)`,
+                border: `1px solid ${r.tint}40`, boxShadow: `0 0 18px ${r.tint}1c, 0 6px 16px rgba(10,14,20,.06)`,
                 /* per-card glow, driven off the icon's own colour */
                 "--glow": r.tint, "--glowSoft": `${r.tint}2e`, "--glowEdge": `${r.tint}70` }}>
                 <div style={{ height: 62, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}
@@ -670,7 +663,7 @@ export default function ReinvestHarvestThankYou({
 
 
         {/* ── DISCLOSURE ── */}
-        <footer style={{ ...wrap, paddingTop: 26, borderTop: "1px solid rgba(255,255,255,.06)" }}>
+        <footer style={{ ...wrap, paddingTop: 26, borderTop: `1px solid ${C.lineSoft}` }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center", marginBottom: 14 }}>
             <svg width="19" height="19" viewBox="0 0 64 64" fill="none">
               <path d="M32 8L14 16V30C14 42 22 52 32 56C42 52 50 42 50 30V16L32 8Z" fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinejoin="round" />

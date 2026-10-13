@@ -37,7 +37,9 @@ const ZONE_TONE = { foundation: "red", constrained: "amber", midpoint: "gold", g
 /* Driver scores — the same rule as the booking page: red 1–2, gold 3–4, green 5, cyan 6. */
 const scoreTone = (n) => TONE[n <= 2 ? "red" : n <= 4 ? "gold" : n === 5 ? "green" : "cyan"];
 
-const ICON = (key) => `/icons/value-drivers/${key}-light.svg`;
+/* PNG, not SVG: the icons' soft shadows are SVG filters, which iPhone Safari
+   leaves out when the PDF is drawn, so the tiles came out blank. */
+const ICON = (key) => `/icons/value-drivers/${key}-light.png`;
 const STEP = Object.fromEntries(DRIVER_STEPS.map(s => [s.key, s]));
 const sentence = (s) => (s ? s.charAt(0) + s.slice(1).toLowerCase() : "");
 /* House style for this document: no em dashes. Text shared with the question
@@ -630,8 +632,15 @@ async function buildPdf(root, filename) {
         el.style.transform = "none"; el.style.boxShadow = "none";
         /* the soft radial glows draw as flat boxes in the image, so leave them out */
         el.querySelectorAll(".glow").forEach(g => { g.style.display = "none"; });
-        /* an inset highlight draws as a pale inner box, so keep only the outer glow */
-        el.querySelectorAll(".bio").forEach(b => { b.style.boxShadow = "0 0 30px rgba(200,162,78,.15), 0 18px 40px rgba(10,14,20,.30)"; });
+        /* html2canvas draws inset shadows as a pale inner box (the "square" behind
+           the tile icons), so keep only the outer shadows */
+        const win = doc.defaultView;
+        el.querySelectorAll("*").forEach(n => {
+          const bs = win.getComputedStyle(n).boxShadow;
+          if (!bs || bs.indexOf("inset") < 0) return;
+          const outer = bs.split(/,(?![^(]*\))/).filter(x => x.indexOf("inset") < 0).join(",");
+          n.style.boxShadow = outer || "none";
+        });
       },
     });
     if (i) pdf.addPage("letter", "portrait");
