@@ -50,14 +50,6 @@ const RESUME_MS = 9000;    /* quiet time after an interaction before it walks ag
 /* Stations sit clockwise from upper-left, so 01 to 03 share the top arc. */
 const ANGLES = [-150, -90, -30, 30, 90, 150].map(a => (a * Math.PI) / 180);
 
-const Shield = ({ size = 46 }) => (
-  <svg width={size} height={size} viewBox="0 0 64 64" fill="none" aria-hidden="true"
-    style={{ filter: "drop-shadow(0 0 10px rgba(200,162,78,.45)) drop-shadow(0 0 3px rgba(200,162,78,.6))" }}>
-    <path d="M32 8L14 16V30C14 42 22 52 32 56C42 52 50 42 50 30V16L32 8Z" fill="none" stroke="#7A5C1E" strokeWidth="2.6" strokeLinejoin="round" />
-    <path d="M32 12L18 18.5V30C18 39.5 24 47.5 32 51C40 47.5 46 39.5 46 30V18.5L32 12Z" fill="none" stroke="#7A5C1E" strokeWidth="1" opacity=".42" strokeLinejoin="round" />
-  </svg>
-);
-
 export default function RoadmapSystem({ onCta }) {
   const boxRef = useRef(null);
   const stageRef = useRef(null);
@@ -233,7 +225,8 @@ export default function RoadmapSystem({ onCta }) {
             <div className="vrs-pulse" aria-hidden="true" style={{ position: "absolute", top: CT / 2, left: "50%", width: CT * 1.5, height: CT * 1.5,
               transform: "translate(-50%,-50%)", borderRadius: "50%", background: `radial-gradient(circle, ${TONE.gold.fill}55 0%, transparent 68%)` }} />
             <div className="vrs-tile vrs-core" style={{ width: CT, height: CT, borderRadius: Math.round(CT * 0.27), position: "relative" }}>
-              <Shield size={Math.round(CT * 0.52)} />
+              {/* the logo shield in the same metallic recipe as the station icons - and the workbook's page 2 */}
+              <img src="/icons/roadmap-system/shield.png" alt="" width={Math.round(CT * 0.74)} height={Math.round(CT * 0.74)} draggable="false" />
             </div>
             <div className="vrs-pill" style={{ marginTop: narrow ? 7 : 10, fontSize: narrow ? 11 : 13.5, fontWeight: 700, lineHeight: 1.2, textAlign: "center",
               padding: narrow ? "5px 11px" : "7px 15px", borderRadius: narrow ? 12 : 999, whiteSpace: "nowrap", position: "relative" }}>

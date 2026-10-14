@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { texBg } from "./reportTexture";
 import {
   PILLAR_MAX, THRESHOLD, BIZ_KEYS, PERS_KEYS, PILLAR_TONE, scoreToneKey,
   QUADRANTS, getQuadrant, BANDS, ROADMAP, routeTo, DIMS,
@@ -114,10 +115,10 @@ function usePageScale() {
 
 /* ── shared pieces (module scope, so nothing remounts on render) ── */
 
-const Page = ({ s, n, total, right, dark, children }) => (
+const Page = ({ s, n, total, right, dark, tex, children }) => (
   <div className="pw" style={{ width: PAGE_W * s, height: PAGE_H * s, marginBottom: 18 * s + 6 }}>
-    <div className="page" style={{ transform: `scale(${s})`, ...(dark ? { background: "linear-gradient(160deg,#141B26 0%,#0A0E14 72%)", color: "#E8ECF1" } : {}) }}>
-      {!dark && <div className="runhead"><b>Kriczky Virtus</b><span>{right}</span></div>}
+    <div className="page" style={{ transform: `scale(${s})`, ...(dark ? { ...texBg("cover", "linear-gradient(160deg,#141B26 0%,#0A0E14 72%)"), color: "#E8ECF1" } : texBg(tex || "mark", L.page)) }}>
+{!dark && <div className="runhead"><b>Kriczky Virtus</b><span>{right}</span></div>}
       {children}
       {!dark && <div className="folio"><b>Reinvest or Harvest</b><span>{n} / {total}</span></div>}
     </div>
@@ -224,7 +225,7 @@ function PositionPage({ s, n, total, report, quad, biz, pers }) {
   const cells = [QUADRANTS.harvest, QUADRANTS.reinvest, QUADRANTS.stabilize, QUADRANTS.split];
   const axis = { fontSize: 12.5, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: L.ink3 };
   return (
-    <Page s={s} n={n} total={total} right="01 · Your position">
+    <Page s={s} n={n} total={total} right="01 · Your position" tex="light">
       <div className="kicker" style={{ color: tone.ink }}>Your position</div>
       <h2>You're <em style={{ color: tone.ink }}>{quad.label}.</em></h2>
       <p className="lede" style={{ marginBottom: 22 }}>{dash(quad.line)}</p>
@@ -449,7 +450,7 @@ function DimPage({ s, n, total, d, score }) {
 /* ── PAGE 17 · WHERE THIS LEADS ── */
 function RoadmapPage({ s, n, total }) {
   return (
-    <Page s={s} n={n} total={total} right="06 · Where this leads">
+    <Page s={s} n={n} total={total} right="06 · Where this leads" tex="light">
       <div className="kicker">Where this leads</div>
       <h2>The scorecard is <em>step one.</em></h2>
       <p className="lede" style={{ marginBottom: 18 }}>It answers the reinvest-or-harvest question for where you are today. This is the system for how you keep answering it as the business changes.</p>
@@ -518,7 +519,7 @@ function NextPage({ s, n, total, offerKey, token }) {
   const x = NEXT[offerKey] || NEXT.oneToOne;
   const href = offerKey === "oneToOne" ? CTA_QUALIFIED(token) : SKOOL_COLLECTIVE;
   return (
-    <Page s={s} n={n} total={total} right="07 · Your next step">
+    <Page s={s} n={n} total={total} right="07 · Your next step" tex="light">
       <div className="kicker">Your next step</div>
       <h2 style={{ fontSize: 42, marginBottom: 12 }}>{x.title}</h2>
       <p style={{ fontSize: 17, lineHeight: 1.5, color: L.ink2, margin: "0 0 4px" }}>{x.body}</p>

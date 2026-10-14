@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { texBg } from "./reportTexture";
 import {
   ATTRACT_KEYS, READY_KEYS, DRIVER_KEYS, DRIVER_NAMES, DRIVER_STEPS, ZONES,
   zoneByKey, PILLAR_MAX, routeTo,
@@ -123,10 +124,10 @@ function usePageScale() {
 
 /* ── shared pieces (module scope, so nothing remounts on render) ── */
 
-const Page = ({ s, n, total, right, dark, children }) => (
+const Page = ({ s, n, total, right, dark, tex, children }) => (
   <div className="pw" style={{ width: PAGE_W * s, height: PAGE_H * s, marginBottom: 18 * s + 6 }}>
-    <div className="page" style={{ transform: `scale(${s})`, ...(dark ? { background: "linear-gradient(160deg,#141B26 0%,#0A0E14 72%)", color: "#E8ECF1" } : {}) }}>
-      {!dark && <div className="runhead"><b>Kriczky Virtus</b><span>{right}</span></div>}
+    <div className="page" style={{ transform: `scale(${s})`, ...(dark ? { ...texBg("cover", "linear-gradient(160deg,#141B26 0%,#0A0E14 72%)"), color: "#E8ECF1" } : texBg(tex || "mark", L.page)) }}>
+{!dark && <div className="runhead"><b>Kriczky Virtus</b><span>{right}</span></div>}
       {children}
       {!dark && <div className="folio"><b>Value Drivers Report</b><span>{n} / {total}</span></div>}
     </div>
@@ -214,7 +215,7 @@ function ZonePage({ s, n, total, report, zone }) {
   const gap = a - r;
   const carrying = gap >= 6 ? "Attractiveness" : gap <= -6 ? "Readiness" : null;
   return (
-    <Page s={s} n={n} total={total} right="01 · Where you land">
+    <Page s={s} n={n} total={total} right="01 · Where you land" tex="light">
       <div className="kicker">Your zone</div>
       <h2>You're in the <em style={{ color: tone.ink }}>{zone.label}.</em></h2>
       <p className="lede">{dash(zone.line)}</p>
@@ -590,7 +591,7 @@ function NextPage({ s, n, total, report, token }) {
   const o = NEXT[key];
   const href = key === "collective" ? SKOOL_COLLECTIVE : ICLOSED_NEXT(token);
   return (
-    <Page s={s} n={n} total={total} right="07 · Your next step">
+    <Page s={s} n={n} total={total} right="07 · Your next step" tex="light">
       <div className="kicker">Your next step</div>
       <h2 style={{ fontSize: 40, marginBottom: 12 }}>{o.title}</h2>
       <p className="lede" style={{ fontSize: 17.5, lineHeight: 1.5, marginBottom: 2 }}>{o.body}</p>
