@@ -55,7 +55,7 @@ export const ROADMAP = [
   { n: "03", t: "Find The Constraint",    d: "The single thing capping growth — and how to know it's the real one.", tone: "gold",  ic: "c3" },
   { n: "04", t: "The Profit Split System",d: "What goes back in, what holds in reserve, what comes out to you.",  tone: "green", ic: "c4" },
   { n: "05", t: "Build The Outside",      d: "Assets that aren't the company, and a tax plan that isn't paperwork.", tone: "green", ic: "c5" },
-  { n: "06", t: "Where This Is Going",    d: "The destination that makes every future decision clear and answerable.", tone: "cyan",  ic: "c6" },
+  { n: "06", t: "Your Wealth North Star",  d: "The destination that makes every future decision clear and answerable.", tone: "cyan",  ic: "c6" },
 ];
 
 const REVENUE_BANDS = [

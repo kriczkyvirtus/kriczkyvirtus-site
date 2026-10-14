@@ -54,6 +54,11 @@ export const LIGHT = {
   t: (c) => INK[c] || c,
 };
 
+/* The bright fill for any accent, whether it arrives as a fill or an ink —
+   glows read best in the bright colour on either background. */
+const INK_TO_FILL = Object.fromEntries(Object.entries(INK).map(([f, i]) => [i, f]));
+export const fillOf = (c) => INK_TO_FILL[c] || c;
+
 const ThemeCtx = createContext(DARK);
 export const ThemeProvider = ThemeCtx.Provider;
 export const useT = () => useContext(ThemeCtx);

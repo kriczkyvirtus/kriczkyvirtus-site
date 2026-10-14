@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { DARK, LIGHT, ThemeProvider, useT } from "./kvTheme.js";
+import { DARK, LIGHT, ThemeProvider, useT, fillOf } from "./kvTheme.js";
 import {
   GRAIN, PILLARS, PILLAR_MAX, DRIVER_KEYS, DRIVER_NAMES,
   zoneByKey, routeTo, scoreColor,
@@ -92,8 +92,12 @@ const cssOf = (C) => `
   @keyframes vslPulse{0%,100%{transform:scale(1);box-shadow:0 10px 40px rgba(0,0,0,.45)}50%{transform:scale(1.035);box-shadow:0 10px 52px rgba(0,0,0,.5),0 0 34px rgba(200,162,78,.45)}}
   @media(prefers-reduced-motion:reduce){.vsl-panel{animation:none}}
   .drivers{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .rcard{transition:box-shadow .3s ease,border-color .3s ease,background .3s ease}
-  .rcard:hover{border-color:var(--glowEdge)!important;background:${C.light ? "linear-gradient(160deg,#FFFFFF 40%,var(--glowSoft))" : "linear-gradient(160deg,var(--glowSoft),rgba(255,255,255,.02))"}!important;box-shadow:0 0 30px var(--glowSoft),0 0 60px var(--glowSoft)}
+  .rcard{transition:box-shadow .3s ease,border-color .3s ease,background .3s ease,transform .3s ease}
+  ${C.light
+    /* Cream: the same hover as the report cards — a slight lift, an edge in the
+       card's colour, and a soft glow all the way round. Pointer devices only. */
+    ? "@media (hover:hover) and (pointer:fine){.rcard:hover{transform:translateY(-2px);border-color:var(--glowEdge)!important;box-shadow:0 0 0 1px var(--glowEdge),0 0 22px var(--glowHi),0 0 52px var(--glowHi),0 14px 30px rgba(10,14,20,.10)!important}}"
+    : ".rcard:hover{border-color:var(--glowEdge)!important;background:linear-gradient(160deg,var(--glowSoft),rgba(255,255,255,.02))!important;box-shadow:0 0 30px var(--glowSoft),0 0 60px var(--glowSoft)}"}
   @media(min-width:700px){.drivers{grid-template-columns:repeat(5,1fr);gap:14px}}
 `;
 
@@ -234,7 +238,7 @@ function DriverGrid({ scores }) {
           <div key={k} className="rcard" style={{ position: "relative", padding: "18px 12px 18px", borderRadius: 14, textAlign: "center",
             background: C.light ? `linear-gradient(160deg, #FFFFFF 45%, ${tint}${flag ? "1c" : "10"})` : `linear-gradient(160deg, ${tint}${flag ? "14" : "0a"}, rgba(255,255,255,.015))`,
             border: `1px solid ${flag ? `${tint}77` : `${tint}${C.light ? "40" : "2e"}`}`, boxShadow: C.light ? `0 0 18px ${tint}1c, 0 6px 16px rgba(10,14,20,.06)` : "none",
-            "--glowSoft": `${tint}2e`, "--glowEdge": `${tint}70` }}>
+            "--glowSoft": `${tint}2e`, "--glowEdge": C.light ? `${fillOf(tint)}cc` : `${tint}70`, "--glowHi": `${fillOf(tint)}8c` }}>
             {flag && <div style={{ position: "absolute", top: -9, left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap", fontSize: 8.5, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: C.goldLight, background: "#2A2213", border: `1px solid ${C.goldLight}66`, padding: "3px 9px", borderRadius: 5, boxShadow: C.light ? "0 2px 8px rgba(10,14,20,.25)" : "0 2px 10px rgba(0,0,0,.45)" }}>Start here</div>}
             <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 13, fontWeight: 700, color: `${tint}88`, letterSpacing: ".06em", marginBottom: 6 }}>{String(i + 1).padStart(2, "0")}</div>
             <div style={{ fontFamily: serif, fontSize: 18, fontWeight: 700, color: C.text1, lineHeight: 1.15, minHeight: 42, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 10 }}>{DRIVER_NAMES[k]}</div>

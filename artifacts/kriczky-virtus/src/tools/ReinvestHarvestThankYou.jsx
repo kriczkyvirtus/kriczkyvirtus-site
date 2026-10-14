@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 /* Cream, like the report and the printed workbooks (see kvTheme.js). */
-import { LIGHT as C } from "./kvTheme.js";
+import { LIGHT as C, fillOf } from "./kvTheme.js";
 
 /* ═══════════════════════════════════════════════════════════════
    REINVEST OR HARVEST — THANK-YOU PAGE
@@ -399,11 +399,12 @@ export default function ReinvestHarvestThankYou({
         @keyframes vslPulse{0%,100%{transform:scale(1);box-shadow:0 10px 40px rgba(0,0,0,.45)}50%{transform:scale(1.035);box-shadow:0 10px 52px rgba(0,0,0,.5),0 0 34px rgba(200,162,78,.45)}}
         @media(prefers-reduced-motion:reduce){.vsl-panel{animation:none}}
         .roadmap{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-        .rcard{transition:box-shadow .3s ease,border-color .3s ease,background .3s ease}
-        .rcard:hover{
-          border-color:var(--glowEdge)!important;
-          background:linear-gradient(160deg,#FFFFFF 40%,var(--glowSoft))!important;
-          box-shadow:0 0 30px var(--glowSoft),0 0 60px var(--glowSoft);
+        .rcard{transition:box-shadow .3s ease,border-color .3s ease,transform .3s ease}
+        /* The same hover as the report cards: a slight lift, an edge in the
+           card's colour, and a soft glow all the way round. Pointer devices only. */
+        @media (hover:hover) and (pointer:fine){
+          .rcard:hover{transform:translateY(-2px);border-color:var(--glowEdge)!important;
+            box-shadow:0 0 0 1px var(--glowEdge),0 0 22px var(--glowHi),0 0 52px var(--glowHi),0 14px 30px rgba(10,14,20,.10)!important}
         }
         @media(min-width:700px){.roadmap{grid-template-columns:repeat(3,1fr);gap:16px}}
       `}</style>
@@ -648,7 +649,7 @@ export default function ReinvestHarvestThankYou({
                 background: `linear-gradient(160deg, #FFFFFF 45%, ${r.tint}10)`,
                 border: `1px solid ${r.tint}40`, boxShadow: `0 0 18px ${r.tint}1c, 0 6px 16px rgba(10,14,20,.06)`,
                 /* per-card glow, driven off the icon's own colour */
-                "--glow": r.tint, "--glowSoft": `${r.tint}2e`, "--glowEdge": `${r.tint}70` }}>
+                "--glow": r.tint, "--glowSoft": `${r.tint}2e`, "--glowEdge": `${fillOf(r.tint)}cc`, "--glowHi": `${fillOf(r.tint)}8c` }}>
                 <div style={{ height: 62, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}
                   dangerouslySetInnerHTML={{ __html: r.icon.replace('width="512" height="512"', 'width="58" height="58"') }} />
                 <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 13, fontWeight: 700, color: `${r.tint}88`, letterSpacing: ".06em", marginBottom: 5 }}>{r.n}</div>

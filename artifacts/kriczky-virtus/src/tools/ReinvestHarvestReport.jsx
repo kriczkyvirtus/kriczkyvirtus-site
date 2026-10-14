@@ -124,10 +124,12 @@ const Page = ({ s, n, total, right, dark, children }) => (
   </div>
 );
 
-/* A porcelain tile carrying the dimension number, in its pillar's ink. */
-const NumTile = ({ n, tone, size = 64 }) => (
+/* A porcelain tile carrying the dimension's icon (gold for Business Capacity,
+   green for Personal Foundation). PNG, not SVG: SVG filters drop out of the
+   iPhone PDF. */
+const IconTile = ({ k, size = 64 }) => (
   <span className="tile" style={{ width: size, height: size, borderRadius: Math.round(size * 0.26) }}>
-    <span className="num" style={{ fontSize: Math.round(size * 0.42), color: tone.ink }}>{String(n).padStart(2, "0")}</span>
+    <img src={`/icons/reinvest-harvest/dims/${k}.png`} alt="" width={Math.round(size * 0.68)} height={Math.round(size * 0.68)} style={{ display: "block" }} />
   </span>
 );
 
@@ -229,7 +231,11 @@ function PositionPage({ s, n, total, report, quad, biz, pers }) {
 
       <div className="card" style={{ padding: "18px 22px 16px", marginBottom: 16 }}>
         <div style={{ display: "flex", gap: 14 }}>
-          <div style={{ ...axis, writingMode: "vertical-rl", transform: "rotate(180deg)", textAlign: "center", color: TONE.green.ink }}>Personal Foundation →</div>
+          {/* Drawn as SVG: the PDF renderer ignores vertical writing-mode and flips the text. */}
+          <svg width="18" viewBox="0 0 18 200" preserveAspectRatio="xMidYMid meet" style={{ flexShrink: 0, alignSelf: "stretch" }} aria-label="Personal Foundation">
+            <text x="9" y="100" transform="rotate(-90 9 100)" textAnchor="middle" dominantBaseline="central"
+              style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12.5, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase" }} fill={TONE.green.ink}>PERSONAL FOUNDATION →</text>
+          </svg>
           <div style={{ flex: 1 }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               {cells.map(q => {
@@ -323,9 +329,11 @@ function DimRow({ d, score }) {
   const pt = TONE[PILLAR_TONE[d.pillar]];
   return (
     <div className="card drow" style={glowCard(t, { display: "flex", alignItems: "center", gap: 22, padding: "13px 24px", marginBottom: 11 })}>
-      <NumTile n={d.num} tone={pt} size={66} />
+      <IconTile k={d.key} size={66} />
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 27, fontWeight: 700, lineHeight: 1.1 }}>{d.title}</div>
+        <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 27, fontWeight: 700, lineHeight: 1.1 }}>
+          <span className="num" style={{ fontSize: 16, color: pt.ink, marginRight: 10, verticalAlign: "3px" }}>{String(d.num).padStart(2, "0")}</span>{d.title}
+        </div>
         <div style={{ fontSize: 16.5, color: L.ink3, lineHeight: 1.4, margin: "4px 0 10px" }}>{dash(d.subtitle)}</div>
         <Pips value={score} tone={t} />
       </div>
@@ -375,7 +383,7 @@ function MovesPage({ s, n, total, scores, oneToOne }) {
           <div key={d.key} className="card drow" style={glowCard(t, { padding: "14px 22px", marginBottom: 11 })}>
             <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 8 }}>
               <span style={{ padding: "6px 12px", borderRadius: 7, background: TONE.gold.dark, color: L.goldFill, border: `1px solid ${L.goldFill}66`, fontSize: 12, fontWeight: 700, letterSpacing: ".14em" }}>MOVE 0{i + 1}</span>
-              <NumTile n={d.num} tone={TONE[PILLAR_TONE[d.pillar]]} size={42} />
+              <IconTile k={d.key} size={42} />
               <span style={{ fontSize: 16, fontWeight: 700, color: L.ink2 }}>{d.title} · <span style={{ color: t.ink }}>scored {v}/6</span></span>
             </div>
             {win && <>
@@ -400,7 +408,7 @@ function DimPage({ s, n, total, d, score }) {
   return (
     <Page s={s} n={n} total={total} right="05 · Dimension by dimension">
       <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 12 }}>
-        <NumTile n={d.num} tone={pt} size={72} />
+        <IconTile k={d.key} size={72} />
         <div style={{ flex: 1 }}>
           <div className="kicker" style={{ color: pt.ink, marginBottom: 6 }}>Dimension {String(d.num).padStart(2, "0")} · {d.pillar === "biz" ? "Business Capacity" : "Personal Foundation"}</div>
           <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 36, fontWeight: 600, lineHeight: 1.05 }}>{d.title}</div>
@@ -565,6 +573,16 @@ async function buildPdf(root, filename) {
     if (i) pdf.addPage("letter", "portrait");
     pdf.addImage(canvas.toDataURL("image/jpeg", 0.85), "JPEG", 0, 0, 612, 792, undefined, "FAST");
     canvas.width = 0; canvas.height = 0;
+    /* The page is a picture, so lay a real link over each button on it —
+       the CTA stays clickable in the downloaded file. */
+    const box = pages[i].getBoundingClientRect();
+    const k = 612 / box.width;
+    pages[i].querySelectorAll("a[href]").forEach(a => {
+      const r = a.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const url = new URL(a.getAttribute("href"), window.location.origin).href;
+      pdf.link((r.left - box.left) * k, (r.top - box.top) * k, r.width * k, r.height * k, { url });
+    });
   }
   pdf.save(filename);
 }

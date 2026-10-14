@@ -646,6 +646,16 @@ async function buildPdf(root, filename) {
     if (i) pdf.addPage("letter", "portrait");
     pdf.addImage(canvas.toDataURL("image/jpeg", 0.85), "JPEG", 0, 0, 612, 792, undefined, "FAST");
     canvas.width = 0; canvas.height = 0;
+    /* The page is a picture, so lay a real link over each button on it —
+       the CTA stays clickable in the downloaded file. */
+    const box = pages[i].getBoundingClientRect();
+    const k = 612 / box.width;
+    pages[i].querySelectorAll("a[href]").forEach(a => {
+      const r = a.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const url = new URL(a.getAttribute("href"), window.location.origin).href;
+      pdf.link((r.left - box.left) * k, (r.top - box.top) * k, r.width * k, r.height * k, { url });
+    });
   }
   pdf.save(filename);
 }
