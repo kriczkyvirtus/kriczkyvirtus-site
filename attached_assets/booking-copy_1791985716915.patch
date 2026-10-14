@@ -1,0 +1,34 @@
+diff --git a/artifacts/kriczky-virtus/src/tools/ValueDriversNext.jsx b/artifacts/kriczky-virtus/src/tools/ValueDriversNext.jsx
+index 0d95d5f..0d4b048 100644
+--- a/artifacts/kriczky-virtus/src/tools/ValueDriversNext.jsx
++++ b/artifacts/kriczky-virtus/src/tools/ValueDriversNext.jsx
+@@ -43,8 +43,8 @@ const ZONE_HERO = {
+ const OFFERS = {
+   oneToOne: {
+     kicker: "Your next step",
+-    title: "Find out which two drivers would move your number most.",
+-    body: "A free working session. We read your ten scores against your actual numbers and work out where an hour of your attention adds the most value. No pitch, no deck.",
++    title: "Get free hands-on tactical help inside your business to move the needle.",
++    body: "A free working session. We read your ten scores against your actual numbers and see how changes to low hanging fruit might impact your annual profit and sustainable growth opportunities. No pitch, no deck.",
+     cta: "BOOK YOUR FREE WORKING SESSION",
+     steps: [
+       { t: "We read your results together", d: "Both lenses, and which one is carrying your score." },
+@@ -399,15 +399,15 @@ function NextBody({ door = "site", report = null, token = null, C }) {
+ 
+         {resolved ? (
+           <ZoneHero report={report} zone={zone} reportUrl={reportUrl}
+-            qualifier={offerKey === "oneToOne" ? "For owners doing $1M–$10M who want to know what their business is worth, what's holding the number back, and hands-on help fixing it in the right order." : null} />
++            qualifier={offerKey === "oneToOne" ? "For owners doing $1M–$10M who want to know which drivers are holding their growth back, and hands-on help fixing them in the right order." : null} />
+         ) : (
+           <section style={{ padding: "52px 0 34px", textAlign: "center" }}>
+             <div style={{ ...kicker, color: C.gold, marginBottom: 14 }}>Value Drivers</div>
+             <h1 style={{ fontFamily: serif, fontWeight: 700, fontSize: "clamp(34px,8.4vw,64px)", lineHeight: 1.08, color: C.text1, margin: "0 0 22px" }}>
+-              Want help making your business worth more?
++              Want help growing a business that runs without you?
+             </h1>
+             <p style={{ fontSize: "clamp(16px,4vw,22px)", lineHeight: 1.55, color: C.text2, maxWidth: 900, margin: "0 auto", textWrap: "balance" }}>
+-              This is where you find out whether you're a fit to have me work on it with you — raising what the business is worth, and building financial freedom outside of it.
++              This is where you find out whether you're a fit to have me work on it with you — building sustainable growth inside the business, and financial freedom outside of it.
+             </p>
+           </section>
+         )}
