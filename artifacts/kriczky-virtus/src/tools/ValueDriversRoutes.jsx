@@ -38,7 +38,7 @@ export const ValueDriversWorkshopFlow = () => <ValueDriversFlow door="workshop" 
 function NextRoute({ door }) {
   const token = new URLSearchParams(useLocation().search).get("t");
   const { loading, report } = useReport(token);
-  if (loading) return <Loading light={door === "workshop"} />;
+  if (loading) return <Loading light />;
   return <ValueDriversNext key={token || "unresolved"} door={door} report={report} token={report ? token : null} />;
 }
 export const ValueDriversSiteNext = () => <NextRoute door="site" />;

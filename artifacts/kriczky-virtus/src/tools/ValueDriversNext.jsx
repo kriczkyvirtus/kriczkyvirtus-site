@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { DARK, LIGHT, ThemeProvider, useT, fillOf } from "./kvTheme.js";
+import { LIGHT, ThemeProvider, useT, fillOf } from "./kvTheme.js";
 import {
   GRAIN, PILLARS, PILLAR_MAX, DRIVER_KEYS, DRIVER_NAMES,
   zoneByKey, routeTo, scoreColor,
@@ -312,8 +312,8 @@ function useCalendarNudge(active) {
 }
 
 export default function ValueDriversNext(props) {
-  /* The workshop door is cream, like the workbooks attendees use on the day. */
-  const C = props.door === "workshop" ? LIGHT : DARK;
+  /* Both doors are cream, like the reports and the workbooks. */
+  const C = LIGHT;
   return <ThemeProvider value={C}><NextBody {...props} C={C} /></ThemeProvider>;
 }
 
@@ -404,7 +404,7 @@ function NextBody({ door = "site", report = null, token = null, C }) {
           <section style={{ padding: "52px 0 34px", textAlign: "center" }}>
             <div style={{ ...kicker, color: C.gold, marginBottom: 14 }}>Value Drivers</div>
             <h1 style={{ fontFamily: serif, fontWeight: 700, fontSize: "clamp(34px,8.4vw,64px)", lineHeight: 1.08, color: C.text1, margin: "0 0 22px" }}>
-              Want help growing a business that runs without you?
+              Want help growing your business into an asset that runs without you?
             </h1>
             <p style={{ fontSize: "clamp(16px,4vw,22px)", lineHeight: 1.55, color: C.text2, maxWidth: 900, margin: "0 auto", textWrap: "balance" }}>
               This is where you find out whether you're a fit to have me work on it with you — building sustainable growth inside the business, and financial freedom outside of it.

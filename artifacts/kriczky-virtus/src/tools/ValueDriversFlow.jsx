@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { DARK, LIGHT, ThemeProvider, useT } from "./kvTheme.js";
+import { LIGHT, ThemeProvider, useT } from "./kvTheme.js";
 import {
   GRAIN, PILLARS, PILLAR_MAX, DRIVER_KEYS, DRIVER_NAMES, ATTRACT_KEYS,
   zoneByKey, score, buildSteps, NEXT_PATH, scoreColor,
@@ -259,8 +259,9 @@ const WorkbookCard = ({ scores, attract, ready, zone }) => { const C = useT(); r
 ); };
 
 export default function ValueDriversFlow({ door = "site" }) {
-  /* The workshop door is cream, like the workbooks attendees use on the day. */
-  const C = door === "workshop" ? LIGHT : DARK;
+  /* Both doors are cream, like the reports and the workbooks. DARK is kept in
+     kvTheme.js for any page that still needs it. */
+  const C = LIGHT;
   return <ThemeProvider value={C}><FlowBody door={door} C={C} /></ThemeProvider>;
 }
 
