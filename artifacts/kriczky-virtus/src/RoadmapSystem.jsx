@@ -77,6 +77,10 @@ export default function RoadmapSystem({ onCta }) {
     return () => ro.disconnect();
   }, []);
 
+  /* "Tap" or "Hover over", by the device rather than the screen width. */
+  const [touch, setTouch] = useState(false);
+  useEffect(() => { setTouch(!window.matchMedia("(hover: hover) and (pointer: fine)").matches); }, []);
+
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     const on = () => setReduced(mq.matches); on();
@@ -321,9 +325,11 @@ export default function RoadmapSystem({ onCta }) {
             );
           })}
         </div>
-        <p style={{ fontSize: 13, color: "#8C8476", margin: "10px 0 0" }}>
-          {narrow ? "Tap" : "Hover over"} a station to explore.{onCta && <> <a href="#register" onClick={onCta} style={{ color: "#7A5C1E", fontWeight: 600, textDecoration: "none", whiteSpace: "nowrap" }}>Walk 01 to 03 with your numbers &#8594;</a></>}
-        </p>
+        <div style={{ textAlign: "center", marginTop: 12, lineHeight: 1.6 }}>
+          <div style={{ fontSize: 13, color: "#8C8476" }}>{touch ? "Tap" : "Hover over"} a station to explore.</div>
+          {onCta && <a href="#register" onClick={onCta} style={{ display: "inline-block", fontSize: 13.5, color: "#7A5C1E", fontWeight: 600, textDecoration: "none" }}>
+            Walk 01 to 03 with your numbers &#8594;</a>}
+        </div>
       </div>
 
       <style>{`

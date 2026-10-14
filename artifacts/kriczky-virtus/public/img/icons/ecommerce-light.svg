@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="-210 -210 420 420">
+<defs>
+  <linearGradient id="lmetalwsecommerce" gradientUnits="userSpaceOnUse" x1="0" y1="-118.0" x2="0" y2="109.0"><stop offset="0%" stop-color="#E8CF8C"/><stop offset="14%" stop-color="#D2B160"/><stop offset="28%" stop-color="#BF9A45"/><stop offset="42%" stop-color="#5A4419"/><stop offset="50%" stop-color="#E6CB84"/><stop offset="64%" stop-color="#B08A3A"/><stop offset="80%" stop-color="#7E6226"/><stop offset="100%" stop-color="#4E3A14"/></linearGradient>
+  <filter id="lcastwsecommerce" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
+  <filter id="lliftwsecommerce" x="-60%" y="-60%" width="220%" height="220%">
+    <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#0A0E14" flood-opacity="0.22"/>
+  </filter>
+</defs>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#0A0E14" stroke-opacity="0.20" stroke-width="26" transform="translate(0,13)" filter="url(#lcastwsecommerce)"><path d="M -85.80 -52.00 h 171.60 l 13.00 161.20 H -98.80 Z M -39.00 -52.00 V -79.30 a 39.00 39.00 0 0 1 78.00 0.00 V -52.00"/></g>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#4E3A14" stroke-opacity="0.85" stroke-width="27"><path d="M -85.80 -52.00 h 171.60 l 13.00 161.20 H -98.80 Z M -39.00 -52.00 V -79.30 a 39.00 39.00 0 0 1 78.00 0.00 V -52.00"/></g>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="url(#lmetalwsecommerce)" stroke-width="22" filter="url(#lliftwsecommerce)"><path d="M -85.80 -52.00 h 171.60 l 13.00 161.20 H -98.80 Z M -39.00 -52.00 V -79.30 a 39.00 39.00 0 0 1 78.00 0.00 V -52.00"/></g>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#FFFFFF" stroke-opacity="0.70" stroke-width="5" transform="translate(0,-5)"><path d="M -85.80 -52.00 h 171.60 l 13.00 161.20 H -98.80 Z M -39.00 -52.00 V -79.30 a 39.00 39.00 0 0 1 78.00 0.00 V -52.00"/></g>
+</svg>

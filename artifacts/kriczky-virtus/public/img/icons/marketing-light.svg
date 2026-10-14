@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="-210 -210 420 420">
+<defs>
+  <linearGradient id="lmetalwsmarketing" gradientUnits="userSpaceOnUse" x1="0" y1="-86.0" x2="0" y2="86.0"><stop offset="0%" stop-color="#E8CF8C"/><stop offset="14%" stop-color="#D2B160"/><stop offset="28%" stop-color="#BF9A45"/><stop offset="42%" stop-color="#5A4419"/><stop offset="50%" stop-color="#E6CB84"/><stop offset="64%" stop-color="#B08A3A"/><stop offset="80%" stop-color="#7E6226"/><stop offset="100%" stop-color="#4E3A14"/></linearGradient>
+  <filter id="lcastwsmarketing" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
+  <filter id="lliftwsmarketing" x="-60%" y="-60%" width="220%" height="220%">
+    <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#0A0E14" flood-opacity="0.22"/>
+  </filter>
+</defs>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#0A0E14" stroke-opacity="0.20" stroke-width="26" transform="translate(0,13)" filter="url(#lcastwsmarketing)"><path d="M -110.50 -18.20 v 36.40 a 13.00 13.00 0 0 0 13.00 13.00 h 23.40 l 70.20 54.60 V -85.80 L -74.10 -31.20 H -97.50 a 13.00 13.00 0 0 0 -13.00 13.00 Z"/><path d="M 46.80 -33.80 a 52.00 52.00 0 0 1 0.00 67.60"/><path d="M 83.20 -66.30 a 104.00 104.00 0 0 1 0.00 132.60"/></g>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#4E3A14" stroke-opacity="0.85" stroke-width="27"><path d="M -110.50 -18.20 v 36.40 a 13.00 13.00 0 0 0 13.00 13.00 h 23.40 l 70.20 54.60 V -85.80 L -74.10 -31.20 H -97.50 a 13.00 13.00 0 0 0 -13.00 13.00 Z"/><path d="M 46.80 -33.80 a 52.00 52.00 0 0 1 0.00 67.60"/><path d="M 83.20 -66.30 a 104.00 104.00 0 0 1 0.00 132.60"/></g>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="url(#lmetalwsmarketing)" stroke-width="22" filter="url(#lliftwsmarketing)"><path d="M -110.50 -18.20 v 36.40 a 13.00 13.00 0 0 0 13.00 13.00 h 23.40 l 70.20 54.60 V -85.80 L -74.10 -31.20 H -97.50 a 13.00 13.00 0 0 0 -13.00 13.00 Z"/><path d="M 46.80 -33.80 a 52.00 52.00 0 0 1 0.00 67.60"/><path d="M 83.20 -66.30 a 104.00 104.00 0 0 1 0.00 132.60"/></g>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#FFFFFF" stroke-opacity="0.70" stroke-width="5" transform="translate(0,-5)"><path d="M -110.50 -18.20 v 36.40 a 13.00 13.00 0 0 0 13.00 13.00 h 23.40 l 70.20 54.60 V -85.80 L -74.10 -31.20 H -97.50 a 13.00 13.00 0 0 0 -13.00 13.00 Z"/><path d="M 46.80 -33.80 a 52.00 52.00 0 0 1 0.00 67.60"/><path d="M 83.20 -66.30 a 104.00 104.00 0 0 1 0.00 132.60"/></g>
+</svg>

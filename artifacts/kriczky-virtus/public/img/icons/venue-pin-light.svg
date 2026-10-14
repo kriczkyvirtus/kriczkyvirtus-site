@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="-210 -210 420 420">
+<defs>
+  <linearGradient id="lmetalwsvenuepin" gradientUnits="userSpaceOnUse" x1="0" y1="-170" x2="0" y2="155"><stop offset="0%" stop-color="#E8CF8C"/><stop offset="14%" stop-color="#D2B160"/><stop offset="28%" stop-color="#BF9A45"/><stop offset="42%" stop-color="#5A4419"/><stop offset="50%" stop-color="#E6CB84"/><stop offset="64%" stop-color="#B08A3A"/><stop offset="80%" stop-color="#7E6226"/><stop offset="100%" stop-color="#4E3A14"/></linearGradient>
+  <filter id="lcastwsvenuepin" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
+  <filter id="lliftwsvenuepin" x="-60%" y="-60%" width="220%" height="220%">
+    <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#0A0E14" flood-opacity="0.22"/>
+  </filter>
+</defs>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#0A0E14" stroke-opacity="0.20" stroke-width="26" transform="translate(0,13)" filter="url(#lcastwsvenuepin)"><path d="M0 155 C0 155 116 26 116 -54 A116 116 0 1 0 -116 -54 C-116 26 0 155 0 155 Z"/><circle cx="0" cy="-54" r="44"/></g>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#4E3A14" stroke-opacity="0.85" stroke-width="27"><path d="M0 155 C0 155 116 26 116 -54 A116 116 0 1 0 -116 -54 C-116 26 0 155 0 155 Z"/><circle cx="0" cy="-54" r="44"/></g>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="url(#lmetalwsvenuepin)" stroke-width="22" filter="url(#lliftwsvenuepin)"><path d="M0 155 C0 155 116 26 116 -54 A116 116 0 1 0 -116 -54 C-116 26 0 155 0 155 Z"/><circle cx="0" cy="-54" r="44"/></g>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#FFFFFF" stroke-opacity="0.70" stroke-width="5" transform="translate(0,-5)"><path d="M0 155 C0 155 116 26 116 -54 A116 116 0 1 0 -116 -54 C-116 26 0 155 0 155 Z"/><circle cx="0" cy="-54" r="44"/></g>
+</svg>
