@@ -523,16 +523,13 @@ function NextPage({ s, n, total, offerKey, token }) {
       <h2 style={{ fontSize: 42, marginBottom: 12 }}>{x.title}</h2>
       <p style={{ fontSize: 17, lineHeight: 1.5, color: L.ink2, margin: "0 0 4px" }}>{x.body}</p>
       <Steps steps={x.steps} />
-      <a href={href} className="cta" {...(offerKey === "oneToOne" ? {} : { target: "_blank", rel: "noopener noreferrer" })}
+      <a href={href} className="cta" target="_blank" rel="noopener noreferrer"
         style={{ display: "block", textAlign: "center", textDecoration: "none", margin: "12px 0 12px", padding: "16px 20px", borderRadius: 12,
           background: "linear-gradient(160deg,#141B26 0%,#0A0E14 72%)", color: L.goldFill, border: `1px solid ${L.goldFill}66`,
           fontSize: 17, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", boxShadow: `0 0 30px ${L.goldFill}33, 0 10px 24px rgba(10,14,20,.22)` }}>
         {x.cta} →
       </a>
       <BioCard />
-      <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 18, fontStyle: "italic", lineHeight: 1.4, color: L.ink, margin: "0 0 8px", paddingLeft: 14, borderLeft: `3px solid ${L.goldFill}88` }}>
-        Nobody decides to put everything into one asset. The owners who end up with real freedom are the ones who <b style={{ fontStyle: "normal", color: L.gold }}>decided on purpose.</b>
-      </p>
       <p style={{ fontSize: 12, lineHeight: 1.5, color: L.ink3, margin: 0 }}>
         This scorecard is an educational self-assessment tool from Kriczky Virtus. It is general in nature, is based entirely on your own self-reported answers, and does not constitute individualized financial, tax, legal, or accounting advice, nor a recommendation to pursue any particular course of action. No outcome is projected or guaranteed. Coordinate any decision with your CPA, attorney, and other advisors before acting.
       </p>

@@ -596,7 +596,7 @@ function NextPage({ s, n, total, report, token }) {
       <p className="lede" style={{ fontSize: 17.5, lineHeight: 1.5, marginBottom: 2 }}>{o.body}</p>
       <div style={{ marginBottom: o.cta ? 14 : 18 }}><Steps steps={o.steps} /></div>
       {o.cta && (
-        <a href={href} className="cta" target={key === "collective" ? "_blank" : undefined} rel="noopener noreferrer"
+        <a href={href} className="cta" target="_blank" rel="noopener noreferrer"
           style={{ display: "block", textAlign: "center", padding: "15px 20px", borderRadius: 12, textDecoration: "none", marginBottom: 18,
             background: "linear-gradient(160deg,#141B26 0%,#0A0E14 72%)", border: `1.5px solid ${L.goldFill}`, color: L.goldFill,
             fontSize: 18, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", boxShadow: `0 0 22px ${L.goldFill}33` }}>
