@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import RoadmapSystem from "./RoadmapSystem";
 /* Icons are the Virtus metallic set - three-pass SVGs from the icon recipe,
    served as files. They carry their own gradients, filters and glow, so they
    are referenced as <img> rather than inlined: inlining several would collide
@@ -700,6 +701,17 @@ export default function WorkshopPageCream() {
               <Meta k="Where" v={`${EVENT.venueLine1} ${EVENT.venueLine2}`} href={EVENT.mapUrl} />
               <Meta k="Cost" v="Free" />
             </div>
+          </div>
+        </Sec>
+
+        {/* ── THE ROADMAP - the whole system, interactive ── */}
+        <Sec style={{ paddingTop: "clamp(10px,2vw,24px)" }}>
+          <div style={wrap}>
+            <Head kicker="The Owner’s Virtus Roadmap" align="center"
+              sub="Six stations that work as one system. Each one feeds the next, and the workshop walks the first three on your own numbers.">
+              Six stations, <span style={EM}>one system</span>
+            </Head>
+            <div style={{ marginTop: "clamp(18px,3vw,34px)" }}><RoadmapSystem onCta={toForm} /></div>
           </div>
         </Sec>
 
