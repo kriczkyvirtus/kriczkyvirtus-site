@@ -204,7 +204,7 @@ function CoverPage({ s, report, quad }) {
             </div>
           )}
           <span style={{ marginLeft: "auto", display: "inline-block", padding: "12px 22px", borderRadius: 10, background: tone.dark, color: tone.fill,
-            border: `1px solid ${tone.fill}88`, fontSize: 15, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", boxShadow: `0 0 24px ${tone.fill}33` }}>
+            border: `1px solid ${tone.fill}88`, fontSize: 13, fontWeight: 700, letterSpacing: ".1em", whiteSpace: "nowrap", flexShrink: 0, textTransform: "uppercase", boxShadow: `0 0 24px ${tone.fill}33` }}>
             {quad.label}
           </span>
         </div>
@@ -296,28 +296,28 @@ function MeaningPage({ s, n, total, quad, biz, pers }) {
     <Page s={s} n={n} total={total} right="02 · What this means">
       <div className="kicker" style={{ color: tone.ink }}>What this means</div>
       <h2>Reading <em style={{ color: tone.ink }}>{quad.label}.</em></h2>
-      <p style={{ fontSize: 18, lineHeight: 1.6, color: L.ink2, margin: "0 0 18px" }}>{dash(quad.body)}</p>
+      <p style={{ fontSize: 16.5, lineHeight: 1.55, color: L.ink2, margin: "0 0 14px" }}>{dash(quad.body)}</p>
 
-      <div className="card drow" style={glowCard(TONE.amber, { padding: "16px 22px", marginBottom: 14 })}>
+      <div className="card drow" style={glowCard(TONE.amber, { padding: "14px 22px", marginBottom: 12 })}>
         <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: TONE.amber.ink, marginBottom: 6 }}>The trap in this position</div>
-        <p style={{ fontSize: 17, lineHeight: 1.55, color: L.ink2, margin: 0 }}>{dash(quad.watch)}</p>
+        <p style={{ fontSize: 16, lineHeight: 1.5, color: L.ink2, margin: 0 }}>{dash(quad.watch)}</p>
       </div>
 
       {gap >= 6 && (
-        <div className="card drow" style={glowCard(TONE[biz > pers ? PILLAR_TONE.biz : PILLAR_TONE.pers], { padding: "16px 22px", marginBottom: 14 })}>
+        <div className="card drow" style={glowCard(TONE[biz > pers ? PILLAR_TONE.biz : PILLAR_TONE.pers], { padding: "14px 22px", marginBottom: 12 })}>
           <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: L.ink3, marginBottom: 6 }}>Read the split, not the total</div>
-          <p style={{ fontSize: 17, lineHeight: 1.55, color: L.ink2, margin: 0 }}>
+          <p style={{ fontSize: 16, lineHeight: 1.5, color: L.ink2, margin: 0 }}>
             Your two sides are <b style={{ color: L.ink }}>{gap} points apart</b>. <b style={{ color: (biz > pers ? PILLAR.biz : PILLAR.pers).tone.ink }}>{biz > pers ? "Business Capacity" : "Personal Foundation"}</b> is carrying this score. A respectable total built almost entirely on one side calls for a different decision than the same total spread evenly. Your position is based on the two sides separately.
           </p>
         </div>
       )}
 
-      <div className="card drow" style={glowCard(bandTone, { padding: "16px 22px" })}>
+      <div className="card drow" style={glowCard(bandTone, { padding: "14px 22px" })}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
           <span style={{ fontSize: 14, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: bandTone.ink }}>Your total · {band.label}</span>
           <span><span className="num" style={{ fontSize: 40, color: bandTone.ink }}>{total60}</span><span className="num" style={{ fontSize: 18, color: L.ink3 }}> / 60</span></span>
         </div>
-        <p style={{ fontSize: 17, lineHeight: 1.55, color: L.ink2, margin: 0 }}>{dash(band.desc)}</p>
+        <p style={{ fontSize: 16, lineHeight: 1.5, color: L.ink2, margin: 0 }}>{dash(band.desc)}</p>
       </div>
     </Page>
   );
@@ -328,13 +328,13 @@ function DimRow({ d, score }) {
   const t = scoreTone(score);
   const pt = TONE[PILLAR_TONE[d.pillar]];
   return (
-    <div className="card drow" style={glowCard(t, { display: "flex", alignItems: "center", gap: 22, padding: "13px 24px", marginBottom: 11 })}>
+    <div className="card drow" style={glowCard(t, { display: "flex", alignItems: "center", gap: 22, padding: "10px 24px", marginBottom: 9 })}>
       <IconTile k={d.key} size={66} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 27, fontWeight: 700, lineHeight: 1.1 }}>
           <span className="num" style={{ fontSize: 16, color: pt.ink, marginRight: 10, verticalAlign: "3px" }}>{String(d.num).padStart(2, "0")}</span>{d.title}
         </div>
-        <div style={{ fontSize: 16.5, color: L.ink3, lineHeight: 1.4, margin: "4px 0 10px" }}>{dash(d.subtitle)}</div>
+        <div style={{ fontSize: 16, color: L.ink3, lineHeight: 1.35, margin: "3px 0 8px" }}>{dash(d.subtitle)}</div>
         <Pips value={score} tone={t} />
       </div>
       <div style={{ textAlign: "right", flexShrink: 0 }}>

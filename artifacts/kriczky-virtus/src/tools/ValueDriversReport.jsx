@@ -274,7 +274,7 @@ function DriverRow({ k, n, score }) {
   const t = scoreTone(score);
   const step = STEP[k];
   return (
-    <div className="card drow" style={glowCard(t, { display: "flex", alignItems: "center", gap: 22, padding: "13px 24px", marginBottom: 11 })}>
+    <div className="card drow" style={glowCard(t, { display: "flex", alignItems: "center", gap: 22, padding: "10px 24px", marginBottom: 10 })}>
       <Tile src={ICON(k)} size={68} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 27, fontWeight: 700, lineHeight: 1.1 }}>

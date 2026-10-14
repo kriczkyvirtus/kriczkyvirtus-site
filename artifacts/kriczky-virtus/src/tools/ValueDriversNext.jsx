@@ -152,7 +152,7 @@ const ZoneHero = ({ report, zone, reportUrl, qualifier }) => { const C = useT();
       <p style={{ fontSize: "clamp(13.5px,3.1vw,15.5px)", lineHeight: 1.6, color: C.text3, maxWidth: 680, margin: "22px auto 0" }}>{qualifier}</p>
     )}
     {reportUrl && (
-      <a href={reportUrl} style={{ display: "inline-block", marginTop: 18, color: C.gold, fontSize: 14.5, fontWeight: 700, textDecoration: "none", letterSpacing: ".02em" }}>
+      <a href={reportUrl} target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", marginTop: 18, color: C.gold, fontSize: 14.5, fontWeight: 700, textDecoration: "none", letterSpacing: ".02em" }}>
         Read your full report →
       </a>
     )}
