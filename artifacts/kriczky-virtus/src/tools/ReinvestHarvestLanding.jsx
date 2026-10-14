@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 /* ═══════════════════════════════════════════════════════════════
-   REINVEST OR HARVEST — LANDING PAGE
+   REINVEST OR HARVEST - LANDING PAGE
    Route: /reinvest-harvest
    Mobile-first. Traffic is ManyChat DMs off Reels + paid IG.
    ═══════════════════════════════════════════════════════════════ */
@@ -9,7 +9,7 @@ import { useState, useEffect, useRef } from "react";
 const HEADSHOT = "data:image/jpeg;base64,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";
 
 /* Landing VSL. Raw MP4 rather than an embed so the unmute overlay can control
-   the element directly — same reasoning as the thank-you page. */
+   the element directly - same reasoning as the thank-you page. */
 const VSL_SRC = "/video/reinvest-harvest-landing.mp4";
 const VSL_POSTER = "/video/reinvest-harvest-landing-poster.jpg";
 
@@ -159,7 +159,7 @@ const SampleResultCard = () => {
         </div>
       ))}
 
-      {/* What they actually get — static, so it sits below the cycling scores
+      {/* What they actually get - static, so it sits below the cycling scores
           rather than inside them. Gold numerals match the thank-you page's
           "Your next step" block, so the two read as one system. */}
       <div style={{ marginTop: 22, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,.07)" }}>
@@ -221,7 +221,7 @@ const CTA = ({ compact = false }) => (
       </span>
     </a>
     {/* Up from 12.5/12, then back 20%. Clamped rather than flat so both lines
-        still fit a narrow phone. Suppressed on the post-video CTA — the same two
+        still fit a narrow phone. Suppressed on the post-video CTA - the same two
         lines 600px further down reads as filler, not reassurance. */}
     {!compact && (
       <>
@@ -240,7 +240,7 @@ export default function ReinvestHarvestLanding() {
   const [playing, setPlaying] = useState(false);
   const vidRef = useRef(null);
 
-  /* Unmute restarts from zero — the opening seconds are the hook and they're
+  /* Unmute restarts from zero - the opening seconds are the hook and they're
      written to be heard. Also drops the loop and hands over native controls. */
   const unmuteVideo = () => {
     const v = vidRef.current;
@@ -261,7 +261,7 @@ export default function ReinvestHarvestLanding() {
         @keyframes sampleFade { from { opacity: 0; } to { opacity: 1; } }
         .wrap { max-width: 940px; margin: 0 auto; position: relative; }
         /* Wrapper is 940 so the hero headline gets real measure at 56px.
-           Everything below the hero re-narrows to a 680px reading column —
+           Everything below the hero re-narrows to a 680px reading column - 
            body copy at 940 is uncomfortably wide. */
         .col { max-width: 680px; margin: 0 auto; }
         .cta:hover { box-shadow: 0 0 48px ${C.gold}33, 0 8px 22px rgba(0,0,0,.45) !important; border-color: ${C.gold}99 !important; transform: translateY(-1px); }
@@ -282,7 +282,7 @@ export default function ReinvestHarvestLanding() {
         }
         .cta:hover .ctaArrow { transform: translateY(-50%) translateX(5px); }
         /* Scaled with the button, but sized so the pill stays inside the
-           viewport — at 30px the label alone overran a 390px screen. */
+           viewport - at 30px the label alone overran a 390px screen. */
         @media (max-width: 520px) {
           .cta { padding: 19px 34px !important; }
           .ctaLabel { font-size: 24px !important; }
@@ -308,13 +308,13 @@ export default function ReinvestHarvestLanding() {
       <div style={{ position: "fixed", inset: 0, zIndex: 0, background: `radial-gradient(ellipse 80% 60% at 25% 85%, #221a08 0%, transparent 55%), radial-gradient(ellipse 60% 50% at 75% 15%, #0d2320 0%, transparent 55%), radial-gradient(ellipse 70% 50% at 50% 50%, rgba(200,162,78,0.04) 0%, transparent 60%), linear-gradient(155deg, #070a10 0%, #0c1018 25%, #151208 50%, #0b1a17 75%, #090d14 100%)` }} />
       <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 1, opacity: .06, mixBlendMode: "overlay", backgroundImage: GRAIN, backgroundSize: "128px 128px" }} />
 
-      {/* Caustic light streaks — gold left, green right (mirrors the barbell) */}
+      {/* Caustic light streaks - gold left, green right (mirrors the barbell) */}
       <div style={{ position: "fixed", top: "16%", left: "4%", width: 500, height: 6, background: `linear-gradient(90deg, transparent, ${C.gold} 50%, transparent)`, filter: "blur(20px)", opacity: 0.08, transform: "rotate(-10deg)", pointerEvents: "none", zIndex: 1 }} />
       <div style={{ position: "fixed", top: "58%", right: "0%", width: 420, height: 6, background: `linear-gradient(90deg, transparent, ${C.green} 50%, transparent)`, filter: "blur(18px)", opacity: 0.06, transform: "rotate(8deg)", pointerEvents: "none", zIndex: 1 }} />
 
       <div className="wrap" style={{ zIndex: 10 }}>
 
-        {/* 0 — NAV HEADER */}
+        {/* 0 - NAV HEADER */}
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "25px 22px 0", position: "relative", zIndex: 2 }}>
           <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
             <div style={{ width: 36, height: 36, borderRadius: 9, background: "rgba(200,162,78,0.06)", border: "1px solid rgba(200,162,78,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -326,7 +326,7 @@ export default function ReinvestHarvestLanding() {
           </a>
         </div>
 
-        {/* 1 — HERO */}
+        {/* 1 - HERO */}
         <section style={{ padding: "34px 22px 30px", position: "relative", zIndex: 2, textAlign: "center" }}>
           <div style={{
             display: "inline-flex", alignItems: "center", justifyContent: "center",
@@ -343,7 +343,7 @@ export default function ReinvestHarvestLanding() {
           </p>
 
           <h1 style={{ ...H1, fontSize: "clamp(29px, 5.4vw, 56px)", maxWidth: 880, margin: "0 auto", textWrap: "balance" }}>
-            Where should your next dollar of profit go —{" "}
+            Where should your next dollar of profit go - {" "}
             <span style={{ color: C.gold, fontStyle: "italic" }}>back into the business</span>, or{" "}
             <span style={{ color: C.green, fontStyle: "italic" }}>out to you</span>?
           </h1>
@@ -354,22 +354,22 @@ export default function ReinvestHarvestLanding() {
           <p style={{ ...BODY, margin: "20px auto 0", maxWidth: 700, fontSize: "clamp(14px, 3.8vw, 22px)", lineHeight: 1.5, textWrap: "balance" }}>
             Get it right and your business and financial freedom compound. Get it wrong and you just get busier.
           </p>
-          {/* Qualifier — mirrors the thank-you page, widened to "targeting or
+          {/* Qualifier - mirrors the thank-you page, widened to "targeting or
               already doing" so aspiring owners aren't screened out at the door. */}
           <p style={{ fontSize: "clamp(13px, 3.2vw, 16px)", lineHeight: 1.6, color: C.text3, maxWidth: 720, margin: "18px auto 0", textWrap: "balance" }}>
             Built for owners targeting or already doing $1M&ndash;$10M a year who want a clear answer to &ldquo;how much stays in the business vs comes out to me&rdquo; in the next 12 months.
           </p>
         </section>
 
-        {/* 2 — PRIMARY CTA — ahead of the video: the ready ones shouldn't have to
+        {/* 2 - PRIMARY CTA - ahead of the video: the ready ones shouldn't have to
              sit through the video to find the button. */}
         <section className="col" style={{ padding: "26px 22px 54px", position: "relative", zIndex: 2 }}>
           <CTA />
         </section>
 
-        {/* 3 — VIDEO — now optional rather than the gate before the button */}
+        {/* 3 - VIDEO - now optional rather than the gate before the button */}
         {/* Heading sits outside .col so it gets the 940px wrapper instead of the
-            680px reading column — at 52px the first sentence needs 789px and
+            680px reading column - at 52px the first sentence needs 789px and
             would wrap inside col. Two explicit blocks, so the break is where it
             should be rather than wherever the text happens to run out. */}
         <div style={{ padding: "0 22px 34px", position: "relative", zIndex: 2, textAlign: "center" }}>
@@ -381,7 +381,7 @@ export default function ReinvestHarvestLanding() {
 
         {/* Matches the thank-you page player exactly: 1080px container, so the
             16:9 frame renders 1040x585 on desktop. Breaks out of .col, which caps
-            at 680 — the page wrapper is 940, so this uses a viewport-bounded
+            at 680 - the page wrapper is 940, so this uses a viewport-bounded
             breakout rather than a plain maxWidth. */}
         <section style={{ marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)", width: "100vw", maxWidth: "100vw", padding: "0 20px 26px", boxSizing: "border-box", position: "relative", zIndex: 2 }}>
           <div style={{ maxWidth: 1040, margin: "0 auto" }}>
@@ -425,24 +425,24 @@ export default function ReinvestHarvestLanding() {
           </div>
         </section>
 
-        {/* 4 — SAMPLE RESULT CARD (cycles through all four quadrants) */}
+        {/* 4 - SAMPLE RESULT CARD (cycles through all four quadrants) */}
         {/* 50px top: the video section already contributes 26px below itself, so
-            26 + 50 = 76px — matching the 76px gap below this card (its own 20px
+            26 + 50 = 76px - matching the 76px gap below this card (its own 20px
             plus the pain section's 56px top). */}
         <section className="col" style={{ padding: "50px 22px 20px", position: "relative", zIndex: 2 }}>
           <SampleResultCard />
         </section>
 
-        {/* 5 — THE PAIN */}
+        {/* 5 - THE PAIN */}
         <section className="col" style={S}>
           <div style={{ padding: "28px 24px", borderRadius: 16, background: "linear-gradient(145deg, rgba(255,255,255,.04), rgba(255,255,255,.015) 50%, rgba(255,255,255,.025))", backdropFilter: "blur(16px)", border: `1px solid ${C.border2}`, borderTop: "1px solid rgba(255,255,255,.10)", boxShadow: "0 2px 4px rgba(0,0,0,.2), 0 8px 24px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.05)" }}>
             <p style={BODY}>You had a good year. The money came in.</p>
-            <p style={BODY}>Some went back into the business — a truck, a hire, new equipment, more space. The rest went somewhere.</p>
+            <p style={BODY}>Some went back into the business - a truck, a hire, new equipment, more space. The rest went somewhere.</p>
             <p style={BODY}><strong style={{ color: C.text1, fontWeight: 700 }}>Ask most owners what that spending actually returned and they can't tell you.</strong> Ask what they'd have today if they'd kept it instead, and they can't tell you that either.</p>
             <p style={BODY}>Meanwhile the business gets bigger. Your life doesn't change much. You're earning more than you ever have and you don't feel any richer.</p>
             <div style={{ padding: "22px 24px", borderRadius: 14, background: `linear-gradient(135deg, ${C.gold}08, ${C.gold}03)`, border: `1px solid ${C.gold}25`, margin: "26px 0" }}>
               <p style={{ ...BODY, margin: 0, color: C.text1, fontSize: 17, fontWeight: 500 }}>
-                The goal is intentional growth that creates financial freedom and actual wealth — not a larger business that is even more fragile and dependent on its owner. <span style={{ color: C.gold, fontWeight: 700 }}>You.</span>
+                The goal is intentional growth that creates financial freedom and actual wealth - not a larger business that is even more fragile and dependent on its owner. <span style={{ color: C.gold, fontWeight: 700 }}>You.</span>
               </p>
             </div>
             <p style={{ ...BODY, margin: 0 }}>
@@ -451,7 +451,7 @@ export default function ReinvestHarvestLanding() {
           </div>
         </section>
 
-        {/* 6 — THE BARBELL */}
+        {/* 6 - THE BARBELL */}
         <section className="col" style={S}>
          <div style={{ padding: "32px 24px", borderRadius: 14, background: `linear-gradient(135deg, ${C.gold}08, ${C.gold}03)`, border: `1px solid ${C.gold}25` }}>
           <div style={{ textAlign: "center", marginBottom: 30 }}>
@@ -483,13 +483,13 @@ export default function ReinvestHarvestLanding() {
          </div>
         </section>
 
-        {/* 7 — THE 2×2 */}
+        {/* 7 - THE 2×2 */}
         <section className="col" style={S}>
           <h2 style={{ ...H1, fontSize: "clamp(24px, 5.6vw, 32px)", textAlign: "center", marginBottom: 8 }}>
             You'll land in one of <span style={{ fontStyle: "italic", color: C.gold }}>four positions</span>.
           </h2>
           <p style={{ ...BODY, textAlign: "center", fontSize: 14, marginBottom: 24 }}>
-            Your two scores decide it — not the total.
+            Your two scores decide it - not the total.
           </p>
           <div className="quad">
             {[
@@ -513,7 +513,7 @@ export default function ReinvestHarvestLanding() {
           </p>
         </section>
 
-        {/* 8 — WHO BUILT THIS */}
+        {/* 8 - WHO BUILT THIS */}
         <section className="col" style={S}>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
             <img src={HEADSHOT} alt="Edward Kriczky"
@@ -524,13 +524,13 @@ export default function ReinvestHarvestLanding() {
               </div>
               <div style={{ fontSize: 11, color: C.gold, marginBottom: 10 }}>Founder, Kriczky Virtus</div>
               <p style={{ fontSize: 13, lineHeight: 1.65, color: C.text2, margin: 0, maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
-                We've all heard the phrase "reinvest back into your business" — but nobody shows you how, specifically customized to your company's unique situation. I help business owners figure out where their best opportunities for ROI are when reinvesting back into their business, aligned with where they want their business to go long-term.
+                We've all heard the phrase "reinvest back into your business" - but nobody shows you how, specifically customized to your company's unique situation. I help business owners figure out where their best opportunities for ROI are when reinvesting back into their business, aligned with where they want their business to go long-term.
               </p>
             </div>
           </div>
         </section>
 
-        {/* 9 — HOW IT WORKS */}
+        {/* 9 - HOW IT WORKS */}
         <section className="col" style={S}>
           <div className="twoCol" style={{ gridTemplateColumns: "1fr" }}>
             {[
@@ -549,15 +549,15 @@ export default function ReinvestHarvestLanding() {
           </div>
         </section>
 
-        {/* 10 — FINAL CTA */}
+        {/* 10 - FINAL CTA */}
         <section className="col" style={{ ...S, paddingTop: 12 }}>
           <CTA />
         </section>
 
-        {/* 11 — DISCLOSURE + FOOTER */}
+        {/* 11 - DISCLOSURE + FOOTER */}
         <footer style={{ padding: "34px 22px 50px", borderTop: `1px solid ${C.border1}`, position: "relative", zIndex: 2 }}>
           <p style={{ fontSize: 10.5, lineHeight: 1.6, color: C.text3, textAlign: "center", margin: "0 0 28px", maxWidth: 620, marginLeft: "auto", marginRight: "auto" }}>
-            This scorecard is an educational self-assessment tool from Kriczky Virtus. It is general in nature, is based entirely on your own self-reported answers, and does not constitute individualized financial, tax, legal, or accounting advice, nor a recommendation to pursue any particular course of action. No outcome is projected or guaranteed. Your situation is specific to you — coordinate any decision with your CPA, attorney, and other advisors before acting.
+            This scorecard is an educational self-assessment tool from Kriczky Virtus. It is general in nature, is based entirely on your own self-reported answers, and does not constitute individualized financial, tax, legal, or accounting advice, nor a recommendation to pursue any particular course of action. No outcome is projected or guaranteed. Your situation is specific to you - coordinate any decision with your CPA, attorney, and other advisors before acting.
           </p>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", paddingTop: 24, borderTop: `1px solid ${C.border1}` }}>

@@ -1,5 +1,5 @@
 /* Quick wins per driver, by score tier (low 1–2, mid 3–4, high 5–6).
-   Copied from the original WMBW document (WMBW.jsx quickWins) — the report's
+   Copied from the original WMBW document (WMBW.jsx quickWins) - the report's
    "first three moves" and driver pages read from here. */
 export const QUICK_WINS = {
  "marketPosition": {

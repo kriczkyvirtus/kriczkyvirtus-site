@@ -6,7 +6,7 @@ import {
 } from "./valueDriversData.js";
 
 /* ═══════════════════════════════════════════════════════════════
-   VALUE DRIVERS — NEXT PAGES
+   VALUE DRIVERS - NEXT PAGES
      door="site"     /tools/wmbw/next                 book a call (or the Collective)
      door="workshop" /workshop-rh/value-drivers/next  workshop VSL + workbook scores
    Reached from the flow's result screen and from the results email (?t=token).
@@ -15,8 +15,8 @@ import {
    calendar inside it, VSL with the unmute panel, glowing card grid, footer.
    ═══════════════════════════════════════════════════════════════ */
 
-/* Direct iframe — iClosed widget.js races the React render. Same event as /free-session. */
-const ICLOSED_SESSION = "https://app.iclosed.io/e/kriczkyvirtus/free-working-session";
+/* Direct iframe - iClosed widget.js races the React render. Same event as /free-session. */
+const ICLOSED_SESSION = "https://app.iclosed.io/e/kriczkyvirtus/free-value-drivers-working-session";
 const SKOOL_COLLECTIVE = "https://www.skool.com/virtus-collective";
 
 /* Website-door VSL (optional). The section only renders once SITE_VSL_SRC is set. */
@@ -24,20 +24,20 @@ const SITE_VSL_SRC = null;          // e.g. "/video/value-drivers-next.mp4"
 const SITE_VSL_POSTER = null;
 const SITE_VSL_LENGTH = "";         // e.g. "1 MIN 40 SEC"
 
-/* ⚠️ Workshop VSL — set once the video is recorded. While null, the page shows a
+/* ⚠️ Workshop VSL - set once the video is recorded. While null, the page shows a
    clearly marked placeholder instead of an empty player. */
 const WORKSHOP_VSL_SRC = null;      // e.g. "/video/workshop-value-drivers.mp4"
 const WORKSHOP_VSL_POSTER = null;   // e.g. "/video/workshop-value-drivers-poster.jpg"
 const WORKSHOP_VSL_LENGTH = "";     // e.g. "2 MIN 10 SEC"
 
-/* Hero copy per zone — the fuller version of the one-liners in valueDriversData,
+/* Hero copy per zone - the fuller version of the one-liners in valueDriversData,
    written to the same length and voice as the Reinvest or Harvest quadrant lines. */
 const ZONE_HERO = {
   foundation: "Right now the business runs on you. That's normal at this stage, but it's also why a bad month would hit hard. The good news: this is where small, unsexy fixes might improve your business the most.",
   constrained: "You've built real momentum, and a few gaps are starting to hold it back. Left alone, the business gets busier without improving sustainable growth potential. Close the two weakest drivers and the growth starts compounding instead of leaking.",
   midpoint: "The model works. It just isn't nailed down yet, so scaling now would amplify the gaps along with the strengths. This is the zone where a focused 90 days can do the most to set up your next stage of growth.",
   green: "Attractive from the outside and ready on the inside. Few owners get here. The job now is protecting what you've built while you push into Best-in-Class, and making sure the growth keeps paying you, not just the business.",
-  bestInClass: "Scalable, resilient, and it runs without you. That's rare. The question now isn't how to fix the business — it's what you want the business to do for you, and how to keep it here while you decide.",
+  bestInClass: "Scalable, resilient, and it runs without you. That's rare. The question now isn't how to fix the business - it's what you want the business to do for you, and how to keep it here while you decide.",
 };
 
 const OFFERS = {
@@ -55,7 +55,7 @@ const OFFERS = {
   collective: {
     kicker: "Your next step",
     title: "Start with the owners already working on this.",
-    body: "The Virtus Collective is where owners at your stage work through exactly these drivers — with the playbooks, and with other owners running them at the same time. It's free, and you can be inside it in about a minute.",
+    body: "The Virtus Collective is where owners at your stage work through exactly these drivers - with the playbooks, and with other owners running them at the same time. It's free, and you can be inside it in about a minute.",
     cta: "JOIN THE VIRTUS COLLECTIVE",
     steps: [
       { t: "Courses mapped to the ten drivers", d: "Worked in the order they should be fixed." },
@@ -94,7 +94,7 @@ const cssOf = (C) => `
   .drivers{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .rcard{transition:box-shadow .3s ease,border-color .3s ease,background .3s ease,transform .3s ease}
   ${C.light
-    /* Cream: the same hover as the report cards — a slight lift, an edge in the
+    /* Cream: the same hover as the report cards - a slight lift, an edge in the
        card's colour, and a soft glow all the way round. Pointer devices only. */
     ? "@media (hover:hover) and (pointer:fine){.rcard:hover{transform:translateY(-2px);border-color:var(--glowEdge)!important;box-shadow:0 0 0 1px var(--glowEdge),0 0 22px var(--glowHi),0 0 52px var(--glowHi),0 14px 30px rgba(10,14,20,.10)!important}}"
     : ".rcard:hover{border-color:var(--glowEdge)!important;background:linear-gradient(160deg,var(--glowSoft),rgba(255,255,255,.02))!important;box-shadow:0 0 30px var(--glowSoft),0 0 60px var(--glowSoft)}"}
@@ -181,7 +181,7 @@ function Vsl({ src, poster, length, placeholder }) {
   const C = useT();
   const [playing, setPlaying] = useState(false);
   const vidRef = useRef(null);
-  /* Unmute restarts from zero — same behaviour as the Reinvest or Harvest page. */
+  /* Unmute restarts from zero - same behaviour as the Reinvest or Harvest page. */
   const unmute = () => {
     const v = vidRef.current;
     if (v) { v.muted = false; v.currentTime = 0; v.loop = false; const p = v.play(); if (p && p.catch) p.catch(() => {}); }
@@ -220,7 +220,7 @@ function Vsl({ src, poster, length, placeholder }) {
   );
 }
 
-/* The ten drivers as a glowing card grid — the Value Drivers counterpart of the
+/* The ten drivers as a glowing card grid - the Value Drivers counterpart of the
    six-course roadmap on the Reinvest or Harvest page. Each card is coloured by
    its own score (red 1–2, gold 3–4, green 5, cyan 6). The two lowest are flagged. */
 function DriverGrid({ scores }) {
@@ -283,7 +283,7 @@ const Footer = () => { const C = useT(); return (
   </footer>
 ); };
 
-/* Gentle nudge to the calendar — same rules as the Reinvest or Harvest page:
+/* Gentle nudge to the calendar - same rules as the Reinvest or Harvest page:
    only when a calendar exists, not on a #hash arrival, not once they've started
    scrolling, respects reduced motion, fires once. */
 function useCalendarNudge(active) {
@@ -380,7 +380,7 @@ function NextBody({ door = "site", report = null, token = null, C }) {
     const full = `${report.firstName || ""} ${report.lastName || ""}`.trim();
     if (full) p.set("iclosedName", full);
     if (report.email) p.set("iclosedEmail", report.email);
-    /* iClosed's phone field can't parse dashes — digits only. */
+    /* iClosed's phone field can't parse dashes - digits only. */
     const digits = String(report.phone || "").replace(/\D/g, "");
     if (digits) p.set("iclosedPhone", digits);
     const q = p.toString();
@@ -407,7 +407,7 @@ function NextBody({ door = "site", report = null, token = null, C }) {
               Want help growing your business into an asset that runs without you?
             </h1>
             <p style={{ fontSize: "clamp(16px,4vw,22px)", lineHeight: 1.55, color: C.text2, maxWidth: 900, margin: "0 auto", textWrap: "balance" }}>
-              This is where you find out whether you're a fit to have me work on it with you — building sustainable growth inside the business, and financial freedom outside of it.
+              This is where you find out whether you're a fit to have me work on it with you - building sustainable growth inside the business, and financial freedom outside of it.
             </p>
           </section>
         )}
@@ -419,7 +419,7 @@ function NextBody({ door = "site", report = null, token = null, C }) {
             <NumberedSteps steps={offer.steps} />
             {offerKey === "oneToOne" ? (
               <div id="vd-calendar" style={{ marginTop: 26, borderRadius: 14, overflow: "hidden", border: `1px solid ${C.line}`, background: C.bgCard, minHeight: 620 }}>
-                {/* Direct iframe. Do NOT use iClosed widget.js — it races the React render. */}
+                {/* Direct iframe. Do NOT use iClosed widget.js - it races the React render. */}
                 <iframe src={schedulerUrl} title="Book your free working session" width="100%" height="620"
                   style={{ border: "none", display: "block" }} loading="lazy" />
               </div>
@@ -459,7 +459,7 @@ function NextBody({ door = "site", report = null, token = null, C }) {
         {resolved && (
           <section style={{ maxWidth: 1040, margin: "0 auto", padding: "10px 0 44px" }}>
             <SectionHead k="Where this leads" title="Your zone is" accent="step one"
-              body="It tells you where the business lands today. These ten drivers are how you move it — starting with the two marked below." />
+              body="It tells you where the business lands today. These ten drivers are how you move it - starting with the two marked below." />
             <DriverGrid scores={report.scores} />
           </section>
         )}

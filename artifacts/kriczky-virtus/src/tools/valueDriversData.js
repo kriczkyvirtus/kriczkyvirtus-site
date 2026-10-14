@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   VALUE DRIVERS — shared data
+   VALUE DRIVERS - shared data
    One source for the flow, both next pages and the report.
    The ten drivers, zones and thresholds match workbook page 7
    (Walking to Destiny's 45 / 58 / 67 / 72%, growth-framed names).
@@ -43,13 +43,13 @@ export const DRIVER_NAMES = {
 /* Zones by total /60. Same cut points as workbook page 7. */
 export const ZONES = [
   { key: "foundation",  label: "Foundation Zone",  min: 10, max: 26, color: C.red,
-    line: "The business can't grow unless you carry it. Build the base first — it's where small changes move the needle the most." },
+    line: "The business can't grow unless you carry it. Build the base first - it's where small changes move the needle the most." },
   { key: "constrained", label: "Constrained Zone", min: 27, max: 34, color: C.amber,
     line: "It's growing, but gaps in the foundation constrain how far and how fast. The gaps are specific, which means they're fixable." },
   { key: "midpoint",    label: "Midpoint Zone",    min: 35, max: 39, color: C.gold,
     line: "The model works but isn't nailed yet. Scaling from here amplifies the gaps along with the strengths." },
   { key: "green",       label: "Green Zone",       min: 40, max: 42, color: C.green,
-    line: "Attractive and ready. The model is nailed and built to scale — the work now is protecting that and pushing the two lowest drivers up so that continued growth is sustainable." },
+    line: "Attractive and ready. The model is nailed and built to scale - the work now is protecting that and pushing the two lowest drivers up so that continued growth is sustainable." },
   { key: "bestInClass", label: "Best-in-Class",    min: 43, max: 60, color: C.cyan,
     line: "Scalable, resilient, and it runs without you. Few owners get here. The job now is keeping it there as the business grows." },
 ];
@@ -63,7 +63,7 @@ export const score = (scores = {}) => {
   return { attract, ready, total, zone: zoneFor(total) };
 };
 
-/* REVENUE BANDS — strings must match ActiveCampaign `Revenue Range` exactly. */
+/* REVENUE BANDS - strings must match ActiveCampaign `Revenue Range` exactly. */
 export const REVENUE_BANDS = [
   { value: "Under $500K", label: "Under $500K",   qualified: false },
   { value: "$500K - $1M", label: "$500K – $1M",   qualified: false },
@@ -89,7 +89,7 @@ export const scoreColor = (n) => {
   return C.cyan;
 };
 
-/* The ten drivers, one per screen, rated 1–6 — the same content as the
+/* The ten drivers, one per screen, rated 1–6 - the same content as the
    /tools/wmbw document (WMBW.jsx ATTRACT_DIMS / READY_DIMS): description,
    "check what's true today" statements, then Rate Yourself. Self-rating on a
    1–6 scale with no middle, rather than picking a pre-written answer.
@@ -101,11 +101,13 @@ export const DRIVER_STEPS = [
     subtitle: "ARE YOU DOMINANT IN A DEFINED MARKET, OR REPLACEABLE?",
     description: "A regional HVAC company that owns 35% of commercial contracts in its metro area grows on very different terms than one competing on price against 40 other contractors. It wins work without discounting, chooses its customers, and has room to raise prices. A cybersecurity firm with three patents and a proprietary threat-detection algorithm isn't just another vendor; customers seek it out. Market leaders build defensible positions through specialization, intellectual property, brand recognition, or geographic dominance that would take a competitor years to replicate, and that position is what lets growth compound instead of being competed away.",
     checklist: [
-      { text: "I can clearly articulate my competitive moat — and it's more than 'great service'", sub: "Think: patents, proprietary processes, exclusive contracts, brand equity, regulatory advantages, or a network effect." },
+      { text: "I can clearly articulate my competitive moat - and it's more than 'great service'", sub: "Think: patents, proprietary processes, exclusive contracts, brand equity, regulatory advantages, or a network effect." },
       { text: "My market share is measurable and I know what percentage of my addressable market I own", sub: "If you can't quantify your position, you can't see how much room is left to grow. 'We're well-known' is not evidence." },
       { text: "A competitor couldn't replicate my core advantage in less than 3 years", sub: "Time-to-replicate is the truest test of a moat. If someone could rebuild your advantage in 6 months, your growth can be competed away." },
       { text: "I operate in a market with identifiable growth tailwinds, not just survival dynamics", sub: "Growth is easier with the wind at your back. Is your industry expanding or contracting?" },
     ],
+    /* highShort: a shorter top-of-scale label for the question flow only, so it fits
+       two lines on a phone. The report keeps highLabel. */
     lowLabel: "No defensible position", highLabel: "Dominant, protected moat" },
   { type: "rate", key: "revenueQuality", pillar: "attract",
     title: "Revenue Quality & Growth Trajectory",
@@ -114,10 +116,10 @@ export const DRIVER_STEPS = [
     checklist: [
       { text: "At least 50% of my revenue is recurring or contractually committed", sub: "Monthly retainers, subscriptions, maintenance contracts, managed services: anything with auto-renewal or multi-year commitment." },
       { text: "My revenue has grown at least 10% year-over-year for the past 3 years (without margins shrinking)", sub: "Flat or declining revenue strains everything. Consistent growth with healthy margins is what compounds." },
-      { text: "I can demonstrate pricing power — I've raised prices in the last 12 months without losing customers", sub: "If you can't raise prices, you're competing on cost. If customers stay after increases, you have real value to build on." },
-      { text: "My sales pipeline is documented and predictable — I know within 15% what next quarter looks like", sub: "If revenue is a surprise every month, every hire and investment is a gamble. Predictability lets you grow on purpose." },
+      { text: "I can demonstrate pricing power - I've raised prices in the last 12 months without losing customers", sub: "If you can't raise prices, you're competing on cost. If customers stay after increases, you have real value to build on." },
+      { text: "My sales pipeline is documented and predictable - I know within 15% what next quarter looks like", sub: "If revenue is a surprise every month, every hire and investment is a gamble. Predictability lets you grow on purpose." },
     ],
-    lowLabel: "Project-based, volatile", highLabel: "Recurring/reoccurring, growing, predictable" },
+    lowLabel: "Project-based, volatile", highLabel: "Recurring/reoccurring, growing, predictable", highShort: "Recurring, growing, predictable" },
   { type: "rate", key: "financialPerformance", pillar: "attract",
     title: "Financial Performance & Margins",
     subtitle: "ARE YOUR EARNINGS STRONG RELATIVE TO YOUR INDUSTRY?",
@@ -128,7 +130,7 @@ export const DRIVER_STEPS = [
       { text: "My margins have been stable or improving for the past 3 years", sub: "Declining margins, even with growing revenue, mean the business is becoming less efficient as it grows." },
       { text: "I can explain every major line item's trend and trajectory to my team, lender, or partner", sub: "If you can't narrate your financials like a story, it's hard to know which levers to pull next." },
     ],
-    lowLabel: "Below industry benchmarks", highLabel: "Net margins are at least 75th percentile for your industry" },
+    lowLabel: "Below industry benchmarks", highLabel: "Net margins are at least 75th percentile for your industry", highShort: "Top-quartile margins for your industry" },
   { type: "rate", key: "customerConcentration", pillar: "attract",
     title: "Customer Concentration & Relationships",
     subtitle: "IS YOUR REVENUE DANGEROUSLY CONCENTRATED?",
@@ -150,7 +152,7 @@ export const DRIVER_STEPS = [
       { text: "Key client relationships are managed by team members, not exclusively by me", sub: "If your top 5 clients have never spoken to anyone but you, your growth is capped by your calendar." },
       { text: "My management team has formal roles, documented responsibilities, and performance metrics", sub: "Org chart, job descriptions, KPIs, regular reviews: the infrastructure of a real management layer, not just titles." },
     ],
-    lowLabel: "Owner is the business", highLabel: "The business runs and grows without owner" },
+    lowLabel: "Owner is the business", highLabel: "The business runs and grows without owner", highShort: "Runs and grows without the owner" },
   { type: "rate", key: "documentation", pillar: "ready",
     title: "Documentation & Transferability",
     subtitle: "CAN THE MODEL BE REPLICATED WITHOUT YOU?",
@@ -179,11 +181,11 @@ export const DRIVER_STEPS = [
     description: "You can't manage what you can't measure, and you can't scale, raise capital, or bring on a partner if your financial reporting is unreliable, delayed, or understandable only to you. A lender's first question is your debt service coverage. A potential partner's first ask is margin by service line. Your own best growth decisions depend on knowing which customers, services, and products actually make money. If your books can't answer these questions within 48 hours, cleanly, accurately, and without you personally pulling the numbers, your financial infrastructure is a constraint on everything you're trying to build.",
     checklist: [
       { text: "My financial statements are professionally prepared and current within 30 days", sub: "Compiled or reviewed by a CPA, with clean categorization, proper accrual accounting, and no material adjustments needed." },
-      { text: "I receive monthly financial reports I can use to make decisions — without preparing them myself", sub: "P&L, balance sheet, cash flow, AR/AP aging, and margin by service line: delivered to you, not assembled by you." },
+      { text: "I receive monthly financial reports I can use to make decisions - without preparing them myself", sub: "P&L, balance sheet, cash flow, AR/AP aging, and margin by service line: delivered to you, not assembled by you." },
       { text: "My financials could hold up to outside scrutiny from a lender, partner, or investor", sub: "Recasted financials removing owner perks, clean add-backs, numbers that hold up: the kind a lender or partner can rely on." },
       { text: "I can produce unit economics and profitability by client, service line, or product", sub: "Revenue by category isn't enough. Knowing which clients, services, or products actually make money, and which drain margin, is how you scale profitably." },
     ],
-    lowLabel: "Flying blind", highLabel: "Investor-grade reporting ready for an independent 3rd-party audit" },
+    lowLabel: "Flying blind", highLabel: "Investor-grade reporting ready for an independent 3rd-party audit", highShort: "Audit-ready, investor-grade reporting" },
   { type: "rate", key: "revPredictability", pillar: "ready",
     title: "Revenue Predictability & Contractual Strength",
     subtitle: "CAN THE MODEL SUSTAIN ITSELF WITHOUT YOU?",
@@ -205,7 +207,7 @@ export const DRIVER_STEPS = [
       { text: "Every critical business function has a trained backup who could step in within 30 days", sub: "Not just leadership: critical individual contributors too. If your best technician, your head of accounting, or your top producer left, who's next?" },
       { text: "I have a retention strategy specifically designed to keep my highest-potential people", sub: "Stay bonuses, equity participation, career progression, meaningful authority. If your bench could leave for a 15% raise, it's not a bench." },
     ],
-    lowLabel: "No pipeline, no backups", highLabel: "Deep bench, leaders exist and develop other leaders" },
+    lowLabel: "No pipeline, no backups", highLabel: "Deep bench, leaders exist and develop other leaders", highShort: "Leaders who develop other leaders" },
 ];
 
 export const INDUSTRY_STEP = {
@@ -245,11 +247,11 @@ export const REVENUE_STEP = {
 const HOW = { type: "interstitial", kicker: "How this works",
   title: "Two lenses, scored separately.",
   body: [
-    { label: "Attractiveness", color: C.cyan, text: "How your business looks from the outside — position, revenue, margins, customers, and whether it performs without you." },
-    { label: "Readiness", color: C.gold, text: "Whether it's built to scale without breaking — documented, protected, measured, predictable, and led by more than one person." },
+    { label: "Attractiveness", color: C.cyan, text: "How your business looks from the outside - position, revenue, margins, customers, and whether it performs without you." },
+    { label: "Readiness", color: C.gold, text: "Whether it's built to scale without breaking - documented, protected, measured, predictable, and led by more than one person." },
   ],
-  foot: "You can't control the range your industry is valued in. You can control where you land in it.",
-  note: { label: "Why 1–6 instead of 1–5?", text: "Most people default to 3 on a 1–5 scale — it feels safe. A 1–6 scale has no middle. For each driver, check which characteristics describe your business today, then decide: am I below the midpoint or above it?" } };
+  divider: true,
+  note: { label: "Why 1–6 instead of 1–5?", text: "Most people default to 3 on a 1–5 scale - it feels safe. A 1–6 scale has no middle. For each driver, check which characteristics describe your business today, then decide: am I below the midpoint or above it?" } };
 
 /* Halfway marker, between the Attractiveness and Readiness drivers.
    ⚠️ CCO: stat and attribution to confirm before launch. */
@@ -263,15 +265,15 @@ const MID = { type: "interstitial", kicker: "One number worth sitting with",
 const PROMISE = { type: "interstitial", kicker: "Almost there",
   title: "What you're about to get.",
   list: [
-    "Your zone — where your business lands today",
+    "Your zone - where your business lands today",
     "Separate Attractiveness and Readiness scores",
-    "The two drivers holding your value back",
+    "The two drivers holding your growth back",
     "Three moves calibrated to how you actually scored",
   ] };
 
 /* Website door: contact first, full profile, revenue last.
    Workshop door: contact skipped when the email link carries it, and no
-   revenue or timing — registration already captured both. */
+   revenue or timing - registration already captured both. */
 export const buildSteps = (door, haveContact) => {
   const contact = haveContact ? [] : [{ type: "contact" }];
   const drivers = [...DRIVER_STEPS.slice(0, 5), MID, ...DRIVER_STEPS.slice(5)];

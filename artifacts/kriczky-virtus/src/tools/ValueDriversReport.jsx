@@ -6,10 +6,10 @@ import {
 import { QUICK_WINS, tierFor } from "./valueDriversReportData.js";
 
 /* ═══════════════════════════════════════════════════════════════
-   VALUE DRIVERS — THE REPORT   /tools/wmbw/r/:token
+   VALUE DRIVERS - THE REPORT   /tools/wmbw/r/:token
    Replaces the old WMBW document. A real document: fixed US-letter portrait
    pages (816 × 1056 px = 8.5 × 11 in at 96 dpi), laid out once and scaled to
-   fit the screen — on a phone it reads like a PDF, and printing gives one
+   fit the screen - on a phone it reads like a PDF, and printing gives one
    page per sheet. Light (cream) theme, the same system as the light
    workbooks: ink-on-cream type, Cormorant headings with an italic gold
    accent, porcelain icon tiles, white lifted cards. The cover stays dark,
@@ -18,7 +18,7 @@ import { QUICK_WINS, tierFor } from "./valueDriversReportData.js";
 
 const PAGE_W = 816, PAGE_H = 1056;
 
-/* Light-theme tokens — from the print pipeline's theme_light.py, so the
+/* Light-theme tokens - from the print pipeline's theme_light.py, so the
    report and the printed workbook match. */
 const L = {
   page: "#F2EEE6", desk: "#DDD6C8", card: "#FFFFFF",
@@ -34,7 +34,7 @@ const TONE = {
   cyan:  { ink: "#0E7490", fill: "#22D3EE", tint: "#E1ECEE", dark: "#0A2A31" },
 };
 const ZONE_TONE = { foundation: "red", constrained: "amber", midpoint: "gold", green: "green", bestInClass: "cyan" };
-/* Driver scores — the same rule as the booking page: red 1–2, gold 3–4, green 5, cyan 6. */
+/* Driver scores - the same rule as the booking page: red 1–2, gold 3–4, green 5, cyan 6. */
 const scoreTone = (n) => TONE[n <= 2 ? "red" : n <= 4 ? "gold" : n === 5 ? "green" : "cyan"];
 
 /* PNG, not SVG: the icons' soft shadows are SVG filters, which iPhone Safari
@@ -100,7 +100,7 @@ const CSS = `
   }
 `;
 
-/* Fit pages to the width available — the same layout on every screen. */
+/* Fit pages to the width available - the same layout on every screen. */
 function usePageScale() {
   const ref = useRef(null);
   const [s, setS] = useState(1);
@@ -152,7 +152,7 @@ const dateText = (iso) => {
   catch (e) { return ""; }
 };
 
-/* ── PAGE 1 · COVER — dark, like the printed workbook covers ── */
+/* ── PAGE 1 · COVER - dark, like the printed workbook covers ── */
 function CoverPage({ s, report, zone }) {
   const tone = TONE[ZONE_TONE[zone.key]];
   const who = [report.firstName, report.lastName].filter(Boolean).join(" ");
@@ -646,7 +646,7 @@ async function buildPdf(root, filename) {
     if (i) pdf.addPage("letter", "portrait");
     pdf.addImage(canvas.toDataURL("image/jpeg", 0.85), "JPEG", 0, 0, 612, 792, undefined, "FAST");
     canvas.width = 0; canvas.height = 0;
-    /* The page is a picture, so lay a real link over each button on it —
+    /* The page is a picture, so lay a real link over each button on it - 
        the CTA stays clickable in the downloaded file. */
     const box = pages[i].getBoundingClientRect();
     const k = 612 / box.width;

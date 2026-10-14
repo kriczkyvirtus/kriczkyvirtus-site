@@ -6,7 +6,7 @@ import {
 import { VISUALS } from "./reinvestHarvestVisuals.jsx";
 
 /* ═══════════════════════════════════════════════════════════════
-   REINVEST OR HARVEST — THE REPORT   /r/:token
+   REINVEST OR HARVEST - THE REPORT   /r/:token
    Built the same way as the Value Drivers report: fixed US-letter portrait
    pages (816 × 1056 px = 8.5 × 11 in at 96 dpi), laid out once and scaled to
    fit the screen, so a phone shows the same document a desktop does. Cream
@@ -15,7 +15,7 @@ import { VISUALS } from "./reinvestHarvestVisuals.jsx";
 
 const PAGE_W = 816, PAGE_H = 1056;
 
-/* Light-theme tokens — from the print pipeline's theme_light.py. */
+/* Light-theme tokens - from the print pipeline's theme_light.py. */
 const L = {
   page: "#F2EEE6", desk: "#DDD6C8", card: "#FFFFFF",
   ink: "#0A0E14", ink2: "#3E4652", ink3: "#6B6459", rule: "#C9C2B4", ruleLight: "#E2DBCD",
@@ -39,7 +39,7 @@ const PILLAR = {
 };
 const DIM = Object.fromEntries(DIMS.map(d => [d.key, d]));
 /* House style for the reports: no em dashes. */
-const dash = (t) => (typeof t === "string" ? t.replace(/\s*—\s*/g, " - ") : t);
+const dash = (t) => (typeof t === "string" ? t.replace(/\s* - \s*/g, " - ") : t);
 const glowCard = (tone, extra = {}) => ({
   border: `1px solid ${tone.fill}55`, background: `linear-gradient(135deg, #FFFFFF 55%, ${tone.tint})`,
   boxShadow: `0 0 22px ${tone.fill}2e, 0 8px 22px rgba(10,14,20,.07)`, "--edge": `${tone.fill}aa`, "--glowHi": `${tone.fill}66`, ...extra,
@@ -70,7 +70,7 @@ const CSS = `
   .rhr .num{font-family:'Playfair Display',serif;font-weight:700;line-height:1}
   .rhr .drow{transition:box-shadow .3s ease,border-color .3s ease,transform .3s ease}
   .rhr .cta{transition:box-shadow .3s ease,transform .3s ease}
-  /* Hover glows only with a real pointer — on phones a tap would trigger them. */
+  /* Hover glows only with a real pointer - on phones a tap would trigger them. */
   @media (hover:hover) and (pointer:fine){
     .rhr .drow:hover{box-shadow:0 0 0 1px var(--edge),0 0 34px var(--glowHi),0 14px 34px rgba(10,14,20,.10)!important;border-color:var(--edge)!important;transform:translateY(-1px)}
     .rhr .cta:hover{box-shadow:0 0 44px rgba(200,162,78,.55),0 10px 26px rgba(10,14,20,.25)!important;transform:translateY(-1px)}
@@ -91,7 +91,7 @@ const CSS = `
   }
 `;
 
-/* Fit pages to the width available — the same layout on every screen. */
+/* Fit pages to the width available - the same layout on every screen. */
 function usePageScale() {
   const ref = useRef(null);
   const [s, setS] = useState(1);
@@ -570,7 +570,7 @@ async function buildPdf(root, filename) {
     if (i) pdf.addPage("letter", "portrait");
     pdf.addImage(canvas.toDataURL("image/jpeg", 0.85), "JPEG", 0, 0, 612, 792, undefined, "FAST");
     canvas.width = 0; canvas.height = 0;
-    /* The page is a picture, so lay a real link over each button on it —
+    /* The page is a picture, so lay a real link over each button on it - 
        the CTA stays clickable in the downloaded file. */
     const box = pages[i].getBoundingClientRect();
     const k = 612 / box.width;

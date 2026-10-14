@@ -6,7 +6,7 @@ import {
 } from "./valueDriversData.js";
 
 /* ═══════════════════════════════════════════════════════════════
-   VALUE DRIVERS — QUESTION FLOW
+   VALUE DRIVERS - QUESTION FLOW
    Two doors, one component:
      door="site"     → /tools/wmbw                 → /tools/wmbw/next (book a call)
      door="workshop" → /workshop-rh/value-drivers  → /workshop-rh/value-drivers/next (VSL)
@@ -63,7 +63,7 @@ const clearProgress = (door) => {
 };
 const ALPHA = "ABCDEFGH";
 
-/* Module scope, never inside the page function — a component defined inside
+/* Module scope, never inside the page function - a component defined inside
    remounts on every state change (the SliderBlock bug). */
 const OptionCard = ({ label, selected, onClick, letter, compact }) => { const C = useT(); return (
   <div onClick={onClick} className="opt"
@@ -188,7 +188,7 @@ function Description({ text }) {
   );
 }
 
-/* Rate Yourself, 1–6 — the WMBW selector, sized for a thumb. */
+/* Rate Yourself, 1–6 - the WMBW selector, sized for a thumb. */
 const RateYourself = ({ value, onChange, lowLabel, highLabel }) => {
   const C = useT();
   const ac = value ? C.t(scoreColor(value)) : C.gold;
@@ -217,7 +217,7 @@ const RateYourself = ({ value, onChange, lowLabel, highLabel }) => {
         })}
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 12, fontSize: 10.5, lineHeight: 1.35, textTransform: "uppercase", letterSpacing: ".06em", color: C.text3 }}>
-        <span style={{ maxWidth: "48%" }}>{lowLabel}</span><span style={{ maxWidth: "48%", textAlign: "right" }}>{highLabel}</span>
+        <span style={{ maxWidth: "44%" }}>{lowLabel}</span><span style={{ maxWidth: "44%", textAlign: "right" }}>{highLabel}</span>
       </div>
     </div>
   );
@@ -359,7 +359,7 @@ function FlowBody({ door, C }) {
   const fullName = () => `${contact.first} ${contact.last}`.trim() || contact.first.trim() || contact.email;
 
   /* Capture valid contact details once, without delaying progress. Website door
-     only — a workshop attendee is already on file from registration. */
+     only - a workshop attendee is already on file from registration. */
   const sendPartial = () => {
     if (partialSent.current || door !== "site") return;
     partialSent.current = true;
@@ -407,7 +407,7 @@ function FlowBody({ door, C }) {
       console.warn("[value-drivers] lead-capture failed", e, JSON.stringify(payload));
     }
     await new Promise(r => setTimeout(r, 600));
-    /* Workshop door goes straight to the workshop video page — it already shows
+    /* Workshop door goes straight to the workshop video page - it already shows
        the zone and the ten scores for the workbook, so no result screen here.
        The website door shows the result for a beat, then moves on, like the
        scorecard. If capture failed there's no token, so both doors fall back
@@ -478,7 +478,7 @@ function FlowBody({ door, C }) {
           </h1>
           <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 20, fontStyle: "italic", lineHeight: 1.5, color: C.text1, margin: "0 0 30px" }}>
             {agreed === null && <>{zone.line}</>}
-            {agreed === true && <>You guessed {guessZone.label} — and your answers agree. That's a clear-eyed read.</>}
+            {agreed === true && <>You guessed {guessZone.label} - and your answers agree. That's a clear-eyed read.</>}
             {agreed === false && <>You guessed <b style={{ fontStyle: "normal" }}>{guessZone.label}</b>. Your answers put you in <b style={{ fontStyle: "normal", color: zc }}>{zone.label}</b>.</>}
           </p>
 
@@ -494,7 +494,7 @@ function FlowBody({ door, C }) {
           </div>
           {carrying && (
             <p style={{ fontSize: 14, lineHeight: 1.55, color: C.text2, margin: "0 0 30px" }}>
-              <b style={{ color: C.t(carrying.color) }}>{carrying.label}</b> is carrying your score — {Math.abs(gap)} points ahead of the other side.
+              <b style={{ color: C.t(carrying.color) }}>{carrying.label}</b> is carrying your score - {Math.abs(gap)} points ahead of the other side.
             </p>
           )}
 
@@ -547,7 +547,7 @@ function FlowBody({ door, C }) {
         {resumed && (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "11px 14px", marginBottom: 18, borderRadius: 10,
             background: `${C.green}10`, border: `1px solid ${C.green}33`, fontSize: 13.5, color: C.text1 }}>
-            <span>Welcome back{contact.first ? `, ${contact.first}` : ""} — we saved your answers. Picking up where you left off.</span>
+            <span>Welcome back{contact.first ? `, ${contact.first}` : ""} - we saved your answers. Picking up where you left off.</span>
             <span style={{ display: "flex", gap: 12, flexShrink: 0 }}>
               <button onClick={startOver} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: C.text3, fontSize: 12.5, textDecoration: "underline", fontFamily: "'DM Sans',sans-serif" }}>Start over</button>
               <button onClick={() => setResumed(false)} aria-label="Dismiss" style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: C.text3, fontSize: 16, lineHeight: 1 }}>×</button>
@@ -559,7 +559,7 @@ function FlowBody({ door, C }) {
         {S.type === "contact" && (
           <>
             <h1 style={qStyle}>
-              {door === "workshop" ? "Before we start — confirm it's you." : "Before we start — where should we send your results?"}
+              {door === "workshop" ? "Before we start - confirm it's you." : "Before we start - where should we send your results?"}
             </h1>
             <p style={subStyle}>
               {door === "workshop" ? "Use the email you registered for the workshop with, so your results land on your seat." : "Your results land in your inbox the moment you finish."}
@@ -596,8 +596,8 @@ function FlowBody({ door, C }) {
         {(S.type === "score" || S.type === "choice") && (
           <>
             {S.pillar && (
-              <div style={{ display: "inline-block", padding: "4px 11px", borderRadius: 5, marginBottom: 14, background: `${C.t(PILLARS[S.pillar].color)}14`, border: `1px solid ${C.t(PILLARS[S.pillar].color)}40` }}>
-                <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: C.t(PILLARS[S.pillar].color) }}>
+              <div style={{ display: "inline-flex", alignItems: "center", height: 26, padding: "0 11px", borderRadius: 5, marginBottom: 14, background: `${C.t(PILLARS[S.pillar].color)}14`, border: `1px solid ${C.t(PILLARS[S.pillar].color)}40` }}>
+                <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".12em", lineHeight: 1, textTransform: "uppercase", color: C.t(PILLARS[S.pillar].color) }}>
                   {PILLARS[S.pillar].long}
                 </span>
               </div>
@@ -621,8 +621,8 @@ function FlowBody({ door, C }) {
           return (
             <>
               <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 14 }}>
-                <div style={{ display: "inline-block", padding: "4px 11px", borderRadius: 5, background: `${p.color}14`, border: `1px solid ${p.color}40` }}>
-                  <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: p.color }}>{p.long}</span>
+                <div style={{ display: "inline-flex", alignItems: "center", height: 26, padding: "0 11px", borderRadius: 5, background: `${p.color}14`, border: `1px solid ${p.color}40` }}>
+                  <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".12em", lineHeight: 1, textTransform: "uppercase", color: p.color }}>{p.long}</span>
                 </div>
                 <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: C.text3 }}>
                   Driver {String(n).padStart(2, "0")} of 10
@@ -633,7 +633,7 @@ function FlowBody({ door, C }) {
               <Description key={`d-${S.key}`} text={S.description} />
               <Characteristics key={`c-${S.key}`} items={S.checklist} checked={checks[S.key] || []} onToggle={(i) => toggleCheck(S.key, i)} />
 
-              <RateYourself value={scores[S.key]} onChange={rate} lowLabel={S.lowLabel} highLabel={S.highLabel} />
+              <RateYourself value={scores[S.key]} onChange={rate} lowLabel={S.lowLabel} highLabel={S.highShort || S.highLabel} />
               {PrevButton}
             </>
           );
@@ -675,6 +675,7 @@ function FlowBody({ door, C }) {
               </div>
             )}
             {S.foot && <p style={{ fontSize: 15, lineHeight: 1.6, color: C.text2, margin: "0 0 8px" }}>{S.foot}</p>}
+            {S.divider && <div aria-hidden="true" style={{ borderTop: `2px dashed ${C.lineHi}`, margin: "6px 0 4px" }} />}
             {S.note && (
               <div style={{ marginTop: 18, padding: "14px 16px", borderRadius: 12, background: C.light ? `linear-gradient(135deg,#FFFFFF 55%,${C.cyan}0d)` : `${C.cyan}08`, border: `1px solid ${C.cyan}26`, boxShadow: C.shadowCard }}>
                 <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: C.cyan, marginBottom: 6 }}>{S.note.label}</div>
@@ -697,7 +698,7 @@ function FlowBody({ door, C }) {
               {sending ? "Scoring your answers…" : "SHOW ME MY ZONE →"}
             </GoldButton>
             <p style={{ fontSize: 11.5, lineHeight: 1.55, color: C.text4, textAlign: "center", marginTop: 16 }}>
-              Educational self-assessment only — a valuation estimate, not a valuation. Not individualized financial, tax, or legal advice.
+              Educational self-assessment only - a valuation estimate, not a valuation. Not individualized financial, tax, or legal advice.
             </p>
             {PrevButton}
           </>

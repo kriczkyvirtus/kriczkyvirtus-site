@@ -3,21 +3,21 @@ import { useState, useEffect, useRef } from "react";
 import { LIGHT as C, fillOf } from "./kvTheme.js";
 
 /* ═══════════════════════════════════════════════════════════════
-   REINVEST OR HARVEST — THANK-YOU PAGE
+   REINVEST OR HARVEST - THANK-YOU PAGE
    Route: /reinvest-harvest/next
    Reached immediately after the teaser. Report is emailed in parallel.
    ═══════════════════════════════════════════════════════════════ */
 
-/* Set false before deploy — strips the variant toolbar. */
+/* Set false before deploy - strips the variant toolbar. */
 const PREVIEW = false;
 
-/* TODO: replace with the real iClosed event URLs. Direct iframe only —
+/* TODO: replace with the real iClosed event URLs. Direct iframe only - 
    widget.js does not work in React SPAs. */
 const ICLOSED_QUALIFIED = "https://app.iclosed.io/e/kriczkyvirtus/free-reinvest-or-harvest-working-session";
 const SKOOL_COLLECTIVE = "https://www.skool.com/virtus-collective";
 
 /* VSL. Raw MP4 rather than an embed so the unmute overlay can control the
-   element directly — with YouTube or Vimeo this would mean loading their
+   element directly - with YouTube or Vimeo this would mean loading their
    player API and talking to an iframe. Poster fills the 16:9 box while the
    video decodes, otherwise it's a black rectangle for a beat. */
 const VSL_SRC = "/video/reinvest-harvest-next.mp4";
@@ -65,9 +65,9 @@ const OFFERS = {
     body: "A free working session. We walk your two scores against your actual numbers and figure out where a reinvested dollar earns most in your specific business. No pitch, no deck.",
     cta: "BOOK YOUR FREE WORKING SESSION",
     url: ICLOSED_QUALIFIED,
-    bridge: "The video shows you what to do. This is where you find out whether you're a fit to have me work on it with you — intentionally pursuing reinvestment opportunities inside your business, and building financial freedom outside of it.",
+    bridge: "The video shows you what to do. This is where you find out whether you're a fit to have me work on it with you - intentionally pursuing reinvestment opportunities inside your business, and building financial freedom outside of it.",
     calHead: "Ready to stop guessing where the next dollar of profit goes?",
-    calSub: "Book a free working session — we read your scorecard against your real numbers and map your next 90 days.",
+    calSub: "Book a free working session - we read your scorecard against your real numbers and map your next 90 days.",
     steps: [
       { t: "We read your scorecard together", d: "Both pillars, and which one is carrying your score." },
       { t: "We pressure-test it against real numbers", d: "Self-reported answers get you a direction. Financials get you an answer." },
@@ -78,10 +78,10 @@ const OFFERS = {
   collective: {
     kicker: "Your next step",
     title: "Start with the owners already working on this.",
-    body: "The Virtus Collective is where owners at your stage work through exactly these decisions — with the playbooks, and with other owners running them at the same time. It is free, and you can be inside it in about a minute.",
+    body: "The Virtus Collective is where owners at your stage work through exactly these decisions - with the playbooks, and with other owners running them at the same time. It is free, and you can be inside it in about a minute.",
     cta: "JOIN THE VIRTUS COLLECTIVE",
     url: SKOOL_COLLECTIVE,
-    bridge: "The video shows you what to do. The Collective is where owners actually do it — intentionally pursuing reinvestment opportunities inside their business, and building financial freedom outside of it.",
+    bridge: "The video shows you what to do. The Collective is where owners actually do it - intentionally pursuing reinvestment opportunities inside their business, and building financial freedom outside of it.",
     calHead: "Ready to work through this alongside other owners?",
     calSub: "The Virtus Collective is free. Six courses mapped to the two sides you were just scored on, plus the owners already running them.",
     steps: [
@@ -245,7 +245,7 @@ const ICON_C6 = `<svg width="512" height="512" viewBox="-210 -210 420 420" xmlns
 </svg>`;
 
 /* Course 06 spans both pillars, so it takes the gold→green blend rather than
-   cyan — cyan is Customer Capital elsewhere in the system. */
+   cyan - cyan is Customer Capital elsewhere in the system. */
 const ROADMAP = [
   { n: "01", icon: ICON_C1, title: "Start Here",            desc: "The one decision everything else hangs on.",                    tint: C.gold },
   { n: "02", icon: ICON_C2, title: "Know Your Numbers",     desc: "What your last reinvestment returned, and how your margin compares.", tint: C.gold },
@@ -260,8 +260,8 @@ const ROADMAP = [
      2. later from the report or the results email, as
         /reinvest-harvest/next?t=<token>#rh-scheduler
    In case 2 the server resolves the token and passes the same props back.
-   If the token is missing or unrecognised — forwarded link, mangled by an
-   email client — `resolved` comes back false and the page drops to a
+   If the token is missing or unrecognised - forwarded link, mangled by an
+   email client - `resolved` comes back false and the page drops to a
    generic booking view rather than rendering a broken result. */
 export default function ReinvestHarvestThankYou({
   email = "you@yourcompany.com",
@@ -280,7 +280,7 @@ export default function ReinvestHarvestThankYou({
   const vidRef = useRef(null);
 
   /* Unmute restarts from zero. The first ten seconds are the hook and they're
-     written to be heard — someone who watched forty seconds silently hasn't
+     written to be heard - someone who watched forty seconds silently hasn't
      really started. Also drops the loop and hands over native controls. */
   const unmuteVideo = () => {
     const v = vidRef.current;
@@ -302,16 +302,16 @@ export default function ReinvestHarvestThankYou({
   const offer = OFFERS[offerKey];
 
   /* Gentle nudge to the calendar.
-     Deliberate, not accidental: there was no auto-scroll before — arriving from
+     Deliberate, not accidental: there was no auto-scroll before - arriving from
      the report's #rh-scheduler link let the browser jump once the lazy iframe
      settled, which looked like a timed scroll but only happened on that one path.
      This does it consistently, and only when it's wanted:
        · a calendar actually exists (resolved 1-on-1)
-       · they didn't arrive with the hash — the browser already handled that
+       · they didn't arrive with the hash - the browser already handled that
        · they haven't started scrolling themselves; their intent wins
        · prefers-reduced-motion is respected
        · fires once
-     Targets the iframe minus 110px so the last step stays visible above it —
+     Targets the iframe minus 110px so the last step stays visible above it - 
      they land on "calendar, with context" rather than mid-page with no anchor. */
   useEffect(() => {
     if (!resolved || offerKey !== "oneToOne") return;
@@ -327,7 +327,7 @@ export default function ReinvestHarvestThankYou({
     window.addEventListener("keydown", cancel);
 
     /* Native smooth scroll. A requestAnimationFrame glide was tried to slow it
-       down and read as janky — the eagerly-loaded iClosed iframe does layout work
+       down and read as janky - the eagerly-loaded iClosed iframe does layout work
        on the same frames, so every repaint fought the animation. Native scrolling
        is handled off the main thread and stays smooth regardless. */
     const t = setTimeout(() => {
@@ -348,7 +348,7 @@ export default function ReinvestHarvestThankYou({
 
 
   /* Booking lives on this page, so the fit-call CTAs scroll rather than navigate.
-     href is the in-page anchor, not the iClosed URL — that way a middle-click or
+     href is the in-page anchor, not the iClosed URL - that way a middle-click or
      cmd-click can't open the scheduler in a tab either, and with JS disabled the
      browser still jumps to the embed instead of leaving the page.
      Collective has no embed, so that branch keeps its external Skool link. */
@@ -358,7 +358,7 @@ export default function ReinvestHarvestThankYou({
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
   /* Prefill the iClosed form from what they already gave us at step 1, so they
-     don't retype it. Params must go on the IFRAME src, not the page URL — a
+     don't retype it. Params must go on the IFRAME src, not the page URL - a
      cross-origin iframe can't read the parent's query string. Because the src is
      built at render time with the values already in hand, there's no load race.
      Blank when unresolved, which is correct: the form then asks as normal. */
@@ -369,7 +369,7 @@ export default function ReinvestHarvestThankYou({
     if (full) p.set("iclosedName", full);
     if (email && email !== "you@yourcompany.com") p.set("iclosedEmail", email);
     /* Digits only. We store 555-123-4567 for Sheets and AC, but iClosed's phone
-       field can't parse the dashes — their docs show iclosedPhone=1234567890.
+       field can't parse the dashes - their docs show iclosedPhone=1234567890.
        Sheets and AC keep the formatted value; only iClosed gets the stripped one. */
     const phoneDigits = String(phone || "").replace(/\D/g, "");
     if (phoneDigits) p.set("iclosedPhone", phoneDigits);
@@ -433,7 +433,7 @@ export default function ReinvestHarvestThankYou({
             <p style={{ fontSize: "clamp(16px,3.9vw,20px)", lineHeight: 1.5, color: C.text1, maxWidth: 820, margin: "0 auto", fontWeight: 400 }}>
               {quad.line}
             </p>
-            {/* Qualifier — 1-on-1 branch only. On the Collective branch it would
+            {/* Qualifier - 1-on-1 branch only. On the Collective branch it would
                 describe an offer that isn't being made. */}
             {offerKey === "oneToOne" && (
               <p style={{ fontSize: "clamp(13.5px,3.1vw,15.5px)", lineHeight: 1.6, color: C.text3, maxWidth: 680, margin: "18px auto 0" }}>
@@ -444,7 +444,7 @@ export default function ReinvestHarvestThankYou({
         ) : (
           /* Same copy as the resolved page's bridge section. Deliberate: it is
              fully generic, whereas the earlier hero referenced "your two scores"
-             — which a visitor arriving on a bad token may not have. */
+ - which a visitor arriving on a bad token may not have. */
           <section style={{ padding: "52px 0 34px", textAlign: "center" }}>
             <div style={{ ...kicker, color: C.gold, marginBottom: 14 }}>Reinvest or Harvest</div>
             {/* Sized to the resolved page's hero rather than the bridge section.
@@ -456,12 +456,12 @@ export default function ReinvestHarvestThankYou({
             </h1>
             {/* balance + a wider measure: at 760 the last line was just "of it." */}
             <p style={{ fontSize: "clamp(16px,4vw,22px)", lineHeight: 1.55, color: C.text2, maxWidth: 900, margin: "0 auto", textWrap: "balance" }}>
-              This is where you find out whether you're a fit to have me work on it with you — intentionally pursuing reinvestment opportunities inside your business, and building financial freedom outside of it.
+              This is where you find out whether you're a fit to have me work on it with you - intentionally pursuing reinvestment opportunities inside your business, and building financial freedom outside of it.
             </p>
           </section>
         )}
 
-        {/* ── NEXT 90 DAYS — the ask and the calendar as one block ──
+        {/* ── NEXT 90 DAYS - the ask and the calendar as one block ──
              They read what happens in the session, then see times immediately
              underneath. The calendar on its own, above any reason to book, was
              asking before explaining. */}
@@ -469,7 +469,7 @@ export default function ReinvestHarvestThankYou({
           <div style={{ padding: "32px 24px", borderRadius: 18, background: "#FFFFFF", border: `1px solid ${C.goldLight}55`, boxShadow: `0 0 26px ${C.goldLight}1f, 0 10px 30px rgba(10,14,20,.08)` }}>
 
             {/* Same block in both states. Someone on a bad token has almost always
-                taken the scorecard — a forwarded or mangled link — so the steps and
+                taken the scorecard - a forwarded or mangled link - so the steps and
                 the ask read correctly for them too. */}
             <div style={{ ...kicker, color: C.gold, marginBottom: 12, textAlign: "center" }}>{offer.kicker}</div>
             <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(24px,5.6vw,32px)", lineHeight: 1.18, color: C.text1, textAlign: "center", margin: "0 0 14px" }}>
@@ -498,7 +498,7 @@ export default function ReinvestHarvestThankYou({
             {/* The calendar sits directly under the reasons to use it. */}
             {offerKey === "oneToOne" ? (
               <div id="rh-calendar" style={{ marginTop: 26, borderRadius: 14, overflow: "hidden", border: `1px solid ${C.line}`, background: C.bgCard, minHeight: 620 }}>
-                {/* Direct iframe. Do NOT use iClosed widget.js — it races the React render. */}
+                {/* Direct iframe. Do NOT use iClosed widget.js - it races the React render. */}
                 <iframe src={schedulerUrl} title="Book your working session" width="100%" height="620"
                   style={{ border: "none", display: "block" }} loading="lazy" />
               </div>
@@ -513,15 +513,15 @@ export default function ReinvestHarvestThankYou({
 
 
 
-        {/* ── VIDEO HEADING — 1-on-1 only: it names a working session the
+        {/* ── VIDEO HEADING - 1-on-1 only: it names a working session the
              Collective branch does not offer. ── */}
         {offerKey === "oneToOne" && (
-        /* Breaks out of the 1120px page shell — the 60px line needs ~1301px.
+        /* Breaks out of the 1120px page shell - the 60px line needs ~1301px.
            Negative margins are the only way out of a maxWidth parent; the width
            calc keeps it inside the viewport so nothing overflows. */
         <section style={{ textAlign: "center", marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)", width: "100vw", maxWidth: "100vw", padding: "0 20px 22px", boxSizing: "border-box" }}>
           {/* Back to 60px. The line measures ~21.7x the font size, so at 60px it
-              needs 1301px — wider than the 1080 column. The heading gets its own
+              needs 1301px - wider than the 1080 column. The heading gets its own
               1400px container and the 4.4vw term keeps it on one line all the way
               down to 1024px, where it lands at 45px. */}
           <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(28px,4.4vw,60px)", lineHeight: 1.1, color: C.text1, margin: "0 auto 20px", maxWidth: 1400, textWrap: "balance" }}>
@@ -533,7 +533,7 @@ export default function ReinvestHarvestThankYou({
         </section>
         )}
 
-        {/* ── VSL — 1-on-1 only ──
+        {/* ── VSL - 1-on-1 only ──
             The video sells the working session. On the Collective branch that's
             an offer they can't take, so it would build appetite for the wrong
             thing and push the Skool button further down the page.
@@ -583,7 +583,7 @@ export default function ReinvestHarvestThankYou({
                   <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, color: "#0A0E14", lineHeight: 1.25, textAlign: "center", fontSize: "clamp(15px,2.6vw,26px)" }}>
                     Your video is playing<br />Click to unmute
                   </span>
-                  {/* Quiet third line — the panel's job is one instruction, so the
+                  {/* Quiet third line - the panel's job is one instruction, so the
                       runtime sits under it rather than competing with it. */}
                   <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, color: "#0A0E14", opacity: .72, letterSpacing: ".05em", marginTop: "3%", fontSize: "clamp(11px,1.5vw,15px)" }}>
                     1 MIN 40 SEC
@@ -597,7 +597,7 @@ export default function ReinvestHarvestThankYou({
 
 
 
-        {/* ── CTA — belongs to the video above it, so it goes with the video.
+        {/* ── CTA - belongs to the video above it, so it goes with the video.
              Without this gate the Collective branch shows two identical JOIN
              buttons 134px apart, since the card already carries one. ── */}
         {resolved && offerKey === "oneToOne" && (
@@ -623,10 +623,10 @@ export default function ReinvestHarvestThankYou({
         )}
 
 
-        {/* ── ROADMAP — supporting material, below the video ── */}
+        {/* ── ROADMAP - supporting material, below the video ── */}
         <section style={{ maxWidth: 940, margin: "0 auto", padding: "10px 0 44px" }}>
           <div style={{ textAlign: "center", marginBottom: 34 }}>
-            {/* Scaled to match the video section above — this and the VSL block are
+            {/* Scaled to match the video section above - this and the VSL block are
                 the two supporting sections and were reading much smaller than it. */}
             <div style={{ ...kicker, fontSize: 15, color: C.gold, marginBottom: 14 }}>Where this leads</div>
             <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(32px,7.9vw,60px)", lineHeight: 1.1, color: C.text1, margin: "0 0 16px" }}>
@@ -642,7 +642,7 @@ export default function ReinvestHarvestThankYou({
               /* "You Are Here" only makes sense if they just took it. Someone
                  arriving on a bad token hasn't scored, so 01 reverts. */
               const r = (resolved && r0.n === "01")
-                ? { ...r0, title: "You Are Here", desc: "The one decision everything else hangs on — the one you just scored." }
+                ? { ...r0, title: "You Are Here", desc: "The one decision everything else hangs on - the one you just scored." }
                 : r0;
               return (
               <div key={r.n} className="rcard" style={{ padding: "20px 16px 22px", borderRadius: 14, textAlign: "center",
@@ -674,19 +674,19 @@ export default function ReinvestHarvestThankYou({
             </span>
           </div>
           <p style={{ fontSize: 10.5, lineHeight: 1.6, color: C.text3, textAlign: "center", margin: 0 }}>
-            This scorecard is an educational self-assessment tool from Kriczky Virtus. It is general in nature, is based entirely on your own self-reported answers, and does not constitute individualized financial, tax, legal, or accounting advice, nor a recommendation to pursue any particular course of action. No outcome is projected or guaranteed. Your situation is specific to you — coordinate any decision with your CPA, attorney, and other advisors before acting.
+            This scorecard is an educational self-assessment tool from Kriczky Virtus. It is general in nature, is based entirely on your own self-reported answers, and does not constitute individualized financial, tax, legal, or accounting advice, nor a recommendation to pursue any particular course of action. No outcome is projected or guaranteed. Your situation is specific to you - coordinate any decision with your CPA, attorney, and other advisors before acting.
           </p>
         </footer>
       </div>
 
-      {/* ── PREVIEW TOOLBAR — not present in production ── */}
+      {/* ── PREVIEW TOOLBAR - not present in production ── */}
       {PREVIEW && (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 99, background: "rgba(10,14,20,.95)", backdropFilter: "blur(10px)", borderTop: `1px solid ${C.gold}44`, padding: "10px 14px", display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", alignItems: "center" }}>
           <span style={{ fontSize: 8.5, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: C.gold, padding: "3px 8px", borderRadius: 4, border: `1px solid ${C.gold}55`, background: `${C.gold}12` }}>Preview</span>
           {Object.keys(QUADRANTS).map(k => (
             <button key={k} onClick={() => setQ(k)}
               style={{ padding: "5px 10px", borderRadius: 7, cursor: "pointer", fontSize: 10.5, fontWeight: 600, fontFamily: "'DM Sans',sans-serif", color: QUADRANTS[k].color, background: q === k ? `${QUADRANTS[k].color}26` : `${QUADRANTS[k].color}0d`, border: `1px solid ${QUADRANTS[k].color}${q === k ? "88" : "33"}` }}>
-              {QUADRANTS[k].label.split(" —")[0]}
+              {QUADRANTS[k].label.split(" - ")[0]}
             </button>
           ))}
           <div style={{ width: 1, height: 18, background: "rgba(255,255,255,.14)" }} />

@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-/* Icons are the Virtus metallic set — three-pass SVGs from the icon recipe,
+/* Icons are the Virtus metallic set - three-pass SVGs from the icon recipe,
    served as files. They carry their own gradients, filters and glow, so they
    are referenced as <img> rather than inlined: inlining several would collide
    their gradient IDs. No icon library is needed. */
 const ICON = (slug) => `/img/icons/${slug}-metallic.svg`;
 
-/* Reinvest or Harvest Workshop — /workshop-rh
+/* Reinvest or Harvest Workshop - /workshop-rh
    Cold-traffic build: problem → framework → what you leave with → authority →
    client stories → proof → fit → FAQ → deposit → form.
    Sections alternate left / centre / right rather than stacking centred.
@@ -24,10 +24,10 @@ const EVENT = {
 };
 const DEPOSIT_URL = "https://book.stripe.com/5kQ3cvg3l8Pv9QH2bIcEw08";
 
-/* ⚠️ PLACEHOLDER TESTIMONIALS — replace with real ones. Structure only.
+/* ⚠️ PLACEHOLDER TESTIMONIALS - replace with real ones. Structure only.
    `connection` is required on every entry: attendees receive a workshop priced
    at $2,000 and a $6,000 Wealth Roadmap for nothing, which is a material
-   connection a reader should know about. Business side only — nothing touching
+   connection a reader should know about. Business side only - nothing touching
    investments, wealth or returns. Set to [] to hide the section entirely. */
 const TESTIMONIALS = [];
 /* When real ones arrive, each entry is:
@@ -41,6 +41,8 @@ const OUTCOMES = ["Add two to five points of profit",
                   "Take more out personally without stalling growth",
                   "Get clean numbers and a simple finance system",
                   "Reinvest tactically back into the business to make sustainable growth more likely"];
+/* Values must match the ActiveCampaign field options exactly (em dash included);
+   the dropdown shows them with a plain hyphen. */
 const APPETITE = ["Strong", "Depends on the plan", "None — I'll run it myself"];
 
 const C = {
@@ -51,7 +53,7 @@ const C = {
 };
 const GRAIN = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
 
-/* Each stage carries what sits underneath it — shown on the back of the card. */
+/* Each stage carries what sits underneath it - shown on the back of the card. */
 const STAGES = [
   { n: "1", name: "Qualified Leads", c: C.gold, icon: "stage-leads",
     what: "Not enough of the right customers.",
@@ -71,7 +73,7 @@ const STAGES = [
 ];
 
 const LEAVE_WITH = [
-  ["Stations 01 to 03, done", "Reinvest or Harvest, Know Your Numbers, and Find The Constraint — worked on your numbers, not in theory."],
+  ["Stations 01 to 03, done", "Reinvest or Harvest, Know Your Numbers, and Find The Constraint - worked on your numbers, not in theory."],
   ["Your 90-day sprint", "Three moves, the weekly signal that tells you each one is working, and what you do before Friday."],
   ["Your workbook and Sprint Ledger", "A workbook printed with your name on the cover, and the Ledger you bring back every quarter."],
   ["Your Personalized Wealth Roadmap", "A personal wealth tactical playbook through Kriczky Wealth Management LLC. Owners normally pay $6,000. Included for everyone who attends."],
@@ -85,14 +87,14 @@ const SLIDES = [
 ];
 
 const AGENDA = [
-  ["12:00", "Lunch — provided"],
+  ["12:00", "Lunch - provided"],
   ["1:00", "Where your next dollar of profit actually goes"],
   ["1:30", "Your two scores, and the direction they’re heading"],
   ["2:10", "Your three gaps and your value drivers"],
   ["2:55", "The one stage capping everything else"],
   ["3:35", "Your vision, and the “One Thing” that decides next year"],
   ["4:05", "Your 90-day plan, and the first move this week"],
-  ["5:00", "Happy hour — food and drinks provided"],
+  ["5:00", "Happy hour - food and drinks provided"],
 ];
 
 /* One mark per niche. */
@@ -121,7 +123,7 @@ const STORIES = [
     thought: "Stage 2 · Capacity to Sell",
     actual: "1",
     open: "A landscaping company came to me and the two owners were convinced that the problem in the business was that they needed to hire in 1 or 2 people that could run sales so that the 2 owners could grow the revenue for the business.",
-    diagnosis: "But after we dug into the details in their business, the actual constraint was Stage 1 — Qualified Leads, and more specifically that they didn’t have an acquisition channel that they could control how many qualified leads came to them. You could see it in that they were entirely dependent on organic marketing.",
+    diagnosis: "But after we dug into the details in their business, the actual constraint was Stage 1 - Qualified Leads, and more specifically that they didn’t have an acquisition channel that they could control how many qualified leads came to them. You could see it in that they were entirely dependent on organic marketing.",
     seqLead: "Rather than prioritize hiring 1 or 2 salesmen, the sequence we laid out was:",
     seq: ["Reinvest into Stage 1 to increase Qualified Leads",
           "Hire a specific role to increase their Capacity to Fulfill what they sell (Stage 3)",
@@ -138,7 +140,7 @@ const STORIES = [
     thought: "Stage 3 · Capacity to Fulfill",
     actual: "2",
     open: "A residential remodeling company (kitchen, bathroom, basement, and more) was convinced the problem was Stage 3, and was about to take on a lot of debt to bring in new technicians, trucks, and inventory.",
-    diagnosis: "Instead, when we looked at their situation, the actual problem was Stage 2 — Capacity to Sell. We identified which of their services was the most profitable, which also was the service they were best at selling, fastest at delivering, and extremely profitable at acquiring through paid ads.",
+    diagnosis: "Instead, when we looked at their situation, the actual problem was Stage 2 - Capacity to Sell. We identified which of their services was the most profitable, which also was the service they were best at selling, fastest at delivering, and extremely profitable at acquiring through paid ads.",
     seqLead: "So the sequence we laid out was:",
     seq: ["Prioritize selling their most profitable service",
           "Reinvest their profit into the marketing that was already working, solely focused on this service, until their sales team’s capacity was filled with these leads",
@@ -160,16 +162,16 @@ const NOT_FIT = ["You’re under $1M a year",
                  "You want someone to hand you a plan and leave"];
 
 const FAQ = [
-  ["Is this a pitch?", "No. You spend the afternoon on your own business. At the end I’ll show you two ways to keep working together if you want them — nothing before that."],
-  ["Do I need to bring my numbers?", "After you reserve your seat we send you two links, each a brief series of tailored questions. They let us build custom analysis reports for your business, benchmarked against your own industry's data — so the afternoon is about you rather than about averages. If you don't get to them beforehand, bring rough numbers instead: last year's revenue, your net margin, what you took out in the last 90 days, and roughly what you hold in personal investments. Ranges are fine, and nobody audits anything. For the most personalized experience, just click the two links and answer the questions."],
-  ["It’s really free? What’s the catch?", `This workshop is built to be a ${EVENT.fullPrice} ticket. The first rooms are free because they’re the first — I’d rather fill the room and learn from it than charge for version one. Nothing is asked in return.`],
+  ["Is this a pitch?", "No. You spend the afternoon on your own business. At the end I’ll show you two ways to keep working together if you want them - nothing before that."],
+  ["Do I need to bring my numbers?", "After you reserve your seat we send you two links, each a brief series of tailored questions. They let us build custom analysis reports for your business, benchmarked against your own industry's data - so the afternoon is about you rather than about averages. If you don't get to them beforehand, bring rough numbers instead: last year's revenue, your net margin, what you took out in the last 90 days, and roughly what you hold in personal investments. Ranges are fine, and nobody audits anything. For the most personalized experience, just click the two links and answer the questions."],
+  ["It’s really free? What’s the catch?", `This workshop is built to be a ${EVENT.fullPrice} ticket. The first rooms are free because they’re the first - I’d rather fill the room and learn from it than charge for version one. Nothing is asked in return.`],
   ["Who else is in the room?", "About twenty owners at a similar scale, roughly half of them people I already work with. You’re seated by where you landed on the scorecard, not by revenue."],
   ["What if I can’t stay the whole afternoon?", "Come to the next one instead. Each block builds on the one before it, and leaving at three means leaving without the plan."],
-  ["Is this right for my industry and revenue tier?", `We've worked with owners across ${SECTORS.map(x => x[0]).join(", ")} — and across every revenue tier from ${TIERS[0].toLowerCase()} to ${TIERS[TIERS.length - 1]}. What changes between tiers is what actually drives the reinvest-or-harvest decision, and how much to put back in. We've helped owners at each of these stages work out what matters most where they are, and align it with the long-term outcome they want — personally and inside the business.`],
-  ["What happens afterwards?", "You leave with a 90-day plan, your workbook and your Sprint Ledger. Everyone is offered a free Execution Debrief — sixty minutes, one to one, to decide what gets executed first. It’s also how your Wealth Roadmap starts."],
+  ["Is this right for my industry and revenue tier?", `We've worked with owners across ${SECTORS.map(x => x[0]).join(", ")} - and across every revenue tier from ${TIERS[0].toLowerCase()} to ${TIERS[TIERS.length - 1]}. What changes between tiers is what actually drives the reinvest-or-harvest decision, and how much to put back in. We've helped owners at each of these stages work out what matters most where they are, and align it with the long-term outcome they want - personally and inside the business.`],
+  ["What happens afterwards?", "You leave with a 90-day plan, your workbook and your Sprint Ledger. Everyone is offered a free Execution Debrief - sixty minutes, one to one, to decide what gets executed first. It’s also how your Wealth Roadmap starts."],
 ];
 
-/* Brand SVGs, inlined — same assets as the workbook and Ledger. */
+/* Brand SVGs, inlined - same assets as the workbook and Ledger. */
 const ICONS = {
   StartHere: { vb: "-210 -210 420 420", inner: <><defs>
   <linearGradient id="metalxcompass" gradientUnits="userSpaceOnUse" x1="0" y1="-150" x2="0" y2="150"><stop offset="0%" stopColor="#F8ECC4"/><stop offset="14%" stopColor="#DFC177"/><stop offset="28%" stopColor="#C8A24E"/><stop offset="42%" stopColor="#5A4419"/><stop offset="50%" stopColor="#F8ECC4"/><stop offset="64%" stopColor="#C8A24E"/><stop offset="80%" stopColor="#8A6C2A"/><stop offset="100%" stopColor="#5A4419"/></linearGradient>
@@ -454,12 +456,12 @@ const errStyle = { color: C.red, fontSize: 12.5, lineHeight: 1.4, margin: "6px 0
 const Err = ({ msg }) => (msg ? <p style={errStyle}>{msg}</p> : null);
 const Sec = ({ children, style, id }) => <section id={id} style={{ padding: "clamp(34px,5.5vw,62px) 0", ...style }}>{children}</section>;
 
-/* Lives at module scope so it isn't a new component on every render — a new
+/* Lives at module scope so it isn't a new component on every render - a new
    identity remounts the subtree and kills focus in whatever input is being typed in. */
 const toForm = (e) => {
   e.preventDefault();
   /* On desktop the form sits beside the heading, so the section top is right.
-     On a phone it sits below the deposit card — landing there shows a wall of
+     On a phone it sits below the deposit card - landing there shows a wall of
      prose and no inputs, so aim at the venue block instead: a line of context,
      then the fields. */
   const coarse = window.matchMedia("(hover: none), (pointer: coarse)").matches;
@@ -519,7 +521,7 @@ export default function WorkshopPage() {
   const [slide, setSlide] = useState(0);
   const [slideHeld, setSlideHeld] = useState(false);
   const [openStory, setOpenStory] = useState(null);   /* all closed until clicked */
-  const [bioOpen, setBioOpen] = useState(false);      /* mobile only — desktop shows it all */
+  const [bioOpen, setBioOpen] = useState(false);      /* mobile only - desktop shows it all */
 
   /* On a phone there's no cursor, so scroll position decides what's lit: the card
      nearest the middle of the screen picks up the same gold edge the story cards
@@ -542,7 +544,7 @@ export default function WorkshopPage() {
         const gap = Math.abs(r.top + r.height / 2 - mid);
         if (gap < bestGap) { bestGap = gap; best = el; }
       }
-      /* Only when it's genuinely near the middle — otherwise something stays lit
+      /* Only when it's genuinely near the middle - otherwise something stays lit
          while the reader is looking at a different part of the page. */
       if (best && bestGap > innerHeight * 0.42) best = null;
       for (const el of cards) el.classList.toggle("lit", el === best);
@@ -561,7 +563,7 @@ export default function WorkshopPage() {
 
   /* A soft light that trails the cursor. The whole page is metal lit from a
      fixed point; letting the reader move that point is the thematic version of
-     a hover effect. Written straight to the DOM through a ref and an rAF loop —
+     a hover effect. Written straight to the DOM through a ref and an rAF loop - 
      a mousemove that calls setState re-renders the page on every pixel. */
   const lampRef = useRef(null);
   useEffect(() => {
@@ -662,7 +664,7 @@ export default function WorkshopPage() {
             KRICZKY <span style={{ color: C.goldMuted }}>VIRTUS</span></span>
         </div>
 
-        {/* ── HERO — centred ── */}
+        {/* ── HERO - centred ── */}
         <Sec style={{ paddingTop: "clamp(30px,5vw,54px)", textAlign: "center" }}>
           <div style={wrap}>
             <div style={KICKER}>In person &middot; West Chester, PA &middot; {EVENT.date || "next date announced soon"}</div>
@@ -679,14 +681,14 @@ export default function WorkshopPage() {
             <div style={{ margin: "32px 0 0" }}><CTA /></div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(165px, 1fr))", gap: 10, maxWidth: 860, margin: "32px auto 0", textAlign: "left" }}>
               <Meta k="Date" v={EVENT.date || "Announced soon"} />
-              <Meta k="Time" v={EVENT.time} note="Happy Hour afterwards — food and drinks covered" />
+              <Meta k="Time" v={EVENT.time} note="Happy Hour afterwards - food and drinks covered" />
               <Meta k="Where" v={`${EVENT.venueLine1} ${EVENT.venueLine2}`} href={EVENT.mapUrl} />
               <Meta k="Cost" v="Free" />
             </div>
           </div>
         </Sec>
 
-        {/* ── INDUSTRIES BANNER — scrolls continuously, right to left ── */}
+        {/* ── INDUSTRIES BANNER - scrolls continuously, right to left ── */}
         <div style={{ padding: "clamp(6px,1.4vw,18px) 0 clamp(18px,2.6vw,30px)" }}>
           <p style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: C.text3, textAlign: "center", margin: "0 0 20px" }}>
             Industries of owners we have helped
@@ -707,12 +709,12 @@ export default function WorkshopPage() {
           </div>
         </div>
 
-        {/* ── THE PROBLEM — text left, barbell right ── */}
+        {/* ── THE PROBLEM - text left, barbell right ── */}
         <Sec>
           <div style={{ ...wrap, display: "flex", gap: "clamp(24px,4vw,56px)", alignItems: "center" }} className="split">
             <div style={{ flex: "1 1 0" }}>
               <Head kicker="The problem">Every dollar of profit goes one of <span style={EM}>two places</span></Head>
-              <p style={P}>Back into the business, or out to you. Most owners load one end for years and never notice the other is empty — because every single decision to reinvest was the right one at the time.</p>
+              <p style={P}>Back into the business, or out to you. Most owners load one end for years and never notice the other is empty - because every single decision to reinvest was the right one at the time.</p>
               <p style={{ ...P, marginTop: 14 }}>Ten years of good decisions later, the business is worth something and the owner isn’t. That’s the trade almost nobody sits down and makes on purpose. This afternoon is where you make it deliberately.</p>
             </div>
             <div style={{ flex: "0 0 auto", width: "min(46%, 420px)" }} className="splitvis">
@@ -724,11 +726,11 @@ export default function WorkshopPage() {
           </div>
         </Sec>
 
-        {/* ── THE FRAMEWORK — centred, full-width cards that flip ── */}
+        {/* ── THE FRAMEWORK - centred, full-width cards that flip ── */}
         <Sec>
           <div style={wrap}>
             <Head kicker="The framework" align="center"
-              sub="Three stages carry every business. The first one that breaks as demand rises is the only thing worth working on — everything else is effort spent on a problem you don’t have yet.">
+              sub="Three stages carry every business. The first one that breaks as demand rises is the only thing worth working on - everything else is effort spent on a problem you don’t have yet.">
               The 3-Stage Constraint <span style={EM}>Framework</span>
             </Head>
             <div className="stagerow" style={{ display: "flex", alignItems: "stretch", gap: 10, marginTop: 34 }}>
@@ -756,7 +758,7 @@ export default function WorkshopPage() {
                         {s.sub.map(t => <div key={t} style={{ fontSize: 13.5, lineHeight: 1.45, color: C.text2, padding: "4px 0", borderBottom: `1px solid ${C.border1}` }}>{t}</div>)}
                         <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: C.red, margin: "14px 0 8px" }}>Landmines</div>
                         {s.mines.map(t => <div key={t} style={{ fontSize: 13.5, lineHeight: 1.45, color: "#C98B8B", padding: "4px 0", borderBottom: `1px solid ${C.border1}` }}>{t}</div>)}
-                        <p style={{ fontSize: 11.5, lineHeight: 1.45, color: C.text4, margin: "12px 0 0" }}>Examples only — there are more than these underneath each stage.</p>
+                        <p style={{ fontSize: 11.5, lineHeight: 1.45, color: C.text4, margin: "12px 0 0" }}>Examples only - there are more than these underneath each stage.</p>
                       </div>
                     </div>
                   </div>
@@ -765,13 +767,13 @@ export default function WorkshopPage() {
               ))}
             </div>
             <p style={{ ...P, textAlign: "center", maxWidth: 680, margin: "26px auto 0" }}>
-              Underneath whichever stage binds you sit the sub-bottlenecks causing it — and the landmines that make growth cost more than it returns. You’ll work through both.
+              Underneath whichever stage binds you sit the sub-bottlenecks causing it - and the landmines that make growth cost more than it returns. You’ll work through both.
             </p>
             <div style={{ marginTop: 34 }}><CTA note={false} /></div>
           </div>
         </Sec>
 
-        {/* ── WHAT YOU LEAVE WITH — pages left, text right ── */}
+        {/* ── WHAT YOU LEAVE WITH - pages left, text right ── */}
         <Sec>
           <div style={{ ...wrap, display: "flex", gap: "clamp(24px,4vw,56px)", alignItems: "center" }} className="split">
             <div style={{ flex: "0 0 auto", width: "min(50%, 520px)" }} className="splitvis">
@@ -806,7 +808,7 @@ export default function WorkshopPage() {
           </div>
         </Sec>
 
-        {/* ── THE AFTERNOON — text right, roadmap left ── */}
+        {/* ── THE AFTERNOON - text right, roadmap left ── */}
         <Sec>
           <div style={{ ...wrap, display: "flex", gap: "clamp(24px,4vw,56px)", alignItems: "center" }} className="split rev">
             <div style={{ flex: "1 1 0" }}>
@@ -820,7 +822,7 @@ export default function WorkshopPage() {
                 ))}
               </div>
               <p style={{ fontSize: 14.5, lineHeight: 1.6, color: C.text2, margin: "16px 0 0" }}>
-                <strong style={{ color: C.text1, fontWeight: 600 }}>Lunch and happy hour are on us.</strong> You won’t spend a dollar on the day &mdash; and the $250 deposit is back in your pocket when you walk in.
+                <strong style={{ color: C.text1, fontWeight: 600 }}>Lunch and happy hour are on us.</strong> You won’t spend a dollar on the day - and the $250 deposit is back in your pocket when you walk in.
               </p>
               <p style={{ fontSize: 14, lineHeight: 1.6, color: C.text3, margin: "10px 0 0" }}>
                 Optional pre-work goes out when you register. Do it and the afternoon is built around your numbers; skip it and you’ll catch up in the break.
@@ -834,7 +836,7 @@ export default function WorkshopPage() {
           </div>
         </Sec>
 
-        {/* ── WHO'S RUNNING IT — headshot floated, so the text wraps beside and
+        {/* ── WHO'S RUNNING IT - headshot floated, so the text wraps beside and
                under it and the whole section fits one desktop screen ── */}
         <Sec style={{ padding: "clamp(24px,3.4vw,42px) 0" }}>
           <div style={col}>
@@ -844,14 +846,14 @@ export default function WorkshopPage() {
                 margin: "6px 26px 18px 0", shapeOutside: "inset(0 round 18px)" }} />
             <div style={KICKER}>Who’s running it</div>
             <h2 style={{ ...H2, fontSize: "clamp(28px,4.1vw,42px)", margin: "0 0 12px" }}>A quarterback for every domain of <span style={EM}>your wealth</span></h2>
-            <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58 }}>I started out as an aerospace engineer, designing weapons integration systems for US special forces. I went from entry level to co-leading a team of 25 — hiring, scaling the team, and building the comp plans that kept them.</p>
+            <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58 }}>I started out as an aerospace engineer, designing weapons integration systems for US special forces. I went from entry level to co-leading a team of 25 - hiring, scaling the team, and building the comp plans that kept them.</p>
             <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>Then I left to start my own firm. Three years of eighty-hour weeks, married, three kids and a fourth on the way.</p>
 
             <div className={`biomore${bioOpen ? " open" : ""}`}>
               <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>Before any of that, my wife and I finished college with over $100,000 of student debt and went from two incomes to one. For years every dollar went to that debt. We couldn’t buy a home. I ate less than I needed to because I was frightened of the bills, and lost fifteen pounds doing it. I felt like a loser in front of my wife.</p>
               <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>I climbed out of that with almost no help. I don’t want another family in it, and I especially don’t want it for owners, who carry more risk than anyone I know.</p>
-              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10, color: C.text1 }}>Here’s what managing money for them taught me: <strong style={{ color: C.gold, fontWeight: 600 }}>roughly 80% of an owner’s net worth sits inside the business.</strong> You can compound the other 20% perfectly and it still won’t decide anything. Almost nobody helps with the 80% — and almost nobody gets the two sides working together instead of rowing in opposite directions.</p>
-              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>Most owners end up with five or ten advisors — an accountant, an attorney, an insurance broker, a banker, someone managing investments — none of whom speak to each other. Each one is paid separately, each sees one slice, and the advice comes back contradicting itself. You end up being the one coordinating all of it, on top of running the company.</p>
+              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10, color: C.text1 }}>Here’s what managing money for them taught me: <strong style={{ color: C.gold, fontWeight: 600 }}>roughly 80% of an owner’s net worth sits inside the business.</strong> You can compound the other 20% perfectly and it still won’t decide anything. Almost nobody helps with the 80% - and almost nobody gets the two sides working together instead of rowing in opposite directions.</p>
+              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>Most owners end up with five or ten advisors - an accountant, an attorney, an insurance broker, a banker, someone managing investments - none of whom speak to each other. Each one is paid separately, each sees one slice, and the advice comes back contradicting itself. You end up being the one coordinating all of it, on top of running the company.</p>
               <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10, color: C.text1 }}>My job is to be the quarterback across every domain of your financial life, the business included: keeping your existing advisors rowing in the same direction rather than opposite ones. That’s why I built both sides. That’s the barbell.</p>
               <p style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: 22, color: C.text1, margin: "18px 0 0" }}>
                 Edward Kriczky, <span style={{ color: C.gold }}>CEPA&reg;</span></p>
@@ -953,7 +955,7 @@ export default function WorkshopPage() {
           </div>
         </Sec>
 
-        {/* ── PROOF — hidden while TESTIMONIALS is empty ── */}
+        {/* ── PROOF - hidden while TESTIMONIALS is empty ── */}
         {TESTIMONIALS.length > 0 && (
           <Sec>
             <div style={wrap}>
@@ -977,7 +979,7 @@ export default function WorkshopPage() {
           </Sec>
         )}
 
-        {/* ── FIT — text right, industries left ── */}
+        {/* ── FIT - text right, industries left ── */}
         <Sec>
           <div style={wrap}>
             <Head kicker="Is This Right For You?">Who the room is <span style={EM}>for</span></Head>
@@ -1005,7 +1007,7 @@ export default function WorkshopPage() {
           </div>
         </Sec>
 
-        {/* ── FAQ — accordion ── */}
+        {/* ── FAQ - accordion ── */}
         <Sec>
           <div style={col}>
             <Head kicker="" align="center">Frequently Asked <span style={EM}>Questions</span></Head>
@@ -1030,7 +1032,7 @@ export default function WorkshopPage() {
         <Sec id="register" style={{ scrollMarginTop: 16, paddingBottom: "clamp(40px,5vw,62px)" }}>
           <div style={{ ...wrap, display: "flex", gap: "clamp(24px,3.4vw,48px)", alignItems: "flex-start" }} className="split">
            <div style={{ flex: "1 1 0", minWidth: 0 }}>
-            <Head kicker="Reserve your seat">Free &mdash; <span style={EM}>with a deposit you get back</span></Head>
+            <Head kicker="Reserve your seat">Free - <span style={EM}>with a deposit you get back</span></Head>
 
             <div style={{ ...card, margin: "10px 0 16px", borderColor: `${C.gold}3d` }}>
               <div style={KICKER}>Why there’s a deposit</div>
@@ -1067,7 +1069,7 @@ export default function WorkshopPage() {
               <div style={{ marginTop: 14 }}><label style={label}>If you leave with a 90-day plan you believe in, what’s your appetite for getting help executing it?</label>
                 <select style={fieldStyle("appetite")} value={f.appetite} onChange={set("appetite")}>
                   <option value="" style={{ background: C.bgDeep, color: C.text3 }}>Select…</option>
-                  {APPETITE.map(r => <option key={r} value={r} style={{ background: C.bgDeep, color: C.text1 }}>{r}</option>)}</select><Err msg={touched && errors.appetite} /></div>
+                  {APPETITE.map(r => <option key={r} value={r} style={{ background: C.bgDeep, color: C.text1 }}>{r.replace("\u2014", "-")}</option>)}</select><Err msg={touched && errors.appetite} /></div>
 
               <button onClick={submit} disabled={state === "sending"} className="cta"
                 style={{ width: "100%", marginTop: 24, padding: "22px 18px", borderRadius: 999, cursor: "pointer",

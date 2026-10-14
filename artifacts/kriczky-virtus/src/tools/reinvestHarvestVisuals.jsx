@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   REINVEST OR HARVEST — CONCEPT VISUALS, cream theme
+   REINVEST OR HARVEST - CONCEPT VISUALS, cream theme
    One small diagram per dimension, drawn for the cream report pages:
    ink colours for lines and labels, the metallic gold and green fills for
    the bars.
@@ -15,7 +15,7 @@ const scoreColor = (n) => !n ? C.text4 : n <= 2 ? C.red : n === 3 ? C.amber : n 
 /* ═══ CONCEPT VISUALS ═══
    Diagrammatic, not illustrative. Each shows the mechanic the dimension
    measures. Several read off the owner's own answer.
-   ⚠️ Every gradient uses userSpaceOnUse — axis-aligned lines get no paint
+   ⚠️ Every gradient uses userSpaceOnUse - axis-aligned lines get no paint
    under objectBoundingBox and vanish silently. */
 
 const V = { w: 600, h: 150 };
@@ -23,7 +23,7 @@ const vt = { fontFamily: "'DM Sans',sans-serif" };
 const LBL = { fontSize: 10, letterSpacing: 1.4, fontWeight: 700, ...vt };
 const CAP = { fontSize: 10, ...vt };
 
-/* 01 · Business ROI Opportunities — money in, and whether you can see it come back */
+/* 01 · Business ROI Opportunities - money in, and whether you can see it come back */
 const VisualROI = ({ score }) => {
   const known = score >= 4;
   const c = known ? C.gold : C.text4;
@@ -60,7 +60,7 @@ const VisualROI = ({ score }) => {
   );
 };
 
-/* 02 · Margin Position — where you sit against the field */
+/* 02 · Margin Position - where you sit against the field */
 const VisualMargin = ({ score }) => {
   const x = 60 + ((score - 1) / 5) * 480;
   const c = scoreColor(score);
@@ -88,7 +88,7 @@ const VisualMargin = ({ score }) => {
   );
 };
 
-/* 04 · Growing Without Breaking — headroom before something gives */
+/* 04 · Growing Without Breaking - headroom before something gives */
 const VisualHeadroom = ({ score }) => {
   const cap = 90 + (score - 1) * 78;        // capacity grows with the score
   const demand = 430;                        // demand is fixed: a 2x surge
@@ -117,7 +117,7 @@ const VisualHeadroom = ({ score }) => {
         const x = Math.max(70, Math.min(mid, 552));
         return (
           <g>
-            {/* label sits above the bar on the dark ground — green on gold is unreadable */}
+            {/* label sits above the bar on the dark ground - green on gold is unreadable */}
             <text x={x} textAnchor="middle" y="40" style={{ ...LBL, fontSize: 9 }} fill={C.green}>HEADROOM</text>
             <line x1={60 + demand} y1="46" x2={60 + cap} y2="46" stroke={C.green} strokeWidth="1.4" opacity=".7"/>
             <line x1={60 + demand} y1="43" x2={60 + demand} y2="49" stroke={C.green} strokeWidth="1.4" opacity=".7"/>
@@ -129,7 +129,7 @@ const VisualHeadroom = ({ score }) => {
   );
 };
 
-/* 05 · Proven Demand Runway — work waiting versus work you can take */
+/* 05 · Proven Demand Runway - work waiting versus work you can take */
 const VisualRunway = ({ score }) => {
   const waiting = Math.max(0, score - 1);
   return (
@@ -156,7 +156,7 @@ const VisualRunway = ({ score }) => {
   );
 };
 
-/* 06 · What You Take Out — five years of distributions, and what's left to show */
+/* 06 · What You Take Out - five years of distributions, and what's left to show */
 const VisualSplit = ({ score }) => {
   const keep = [0, .12, .3, .5, .72, .95][score - 1];   // share that becomes an asset
   const H = 52, TOP = 46, YRS = 5, colW = 62, gap = 22, x0 = 62;
@@ -198,7 +198,7 @@ const VisualSplit = ({ score }) => {
   );
 };
 
-/* 07 · Liquid Reserve — months of cover against a six-month target */
+/* 07 · Liquid Reserve - months of cover against a six-month target */
 const VisualReserve = ({ score }) => {
   const months = [0.5, 1, 2.5, 4, 5, 7][score - 1];
   const w = Math.min(months / 8, 1) * 480;
@@ -222,13 +222,13 @@ const VisualReserve = ({ score }) => {
       <line x1={targetX} y1="44" x2={targetX} y2="100" stroke={C.green} strokeWidth="1.6" strokeDasharray="4 4"/>
       <text x={targetX} y="38" textAnchor="middle" style={{ ...LBL, fontSize: 8.5 }} fill={C.green}>SIX-MONTH TARGET</text>
       <text x="60" y="140" style={{ ...CAP, fontSize: 9.5 }} fill={C.text3}>
-        Reserve is what buys you the ability to say no — and the option to be patient.
+        Reserve is what buys you the ability to say no - and the option to be patient.
       </text>
     </svg>
   );
 };
 
-/* 09 · Proactive Tax Coordination — options shrink to nothing as the year closes */
+/* 09 · Proactive Tax Coordination - options shrink to nothing as the year closes */
 const VisualTaxYear = ({ score }) => {
   /* where the owner actually engages, in month index */
   const TOUCH = [[15.5], [15.5], [11.5], [9], [8.5, 11.5], [2, 5, 8, 11]][score - 1];
@@ -265,7 +265,7 @@ const VisualTaxYear = ({ score }) => {
         <text x={x(15.5)} y="42" textAnchor="middle" style={{ ...LBL, fontSize: 8.5 }} fill={C.red}>APRIL</text>
       )}
       <text x="62" y="140" style={{ ...CAP, fontSize: 10 }} fill={c}>
-        {live === 0 ? "By the time you talk, the year is closed. There is nothing left to decide — only a bill to pay."
+        {live === 0 ? "By the time you talk, the year is closed. There is nothing left to decide - only a bill to pay."
          : live === 1 ? "One conversation, late. Most of the levers had already closed by the time you had it."
          : live === 2 ? "You're in the window, but only at the end of it. The earlier options were never on the table."
          : "Four touchpoints across the year. Every lever is live when you're actually deciding."}
@@ -274,7 +274,7 @@ const VisualTaxYear = ({ score }) => {
   );
 };
 
-/* 10 · Your Long-Term Destination — drift, or a distance you can close */
+/* 10 · Your Long-Term Destination - drift, or a distance you can close */
 const VisualGap = ({ score }) => {
   const tier = score <= 2 ? "drift" : score <= 4 ? "vague" : "clear";
   const ends = [[38,-30],[52,-14],[60,4],[48,22],[34,36]];   // fan angles for drift

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { LIGHT as C } from "./kvTheme.js";
 
 /* ═══════════════════════════════════════════════════════════════
-   REINVEST OR HARVEST — 20-STEP FLOW
+   REINVEST OR HARVEST - 20-STEP FLOW
    Route: /reinvest-harvest/start
    Mobile-first. One question per screen.
    ═══════════════════════════════════════════════════════════════ */
@@ -28,7 +28,7 @@ const getQuadrant = (b, p) =>
   b >= THRESHOLD ? (p >= THRESHOLD ? QUADRANTS.reinvest : QUADRANTS.split)
                  : (p >= THRESHOLD ? QUADRANTS.harvest  : QUADRANTS.stabilize);
 
-/* ── REVENUE BANDS — strings must match ActiveCampaign `Revenue Range` exactly ── */
+/* ── REVENUE BANDS - strings must match ActiveCampaign `Revenue Range` exactly ── */
 const REVENUE_BANDS = [
   { value: "Under $500K", label: "Under $500K",   qualified: false },
   { value: "$500K - $1M", label: "$500K – $1M",   qualified: false },
@@ -45,9 +45,9 @@ const STEPS = [
     q: "Right now, which way are you leaning? What do you think you should do with your profits?",
     sub: "No wrong answer. We'll compare it to what your answers actually say.",
     options: [
-      { t: "Reinvest — put it back into the business", v: "reinvest" },
-      { t: "Take profit — pull more out for myself",   v: "harvest" },
-      { t: "Split it — some of each",                  v: "split" },
+      { t: "Reinvest - put it back into the business", v: "reinvest" },
+      { t: "Take profit - pull more out for myself",   v: "harvest" },
+      { t: "Split it - some of each",                  v: "split" },
       { t: "Honestly, I don't know",                   v: null },
     ] },
 
@@ -61,7 +61,7 @@ const STEPS = [
 
   { type: "score", key: "b1", pillar: "biz",
     q: "Do you know what your last big investment in the business actually returned?",
-    sub: "The equipment, the hire, the software, the buildout — any major spend in the last two years.",
+    sub: "The equipment, the hire, the software, the buildout - any major spend in the last two years.",
     options: [
       { t: "We set an ROI target beforehand, then measured actual ROI afterwards", s: 6 },
       { t: "Measured ROI only after the fact, didn't set a target", s: 5 },
@@ -73,7 +73,7 @@ const STEPS = [
 
   { type: "score", key: "b2", pillar: "biz",
     q: "How does your net margin compare to others in your industry?",
-    sub: "Your industry, your revenue size — not a national average across all business.",
+    sub: "Your industry, your revenue size - not a national average across all business.",
     options: [
       { t: "Top quartile, and I know why", s: 6 },
       { t: "Above the median", s: 5 },
@@ -85,10 +85,10 @@ const STEPS = [
 
   { type: "score", key: "b3", pillar: "biz",
     q: "Do you know the one thing holding your growth back?",
-    sub: "Not a list — the single thing that, if it improved, would let everything else move.",
+    sub: "Not a list - the single thing that, if it improved, would let everything else move.",
     options: [
-      { t: "Yes — and I have data proving it", s: 6 },
-      { t: "Yes — confident, but no hard data", s: 5 },
+      { t: "Yes - and I have data proving it", s: 6 },
+      { t: "Yes - confident, but no hard data", s: 5 },
       { t: "I have a strong hunch", s: 4 },
       { t: "I've narrowed it to two", s: 3 },
       { t: "Three or four candidates", s: 2 },
@@ -97,7 +97,7 @@ const STEPS = [
 
   { type: "score", key: "b4", pillar: "biz",
     q: "If your qualified leads doubled tomorrow, what would happen?",
-    sub: "Not more revenue — more work. What gives first?",
+    sub: "Not more revenue - more work. What gives first?",
     options: [
       { t: "We'd absorb it comfortably", s: 6 },
       { t: "A stretch, but we'd manage", s: 5 },
@@ -123,11 +123,11 @@ const STEPS = [
     stat: "80%",
     title: "of the average owner's net worth sits inside their own company.",
     cite: "Exit Planning Institute, State of Owner Readiness",
-    foot: "Nobody chooses that number — it accumulates one reasonable decision at a time. The next five questions are about the other side." },
+    foot: "Nobody chooses that number - it accumulates one reasonable decision at a time. The next five questions are about the other side." },
 
   { type: "score", key: "p1", pillar: "pers",
     q: "How intentional are you about paying yourself and building assets outside the business?",
-    sub: "Salary and distributions together — how much you take, and where it goes after it leaves.",
+    sub: "Salary and distributions together - how much you take, and where it goes after it leaves.",
     options: [
       { t: "Set amount, automatically invested outside", s: 6 },
       { t: "Deliberate, and mostly invested", s: 5 },
@@ -163,7 +163,7 @@ const STEPS = [
 
   { type: "score", key: "p4", pillar: "pers",
     q: "When do you talk to your CPA about the year ahead?",
-    sub: "Planning conversations — not filing appointments.",
+    sub: "Planning conversations - not filing appointments.",
     options: [
       { t: "Quarterly planning, advisors coordinate amongst themselves", s: 6 },
       { t: "A planning meeting before year-end", s: 5 },
@@ -238,7 +238,7 @@ const STEPS = [
 /* Formats to 555-123-4567 as the user types. Digits only, capped at 10. */
 const fmtPhone = (v) => {
   let d = v.replace(/\D/g, "");
-  /* Drop a leading US country code — otherwise "+1 415…" shifts every digit
+  /* Drop a leading US country code - otherwise "+1 415…" shifts every digit
      one place and produces 141-555-5013. */
   if (d.length > 10 && d[0] === "1") d = d.slice(1);
   d = d.slice(0, 10);
@@ -350,7 +350,7 @@ export default function ReinvestHarvestFlow() {
       if (!token) throw new Error("Capture response did not include a token");
     } catch (e) {
       setCaptureFailed(true);
-      console.warn("[reinvest-harvest] lead-capture failed — payload logged above", e);
+      console.warn("[reinvest-harvest] lead-capture failed - payload logged above", e);
     }
     await new Promise(r => setTimeout(r, 600));
     setSending(false); setDone(true);
@@ -415,7 +415,7 @@ export default function ReinvestHarvestFlow() {
 
           <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 20, fontStyle: "italic", lineHeight: 1.5, color: C.text1, margin: "0 0 34px" }}>
             {agreed === null && <>Your answers point to {quadrant.label}.</>}
-            {agreed === true && <>You guessed {guessLabel} — and your answers agree. That's a confident read.</>}
+            {agreed === true && <>You guessed {guessLabel} - and your answers agree. That's a confident read.</>}
             {agreed === false && <>You were leaning <b style={{ fontStyle: "normal" }}>{guessLabel}</b>. Your answers point to <b style={{ fontStyle: "normal", color: quadrant.color }}>{quadrant.label}</b>.</>}
           </p>
 
@@ -436,7 +436,7 @@ export default function ReinvestHarvestFlow() {
           </div>
 
           <p style={{ fontSize: 12.5, color: C.text4, marginTop: 26 }}>
-            Taking you to a short video next — watch it before you check your email.
+            Taking you to a short video next - watch it before you check your email.
           </p>
           {captureFailed && (
             <a href="/reinvest-harvest/next" style={{ display: "inline-block", marginTop: 14, color: C.gold, fontSize: 15, fontWeight: 700, textDecoration: "none" }}>
@@ -481,7 +481,7 @@ export default function ReinvestHarvestFlow() {
         {/* ── CONTACT ── */}
         {S.type === "contact" && (
           <>
-            <h1 style={qStyle}>Before we start — where should we send your results?</h1>
+            <h1 style={qStyle}>Before we start - where should we send your results?</h1>
             <p style={subStyle}>Your scorecard lands in your inbox the moment you finish.</p>
             {[
               { k: "first", ph: "First name", type: "text" },
@@ -508,7 +508,7 @@ export default function ReinvestHarvestFlow() {
               Continue →
             </button>
             {/* Matches the consent wording on /free-session. Privacy Policy and Terms are
-                named but not linked — neither page exists as a route yet. */}
+                named but not linked - neither page exists as a route yet. */}
             <p style={{ fontSize: 10.5, lineHeight: 1.55, color: C.text4, textAlign: "center", marginTop: 14 }}>
               By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our Privacy Policy and Terms of Service.
             </p>
