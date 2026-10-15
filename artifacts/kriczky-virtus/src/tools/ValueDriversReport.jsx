@@ -90,6 +90,7 @@ const CSS = `
   .vdr .bar button:disabled{opacity:.7;cursor:progress}
   .vdr .bar button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:.04em;padding:9px 18px;border-radius:9px;cursor:pointer;
     color:#F2EEE6;background:#0A0E14;border:1px solid #0A0E14}
+  .vdr .bar button.ghost{color:${L.ink};background:transparent;border-color:${L.rule}}
   @page{size:letter;margin:0}
   @media print{
     html,body{background:#fff!important}
@@ -662,12 +663,27 @@ async function buildPdf(root, filename) {
 }
 
 /* ── the report ── */
-export default function ValueDriversReport({ report, token = null }) {
+export default function ValueDriversReport({ report, token = null, shareUrl = null }) {
   const zone = zoneByKey(report.zoneKey) || ZONES[0];
   const [ref, s] = usePageScale();
   const [busy, setBusy] = useState(false);
+  const [copied, setCopied] = useState(false);
   const order = ranked(report.scores);
   const TOTAL = 7 + order.length + 1;
+
+  const share = async () => {
+    const url = shareUrl || (typeof window !== "undefined" ? window.location.href : "");
+    try { await navigator.clipboard.writeText(url); }
+    catch (e) {
+      const ta = document.createElement("textarea");
+      ta.value = url; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); } catch (e2) { /* nothing more to try */ }
+      ta.remove();
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
   return (
     <div className="vdr" ref={ref}>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
@@ -679,6 +695,7 @@ export default function ValueDriversReport({ report, token = null }) {
           catch (e) { window.print(); }
           finally { setBusy(false); }
         }}>{busy ? "Preparing your PDF..." : "Download PDF"}</button>
+        <button className="ghost" onClick={share}>{copied ? "Link copied" : "Share"}</button>
       </div>
       <div className="pages" style={{ padding: "14px 0 30px" }}>
         <CoverPage s={s} report={report} zone={zone} />

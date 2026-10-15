@@ -55,5 +55,12 @@ export function ValueDriversReportRoute() {
       </main>
     );
   }
-  return <ValueDriversReport key={token} report={report} token={token} />;
+  return (
+    <ValueDriversReport
+      key={token}
+      report={report}
+      token={token}
+      shareUrl={`${window.location.origin}/tools/wmbw/r/${token}`}
+    />
+  );
 }
