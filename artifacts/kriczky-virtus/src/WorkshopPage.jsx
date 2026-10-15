@@ -512,7 +512,15 @@ const StageChip = ({ n, small }) => {
     Stage {s.n} &middot; {s.name}</span>;
 };
 
+/* RETIRED (14 Oct 2026): the live page is WorkshopPageCream.jsx at /workshop-rh.
+   This dark version stays at /workshop-rh/dark, unlinked and out of search, as a
+   rollback. Delete it and its route once the cream page has settled. */
 export default function WorkshopPage() {
+  useEffect(() => {
+    const m = document.createElement("meta"); m.name = "robots"; m.content = "noindex, nofollow";
+    document.head.appendChild(m);
+    return () => m.remove();
+  }, []);
   const [f, setF] = useState({ firstName: "", lastName: "", email: "", phone: "", business: "",
                                revenue: "", outcome: "", appetite: "" });
   const [state, setState] = useState("idle");

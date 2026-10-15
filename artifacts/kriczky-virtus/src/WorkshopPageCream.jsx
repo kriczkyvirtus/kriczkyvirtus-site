@@ -6,10 +6,8 @@ import RoadmapSystem from "./RoadmapSystem";
    their gradient IDs. No icon library is needed. */
 const ICON = (slug) => `/img/icons/${slug}-light.svg`;
 
-/* ⚠️ CREAM PREVIEW - /workshop-rh/cream. A light-theme copy of WorkshopPage.jsx
-   for review before deciding whether the whole workshop funnel goes cream.
-   Not linked from anywhere and marked noindex. If approved, this replaces
-   WorkshopPage.jsx at /workshop-rh; if not, delete this file and its route.
+/* The live workshop page (cream since 14 Oct 2026). WorkshopPage.jsx is the
+   retired dark version, kept at /workshop-rh/dark for rollback only.
 
    Reinvest or Harvest Workshop - /workshop-rh
    Cold-traffic build: problem → framework → what you leave with → authority →
@@ -550,12 +548,6 @@ const StageChip = ({ n, small }) => {
 };
 
 export default function WorkshopPageCream() {
-  /* Preview only - keep it out of search results. */
-  useEffect(() => {
-    const m = document.createElement("meta"); m.name = "robots"; m.content = "noindex, nofollow";
-    document.head.appendChild(m);
-    return () => m.remove();
-  }, []);
   const [f, setF] = useState({ firstName: "", lastName: "", email: "", phone: "", business: "",
                                revenue: "", outcome: "", appetite: "" });
   const [state, setState] = useState("idle");

@@ -100,9 +100,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/partnership" element={<GrowthHarvestPartnership variant="session" />} />
         <Route path="/partnership/workshop" element={<GrowthHarvestPartnership variant="workshop" />} />
         <Route path="/partnership/collective" element={<GrowthHarvestPartnership variant="collective" />} />
-        <Route path="/workshop-rh" element={<WorkshopPage />} />
-        {/* Cream preview for review — unlinked, noindex. Remove once decided. */}
-        <Route path="/workshop-rh/cream" element={<WorkshopPageCream />} />
+        {/* The workshop page is cream (14 Oct 2026). The old dark page stays at /dark,
+            unlinked and noindex, as a one-line rollback; remove it once cream has settled. */}
+        <Route path="/workshop-rh" element={<WorkshopPageCream />} />
+        <Route path="/workshop-rh/cream" element={<Navigate to="/workshop-rh" replace />} />
+        <Route path="/workshop-rh/dark" element={<WorkshopPage />} />
         <Route path="/execution-debrief" element={<ExecutionDebrief />} />
         <Route path="/r/:token" element={<ReinvestHarvestReportRoute />} />
         <Route path="/12cs-recurring-revenue" element={<RecurringRevenue12Cs />} />
