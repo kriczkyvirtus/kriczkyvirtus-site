@@ -1,3 +1,4 @@
+import PageTexture from "../PageTexture.jsx";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { LIGHT, ThemeProvider, useT } from "./kvTheme.js";
 import {
@@ -420,7 +421,7 @@ function FlowBody({ door, C }) {
   };
 
   /* ── shared styles ── */
-  const shell = { background: C.bgDeep, minHeight: "100vh", fontFamily: "'DM Sans',sans-serif", color: C.text1 };
+  const shell = { background: C.bgDeep, minHeight: "100vh", fontFamily: "'DM Sans',sans-serif", color: C.text1, position: "relative", isolation: "isolate" };
   const wrap = { maxWidth: 620, margin: "0 auto", padding: "0 20px 60px" };
   const qStyle = { fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(27px,6.6vw,38px)", lineHeight: 1.16, margin: "0 0 10px", color: C.text1 };
   const subStyle = { fontSize: 14.5, lineHeight: 1.55, color: C.text3, margin: "0 0 20px" };
@@ -470,6 +471,7 @@ function FlowBody({ door, C }) {
     const to = token ? `${nextPath}?t=${encodeURIComponent(token)}` : nextPath;
     return (
       <div style={shell} ref={topRef}>
+        <PageTexture />
         {fonts}{css}{grain}
         <div style={{ ...wrap, paddingTop: 70, textAlign: "center", position: "relative", zIndex: 1 }}>
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: zc, marginBottom: 14 }}>Your zone</div>
@@ -528,6 +530,7 @@ function FlowBody({ door, C }) {
   /* ═══ FLOW ═══ */
   return (
     <div style={shell} ref={topRef}>
+        <PageTexture />
       {fonts}{css}{grain}
 
       {/* progress */}

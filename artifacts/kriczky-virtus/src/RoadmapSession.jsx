@@ -148,7 +148,7 @@ export default function RoadmapSession() {
 
         {/* ─── NAV HEADER (matches homepage nav logo) ──── */}
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: mob ? 48 : 64 }}>
-          <a href="/" style={{ display: "flex", alignItems: "center", gap: mob ? 8 : 12, textDecoration: "none" }}>
+          {/* landing page: the logo is not a way off it */}<div style={{ display: "flex", alignItems: "center", gap: mob ? 8 : 12 }}>
             <div style={{
               width: mob ? 34 : 40, height: mob ? 34 : 40,
               borderRadius: mob ? 8 : 10,
@@ -165,7 +165,7 @@ export default function RoadmapSession() {
             }}>
               KRICZKY VIRTUS
             </span>
-          </a>
+          </div>
         </div>
 
         {/* ─── HERO ─────────────────────────────────────── */}

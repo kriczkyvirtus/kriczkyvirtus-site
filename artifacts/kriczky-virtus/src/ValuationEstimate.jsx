@@ -386,12 +386,12 @@ export default function ValuationEstimate() {
 
         {/* Logo */}
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: 40 }}>
-          <a href="/" style={{ display: "flex", alignItems: "center", gap: mob ? 8 : 12, textDecoration: "none" }}>
+          {/* landing page: the logo is not a way off it */}<div style={{ display: "flex", alignItems: "center", gap: mob ? 8 : 12 }}>
             <div style={{ width: mob ? 34 : 40, height: mob ? 34 : 40, borderRadius: mob ? 8 : 10, background: "rgba(200,162,78,0.06)", border: "1px solid rgba(200,162,78,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <KVShield size={mob ? 18 : 22} glow />
             </div>
             <span style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: mob ? 15 : 19, color: C.text1, letterSpacing: 1.2, textTransform: "uppercase" }}>KRICZKY VIRTUS</span>
-          </a>
+          </div>
         </div>
 
         {/* Title — hidden on thank-you page */}

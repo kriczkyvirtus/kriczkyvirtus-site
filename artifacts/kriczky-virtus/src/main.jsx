@@ -47,7 +47,7 @@ const TITLES = {
   '/cohort':                  'Virtus Collective — Cohort Program',
   '/tools/reinvest-harvest':  'Reinvest or Harvest — Capital Allocation Scorecard',
   '/reinvest-harvest':        'Reinvest or Harvest — Capital Allocation Scorecard',
-  '/reinvest-harvest/cream':  'Reinvest or Harvest — Capital Allocation Scorecard',
+  '/reinvest-harvest/dark':   'Reinvest or Harvest — Capital Allocation Scorecard',
   '/reinvest-harvest/start':  'Reinvest or Harvest — Capital Allocation Scorecard',
   '/reinvest-harvest/next':   'Your Reinvest or Harvest Results',
   '/partnership':             'Growth & Harvest Partnership',
@@ -60,7 +60,7 @@ const TITLES = {
 }
 
 /* Unlinked previews and rollbacks stay out of search. */
-const NOINDEX = new Set(['/partnership', '/workshop-rh/dark', '/tools/structural-capital/v2', '/reinvest-harvest/cream'])
+const NOINDEX = new Set(['/partnership', '/workshop-rh/dark', '/tools/structural-capital/v2', '/reinvest-harvest/dark'])
 
 const DEFAULT_TITLE = 'Build Businesses Worth Owning - Kriczky Virtus'
 
@@ -103,9 +103,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         {/* Diagnostic tools v2 sample (house style) - unlinked and noindex until approved. */}
         <Route path="/tools/structural-capital/v2" element={<StructuralCapitalV2 />} />
         <Route path="/tools/reinvest-harvest" element={<Navigate to="/reinvest-harvest" replace />} />
-        <Route path="/reinvest-harvest" element={<ReinvestHarvestLanding />} />
-        {/* Cream redesign preview - unlinked and noindex until approved. */}
-        <Route path="/reinvest-harvest/cream" element={<ReinvestHarvestLandingCream />} />
+        {/* The landing page is cream (16 Oct 2026). The old dark page stays at /dark,
+            unlinked and noindex, as a one-line rollback; remove it once cream has settled. */}
+        <Route path="/reinvest-harvest" element={<ReinvestHarvestLandingCream />} />
+        <Route path="/reinvest-harvest/cream" element={<Navigate to="/reinvest-harvest" replace />} />
+        <Route path="/reinvest-harvest/dark" element={<ReinvestHarvestLanding />} />
         <Route path="/reinvest-harvest/start" element={<ReinvestHarvestFlow />} />
         <Route path="/reinvest-harvest/next" element={<ReinvestHarvestThankYouRoute />} />
         <Route path="/partnership" element={<GrowthHarvestPartnership variant="session" />} />

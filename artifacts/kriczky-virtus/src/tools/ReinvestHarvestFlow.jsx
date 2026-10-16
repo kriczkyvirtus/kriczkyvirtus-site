@@ -1,3 +1,4 @@
+import PageTexture from "../PageTexture.jsx";
 import { useState, useEffect, useRef } from "react";
 /* Cream, like the report and the printed workbooks. Accents are the deeper
    "ink" versions (see kvTheme.js) so they stay readable on cream. */
@@ -362,7 +363,7 @@ export default function ReinvestHarvestFlow() {
   };
 
   /* ── shared styles ── */
-  const shell = { background: C.bgDeep, minHeight: "100vh", fontFamily: "'DM Sans',sans-serif", color: C.text1 };
+  const shell = { background: C.bgDeep, minHeight: "100vh", fontFamily: "'DM Sans',sans-serif", color: C.text1, position: "relative", isolation: "isolate" };
   const wrap = { maxWidth: 620, margin: "0 auto", padding: "0 20px 60px" };
   const qStyle = { fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(27px,6.6vw,38px)", lineHeight: 1.16, margin: "0 0 10px", color: C.text1 };
   const subStyle = { fontSize: 14.5, lineHeight: 1.55, color: C.text3, margin: "0 0 20px" };
@@ -406,6 +407,7 @@ export default function ReinvestHarvestFlow() {
     const guessLabel = { reinvest: "Reinvest", harvest: "Take profit", split: "Split" }[answers.guess];
     return (
       <div style={shell}>
+        <PageTexture />
         <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
         <div style={{ ...wrap, paddingTop: 80, textAlign: "center" }}>
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: quadrant.color, marginBottom: 14 }}>Your position</div>
@@ -451,6 +453,7 @@ export default function ReinvestHarvestFlow() {
   /* ═══ FLOW ═══ */
   return (
     <div style={shell} ref={topRef}>
+        <PageTexture />
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
       <style>{`
         *{box-sizing:border-box}

@@ -61,16 +61,21 @@ const Num = ({ n, t = T.gold, size = 34 }) => (
    always gold, Personal Foundation always green. Only the quadrant
    NAME changes colour per state. Module scope so the interval doesn't
    remount it. */
+/* img: the real report's cover and "Your position" page for that result
+   (rendered from the live report with these scores). */
 const SAMPLE_STATES = [
-  { name: "Concentrated Inside", t: T.gold,  bc: 24, pf: 12 },
-  { name: "Reinvest-Weighted",   t: T.green, bc: 24, pf: 21 },
-  { name: "Harvest-Weighted",    t: T.cyan,  bc: 13, pf: 23 },
-  { name: "Stabilize First",     t: T.red,   bc: 11, pf: 10 },
+  { name: "Concentrated Inside", t: T.gold,  bc: 24, pf: 12, img: "/img/reinvest-harvest/preview-split.webp" },
+  { name: "Reinvest-Weighted",   t: T.green, bc: 24, pf: 21, img: "/img/reinvest-harvest/preview-reinvest.webp" },
+  { name: "Harvest-Weighted",    t: T.cyan,  bc: 13, pf: 23, img: "/img/reinvest-harvest/preview-harvest.webp" },
+  { name: "Stabilize First",     t: T.red,   bc: 11, pf: 10, img: "/img/reinvest-harvest/preview-stabilize.webp" },
 ];
-const CYCLE_MS = 3800;
+const CYCLE_MS = 4600;
 
-const SampleResultCard = () => {
+/* One clock for the preview image and the score card, so they always show the same result.
+   Clicking a dot picks a result and stops the cycling. */
+const useSample = () => {
   const [i, setI] = useState(0);
+  const [held, setHeld] = useState(false);
   const [reduced, setReduced] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -80,11 +85,27 @@ const SampleResultCard = () => {
     return () => mq.removeEventListener("change", apply);
   }, []);
   useEffect(() => {
-    if (reduced) { setI(0); return; }
+    if (reduced || held) return;
     const t = setInterval(() => setI(n => (n + 1) % SAMPLE_STATES.length), CYCLE_MS);
     return () => clearInterval(t);
-  }, [reduced]);
+  }, [reduced, held]);
+  return { i, reduced, pick: (n) => { setI(n); setHeld(true); } };
+};
 
+/* The real report, fanned: cover behind, "Your position" page in front. All four are
+   stacked and cross-faded so nothing reloads. */
+const SamplePreview = ({ i }) => (
+  <div style={{ position: "relative", width: "100%", aspectRatio: "1000 / 974" }}>
+    {SAMPLE_STATES.map((st, n) => (
+      <img key={st.img} src={st.img} alt={n === i ? `Sample scorecard: ${st.name}` : ""} aria-hidden={n !== i}
+        width="1000" height="974" loading={n === 0 ? "eager" : "lazy"}
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain",
+          opacity: n === i ? 1 : 0, transform: n === i ? "none" : "translateY(6px) scale(.985)", transition: "opacity .7s ease, transform .7s ease" }} />
+    ))}
+  </div>
+);
+
+const SampleResultCard = ({ i, reduced, pick }) => {
   const s = SAMPLE_STATES[i];
   const anim = reduced ? "none" : "sampleFade .5s ease";
   const barTransition = reduced ? "none" : "width .6s cubic-bezier(.4,0,.2,1)";
@@ -94,14 +115,14 @@ const SampleResultCard = () => {
   ];
 
   return (
-    <div className="lift" style={{ ...glow(s.t), padding: "30px 26px 24px", transition: "border-color .6s ease, box-shadow .6s ease, background .6s ease" }}>
+    <div className="lift" style={{ ...glow(s.t), padding: "20px 24px 12px", transition: "border-color .6s ease, box-shadow .6s ease, background .6s ease" }}>
       {/* Fixed height: reserves two lines so the card never jumps when a long name wraps. */}
-      <div style={{ minHeight: 74, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ minHeight: 56, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div key={i} style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 34, fontWeight: 600, letterSpacing: "-0.01em", color: s.t.ink, textAlign: "center", lineHeight: 1.14, animation: anim }}>
           {s.name}
         </div>
       </div>
-      <p style={{ fontSize: 13, color: C.ink4, textAlign: "center", margin: "6px 0 24px", fontStyle: "italic" }}>sample result</p>
+      <p style={{ fontSize: 13, color: C.ink4, textAlign: "center", margin: "2px 0 18px", fontStyle: "italic" }}>sample result</p>
 
       {pillars.map(p => (
         <div key={p.label} style={{ marginBottom: 14 }}>
@@ -117,10 +138,13 @@ const SampleResultCard = () => {
         </div>
       ))}
 
-      <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 18 }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: 4, marginTop: 14 }}>
         {SAMPLE_STATES.map((st, n) => (
-          <div key={st.name} style={{ width: n === i ? 18 : 6, height: 6, borderRadius: 3,
-            background: n === i ? s.t.fill : "#D9D1C2", transition: reduced ? "none" : "all .4s ease" }} />
+          <button key={st.name} onClick={() => pick(n)} aria-label={`Show ${st.name}`}
+            style={{ padding: 6, border: "none", background: "transparent", cursor: "pointer", lineHeight: 0 }}>
+            <span style={{ display: "block", width: n === i ? 18 : 7, height: 7, borderRadius: 4,
+              background: n === i ? s.t.fill : "#D9D1C2", transition: reduced ? "none" : "all .4s ease" }} />
+          </button>
         ))}
       </div>
     </div>
@@ -160,6 +184,7 @@ const CTA = ({ compact = false }) => (
 
 export default function ReinvestHarvestLandingCream() {
   const [playing, setPlaying] = useState(false);
+  const sample = useSample();
   const vidRef = useRef(null);
   const texRef = useRef(null);
   const lampRef = useRef(null);
@@ -310,13 +335,14 @@ export default function ReinvestHarvestLandingCream() {
 
         {/* 0 - NAV HEADER: the metallic shield */}
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "25px 22px 0", position: "relative", zIndex: 2 }}>
-          <a href="/" style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none" }}>
+          {/* Not a link: a landing page has one way out, the scorecard button. */}
+          <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
             <span className="tile" style={{ width: 40, height: 40, borderRadius: 11 }}>
               <img src="/icons/roadmap-system/shield.png" alt="" width="28" height="28" draggable="false" style={{ display: "block" }} /></span>
             <span style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: 18, color: C.ink1, letterSpacing: ".14em" }}>
               KRICZKY <span style={{ color: "#9A7A34" }}>VIRTUS</span>
             </span>
-          </a>
+          </div>
         </div>
 
         {/* 1 - HERO */}
@@ -394,26 +420,27 @@ export default function ReinvestHarvestLandingCream() {
           </div>
         </section>
 
-        {/* 4 - WHAT YOU GET: the list left, the cycling sample card right */}
+        {/* 4 - WHAT YOU GET: the real report and its live scores on the left, the list on the right */}
         <section className="wide" style={S}>
-          <div className="split">
+          <div className="split rev">
+            <div style={{ flex: "0 0 auto", width: "min(50%, 560px)" }} className="splitvis">
+              <SamplePreview i={sample.i} />
+              <div style={{ marginTop: 6, maxWidth: 440, marginLeft: "auto", marginRight: "auto" }}><SampleResultCard {...sample} /></div>
+            </div>
             <div style={{ flex: "1 1 0", minWidth: 0 }}>
               <div style={{ ...KICKER, color: T.gold.ink }}>Here's a taste of what you get</div>
-              <h2 style={{ ...H1, fontSize: "clamp(32px, 6vw, 48px)", margin: "0 0 18px" }}>Your scorecard <span style={{ fontStyle: "italic", color: T.gold.ink, fontWeight: 500 }}>shows</span></h2>
+              <h2 style={{ ...H1, fontSize: "clamp(32px, 6vw, 48px)", margin: "0 0 14px" }}>Your scorecard <span style={{ fontStyle: "italic", color: T.gold.ink, fontWeight: 500 }}>shows</span></h2>
               {[
                 "A score for your business capacity",
                 "A score for your personal foundation",
                 "Which of the four positions you're in",
                 "Three next moves based on how you actually answered",
               ].map((x, n) => (
-                <div key={x} style={{ display: "flex", gap: 14, alignItems: "center", padding: "12px 0", borderBottom: n < 3 ? `1px solid ${C.ruleLight}` : "none" }}>
+                <div key={x} style={{ display: "flex", gap: 14, alignItems: "center", padding: "10px 0", borderBottom: n < 3 ? `1px solid ${C.ruleLight}` : "none" }}>
                   <Num n={`0${n + 1}`} />
-                  <span style={{ fontSize: "clamp(16px,4.2vw,19px)", lineHeight: 1.45, color: C.ink2 }}>{x}</span>
+                  <span style={{ fontSize: "clamp(16px,4.2vw,18.5px)", lineHeight: 1.45, color: C.ink2 }}>{x}</span>
                 </div>
               ))}
-            </div>
-            <div style={{ flex: "0 0 auto", width: "min(46%, 440px)" }} className="splitvis">
-              <SampleResultCard />
             </div>
           </div>
         </section>
@@ -470,7 +497,16 @@ export default function ReinvestHarvestLandingCream() {
 
         {/* 7 - THE 2×2: the four positions left, the explanation right */}
         <section className="wide" style={S}>
-          <div className="split rev">
+          <div className="split">
+            <div style={{ flex: "1 1 0", minWidth: 0 }}>
+              <h2 style={{ ...H1, fontSize: "clamp(30px, 5.8vw, 46px)", marginBottom: 12 }}>
+                You'll land in one of <span style={{ fontStyle: "italic", color: T.gold.ink, fontWeight: 500 }}>four positions</span>.
+              </h2>
+              <p style={{ ...BODY, fontSize: 17, color: C.ink1 }}>Your two scores decide it - not the total.</p>
+              <p style={{ ...BODY, margin: 0 }}>
+                Same total, different split, different answer. An owner at 24 and 12 needs something very different than one at 18 and 18.
+              </p>
+            </div>
             <div style={{ flex: "0 0 auto", width: "min(50%, 520px)" }} className="splitvis">
               <div className="quad">
                 {[
@@ -478,7 +514,7 @@ export default function ReinvestHarvestLandingCream() {
                   { n: "Reinvest-Weighted", t: T.green, on: false },
                   { n: "Stabilize First", t: T.red, on: false },
                   { n: "Concentrated Inside", t: T.gold, on: true },
-                ].map(q => (
+                ].map(q => ({ ...q, on: q.n === SAMPLE_STATES[sample.i].name })).map(q => (
                   <div key={q.n} className="lift" style={{ ...glow(q.t, q.on), padding: "22px 15px", minHeight: 118,
                     display: "flex", alignItems: "center", justifyContent: "center", gap: 9, textAlign: "center", opacity: q.on ? 1 : .72 }}>
                     <span style={{ width: 9, height: 9, borderRadius: "50%", flex: "0 0 auto",
@@ -487,15 +523,6 @@ export default function ReinvestHarvestLandingCream() {
                   </div>
                 ))}
               </div>
-            </div>
-            <div style={{ flex: "1 1 0", minWidth: 0 }} className="alignR">
-              <h2 style={{ ...H1, fontSize: "clamp(30px, 5.8vw, 46px)", marginBottom: 12 }}>
-                You'll land in one of <span style={{ fontStyle: "italic", color: T.gold.ink, fontWeight: 500 }}>four positions</span>.
-              </h2>
-              <p style={{ ...BODY, fontSize: 17, color: C.ink1 }}>Your two scores decide it - not the total.</p>
-              <p style={{ ...BODY, margin: 0 }}>
-                Same total, different split, different answer. An owner at 24 and 12 needs something very different than one at 18 and 18.
-              </p>
             </div>
           </div>
         </section>
