@@ -584,6 +584,7 @@ export default function WorkshopPageCream() {
   const [slideHeld, setSlideHeld] = useState(false);
   const [openStory, setOpenStory] = useState(null);   /* all closed until clicked */
   const [bioOpen, setBioOpen] = useState(false);      /* mobile only - desktop shows it all */
+  const bioRef = useRef(null);
 
   /* On a phone there's no cursor, so scroll position decides what's lit: the card
      nearest the middle of the screen picks up the same gold edge the story cards
@@ -978,7 +979,7 @@ export default function WorkshopPageCream() {
             <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58 }}>I started out as an aerospace engineer, designing weapons integration systems for US special forces. I went from entry level to co-leading a team of 25 - hiring, scaling the team, and building the comp plans that kept them.</p>
             <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>Then I left to start my own firm. Three years of eighty-hour weeks, married, three kids and a fourth on the way.</p>
 
-            <div className={`biomore${bioOpen ? " open" : ""}`}>
+            <div ref={bioRef} className={`biomore${bioOpen ? " open" : ""}`}>
               <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>Before any of that, my wife and I finished college with over $100,000 of student debt and went from two incomes to one. For years every dollar went to that debt. We couldn’t buy a home. I ate less than I needed to because I was frightened of the bills, and lost fifteen pounds doing it. I felt like a loser in front of my wife.</p>
               <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>I climbed out of that with almost no help. I don’t want another family in it, and I especially don’t want it for owners, who carry more risk than anyone I know.</p>
               <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10, color: C.text1 }}>Here’s what managing money for them taught me: <strong style={{ color: C.gold, fontWeight: 600 }}>roughly 80% of an owner’s net worth sits inside the business.</strong> You can compound the other 20% perfectly and it still won’t decide anything. Almost nobody helps with the 80% - and almost nobody gets the two sides working together instead of rowing in opposite directions.</p>
@@ -988,9 +989,12 @@ export default function WorkshopPageCream() {
                 Edward Kriczky, <span style={{ color: C.gold }}>CEPA&reg;</span></p>
             </div>
 
-            <button onClick={() => setBioOpen(!bioOpen)} className="biotoggle"
-              style={{ display: "none", width: "100%", marginTop: 14, padding: "12px 18px", borderRadius: 999, cursor: "pointer",
-                background: "transparent", border: `1px solid ${C.border2}`, fontFamily: "'DM Sans',sans-serif" }}>
+            <button onClick={() => {
+                /* open to the text's real height, so the glide takes the whole .7s */
+                if (bioRef.current) bioRef.current.style.setProperty("--bioh", bioRef.current.scrollHeight + "px");
+                setBioOpen(!bioOpen);
+              }} className="biotoggle" aria-expanded={bioOpen}
+              style={{ display: "none", width: "100%", marginTop: 14, padding: "13px 18px", borderRadius: 999, cursor: "pointer", fontFamily: "'DM Sans',sans-serif" }}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 14.5, fontWeight: 600, color: C.gold }}>
                 {bioOpen ? "Show less" : "Read the rest"}
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ transform: bioOpen ? "rotate(180deg)" : "none", transition: "transform .3s ease" }}>
@@ -1112,10 +1116,10 @@ export default function WorkshopPageCream() {
             <div style={{ display: "flex", gap: "clamp(24px,4vw,56px)", alignItems: "stretch", marginTop: 6 }} className="split rev">
              <div style={{ flex: "1 1 0" }}>
               <div className="grid2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-                <div className="fitcard" data-lit style={{ "--tone": C.green, "--fill": "#34D399", "--tint": "#E3EEE6", "--glow": "#34D39940" }}>
+                <div className="fitcard" data-lit style={{ "--tone": C.green, "--fill": "#34D399", "--tint": "#E3EEE6", "--edge": "#34D39955", "--edgeHi": "#34D399aa", "--glow": "#34D3992e", "--glowHi": "#34D39966" }}>
                   <div className="fithead"><span className="fitbadge"><TickMark /></span><span style={{ color: C.green }}>This is for you if</span></div>
                   <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>{FIT.map(t => <Tick key={t}>{t}</Tick>)}</ul></div>
-                <div className="fitcard" data-lit style={{ "--tone": C.red, "--fill": "#F87171", "--tint": "#F6E3DF", "--glow": "#F8717140" }}>
+                <div className="fitcard" data-lit style={{ "--tone": C.red, "--fill": "#F87171", "--tint": "#F6E3DF", "--edge": "#F8717155", "--edgeHi": "#F87171aa", "--glow": "#F871712e", "--glowHi": "#F8717166" }}>
                   <div className="fithead"><span className="fitbadge"><TickMark no /></span><span style={{ color: C.red }}>It isn’t if</span></div>
                   <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>{NOT_FIT.map(t => <Tick key={t} no>{t}</Tick>)}</ul></div>
               </div>
@@ -1294,14 +1298,18 @@ export default function WorkshopPageCream() {
         .chev.plus { width: 34px; height: 34px; }
 
         /* fit cards */
-        .fitcard { position: relative; padding: clamp(22px,3.2vw,28px); border-radius: 18px; overflow: hidden;
-          background: linear-gradient(180deg, var(--tint) 0%, #FFFFFF 110px); border: 1px solid #E6DFD1;
-          box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 1px 2px rgba(10,14,20,.05), 0 12px 30px rgba(10,14,20,.08); }
-        .fitcard::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--fill), transparent); opacity: .8; }
+        /* fit cards: the reports' glow card - an edge and a soft glow all round in the tone */
+        .fitcard { position: relative; padding: clamp(22px,3.2vw,28px); border-radius: 18px;
+          border: 1px solid var(--edge); background: linear-gradient(135deg, #FFFFFF 55%, var(--tint));
+          box-shadow: 0 0 22px var(--glow), 0 8px 22px rgba(10,14,20,.07); transition: box-shadow .3s ease, border-color .3s ease, transform .3s ease; }
+        @media (hover: hover) and (pointer: fine) {
+          .fitcard:hover { transform: translateY(-2px); border-color: var(--edgeHi); box-shadow: 0 0 34px var(--glowHi), 0 12px 26px rgba(10,14,20,.09); }
+        }
+        .fitcard[data-lit].lit { border-color: var(--edgeHi) !important; box-shadow: 0 0 34px var(--glowHi), 0 12px 26px rgba(10,14,20,.09) !important; }
         .fithead { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; font-size: 11.5px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
         .fitbadge { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; flex: 0 0 auto;
           background: linear-gradient(180deg,#FFFEFB 0%,#F7F2E8 100%); border: 1px solid #E6DFD1;
-          box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 1px 2px rgba(10,14,20,.06), 0 8px 18px rgba(10,14,20,.10), 0 0 16px var(--glow); }
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 1px 2px rgba(10,14,20,.06), 0 8px 18px rgba(10,14,20,.10), 0 0 16px var(--glowHi); }
         .fitrow { display: flex; gap: 12px; align-items: flex-start; padding: 11px 0; border-top: 1px solid ${C.border1};
           font-size: clamp(15px,2vw,16.5px); line-height: 1.55; color: ${C.text2}; }
         .fitrow:first-child { border-top: none; padding-top: 4px; }
@@ -1375,12 +1383,16 @@ export default function WorkshopPageCream() {
            the rest, rather than handing them a wall of text mid-page. */
         @media (max-width: 760px) {
           .biopic { float: none !important; width: 100% !important; max-width: 280px; margin: 0 auto 18px !important; display: block; }
-          .biomore { position: relative; max-height: 210px; overflow: hidden; }
-          .biomore::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 130px;
+          /* opens smoothly, the same way the story cards do */
+          .biomore { position: relative; max-height: 210px; overflow: hidden; transition: max-height .7s cubic-bezier(.4,0,.2,1); }
+          .biomore::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 130px; transition: opacity .45s ease;
             background: linear-gradient(to bottom, rgba(242,238,230,0), rgba(242,238,230,.88) 60%, #F2EEE6); pointer-events: none; }
-          .biomore.open { max-height: none; }
-          .biomore.open::after { display: none; }
-          .biotoggle { display: block !important; }
+          .biomore.open { max-height: var(--bioh, 2600px); }
+          .biomore.open::after { opacity: 0; }
+          /* a porcelain button, like the tiles */
+          .biotoggle { display: block !important; background: linear-gradient(180deg,#FFFEFB 0%,#F5EFE3 100%) !important; border: 1px solid #E6DFD1 !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(10,14,20,.06), 0 8px 18px rgba(10,14,20,.10), 0 0 18px rgba(200,162,78,.16); }
+          .biotoggle:active { transform: translateY(1px); box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(10,14,20,.08), 0 0 22px rgba(200,162,78,.3); }
         }
         @media (hover: none) { .cue-hover { display: none; } .cue-tap { display: inline; } }
       `}</style>
