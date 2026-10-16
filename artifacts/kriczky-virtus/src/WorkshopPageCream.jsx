@@ -71,6 +71,12 @@ const guilloche = (stroke, op, w) => {
 };
 const TEX_FAINT = guilloche("#8C7650", 0.065, 0.7);
 const TEX_GOLD = guilloche("#B08A3A", 0.5, 0.9);
+/* The dark "splash" cards (the barbell, the afternoon's roadmap) carry the
+   workbook covers' engraving: gold lattice, faint, on the dark gradient. */
+const TEX_DARK = guilloche("#C8A24E", 0.13, 0.7);
+const DARK_CARD = { position: "relative", borderRadius: 22, overflow: "hidden", border: "1px solid #2A2213",
+  background: `radial-gradient(ellipse 70% 60% at 50% 40%, rgba(200,162,78,.14), transparent 70%), ${TEX_DARK}, linear-gradient(160deg,#141B26 0%,#0A0E14 72%)`,
+  boxShadow: "0 0 0 1px rgba(200,162,78,.08) inset, 0 24px 50px rgba(10,14,20,.28), 0 0 40px rgba(200,162,78,.12)" };
 
 /* The logo shield, drawn large and faint behind a section. */
 const ShieldMark = ({ side = "right", size = 560, top = "50%" }) => (
@@ -108,11 +114,13 @@ const LEAVE_WITH = [
   ["Your Personalized Wealth Roadmap", "A personal wealth tactical playbook through Kriczky Wealth Management LLC. Owners normally pay $6,000. Included for everyone who attends."],
 ];
 
+/* What each slide shows, matched to the cream workbooks: page 2's roadmap orbit,
+   the sprint page, the two books, and the six Wealth Roadmap screens. */
 const SLIDES = [
-  ["/img/workshop/roadmap.png", "Stations 01 to 03, done"],
-  ["/img/workshop/sprint.jpg", "Your 90-day sprint"],
-  ["/img/workshop/books.png", "Your workbook and Sprint Ledger"],
-  ["/img/workshop/wealth.png", "Your Personalized Wealth Roadmap"],
+  { kind: "page",  src: "/img/workshop/page-roadmap.jpg", cap: "Stations 01 to 03, done" },
+  { kind: "page",  src: "/img/workshop/page-sprint.jpg",  cap: "Your 90-day sprint" },
+  { kind: "image", src: "/img/workshop/books-cream.webp", cap: "Your workbook and Sprint Ledger" },
+  { kind: "grid",  src: [1, 2, 3, 4, 5, 6].map(n => `/img/workshop/wealth-0${n}.jpg`), cap: "Your Personalized Wealth Roadmap" },
 ];
 
 const AGENDA = [
@@ -130,7 +138,7 @@ const AGENDA = [
 const INDUSTRIES = [
   ["Landscaping", "landscaping"], ["Residential Remodeling", "remodeling"],
   ["Manufacturing", "manufacturing"], ["Auto Repair", "auto-repair"],
-  ["Physical Therapy", "physical-therapy"], ["SaaS", "saas"],
+  ["Physical Therapy", "physical-therapy"], ["B2B SaaS", "saas"],
   ["Accounting", "accounting"], ["Marketing Agency", "marketing"],
 ];
 const INDUSTRY_ICON = Object.fromEntries(INDUSTRIES);
@@ -191,13 +199,13 @@ const NOT_FIT = ["You’re under $1M a year",
                  "You want someone to hand you a plan and leave"];
 
 const FAQ = [
-  ["Is this a pitch?", "No. You spend the afternoon on your own business. At the end I’ll show you two ways to keep working together if you want them - nothing before that."],
+  ["Is this a pitch?", "No. You spend the afternoon working on your own business. At the end I’ll show you two ways to keep working together if you want them so you can focus on running your business without getting stuck along the way."],
   ["Do I need to bring my numbers?", "After you reserve your seat we send you two links, each a brief series of tailored questions. They let us build custom analysis reports for your business, benchmarked against your own industry's data - so the afternoon is about you rather than about averages. If you don't get to them beforehand, bring rough numbers instead: last year's revenue, your net margin, what you took out in the last 90 days, and roughly what you hold in personal investments. Ranges are fine, and nobody audits anything. For the most personalized experience, just click the two links and answer the questions."],
-  ["It’s really free? What’s the catch?", `This workshop is built to be a ${EVENT.fullPrice} ticket. The first rooms are free because they’re the first - I’d rather fill the room and learn from it than charge for version one. Nothing is asked in return.`],
+  ["It’s really free? What’s the catch?", `This workshop is built to be a ${EVENT.fullPrice} ticket. The first rooms are free because they’re the first.`],
   ["Who else is in the room?", "About twenty owners at a similar scale, roughly half of them people I already work with. You’re seated by where you landed on the scorecard, not by revenue."],
-  ["What if I can’t stay the whole afternoon?", "Come to the next one instead. Each block builds on the one before it, and leaving at three means leaving without the plan."],
+  ["What if I can’t stay the whole afternoon?", "Come to the next one instead. Each block builds on the one before it, and leaving at 3:00pm means leaving without your customized roadmap."],
   ["Is this right for my industry and revenue tier?", `We've worked with owners across ${SECTORS.map(x => x[0]).join(", ")} - and across every revenue tier from ${TIERS[0].toLowerCase()} to ${TIERS[TIERS.length - 1]}. What changes between tiers is what actually drives the reinvest-or-harvest decision, and how much to put back in. We've helped owners at each of these stages work out what matters most where they are, and align it with the long-term outcome they want - personally and inside the business.`],
-  ["What happens afterwards?", "You leave with a 90-day plan, your workbook and your Sprint Ledger. Everyone is offered a free Execution Debrief - sixty minutes, one to one, to decide what gets executed first. It’s also how your Wealth Roadmap starts."],
+  ["What happens afterwards?", "You leave with a 90-day plan, your workbook and your Sprint Ledger. Everyone is offered a free Execution Debrief - 60 minutes, one to one, to decide what gets executed first. It’s also how your free Wealth Roadmap starts."],
 ];
 
 /* Brand SVGs, inlined - same assets as the workbook and Ledger. */
@@ -506,7 +514,7 @@ const toForm = (e) => {
 
 const CTA = ({ note = true, align = "center" }) => (
   <div style={{ textAlign: align }}>
-    <a href="#register" onClick={toForm} className="cta" style={{ display: "inline-block", padding: "24px 60px", borderRadius: 999, textDecoration: "none",
+    <a href="#register" onClick={toForm} className="cta shine" style={{ display: "inline-block", padding: "24px 60px", borderRadius: 999, textDecoration: "none",
       background: DARK_BTN, border: "1.5px solid #0A0E14", boxShadow: `0 0 30px ${C.goldFill}40, 0 10px 24px rgba(10,14,20,.18)` }}>
       <span style={{ fontWeight: 700, fontSize: "clamp(17.5px,2.5vw,21.5px)", color: C.goldFill }}>Reserve Your Seat &#8594;</span>
     </a>
@@ -532,20 +540,39 @@ const Meta = ({ k, v, href, note }) => (
   </div>
 );
 
+const TickMark = ({ no, size = 14 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    {no ? <path d="M6.5 6.5L17.5 17.5M17.5 6.5L6.5 17.5" stroke={C.red} strokeWidth="2.6" strokeLinecap="round" />
+        : <path d="M4.5 12.5L9.7 17.7L19.5 7" stroke={C.green} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />}
+  </svg>
+);
+/* Each line of the fit cards: a small porcelain disc carrying the tick or cross. */
 const Tick = ({ children, no }) => (
-  <li style={{ display: "flex", gap: 11, alignItems: "flex-start", marginBottom: 12, fontSize: "clamp(15px,2vw,16.5px)", lineHeight: 1.6, color: no ? "#9E4F4F" : C.text2 }}>
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 3 }}>
-      {no ? <path d="M6 6L18 18M18 6L6 18" stroke={C.red} strokeWidth="2.2" strokeLinecap="round" />
-          : <path d="M4 12.5L9.5 18L20 6.5" stroke={C.green} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />}
-    </svg><span>{children}</span></li>
+  <li className="fitrow">
+    <span className="fitdot"><TickMark no={no} size={12} /></span><span>{children}</span></li>
 );
 
+/* Stage pills are porcelain, like the tiles: a glazed white body, an edge in the
+   stage's colour, and a small lit gem in front of the name. */
+const FILL = { [C.gold]: C.goldFill, [C.green]: "#34D399", [C.cyan]: "#22D3EE" };
 const StageChip = ({ n, small }) => {
   const s = STAGES.find(x => x.n === n);
-  return <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", height: small ? 28 : 34, padding: small ? "0 12px" : "0 15px", borderRadius: 999,
-    border: `1px solid ${s.c}55`, background: `${s.c}12`, fontSize: small ? 12.5 : 14, fontWeight: 600, color: s.c, whiteSpace: "nowrap", boxSizing: "border-box" }}>
+  const glow = FILL[s.c] || s.c;
+  return <span className="ppill" style={{ height: small ? 32 : 38, padding: small ? "0 14px 0 11px" : "0 17px 0 13px", fontSize: small ? 13 : 14.5, color: s.c,
+    borderColor: `${glow}88`, boxShadow: `inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(10,14,20,.06), 0 6px 16px rgba(10,14,20,.08), 0 0 18px ${glow}26` }}>
+    <span className="gem" style={{ background: `radial-gradient(circle at 35% 30%, #fff 0%, ${glow} 45%, ${s.c} 100%)`, boxShadow: `0 0 8px ${glow}aa` }} />
     Stage {s.n} &middot; {s.name}</span>;
 };
+/* The "they thought" pill: the same porcelain, greyed and struck through. */
+const WrongChip = ({ children }) => (
+  <span className="ppill" style={{ height: 38, padding: "0 17px 0 13px", fontSize: 14.5, color: C.text3, borderColor: C.border2 }}>
+    <span className="gem" style={{ background: "radial-gradient(circle at 35% 30%, #fff 0%, #C9C2B4 50%, #8C8476 100%)" }} />
+    <span style={{ textDecoration: "line-through", textDecorationColor: `${C.red}aa`, textDecorationThickness: "1.5px" }}>{children}</span></span>
+);
+/* Numbered steps: a small porcelain disc with the numeral in the tone's ink. */
+const Num = ({ n, c }) => (
+  <span className="pnum" style={{ color: c, borderColor: `${FILL[c] || c}77`, boxShadow: `inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(10,14,20,.08), 0 5px 12px rgba(10,14,20,.08), 0 0 14px ${FILL[c] || c}30` }}>{n}</span>
+);
 
 export default function WorkshopPageCream() {
   const [f, setF] = useState({ firstName: "", lastName: "", email: "", phone: "", business: "",
@@ -602,6 +629,25 @@ export default function WorkshopPageCream() {
      a mousemove that calls setState re-renders the page on every pixel. */
   const lampRef = useRef(null);
   const sheenRef = useRef(null);
+  const texRef = useRef(null);
+
+  /* The engraving moves with the page. The layers stay fixed (cheap to paint, and
+     the lamp's mask is in screen coordinates), but their pattern is shifted by the
+     scroll, so the lattice travels up with the content like the shields do instead
+     of standing still behind it. */
+  useEffect(() => {
+    let frame = 0, queued = false;
+    const apply = () => {
+      queued = false;
+      const pos = `0px ${-Math.round(window.scrollY)}px`;
+      if (texRef.current) texRef.current.style.backgroundPosition = pos;
+      if (sheenRef.current) sheenRef.current.style.backgroundPosition = pos;
+    };
+    const onScroll = () => { if (!queued) { queued = true; frame = requestAnimationFrame(apply); } };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    apply();
+    return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(frame); };
+  }, []);
   useEffect(() => {
     const lamp = lampRef.current, sheen = sheenRef.current;
     if (!lamp || !sheen) return;
@@ -689,10 +735,10 @@ export default function WorkshopPageCream() {
     <div style={{ background: C.bgDeep, minHeight: "100vh", fontFamily: "'DM Sans',sans-serif", position: "relative", overflowX: "hidden" }}>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
       {/* no grain on cream */}
-      <div style={{ position: "fixed", top: "-14%", left: "50%", transform: "translateX(-50%)", width: "min(1100px,150vw)", height: 560,
+      <div style={{ position: "absolute", top: -80, left: "50%", transform: "translateX(-50%)", width: "min(1100px,150vw)", height: 560,
         background: `radial-gradient(ellipse at center, ${C.goldFill}1c 0%, transparent 66%)`, pointerEvents: "none", zIndex: 0 }} />
       {/* the engraved ground */}
-      <div aria-hidden="true" style={{ position: "fixed", inset: 0, backgroundImage: TEX_FAINT, pointerEvents: "none", zIndex: 0 }} />
+      <div ref={texRef} aria-hidden="true" style={{ position: "fixed", inset: 0, backgroundImage: TEX_FAINT, pointerEvents: "none", zIndex: 0, willChange: "background-position" }} />
       {/* the travelling light: a warm glow, and the engraving polished to gold where it falls */}
       <div ref={lampRef} aria-hidden="true" data-lamp style={{ position: "fixed", top: 0, left: 0, width: 680, height: 680, borderRadius: "50%",
         background: `radial-gradient(circle, ${C.goldFill}38 0%, ${C.goldFill}16 30%, transparent 64%)`,
@@ -781,13 +827,17 @@ export default function WorkshopPageCream() {
                 </div>
               </div>
             </div>
-            <div style={{ flex: "0 0 auto", width: "min(46%, 420px)" }} className="splitvis">
-              <Icon name="Barbell" size="100%" />
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase" }}>
-                <span style={{ color: C.gold }}>Reinvest<span style={{ display: "block", fontWeight: 500, letterSpacing: ".1em", marginTop: 3, opacity: .85 }}>Into the company</span></span>
-                <span style={{ color: C.green, textAlign: "right" }}>Harvest<span style={{ display: "block", fontWeight: 500, letterSpacing: ".1em", marginTop: 3, opacity: .85 }}>Out to you</span></span>
+            <div style={{ flex: "0 0 auto", width: "min(46%, 460px)" }} className="splitvis">
+              {/* one of the page's two dark "splash" cards, like the workbook cover */}
+              <div style={{ ...DARK_CARD, padding: "clamp(28px,4vw,40px) clamp(22px,3.4vw,34px) clamp(22px,3vw,28px)" }}>
+                <Icon name="Barbell" size="100%" />
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 14, fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase" }}>
+                  <span style={{ color: C.goldFill }}>Reinvest<span style={{ display: "block", fontWeight: 500, letterSpacing: ".1em", marginTop: 3, opacity: .8 }}>Into the company</span></span>
+                  <span style={{ color: "#34D399", textAlign: "right" }}>Harvest<span style={{ display: "block", fontWeight: 500, letterSpacing: ".1em", marginTop: 3, opacity: .8 }}>Out to you</span></span>
+                </div>
+                <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 17, fontWeight: 600, letterSpacing: ".04em", color: "#E8ECF1", textAlign: "center", margin: "18px 0 0", paddingTop: 14, borderTop: "1px solid rgba(200,162,78,.18)" }}>
+                  The Owner’s Wealth <span style={{ color: C.goldFill, fontStyle: "italic", fontWeight: 500 }}>Barbell</span></p>
               </div>
-              <p style={{ fontSize: 11.5, color: C.text3, textAlign: "center", margin: "10px 0 0" }}>The Owner’s Wealth Barbell</p>
             </div>
           </div>
         </Sec>
@@ -843,16 +893,24 @@ export default function WorkshopPageCream() {
         <Sec>
           <div style={{ ...wrap, display: "flex", gap: "clamp(24px,4vw,56px)", alignItems: "center" }} className="split">
             <div style={{ flex: "0 0 auto", width: "min(50%, 520px)" }} className="splitvis">
-              <div style={{ position: "relative", height: "clamp(300px,36vw,420px)", borderRadius: 14, overflow: "hidden",
-                border: `1px solid ${C.border2}`, background: "#FFFFFF", boxShadow: "0 10px 28px rgba(10,14,20,.07)" }}>
-                {SLIDES.map(([src, cap], i) => (
-                  <img key={src} src={src} alt={cap} style={{ position: "absolute", inset: 0, width: "100%", height: "100%",
-                    objectFit: "contain", padding: 16, boxSizing: "border-box",
-                    opacity: slide === i ? 1 : 0, transition: "opacity .7s ease" }} />
+              <div style={{ position: "relative", height: "clamp(320px,38vw,450px)", borderRadius: 16, overflow: "hidden",
+                border: `1px solid ${C.border2}`, background: "linear-gradient(180deg,#FBF8F2 0%,#F1EBDF 100%)",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,.9), 0 10px 28px rgba(10,14,20,.08)" }}>
+                {SLIDES.map((sl, i) => (
+                  <div key={sl.cap} className="slide" aria-hidden={slide !== i}
+                    style={{ opacity: slide === i ? 1 : 0, transform: slide === i ? "none" : "scale(.985)" }}>
+                    {sl.kind === "page" && <img src={sl.src} alt={sl.cap} className="slidepage" />}
+                    {sl.kind === "image" && <img src={sl.src} alt={sl.cap} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", display: "block" }} />}
+                    {sl.kind === "grid" && (
+                      <div className="shotgrid" role="img" aria-label={sl.cap}>
+                        {sl.src.map(s => <div key={s} className="shot"><img src={s} alt="" /></div>)}
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
               <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 14 }}>
-                {SLIDES.map(([, cap], i) => (
+                {SLIDES.map(({ cap }, i) => (
                   <button key={cap} aria-label={cap} onClick={() => { setSlide(i); setSlideHeld(true); }}
                     style={{ width: slide === i ? 26 : 9, height: 9, borderRadius: 999, border: "none", cursor: "pointer",
                       background: slide === i ? C.goldFill : "#D9D1C2", transition: "all .3s ease", padding: 0 }} />
@@ -894,10 +952,14 @@ export default function WorkshopPageCream() {
                 Optional pre-work goes out when you register. Do it and the afternoon is built around your numbers; skip it and you’ll catch up in the break.
               </p>
             </div>
-            <div style={{ flex: "0 0 auto", width: "min(44%, 420px)" }} className="splitvis">
-              <img src="/img/workshop/roadmap.png" alt="The Owner’s Virtus Roadmap" style={{ width: "100%", display: "block" }} />
-              <p className="roadcap" style={{ fontSize: 11.5, color: C.text3, textAlign: "center", margin: "12px 0 0", whiteSpace: "nowrap" }}>
-                The Owner’s Virtus Roadmap. <span className="capline2">The workshop covers the first three stations.</span></p>
+            <div style={{ flex: "0 0 auto", width: "min(46%, 500px)" }} className="splitvis">
+              {/* the second dark "splash" card: the roadmap as it's drawn on the Ledger cover */}
+              <div style={{ ...DARK_CARD, padding: "clamp(26px,3.6vw,36px) clamp(18px,2.6vw,26px) clamp(18px,2.6vw,24px)" }}>
+                <img src="/img/workshop/roadmap-dark.webp" alt="The Owner’s Virtus Roadmap" style={{ width: "100%", display: "block" }} />
+                <p style={{ fontSize: 12.5, lineHeight: 1.5, color: "#A9B2BF", textAlign: "center", margin: "16px 0 0", paddingTop: 14, borderTop: "1px solid rgba(200,162,78,.18)" }}>
+                  <span style={{ display: "block", fontFamily: "'Cormorant Garamond',serif", fontSize: 17, fontWeight: 600, color: "#E8ECF1" }}>The Owner’s Virtus <span style={{ color: C.goldFill, fontStyle: "italic", fontWeight: 500 }}>Roadmap</span></span>
+                  The workshop covers the first three stations.</p>
+              </div>
             </div>
           </div>
         </Sec>
@@ -961,21 +1023,20 @@ export default function WorkshopPageCream() {
                       <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: C.text3, marginTop: 5 }}>{s.industry} Business</div>
                     </div>
                   </div>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, transform: openStory === i ? "rotate(180deg)" : "none", transition: "transform .3s ease" }}>
-                    <path d="M6 9.5L12 15.5L18 9.5" stroke={openStory === i ? C.gold : C.text3} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  <span className={`chev${openStory === i ? " on" : ""}`}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ transform: openStory === i ? "rotate(180deg)" : "none", transition: "transform .35s ease" }}>
+                      <path d="M6 9.5L12 15.5L18 9.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
                 </button>
                 <div style={{ maxHeight: openStory === i ? 2600 : 0, opacity: openStory === i ? 1 : 0, overflow: "hidden",
                   transition: "max-height .6s cubic-bezier(.4,0,.2,1), opacity .4s ease" }}>
                  <div style={{ padding: "0 clamp(22px,3.2vw,32px) clamp(24px,3.4vw,34px)" }}>
 
                 {/* thought vs actual, shown rather than described */}
-                <div className="pillrow" style={{ display: "flex", gap: 14, alignItems: "center", flexWrap: "wrap", padding: "14px 16px", borderRadius: 12, background: "#FBF8F2", border: `1px solid ${C.border1}`, marginBottom: 18 }}>
-                  <div><div style={{ fontSize: 10.5, letterSpacing: ".14em", textTransform: "uppercase", color: C.text4, marginBottom: 6 }}>They thought</div>
-                    <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", height: 34, padding: "0 15px", borderRadius: 999,
-                      border: `1px solid ${C.border2}`, background: "#FFFFFF", fontSize: 14, fontWeight: 600, color: C.text3,
-                      textDecoration: "line-through", whiteSpace: "nowrap", boxSizing: "border-box" }}>{s.thought}</span></div>
-                  <div className="pillarrow"><Arrow c={C.text4} w={30} /></div>
-                  <div><div style={{ fontSize: 10.5, letterSpacing: ".14em", textTransform: "uppercase", color: C.text4, marginBottom: 6 }}>Actually binding</div>
+                <div className="pillrow well" style={{ marginBottom: 20 }}>
+                  <div className="pillcell"><div className="welllbl">They thought</div>
+                    <WrongChip>{s.thought}</WrongChip></div>
+                  <div className="pillarrow"><Arrow c={C.goldMuted} w={30} /></div>
+                  <div className="pillcell"><div className="welllbl" style={{ color: C.gold }}>Actually binding</div>
                     <StageChip n={s.actual} /></div>
                 </div>
 
@@ -985,21 +1046,20 @@ export default function WorkshopPageCream() {
                 <p style={{ ...P, fontSize: 15.5, marginTop: 16 }}>{s.seqLead}</p>
                 <ol className="num" style={{ margin: "10px 0 0", padding: 0, listStyle: "none" }}>
                   {s.seq.map((x, n) => (
-                    <li key={n} style={{ display: "flex", gap: 13, alignItems: "flex-start", marginBottom: 9 }}>
-                      <span style={{ flex: "0 0 auto", width: 26, height: 26, borderRadius: 999, border: `1px solid ${C.gold}66`, background: `${C.gold}12`,
-                        display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Playfair Display',serif", fontSize: 13, color: C.gold }}>{n + 1}</span>
-                      <span style={{ fontSize: 15, lineHeight: 1.6, color: C.text2 }}>{x}</span>
+                    <li key={n} style={{ display: "flex", gap: 14, alignItems: "flex-start", marginBottom: 11 }}>
+                      <Num n={n + 1} c={C.gold} />
+                      <span style={{ fontSize: 15, lineHeight: 1.6, color: C.text2, paddingTop: 3 }}>{x}</span>
                     </li>
                   ))}
                 </ol>
 
                 {/* the order of stages, as a path */}
-                <div className="pillrow orderrow" style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", margin: "18px 0 0", padding: "14px 16px", borderRadius: 12, background: "#FBF8F2", border: `1px solid ${C.border1}` }}>
-                  <span style={{ fontSize: 10.5, letterSpacing: ".14em", textTransform: "uppercase", color: C.text4, marginRight: 4 }}>The order we worked it</span>
+                <div className="pillrow orderrow well" style={{ margin: "20px 0 0" }}>
+                  <span className="welllbl orderlbl">The order we worked it</span>
                   {s.order.map((n, idx) => (
-                    <div key={idx} className="orderitem" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <div key={idx} className="orderitem">
                       <StageChip n={n} small />
-                      {idx < s.order.length - 1 && <div className="pillarrow"><Arrow c={C.text4} w={22} /></div>}
+                      {idx < s.order.length - 1 && <div className="pillarrow"><Arrow c={C.goldMuted} w={22} /></div>}
                     </div>
                   ))}
                 </div>
@@ -1007,10 +1067,9 @@ export default function WorkshopPageCream() {
                 <p style={{ ...P, fontSize: 15.5, marginTop: 18 }}>{s.outLead}</p>
                 <ol className="num" style={{ margin: "10px 0 0", padding: 0, listStyle: "none" }}>
                   {s.out.map((x, n) => (
-                    <li key={n} style={{ display: "flex", gap: 13, alignItems: "flex-start", marginBottom: 9 }}>
-                      <span style={{ flex: "0 0 auto", width: 26, height: 26, borderRadius: 999, border: `1px solid ${C.green}66`, background: `${C.green}12`,
-                        display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Playfair Display',serif", fontSize: 13, color: C.green }}>{n + 1}</span>
-                      <span style={{ fontSize: 15, lineHeight: 1.6, color: C.text2 }}>{x}</span>
+                    <li key={n} style={{ display: "flex", gap: 14, alignItems: "flex-start", marginBottom: 11 }}>
+                      <Num n={n + 1} c={C.green} />
+                      <span style={{ fontSize: 15, lineHeight: 1.6, color: C.text2, paddingTop: 3 }}>{x}</span>
                     </li>
                   ))}
                 </ol>
@@ -1053,9 +1112,11 @@ export default function WorkshopPageCream() {
             <div style={{ display: "flex", gap: "clamp(24px,4vw,56px)", alignItems: "stretch", marginTop: 6 }} className="split rev">
              <div style={{ flex: "1 1 0" }}>
               <div className="grid2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-                <div style={card} data-lit><div style={{ ...KICKER, color: C.green, marginBottom: 12 }}>This is for you if</div>
+                <div className="fitcard" data-lit style={{ "--tone": C.green, "--fill": "#34D399", "--tint": "#E3EEE6", "--glow": "#34D39940" }}>
+                  <div className="fithead"><span className="fitbadge"><TickMark /></span><span style={{ color: C.green }}>This is for you if</span></div>
                   <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>{FIT.map(t => <Tick key={t}>{t}</Tick>)}</ul></div>
-                <div style={card} data-lit><div style={{ ...KICKER, color: C.red, marginBottom: 12 }}>It isn’t if</div>
+                <div className="fitcard" data-lit style={{ "--tone": C.red, "--fill": "#F87171", "--tint": "#F6E3DF", "--glow": "#F8717140" }}>
+                  <div className="fithead"><span className="fitbadge"><TickMark no /></span><span style={{ color: C.red }}>It isn’t if</span></div>
                   <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>{NOT_FIT.map(t => <Tick key={t} no>{t}</Tick>)}</ul></div>
               </div>
             </div>
@@ -1081,15 +1142,17 @@ export default function WorkshopPageCream() {
             <Head kicker="" align="center">Frequently Asked <span style={EM}>Questions</span></Head>
             <div style={{ marginTop: 26 }}>
               {FAQ.map(([q, a], i) => (
-                <div key={q} style={{ borderRadius: 12, border: `1px solid ${openQ === i ? C.gold + "44" : C.border2}`, background: openQ === i ? "#FFFFFF" : "transparent", marginBottom: 10, overflow: "hidden" }}>
-                  <button onClick={() => setOpenQ(openQ === i ? -1 : i)} className="faqbtn"
-                    style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 14, padding: "18px 20px",
+                <div key={q} className={`faq${openQ === i ? " open" : ""}`}>
+                  <button onClick={() => setOpenQ(openQ === i ? -1 : i)} className="faqbtn" aria-expanded={openQ === i}
+                    style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 14, padding: "19px 20px 19px 22px",
                       background: "transparent", border: "none", cursor: "pointer", textAlign: "left", fontFamily: "'DM Sans',sans-serif" }}>
-                    <span style={{ fontSize: "clamp(15.5px,2.1vw,17.5px)", fontWeight: 600, color: C.text1 }}>{q}</span>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, transform: openQ === i ? "rotate(45deg)" : "none", transition: "transform .22s ease" }}>
-                      <path d="M12 5v14M5 12h14" stroke={openQ === i ? C.gold : C.text3} strokeWidth="2" strokeLinecap="round" /></svg>
+                    <span className="faqq" style={{ fontSize: "clamp(15.5px,2.1vw,17.5px)", fontWeight: 600 }}>{q}</span>
+                    <span className="chev plus">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ transform: openQ === i ? "rotate(45deg)" : "none", transition: "transform .35s ease" }}>
+                        <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></svg></span>
                   </button>
-                  {openQ === i && <p style={{ ...P, fontSize: 15.5, padding: "0 20px 20px" }}>{a}</p>}
+                  {/* glides: the row's height animates from 0fr to 1fr */}
+                  <div className="faqa"><div><p style={{ ...P, fontSize: 15.5, padding: "0 22px 22px" }}>{a}</p></div></div>
                 </div>
               ))}
             </div>
@@ -1139,7 +1202,7 @@ export default function WorkshopPageCream() {
                   <option value="" style={{ background: "#FFFFFF", color: C.text3 }}>Select…</option>
                   {APPETITE.map(r => <option key={r} value={r} style={{ background: "#FFFFFF", color: C.text1 }}>{r.replace("\u2014", "-")}</option>)}</select><Err msg={touched && errors.appetite} /></div>
 
-              <button onClick={submit} disabled={state === "sending"} className="cta"
+              <button onClick={submit} disabled={state === "sending"} className={valid ? "cta shine" : "cta"}
                 style={{ width: "100%", marginTop: 24, padding: "22px 18px", borderRadius: 999, cursor: "pointer",
                   background: valid ? DARK_BTN : "#E9E3D7",
                   border: `1.5px solid ${valid ? "#0A0E14" : C.border2}`, opacity: state === "sending" ? .7 : 1 }}>
@@ -1186,18 +1249,96 @@ export default function WorkshopPageCream() {
         .ptile img { display: block; user-select: none; pointer-events: none; }
 
         .cta { transition: all .25s ease; }
-        .cta:hover:not(:disabled) { box-shadow: 0 0 48px ${C.goldFill}66, 0 10px 24px rgba(10,14,20,.2) !important; transform: translateY(-1px); }
+        .cta:hover:not(:disabled) { box-shadow: 0 0 48px ${C.goldFill}66, 0 10px 24px rgba(10,14,20,.2) !important; transform: translateY(-2px); }
+        /* a quick shine across the dark buttons on hover, so they read as buttons */
+        .shine { position: relative; overflow: hidden; isolation: isolate; }
+        .shine::after { content: ""; position: absolute; top: -10%; bottom: -10%; left: -75%; width: 55%; pointer-events: none; opacity: 0;
+          background: linear-gradient(100deg, transparent 0%, rgba(248,236,196,0) 22%, rgba(250,240,205,.55) 50%, rgba(248,236,196,0) 78%, transparent 100%);
+          transform: skewX(-18deg); }
+        @media (hover: hover) { .shine:hover::after { animation: shine .8s cubic-bezier(.4,0,.2,1); } }
+        @keyframes shine { 0% { left: -75%; opacity: 1; } 100% { left: 130%; opacity: 1; } }
+        @media (prefers-reduced-motion: reduce) { .shine:hover::after { animation: none; } }
+
+        /* carousel */
+        .slide { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 18px; box-sizing: border-box;
+          transition: opacity .7s ease, transform .7s ease; }
+        .slidepage { height: 100%; width: auto; max-width: 100%; object-fit: contain; display: block; border-radius: 4px;
+          box-shadow: 0 1px 2px rgba(10,14,20,.08), 0 14px 30px rgba(10,14,20,.18); }
+        .shotgrid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); gap: 10px; width: 100%; height: 100%; }
+        .shot { min-height: 0; display: flex; align-items: center; justify-content: center; }
+        .shot img { max-width: 100%; max-height: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; border-radius: 7px; background: #fff;
+          border: 1px solid #E6DFD1; box-shadow: 0 1px 2px rgba(10,14,20,.08), 0 8px 18px rgba(10,14,20,.14); }
+
+        /* porcelain pills, discs and wells (the story cards) */
+        .ppill { display: inline-flex; align-items: center; justify-content: center; gap: 9px; border-radius: 999px; font-weight: 600; white-space: nowrap; box-sizing: border-box;
+          background: linear-gradient(180deg,#FFFEFB 0%,#F5EFE3 100%); border: 1px solid #E6DFD1; letter-spacing: .005em;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(10,14,20,.06), 0 6px 16px rgba(10,14,20,.08); }
+        .gem { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+        .pnum { flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+          font-family: 'Playfair Display',serif; font-weight: 700; font-size: 14px; line-height: 1; box-sizing: border-box; font-variant-numeric: lining-nums; font-feature-settings: 'lnum' 1;
+          background: linear-gradient(180deg,#FFFEFB 0%,#F3ECDF 100%); border: 1px solid #E6DFD1; }
+        .well { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 14px 18px; padding: 18px 20px; border-radius: 14px;
+          background: linear-gradient(180deg,#F8F4EC 0%,#F3EDE2 100%); border: 1px solid ${C.border1};
+          box-shadow: inset 0 1px 3px rgba(10,14,20,.06), inset 0 0 0 1px rgba(255,255,255,.5); }
+        .pillcell { display: flex; flex-direction: column; align-items: center; }
+        .welllbl { font-size: 10.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: ${C.text4}; margin-bottom: 8px; text-align: center; }
+        .orderlbl { width: 100%; margin-bottom: 0; }
+        .orderitem { display: flex; align-items: center; gap: 12px; }
+
+        /* story accordion: a card that clearly lifts and lights on hover */
+        .chev { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: ${C.text3};
+          background: linear-gradient(180deg,#FFFEFB 0%,#F5EFE3 100%); border: 1px solid #E6DFD1;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(10,14,20,.06), 0 6px 14px rgba(10,14,20,.08);
+          transition: color .3s ease, border-color .3s ease, box-shadow .3s ease, background .3s ease; }
+        .chev.on { color: ${C.gold}; border-color: ${C.goldFill}88; }
+        .chev.plus { width: 34px; height: 34px; }
+
+        /* fit cards */
+        .fitcard { position: relative; padding: clamp(22px,3.2vw,28px); border-radius: 18px; overflow: hidden;
+          background: linear-gradient(180deg, var(--tint) 0%, #FFFFFF 110px); border: 1px solid #E6DFD1;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 1px 2px rgba(10,14,20,.05), 0 12px 30px rgba(10,14,20,.08); }
+        .fitcard::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--fill), transparent); opacity: .8; }
+        .fithead { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; font-size: 11.5px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+        .fitbadge { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; flex: 0 0 auto;
+          background: linear-gradient(180deg,#FFFEFB 0%,#F7F2E8 100%); border: 1px solid #E6DFD1;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 1px 2px rgba(10,14,20,.06), 0 8px 18px rgba(10,14,20,.10), 0 0 16px var(--glow); }
+        .fitrow { display: flex; gap: 12px; align-items: flex-start; padding: 11px 0; border-top: 1px solid ${C.border1};
+          font-size: clamp(15px,2vw,16.5px); line-height: 1.55; color: ${C.text2}; }
+        .fitrow:first-child { border-top: none; padding-top: 4px; }
+        .fitdot { width: 24px; height: 24px; border-radius: 50%; flex: 0 0 auto; margin-top: 1px; display: flex; align-items: center; justify-content: center;
+          background: linear-gradient(180deg,#FFFEFB 0%,#F3ECDF 100%); border: 1px solid #E6DFD1;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(10,14,20,.08), 0 4px 10px rgba(10,14,20,.08); }
+
+        /* FAQ: porcelain tiles that glide open */
+        .faq { margin-bottom: 12px; border-radius: 16px; background: linear-gradient(180deg,#FFFEFB 0%,#F7F2E8 100%); border: 1px solid #E6DFD1;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 1px 2px rgba(10,14,20,.06), 0 10px 22px rgba(10,14,20,.08);
+          transition: border-color .3s ease, box-shadow .3s ease, transform .3s ease; }
+        .faq .faqq { color: ${C.text1}; transition: color .25s ease; }
+        .faqa { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s cubic-bezier(.4,0,.2,1), opacity .35s ease; opacity: 0; }
+        .faqa > div { overflow: hidden; min-height: 0; }
+        .faq.open { border-color: ${C.goldFill}88; box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 0 26px ${C.goldFill}2e, 0 12px 26px rgba(10,14,20,.09); }
+        .faq.open .faqa { grid-template-rows: 1fr; opacity: 1; }
+        .faq.open .faqq { color: ${C.gold}; }
+        .faq.open .chev { color: ${C.gold}; border-color: ${C.goldFill}88; }
+        @media (hover: hover) and (pointer: fine) {
+          .faq:hover { transform: translateY(-2px); border-color: ${C.goldFill}88; box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 0 26px ${C.goldFill}2e, 0 14px 28px rgba(10,14,20,.10); }
+          .faq:hover .faqq { color: ${C.gold}; }
+          .faq:hover .chev { color: ${C.gold}; border-color: ${C.goldFill}88; }
+        }
         input:focus, select:focus { border-color: ${C.goldFill} !important; }
         select option { background: #FFFFFF; color: ${C.text1}; }
-        .faqbtn:hover span { color: ${C.gold}; }
-        .storycard { transition: box-shadow .3s ease, border-color .3s ease; }
-        .storycard:hover { border-color: rgba(200,162,78,.6) !important; box-shadow: 0 0 34px rgba(200,162,78,.24), 0 10px 28px rgba(10,14,20,.08) !important; }
+        .storycard { transition: box-shadow .3s ease, border-color .3s ease, transform .3s ease; }
+        @media (hover: hover) and (pointer: fine) {
+          .storycard:hover { transform: translateY(-3px); border-color: ${C.goldFill} !important;
+            box-shadow: 0 0 0 1px ${C.goldFill}66, 0 0 44px rgba(200,162,78,.38), 0 18px 36px rgba(10,14,20,.12) !important; }
+          .storycard:hover .chev { color: ${C.gold}; border-color: ${C.goldFill}; box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 0 16px ${C.goldFill}55, 0 6px 14px rgba(10,14,20,.08); }
+        }
         /* the same edge, given by scroll position rather than by a cursor */
         [data-lit]:not(.flip), .flip .face { transition: border-color .35s ease, box-shadow .35s ease; }
         [data-lit]:not(.flip).lit { border-color: rgba(200,162,78,.6) !important; box-shadow: 0 0 30px rgba(200,162,78,.22), 0 10px 28px rgba(10,14,20,.08) !important; }
         /* Keep the highlight on the rotating faces, not the stationary flip wrapper behind them. */
         .flip.lit .face { border-color: rgba(200,162,78,.6) !important; box-shadow: 0 0 30px rgba(200,162,78,.22) !important; }
-        .storybtn:hover { background: #FBF8F2; }
+        @media (hover: hover) and (pointer: fine) { .storybtn:hover { background: linear-gradient(90deg, #FBF3DF 0%, #FFFFFF 70%); } }
 
         .flip { perspective: 1400px; }
         .flip-inner { position: relative; transform-style: preserve-3d; transition: transform .6s cubic-bezier(.4,0,.2,1); height: 100%; }
@@ -1215,10 +1356,10 @@ export default function WorkshopPageCream() {
           .grid3 { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 980px) {
-          /* stacked pills need the arrow pointing at the next one, not off to the side */
-          .pillrow { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
-          .orderitem { flex-direction: column !important; align-items: flex-start !important; }
-          .pillarrow { transform: rotate(90deg); margin: 2px 0 2px 14px; }
+          /* stacked pills, centred, with the arrow pointing down at the next one */
+          .pillrow { flex-direction: column !important; align-items: center !important; gap: 10px !important; }
+          .orderitem { flex-direction: column !important; align-items: center !important; gap: 10px !important; }
+          .pillarrow { transform: rotate(90deg); margin: 0; }
           /* the niche list reads better centred once it's no longer beside the cards */
           .nichecol { text-align: center; }
           /* the niche list lines up with the cards above it rather than floating centred */
