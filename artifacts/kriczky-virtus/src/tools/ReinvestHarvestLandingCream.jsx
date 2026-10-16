@@ -151,6 +151,82 @@ const SampleResultCard = ({ i, reduced, pick }) => {
   );
 };
 
+
+/* ── Inside the scorecard: real pages from a sample 18-page report ──
+   A swipeable strip (scroll-snap) that also walks itself while it's on screen.
+   Any touch, drag, wheel or arrow click hands control to the reader for good. */
+const REPORT_PAGES = [
+  { n: "03", t: "What this means",          src: "/img/reinvest-harvest/page-03.jpg" },
+  { n: "04", t: "Business capacity, scored", src: "/img/reinvest-harvest/page-04.jpg" },
+  { n: "05", t: "Personal foundation, scored", src: "/img/reinvest-harvest/page-05.jpg" },
+  { n: "06", t: "Your first three moves",    src: "/img/reinvest-harvest/page-06.jpg" },
+  { n: "07", t: "Dimension by dimension",    src: "/img/reinvest-harvest/page-07.jpg" },
+  { n: "10", t: "Dimension by dimension",    src: "/img/reinvest-harvest/page-10.jpg" },
+  { n: "17", t: "Where this leads",          src: "/img/reinvest-harvest/page-17.jpg" },
+  { n: "18", t: "Your next step",            src: "/img/reinvest-harvest/page-18.jpg" },
+];
+
+const PageCarousel = () => {
+  const track = useRef(null);
+  const [at, setAt] = useState(0);
+  const [held, setHeld] = useState(false);
+  const [seen, setSeen] = useState(false);
+  const go = (i) => {
+    const el = track.current; if (!el) return;
+    const n = (i + REPORT_PAGES.length) % REPORT_PAGES.length;
+    const slide = el.children[n]; if (!slide) return;
+    el.scrollTo({ left: slide.offsetLeft - el.offsetLeft - (el.clientWidth - slide.clientWidth) / 2, behavior: "smooth" });
+  };
+  /* which slide is centred */
+  useEffect(() => {
+    const el = track.current; if (!el) return;
+    let frame = 0;
+    const onScroll = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(() => {
+      const mid = el.scrollLeft + el.clientWidth / 2; let best = 0, gap = Infinity;
+      [...el.children].forEach((c, i) => { const g = Math.abs(c.offsetLeft - el.offsetLeft + c.clientWidth / 2 - mid); if (g < gap) { gap = g; best = i; } });
+      setAt(best);
+    }); };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => { el.removeEventListener("scroll", onScroll); cancelAnimationFrame(frame); };
+  }, []);
+  /* only walk while it's on screen */
+  useEffect(() => {
+    const el = track.current; if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([e]) => setSeen(e.isIntersecting), { threshold: 0.4 });
+    io.observe(el); return () => io.disconnect();
+  }, []);
+  useEffect(() => {
+    if (held || !seen || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = setInterval(() => go(at + 1), 3600);
+    return () => clearInterval(id);
+  }, [at, held, seen]);
+  const hold = () => setHeld(true);
+  return (
+    <div style={{ position: "relative" }}>
+      <div ref={track} className="pagetrack" onPointerDown={hold} onWheel={hold} onTouchStart={hold}>
+        {REPORT_PAGES.map((p, i) => (
+          <figure key={p.n + p.src} className={`pageslide${i === at ? " on" : ""}`} style={{ margin: 0 }}>
+            <img src={p.src} alt={`Sample scorecard page ${p.n}: ${p.t}`} width="680" height="880" loading="lazy" draggable="false" />
+            <figcaption><span className="pn">{p.n}</span> {p.t}</figcaption>
+          </figure>
+        ))}
+      </div>
+      <button className="pagearrow left" aria-label="Previous page" onClick={() => { hold(); go(at - 1); }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+      <button className="pagearrow right" aria-label="Next page" onClick={() => { hold(); go(at + 1); }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+      <div style={{ display: "flex", justifyContent: "center", gap: 2, marginTop: 10 }}>
+        {REPORT_PAGES.map((p, i) => (
+          <button key={p.src} onClick={() => { hold(); go(i); }} aria-label={`Show page ${p.n}`}
+            style={{ padding: 6, border: "none", background: "transparent", cursor: "pointer", lineHeight: 0 }}>
+            <span style={{ display: "block", width: i === at ? 18 : 7, height: 7, borderRadius: 4, background: i === at ? T.gold.fill : "#D9D1C2", transition: "all .3s ease" }} />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 /* The house primary button: dark, gold label, gold halo, shine on hover. */
 const CTA = ({ compact = false }) => (
   <div style={{ textAlign: "center" }}>
@@ -319,6 +395,28 @@ export default function ReinvestHarvestLandingCream() {
           .bbmark { width: 360px; flex: 0 0 auto; }
           .bbside { text-align: right; } .bbside.right { text-align: left; }
         }
+        /* the page strip */
+        .pagetrack { display: flex; gap: 22px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 18px calc(50% - 150px) 22px;
+          scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
+          -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+        .pagetrack::-webkit-scrollbar { display: none; }
+        .pageslide { flex: 0 0 300px; scroll-snap-align: center; transition: transform .45s ease, opacity .45s ease; transform: scale(.92); opacity: .62; }
+        .pageslide.on { transform: none; opacity: 1; }
+        .pageslide img { width: 100%; height: auto; display: block; border-radius: 6px; user-select: none;
+          box-shadow: 0 1px 2px rgba(10,14,20,.08), 0 16px 34px rgba(10,14,20,.18); }
+        .pageslide.on img { box-shadow: 0 1px 2px rgba(10,14,20,.08), 0 18px 40px rgba(10,14,20,.22), 0 0 30px rgba(200,162,78,.28); }
+        .pageslide figcaption { text-align: center; margin-top: 12px; font-size: 13px; font-weight: 600; color: ${C.ink2}; letter-spacing: .02em; }
+        .pageslide figcaption .pn { font-family: 'Playfair Display',serif; color: ${T.gold.ink}; margin-right: 4px; }
+        .pagearrow { position: absolute; top: calc(50% - 40px); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+          cursor: pointer; color: ${T.gold.ink}; background: linear-gradient(180deg,#FFFEFB 0%,#F5EFE3 100%); border: 1px solid #E6DFD1;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(10,14,20,.06), 0 8px 18px rgba(10,14,20,.12); transition: transform .3s ease, box-shadow .3s ease; }
+        .pagearrow.left { left: 4px; } .pagearrow.right { right: 4px; }
+        @media (hover: hover) and (pointer: fine) { .pagearrow:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 0 20px rgba(200,162,78,.35), 0 10px 20px rgba(10,14,20,.14); } }
+        @media (max-width: 700px) {
+          .pagearrow { display: none; }
+          .pageslide { flex-basis: 64vw; }
+          .pagetrack { padding: 14px 18vw 18px; gap: 12px; -webkit-mask-image: none; mask-image: none; }
+        }
         .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
         @media (max-width: 860px) { .steps { grid-template-columns: 1fr; } }
       `}</style>
@@ -443,6 +541,16 @@ export default function ReinvestHarvestLandingCream() {
               ))}
             </div>
           </div>
+        </section>
+
+        {/* 4b - INSIDE THE SCORECARD: real pages from a sample report */}
+        <section className="wide" style={{ ...S, paddingTop: 20 }}>
+          <div style={{ textAlign: "center", maxWidth: 720, margin: "0 auto 26px" }}>
+            <div style={{ ...KICKER, color: T.gold.ink }}>Inside your scorecard</div>
+            <h2 style={{ ...H1, fontSize: "clamp(32px, 6vw, 48px)", margin: "0 0 12px" }}>18 pages, <span style={{ fontStyle: "italic", color: T.gold.ink, fontWeight: 500 }}>built from your answers</span></h2>
+            <p style={{ ...BODY, margin: 0 }}>Your position and what it means, all ten dimensions scored one by one, your first three moves, and where it leads. Here's a sample.</p>
+          </div>
+          <PageCarousel />
         </section>
 
         {/* 5 - THE PAIN - centred: a reading column */}
