@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { texBg } from "./reportTexture";
 import {
   PILLAR_MAX, THRESHOLD, BIZ_KEYS, PERS_KEYS, PILLAR_TONE, scoreToneKey,
-  QUADRANTS, getQuadrant, BANDS, ROADMAP, routeTo, DIMS,
+  QUADRANTS, getQuadrant, BANDS, routeTo, DIMS,
 } from "./reinvestHarvestReportData.js";
 import { VISUALS } from "./reinvestHarvestVisuals.jsx";
+import RoadmapSystem from "../RoadmapSystem.jsx";
 
 /* ═══════════════════════════════════════════════════════════════
    REINVEST OR HARVEST - THE REPORT   /r/:token
@@ -182,9 +183,7 @@ function CoverPage({ s, report, quad }) {
           <span>Your Scorecard</span>
         </div>
         <div style={{ marginTop: 210 }}>
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" style={{ marginBottom: 34 }} aria-hidden="true">
-            <path d="M32 8L14 16V30C14 42 22 52 32 56C42 52 50 42 50 30V16L32 8Z" stroke="#C8A24E" strokeWidth="2.2" strokeLinejoin="round" />
-          </svg>
+          <img src="/icons/roadmap-system/shield.png" alt="" aria-hidden="true" width={92} height={92} style={{ display: "inline-block", marginBottom: 26, filter: "drop-shadow(0 6px 14px rgba(0,0,0,.45))" }} />
           <h1 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 600, fontSize: 80, lineHeight: 1, margin: "0 0 26px", letterSpacing: "-.01em", whiteSpace: "nowrap" }}>
             Reinvest <em style={{ color: "#C8A24E", fontWeight: 500 }}>or</em> Harvest
           </h1>
@@ -454,20 +453,8 @@ function RoadmapPage({ s, n, total }) {
       <div className="kicker">Where this leads</div>
       <h2>The scorecard is <em>step one.</em></h2>
       <p className="lede" style={{ marginBottom: 18 }}>It answers the reinvest-or-harvest question for where you are today. This is the system for how you keep answering it as the business changes.</p>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-        {ROADMAP.map(r => {
-          const t = TONE[r.tone];
-          return (
-            <div key={r.n} className="card drow" style={glowCard(t, { padding: "14px 18px 15px", textAlign: "center" })}>
-              {/* PNG, not the SVG: its glow filters drop out of the iPhone PDF. */}
-              <img src={`/icons/reinvest-harvest/${r.ic}.png`} alt="" width="58" height="58" style={{ display: "block", margin: "0 auto 4px" }} />
-              <div className="num" style={{ fontSize: 15, color: t.ink, letterSpacing: ".06em", marginBottom: 4 }}>{r.n}</div>
-              <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 24, fontWeight: 700, lineHeight: 1.15, marginBottom: 4 }}>{r.t}</div>
-              <div style={{ fontSize: 15, lineHeight: 1.4, color: L.ink2 }}>{dash(r.d)}</div>
-            </div>
-          );
-        })}
-      </div>
+      {/* The Owner's Virtus Roadmap, live: the reader is at station 01. */}
+      <div style={{ marginTop: 34 }}><RoadmapSystem report here={[0]} size={380} /></div>
     </Page>
   );
 }
@@ -544,6 +531,9 @@ function NextPage({ s, n, total, offerKey, token }) {
 const fileName = (r) => ("Reinvest or Harvest Scorecard" + (r.company ? " - " + r.company : "")).replace(/[\\/:*?"<>|]+/g, "") + ".pdf";
 
 async function buildPdf(root, filename) {
+  /* hold the roadmap orbit on the reader's station, and let its panel settle */
+  window.dispatchEvent(new Event("kv:freeze-orbit"));
+  await new Promise(r => setTimeout(r, 900));
   if (document.fonts && document.fonts.ready) await document.fonts.ready;
   const [h2c, jspdf] = await Promise.all([import("html2canvas"), import("jspdf")]);
   const html2canvas = h2c.default || h2c;
@@ -557,7 +547,11 @@ async function buildPdf(root, filename) {
       onclone: (doc, el) => {
         el.style.transform = "none"; el.style.boxShadow = "none";
         /* the soft radial glows draw as flat boxes in the image, so leave them out */
-        el.querySelectorAll(".glow").forEach(g => { g.style.display = "none"; });
+        el.querySelectorAll(".glow, .vrs-wash, .vrs-pulse, .vrs-motion").forEach(g => { g.style.display = "none"; });
+        /* the clone restarts every animation from its first frame: show the end state instead */
+        const still = doc.createElement("style");
+        still.textContent = "*{animation:none!important;transition:none!important} .vrs-in{opacity:1!important}";
+        doc.head.appendChild(still);
         /* html2canvas draws inset shadows as a pale inner box, so keep only the outer shadows */
         const win = doc.defaultView;
         el.querySelectorAll("*").forEach(nd => {
@@ -621,7 +615,7 @@ export default function ReinvestHarvestReport({ report, token = null, shareUrl =
           setBusy(true);
           try { await buildPdf(ref.current, fileName(report)); }
           catch (e) { window.print(); }
-          finally { setBusy(false); }
+          finally { setBusy(false); window.dispatchEvent(new Event("kv:release-orbit")); }
         }}>{busy ? "Preparing your PDF..." : "Download PDF"}</button>
         <button className="ghost" onClick={share}>{copied ? "Link copied" : "Share"}</button>
       </div>

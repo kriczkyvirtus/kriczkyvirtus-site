@@ -169,9 +169,7 @@ function CoverPage({ s, report, zone }) {
         </div>
 
         <div style={{ marginTop: 210 }}>
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" style={{ marginBottom: 34 }} aria-hidden="true">
-            <path d="M32 8L14 16V30C14 42 22 52 32 56C42 52 50 42 50 30V16L32 8Z" stroke="#C8A24E" strokeWidth="2.2" strokeLinejoin="round" />
-          </svg>
+          <img src="/icons/roadmap-system/shield.png" alt="" aria-hidden="true" width={92} height={92} style={{ display: "inline-block", marginBottom: 26, filter: "drop-shadow(0 6px 14px rgba(0,0,0,.45))" }} />
           <h1 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 600, fontSize: 80, lineHeight: 1, margin: "0 0 26px", letterSpacing: "-.01em", whiteSpace: "nowrap" }}>
             Your Value <em style={{ color: "#C8A24E", fontWeight: 500 }}>Drivers</em>
           </h1>

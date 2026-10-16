@@ -11,6 +11,7 @@ import BIB from './tools/BIB.jsx'
 import HumanCapital from './tools/HumanCapital.jsx'
 import CustomerCapital from './tools/CustomerCapital.jsx'
 import StructuralCapital from './tools/StructuralCapital.jsx'
+import StructuralCapitalV2 from './tools/StructuralCapitalV2.jsx'
 import ConstraintRoadmap from './tools/ConstraintRoadmap.jsx'
 import RoadmapSession from './RoadmapSession.jsx'
 import BookIntensive from './BookIntensive.jsx'
@@ -52,8 +53,12 @@ const TITLES = {
   '/partnership/collective':  'Growth & Harvest Partnership',
   '/workshop-rh':             'Reinvest or Harvest Workshop — Kriczky Virtus',
   '/execution-debrief':       'Execution Debrief — Kriczky Virtus',
+  '/tools/structural-capital/v2': 'Systems to Run Your Business Without You',
   '/12cs-recurring-revenue':  'The 12 Cs of Recurring Revenue',
 }
+
+/* Unlinked previews and rollbacks stay out of search. */
+const NOINDEX = new Set(['/partnership', '/workshop-rh/dark', '/tools/structural-capital/v2'])
 
 const DEFAULT_TITLE = 'Build Businesses Worth Owning - Kriczky Virtus'
 
@@ -63,7 +68,7 @@ function TitleManager() {
     document.title = TITLES[pathname] ?? DEFAULT_TITLE
 
     let robots = document.querySelector('meta[name="robots"]')
-    if (pathname === '/partnership') {
+    if (NOINDEX.has(pathname)) {
       if (!robots) {
         robots = document.createElement('meta')
         robots.name = 'robots'
@@ -93,6 +98,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/tools/human-capital" element={<HumanCapital />} />
         <Route path="/tools/customer-capital" element={<CustomerCapital />} />
         <Route path="/tools/structural-capital" element={<StructuralCapital />} />
+        {/* Diagnostic tools v2 sample (house style) - unlinked and noindex until approved. */}
+        <Route path="/tools/structural-capital/v2" element={<StructuralCapitalV2 />} />
         <Route path="/tools/reinvest-harvest" element={<Navigate to="/reinvest-harvest" replace />} />
         <Route path="/reinvest-harvest" element={<ReinvestHarvestLanding />} />
         <Route path="/reinvest-harvest/start" element={<ReinvestHarvestFlow />} />

@@ -9,6 +9,12 @@ import { useState, useEffect, useRef, useCallback } from "react";
    It walks the stations on its own while it's on screen. Hovering or
    tapping a station takes over; it picks the walk back up after a pause.
    Tiles lean gently toward the visitor's pointer.
+
+   report mode (inside a letter-page report): a fixed size, the panel beside
+   the orbit, no workshop arc; `here` marks the station(s) the reader is at
+   ("You are here"). Before a PDF capture the page dispatches
+   window "kv:freeze-orbit": the orbit holds on the first `here` station.
+   No CSS colour-mixing anywhere: html2canvas can't parse it and the PDF would fail.
    ═══════════════════════════════════════════════════════════════ */
 
 const TONE = {
@@ -50,7 +56,7 @@ const RESUME_MS = 9000;    /* quiet time after an interaction before it walks ag
 /* Stations sit clockwise from upper-left, so 01 to 03 share the top arc. */
 const ANGLES = [-150, -90, -30, 30, 90, 150].map(a => (a * Math.PI) / 180);
 
-export default function RoadmapSystem({ onCta }) {
+export default function RoadmapSystem({ onCta, report = false, here = [], size = 340 }) {
   const boxRef = useRef(null);
   const stageRef = useRef(null);
   const [S, setS] = useState(560);            /* the orbit's side length in px */
@@ -60,10 +66,12 @@ export default function RoadmapSystem({ onCta }) {
   const [hovering, setHovering] = useState(false); /* pointer resting on a station */
   const [inView, setInView] = useState(false);
   const [reduced, setReduced] = useState(false);
+  const [frozen, setFrozen] = useState(false);   /* held for a report's PDF capture */
 
-  /* Size the orbit to its column. */
+  /* Size the orbit to its column (fixed in a report: the page is laid out once and scaled). */
+  useEffect(() => { if (report) setS(size); }, [report, size]);
   useEffect(() => {
-    const el = boxRef.current; if (!el) return;
+    const el = boxRef.current; if (!el || report) return;
     const ro = new ResizeObserver(([e]) => setS(Math.max(300, Math.min(600, Math.round(e.contentRect.width)))));
     ro.observe(el);
     return () => ro.disconnect();
@@ -90,7 +98,7 @@ export default function RoadmapSystem({ onCta }) {
 
   /* While it's walking, each station gets CYCLE_MS - the same time its
      progress bar takes to fill - then hands over to the next. */
-  const running = inView && !paused && !hovering;
+  const running = inView && !paused && !hovering && !frozen;
   useEffect(() => {
     if (!running) return;
     const to = setTimeout(() => setActive(a => (a + 1) % STATIONS.length), CYCLE_MS);
@@ -99,12 +107,24 @@ export default function RoadmapSystem({ onCta }) {
 
   /* A pick holds the station; after a quiet spell the walk picks back up from there. */
   useEffect(() => {
-    if (!paused || hovering) return;
+    if (!paused || hovering || frozen) return;
     const to = setTimeout(() => setPaused(false), RESUME_MS);
     return () => clearTimeout(to);
-  }, [paused, picks, hovering]);
+  }, [paused, picks, hovering, frozen]);
 
   const pick = useCallback((i) => { setActive(i); setPaused(true); setPicks(n => n + 1); }, []);
+
+  /* A report's PDF capture holds the orbit on the reader's own station. */
+  useEffect(() => {
+    if (!report) return;
+    /* held for the whole capture (it can outlast the resume pause), released after */
+    const freeze = () => { setFrozen(true); setHovering(false); pick(here.length ? here[0] : 0); };
+    const release = () => { setFrozen(false); setPicks(n => n + 1); };
+    window.addEventListener("kv:freeze-orbit", freeze);
+    window.addEventListener("kv:release-orbit", release);
+    return () => { window.removeEventListener("kv:freeze-orbit", freeze); window.removeEventListener("kv:release-orbit", release); };
+  }, [report, here, pick]);
+  const isHere = (i) => here.includes(i);
 
   /* Pointer lean: tiles drift toward the cursor, nearer layers drift more.
      Written straight to the DOM each frame so React doesn't re-render. */
@@ -149,12 +169,14 @@ export default function RoadmapSystem({ onCta }) {
   const tone = TONE[st.tone];
 
   return (
-    <div className="vrs" style={{ display: "flex", gap: "clamp(20px,3.6vw,52px)", alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
+    <div className={`vrs${report ? " vrs-report" : ""}`} style={report
+      ? { display: "flex", gap: 22, alignItems: "center" }
+      : { display: "flex", gap: "clamp(20px,3.6vw,52px)", alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
       {/* ── the orbit ── */}
-      <div ref={boxRef} style={{ flex: "1 1 460px", maxWidth: 600, minWidth: 0 }}>
+      <div ref={boxRef} style={report ? { flex: `0 0 ${size}px`, width: size } : { flex: "1 1 460px", maxWidth: 600, minWidth: 0 }}>
         <div ref={stageRef} className="vrs-stage" style={{ position: "relative", width: S, height: H, margin: "0 auto", "--px": 0, "--py": 0 }}>
           {/* soft wash behind everything */}
-          <div aria-hidden="true" style={{ position: "absolute", left: cx - S * 0.5, top: cy - S * 0.5, width: S, height: S, borderRadius: "50%",
+          <div className="vrs-wash" aria-hidden="true" style={{ position: "absolute", left: cx - S * 0.5, top: cy - S * 0.5, width: S, height: S, borderRadius: "50%",
             background: `radial-gradient(circle, ${tone.fill}24 0%, ${tone.fill}0c 34%, transparent 66%)`, transition: "background .9s ease", pointerEvents: "none" }} />
 
           <svg width={S} height={H} viewBox={`0 0 ${S} ${H}`} aria-hidden="true" className="vrs-lines"
@@ -176,16 +198,18 @@ export default function RoadmapSystem({ onCta }) {
             <circle cx={cx} cy={cy} r={R * 0.52} fill="none" stroke="#E2DACB" strokeWidth="1" strokeDasharray="2 5" />
 
             {/* the workshop's share of the journey */}
-            <path d={arc(R2, ANGLES[0] - wsPad, ANGLES[2] + wsPad)} fill="none" stroke={TONE.gold.fill} strokeWidth="2.5" strokeLinecap="round" opacity=".85" />
+            {!report && <><path d={arc(R2, ANGLES[0] - wsPad, ANGLES[2] + wsPad)} fill="none" stroke={TONE.gold.fill} strokeWidth="2.5" strokeLinecap="round" opacity=".85" />
             <text fontSize={narrow ? 9.5 : 11} fontWeight="700" letterSpacing=".2em" fill={TONE.gold.ink} style={{ fontFamily: "'DM Sans',sans-serif" }}>
               <textPath href="#vrs-ws" startOffset="50%" textAnchor="middle">THE WORKSHOP COVERS 01 TO 03</textPath>
-            </text>
+            </text></>}
 
             {/* the ring, lit from 01 up to the active station */}
             {pos.map((_, i) => {
               const lit = i < active;
               const tt = TONE[STATIONS[i].tone];
-              return <use key={i} href={`#vrs-ring-${i}`} fill="none" stroke={lit ? tt.fill : "transparent"} strokeWidth="2" opacity=".75" style={{ transition: "stroke .6s ease" }} />;
+              /* drawn as its own path, not a <use>: the PDF renderer fills <use> copies black */
+              return <path key={i} d={arc(R, ANGLES[i], ANGLES[(i + 1) % 6] + (i === 5 ? 2 * Math.PI : 0))} fill="none"
+                stroke={tt.fill} strokeOpacity={lit ? 0.75 : 0} strokeWidth="2" style={{ transition: "stroke-opacity .6s ease" }} />;
             })}
 
             {/* spokes */}
@@ -202,7 +226,7 @@ export default function RoadmapSystem({ onCta }) {
                 const on = i === active;
                 const tt = TONE[STATIONS[i].tone];
                 return (
-                  <circle key={`s${i}`} r={on ? 4 : 2.6} fill={on ? tt.fill : "#C8A24E"} opacity={on ? 1 : 0.55}
+                  <circle key={`s${i}`} className="vrs-motion" r={on ? 4 : 2.6} fill={on ? tt.fill : "#C8A24E"} opacity={on ? 1 : 0.55}
                     style={{ filter: on ? `drop-shadow(0 0 5px ${tt.fill})` : "none" }}>
                     <animateMotion dur={on ? "1.6s" : "4.2s"} begin={`${-i * 0.7}s`} repeatCount="indefinite"
                       keyPoints={i % 2 ? "0;1" : "1;0"} keyTimes="0;1" calcMode="linear">
@@ -212,7 +236,7 @@ export default function RoadmapSystem({ onCta }) {
                 );
               })}
               {pos.map((_, i) => (
-                <circle key={`r${i}`} r="3" fill={TONE[STATIONS[i].tone].fill} opacity=".8">
+                <circle key={`r${i}`} className="vrs-motion" r="3" fill={TONE[STATIONS[i].tone].fill} opacity=".8">
                   <animateMotion dur="3.4s" begin={`${-i * 0.57}s`} repeatCount="indefinite"><mpath href={`#vrs-ring-${i}`} /></animateMotion>
                 </circle>
               ))}
@@ -245,10 +269,11 @@ export default function RoadmapSystem({ onCta }) {
                 onMouseEnter={() => { pick(i); setHovering(true); }} onMouseLeave={() => { setHovering(false); setPicks(n => n + 1); }} onFocus={() => pick(i)} onClick={() => pick(i)}
                 style={{ position: "absolute", left: pos[i].x, top: pos[i].y, zIndex: on ? 4 : 3,
                   transform: `translate(-50%, ${-T / 2}px) translate(calc(var(--px) * ${depth}px), calc(var(--py) * ${depth}px))`,
-                  "--tone": tt.ink, "--fill": tt.fill }}>
+                  "--tone": tt.ink, "--fill": tt.fill, "--fill55": `${tt.fill}8c`, "--fill28": `${tt.fill}47`, "--fill40": `${tt.fill}66` }}>
                 <span className="vrs-tile vrs-sttile" style={{ width: T, height: T, borderRadius: Math.round(T * 0.27) }}>
                   <img src={`/icons/reinvest-harvest/${s.ic}.png`} alt="" width={Math.round(T * 0.66)} height={Math.round(T * 0.66)} draggable="false" />
-                  {s.workshop && <span className="vrs-ws" aria-hidden="true" title="Covered in the workshop">
+                  {report && isHere(i) && <span className="vrs-here" aria-hidden="true">You are here</span>}
+                  {!report && s.workshop && <span className="vrs-ws" aria-hidden="true" title="Covered in the workshop">
                     <svg width="10" height="10" viewBox="0 0 12 12"><path d="M2.5 6.4l2.3 2.3 4.7-5" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </span>}
                 </span>
@@ -263,11 +288,15 @@ export default function RoadmapSystem({ onCta }) {
       </div>
 
       {/* ── what the highlighted station fixes ── */}
-      <div style={{ flex: "1 1 340px", maxWidth: 440, minWidth: 0, width: "100%" }}>
+      <div className="vrs-panel" style={report ? { flex: "1 1 0", minWidth: 0 } : { flex: "1 1 340px", maxWidth: 440, minWidth: 0, width: "100%" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 11.5, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#6B6459", marginBottom: 12 }}>
-          <span className="vrs-live" style={{ "--fill": tone.fill }} aria-hidden="true" />
+          <span className="vrs-live" style={{ "--fill": tone.fill, "--fill70": `${tone.fill}b3` }} aria-hidden="true" />
           <span style={{ whiteSpace: "nowrap" }}>Station {st.n} of 06</span>
-          {st.workshop
+          {report
+            ? (isHere(active)
+              ? <span className="vrs-tag" style={{ background: `${TONE.gold.fill}22`, color: TONE.gold.ink, borderColor: `${TONE.gold.fill}66` }}>You are here</span>
+              : <span className="vrs-tag" style={{ background: "#FFFFFF", color: "#6B6459", borderColor: "#DCD4C5" }}>On your roadmap</span>)
+            : st.workshop
             ? <span className="vrs-tag" style={{ background: `${TONE.gold.fill}22`, color: TONE.gold.ink, borderColor: `${TONE.gold.fill}66` }}>Covered in the workshop</span>
             : <span className="vrs-tag" style={{ background: "#FFFFFF", color: "#6B6459", borderColor: "#DCD4C5" }}>After the workshop</span>}
         </div>
@@ -287,7 +316,7 @@ export default function RoadmapSystem({ onCta }) {
                 <img src={`/icons/roadmap-system/${icon}.png`} alt="" width="42" height="42" draggable="false" /></span>
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: c, marginBottom: 4 }}>{label}</div>
-                <div style={{ fontSize: 15.5, lineHeight: 1.5, color: "#3E4652" }}>{text}</div>
+                <div className="tx" style={{ fontSize: 15.5, lineHeight: 1.5, color: "#3E4652" }}>{text}</div>
               </div>
             </div>
           ))}
@@ -296,8 +325,8 @@ export default function RoadmapSystem({ onCta }) {
         <div key={sx.n} aria-hidden="true" style={{ gridArea: "1 / 1", visibility: "hidden" }}>
           <h3 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(28px,3.6vw,36px)", lineHeight: 1.08, margin: "0 0 16px" }}>{sx.t}</h3>
           {[sx.pain, sx.shift, sx.why].map((text, j) => (
-            <div key={j} className="vrs-card"><span style={{ width: 56, height: 56, flexShrink: 0 }} />
-              <div><div style={{ fontSize: 11, marginBottom: 4, letterSpacing: ".14em" }}>&nbsp;</div><div style={{ fontSize: 15.5, lineHeight: 1.5 }}>{text}</div></div></div>
+            <div key={j} className="vrs-card"><span className="vrs-tile" style={{ width: 56, height: 56, flexShrink: 0, visibility: "hidden" }} />
+              <div><div style={{ fontSize: 11, marginBottom: 4, letterSpacing: ".14em" }}>&nbsp;</div><div className="tx" style={{ fontSize: 15.5, lineHeight: 1.5 }}>{text}</div></div></div>
           ))}
         </div>
         ))}
@@ -338,16 +367,23 @@ export default function RoadmapSystem({ onCta }) {
         .vrs-sttile{transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s ease,border-color .45s ease}
         .vrs-stpill{padding:6px 12px;font-weight:600;white-space:nowrap;transition:border-color .45s ease,box-shadow .45s ease}
         .vrs-st.on .vrs-sttile{transform:translateY(-3px) scale(1.09);border-color:var(--fill);
-          box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 0 1px var(--fill),0 0 26px color-mix(in srgb,var(--fill) 55%,transparent),0 0 56px color-mix(in srgb,var(--fill) 28%,transparent),0 16px 30px rgba(10,14,20,.16)}
-        .vrs-st.on .vrs-stpill{border-color:var(--fill);box-shadow:0 0 0 1px color-mix(in srgb,var(--fill) 40%,transparent),0 6px 16px rgba(10,14,20,.08)}
+          box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 0 1px var(--fill),0 0 26px var(--fill55),0 0 56px var(--fill28),0 16px 30px rgba(10,14,20,.16)}
+        .vrs-st.on .vrs-stpill{border-color:var(--fill);box-shadow:0 0 0 1px var(--fill40),0 6px 16px rgba(10,14,20,.08)}
         .vrs-ws{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#7A5C1E;display:flex;align-items:center;justify-content:center;
           box-shadow:0 0 0 2px #FFFEFB,0 2px 6px rgba(10,14,20,.2)}
         .vrs-card{display:flex;gap:15px;align-items:flex-start;padding:14px 16px;margin-bottom:10px;border-radius:14px;background:#FFFFFF;border:1px solid #E6DFD1;
           box-shadow:0 1px 2px rgba(10,14,20,.05),0 8px 20px rgba(10,14,20,.06)}
         .vrs-card.hi{border-color:var(--edge);box-shadow:0 0 0 1px var(--edge),0 10px 26px rgba(10,14,20,.08)}
+        .vrs-here{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;padding:3px 8px;border-radius:999px;
+          background:#7A5C1E;color:#FFFEFB;font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;box-shadow:0 0 0 2px #FFFEFB,0 3px 8px rgba(10,14,20,.2)}
+        .vrs-report .vrs-card{gap:12px;padding:11px 13px;margin-bottom:8px}
+        .vrs-report .vrs-card .vrs-tile{width:44px!important;height:44px!important;border-radius:12px!important}
+        .vrs-report .vrs-card .vrs-tile img{width:33px;height:33px}
+        .vrs-report .vrs-card .tx{font-size:13.5px!important;line-height:1.45!important}
+        .vrs-report h3{font-size:27px!important;margin-bottom:12px!important}
         .vrs-tag{margin-left:auto;padding:4px 10px;border-radius:999px;border:1px solid;font-size:10.5px;letter-spacing:.12em;white-space:nowrap}
         @media (max-width:480px){.vrs-tag{font-size:9.5px;letter-spacing:.08em;padding:4px 8px}}
-        .vrs-live{width:8px;height:8px;border-radius:50%;background:var(--fill);box-shadow:0 0 0 0 var(--fill);animation:vrsPing 1.8s ease-out infinite}
+        .vrs-live{flex:0 0 auto;width:8px;height:8px;border-radius:50%;background:var(--fill);box-shadow:0 0 0 0 var(--fill);animation:vrsPing 1.8s ease-out infinite}
         .vrs-seg{all:unset;cursor:pointer;flex:1;height:5px;border-radius:3px;position:relative;overflow:hidden;transition:background .5s ease}
         .vrs-fill{position:absolute;inset:0;border-radius:3px;transform-origin:left center}
         .vrs-fill.run{animation:vrsFill linear forwards}
@@ -357,7 +393,7 @@ export default function RoadmapSystem({ onCta }) {
         .vrs-pulse{animation:vrsPulse 3.6s ease-in-out infinite}
         @keyframes vrsIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
         @keyframes vrsPulse{0%,100%{opacity:.55;transform:translate(-50%,-50%) scale(.92)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}}
-        @keyframes vrsPing{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--fill) 70%,transparent)}100%{box-shadow:0 0 0 9px transparent}}
+        @keyframes vrsPing{0%{box-shadow:0 0 0 0 var(--fill70)}100%{box-shadow:0 0 0 9px transparent}}
         @media (hover:hover) and (pointer:fine){
           .vrs-st:not(.on):hover .vrs-sttile{transform:translateY(-2px)}
         }
