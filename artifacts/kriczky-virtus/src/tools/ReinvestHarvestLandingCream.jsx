@@ -152,7 +152,8 @@ const SampleResultCard = ({ i, reduced, pick }) => {
 };
 
 
-/* ── Inside the scorecard: real pages from a sample 18-page report ──
+/* ── Inside the scorecard: six real pages from a sample 18-page report, with the
+   dimension names, the three moves' headings and the position name blurred ──
    A swipeable strip (scroll-snap) that also walks itself while it's on screen.
    Any touch, drag, wheel or arrow click hands control to the reader for good. */
 const REPORT_PAGES = [
@@ -162,8 +163,6 @@ const REPORT_PAGES = [
   { n: "06", t: "Your first three moves",    src: "/img/reinvest-harvest/page-06.jpg" },
   { n: "07", t: "Dimension by dimension",    src: "/img/reinvest-harvest/page-07.jpg" },
   { n: "10", t: "Dimension by dimension",    src: "/img/reinvest-harvest/page-10.jpg" },
-  { n: "17", t: "Where this leads",          src: "/img/reinvest-harvest/page-17.jpg" },
-  { n: "18", t: "Your next step",            src: "/img/reinvest-harvest/page-18.jpg" },
 ];
 
 const PageCarousel = () => {
