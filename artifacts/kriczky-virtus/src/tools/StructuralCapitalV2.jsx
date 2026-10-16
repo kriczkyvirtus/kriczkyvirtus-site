@@ -402,6 +402,7 @@ const CSS = `
   .kvd .bar button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:.04em;padding:9px 18px;border-radius:9px;cursor:pointer;
     color:#F2EEE6;background:#0A0E14;border:1px solid #0A0E14}
   .kvd .bar button:disabled{opacity:.7;cursor:progress}
+  .kvd .bar button.ghost{color:${L.ink};background:transparent;border-color:${L.rule}}
   .kvd .gate input{width:100%;padding:14px 16px;border-radius:10px;background:#fff;border:1px solid ${L.rule};color:${L.ink};
     font:16px 'DM Sans',sans-serif;outline:none;margin-bottom:10px}
   .kvd .gate input:focus{border-color:${TONE.gold.fill};box-shadow:0 0 0 3px ${TONE.gold.fill}33}
@@ -551,7 +552,7 @@ async function buildPdf(root, filename) {
 /* =================== EMAIL GATE =================== */
 /* Sits between the pages, outside the scaled frame, so the form is full size
    on a phone (16px inputs: iOS doesn't zoom). Same payload as v1. */
-const EmailGate = ({ toolName, toolSlug, storeSlug, scores, summary, onUnlock }) => {
+const EmailGate = ({ toolName, toolSlug, storeSlug, scores, summary, onUnlock, onStored }) => {
   const [gName, setGName] = useState("");
   const [gEmail, setGEmail] = useState("");
   const [gError, setGError] = useState("");
@@ -569,12 +570,16 @@ const EmailGate = ({ toolName, toolSlug, storeSlug, scores, summary, onUnlock })
     fetch("/api/lead-capture", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
       .catch(err => console.error("[Lead] Fetch failed:", err));
     onUnlock(name);
-    setTimeout(async () => {
+    /* The saved copy's link (the one in the email) is what Share hands out. */
+    const stored = new Promise(resolve => setTimeout(async () => {
       try {
         const res = await fetch("/api/store-results", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, email, tool: storeSlug, html: document.documentElement.outerHTML }) });
-        if (!res.ok) console.error("[Tool] Failed to store results:", res.status);
-      } catch (err) { console.error("[Tool] Store results failed:", err); }
-    }, 2000);
+        if (!res.ok) { console.error("[Tool] Failed to store results:", res.status); resolve(null); return; }
+        const j = await res.json().catch(() => ({}));
+        resolve(j.url || null);
+      } catch (err) { console.error("[Tool] Store results failed:", err); resolve(null); }
+    }, 2000));
+    if (onStored) onStored(stored);
   };
   const g = TONE.gold;
   return (
@@ -617,6 +622,8 @@ export default function StructuralCapitalV2() {
   const [gateUnlocked, setGateUnlocked] = useState(false);
   const [who, setWho] = useState("");
   const [busy, setBusy] = useState(false);
+  const [shareLabel, setShareLabel] = useState("Share");
+  const savedLink = useRef(null);
   const [ref, s] = usePageScale();
 
   const setScore = (key, val) => setScores(p => ({ ...p, [key]: val }));
@@ -641,13 +648,40 @@ export default function StructuralCapitalV2() {
     finally { setBusy(false); }
   };
 
+  /* Share copies the link to the saved results (the same one emailed); until
+     that's ready, it waits for it. Falls back to this page's address. */
+  const share = async () => {
+    setShareLabel("Preparing link...");
+    const url = (savedLink.current && await savedLink.current) || window.location.href;
+    try {
+      if (navigator.share && window.matchMedia("(pointer: coarse)").matches) {
+        await navigator.share({ title: `${TOOL} Deep-Dive`, url });
+        setShareLabel("Share");
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+    } catch (e) {
+      if (e && e.name === "AbortError") { setShareLabel("Share"); return; }
+      const ta = document.createElement("textarea");
+      ta.value = url; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); } catch (e2) { /* nothing more to try */ }
+      ta.remove();
+    }
+    setShareLabel("Link copied");
+    setTimeout(() => setShareLabel("Share"), 1800);
+  };
+
   return (
     <div className="kvd" ref={ref}>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
       <style>{CSS}</style>
       <div className="bar">
         {unlocked
-          ? <button disabled={busy} onClick={download}>{busy ? "Preparing your PDF..." : "Download PDF"}</button>
+          ? <>
+              <button disabled={busy} onClick={download}>{busy ? "Preparing your PDF..." : "Download PDF"}</button>
+              <button className="ghost" onClick={share}>{shareLabel}</button>
+            </>
           : <span style={{ fontSize: 13, fontWeight: 600, color: L.ink2, padding: "9px 0" }}>{scoredCount} of {DIMS.length} scored</span>}
       </div>
       <div className="pages" style={{ padding: "14px 0 10px" }}>
@@ -835,7 +869,7 @@ export default function StructuralCapitalV2() {
         {allScored && !gateUnlocked && (
           <EmailGate toolName="Structural Capital Deep-Dive" toolSlug="structural-capital" storeSlug="structural-capital-deep-dive" scores={scores}
             summary={{ totalScore, maxScore, pct: Math.round((totalScore / maxScore) * 100), band: activeBand?.label }}
-            onUnlock={(name) => { setWho(name); setGateUnlocked(true); }} />
+            onUnlock={(name) => { setWho(name); setGateUnlocked(true); }} onStored={(p) => { savedLink.current = p; }} />
         )}
 
         {/* ═══ YOUR FIRST 3 MOVES (gated) ═══ */}

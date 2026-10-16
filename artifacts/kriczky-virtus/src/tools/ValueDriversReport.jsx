@@ -5,6 +5,7 @@ import {
   zoneByKey, PILLAR_MAX, routeTo,
 } from "./valueDriversData.js";
 import { QUICK_WINS, tierFor } from "./valueDriversReportData.js";
+import RoadmapSystem from "../RoadmapSystem.jsx";
 
 /* ═══════════════════════════════════════════════════════════════
    VALUE DRIVERS - THE REPORT   /tools/wmbw/r/:token
@@ -585,12 +586,29 @@ const BioCard = () => (
   </div>
 );
 
+/* ── WHERE THIS LEADS ── the Owner's Virtus Roadmap, live. The ten scores
+   go into station 02 of the workbook, so the reader is at station 02. */
+function RoadmapPage({ s, n, total, report }) {
+  const workshop = report.door === "workshop";
+  return (
+    <Page s={s} n={n} total={total} right="07 · Where this leads" tex="light">
+      <div className="kicker">Where this leads</div>
+      <h2>Your ten scores are <em>station 02.</em></h2>
+      <p className="lede" style={{ marginBottom: 18 }}>
+        Knowing which drivers carry the business and which hold its growth back is where Know Your Numbers starts. It tells you where the next dollar earns its keep, and the rest of the roadmap builds on it.
+        {workshop ? " It's the station your scores go into at the workshop." : ""}
+      </p>
+      <div style={{ marginTop: 34 }}><RoadmapSystem report here={[1]} size={380} /></div>
+    </Page>
+  );
+}
+
 function NextPage({ s, n, total, report, token }) {
   const key = report.door === "workshop" ? "workshop" : routeTo(report.revenueBand, report.ownerTier);
   const o = NEXT[key];
   const href = key === "collective" ? SKOOL_COLLECTIVE : ICLOSED_NEXT(token);
   return (
-    <Page s={s} n={n} total={total} right="07 · Your next step" tex="light">
+    <Page s={s} n={n} total={total} right="08 · Your next step" tex="light">
       <div className="kicker">Your next step</div>
       <h2 style={{ fontSize: 40, marginBottom: 12 }}>{o.title}</h2>
       <p className="lede" style={{ fontSize: 17.5, lineHeight: 1.5, marginBottom: 2 }}>{o.body}</p>
@@ -623,6 +641,9 @@ async function buildPdf(root, filename) {
   const html2canvas = h2c.default || h2c;
   const JsPDF = jspdf.jsPDF || jspdf.default;
   const pages = Array.from(root.querySelectorAll(".page"));
+  /* hold the roadmap on the reader's station while the pages are drawn */
+  window.dispatchEvent(new Event("kv:freeze-orbit"));
+  await new Promise(r => setTimeout(r, 900));
   const pdf = new JsPDF({ unit: "pt", format: "letter", compress: true });
   for (let i = 0; i < pages.length; i++) {
     const canvas = await html2canvas(pages[i], {
@@ -631,7 +652,11 @@ async function buildPdf(root, filename) {
       onclone: (doc, el) => {
         el.style.transform = "none"; el.style.boxShadow = "none";
         /* the soft radial glows draw as flat boxes in the image, so leave them out */
-        el.querySelectorAll(".glow").forEach(g => { g.style.display = "none"; });
+        el.querySelectorAll(".glow, .vrs-wash, .vrs-pulse, .vrs-motion").forEach(g => { g.style.display = "none"; });
+        /* the clone restarts every animation from its first frame: show the end state */
+        const still = doc.createElement("style");
+        still.textContent = "*{animation:none!important;transition:none!important} .vrs-in{opacity:1!important}";
+        doc.head.appendChild(still);
         /* html2canvas draws inset shadows as a pale inner box (the "square" behind
            the tile icons), so keep only the outer shadows */
         const win = doc.defaultView;
@@ -667,7 +692,7 @@ export default function ValueDriversReport({ report, token = null, shareUrl = nu
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
   const order = ranked(report.scores);
-  const TOTAL = 7 + order.length + 1;
+  const TOTAL = 7 + order.length + 2;
 
   const share = async () => {
     const url = shareUrl || (typeof window !== "undefined" ? window.location.href : "");
@@ -691,7 +716,7 @@ export default function ValueDriversReport({ report, token = null, shareUrl = nu
           setBusy(true);
           try { await buildPdf(ref.current, fileName(report)); }
           catch (e) { window.print(); }
-          finally { setBusy(false); }
+          finally { setBusy(false); window.dispatchEvent(new Event("kv:release-orbit")); }
         }}>{busy ? "Preparing your PDF..." : "Download PDF"}</button>
         <button className="ghost" onClick={share}>{copied ? "Link copied" : "Share"}</button>
       </div>
@@ -706,6 +731,7 @@ export default function ValueDriversReport({ report, token = null, shareUrl = nu
         {order.map((x, i) => (
           <DriverPage key={x.k} s={s} n={8 + i} total={TOTAL} k={x.k} score={x.v} checks={report.checks?.[x.k]} />
         ))}
+        <RoadmapPage s={s} n={TOTAL - 1} total={TOTAL} report={report} />
         <NextPage s={s} n={TOTAL} total={TOTAL} report={report} token={token} />
       </div>
     </div>

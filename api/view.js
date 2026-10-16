@@ -4,6 +4,8 @@
 // Vercel Blob CDN forces Content-Disposition: attachment for HTML files regardless
 // of what is set at upload time, so proxying through our own function is required.
 
+const { injectSavedReportFrame, isLetterPageSnapshot } = require("../lib/saved-report");
+
 const ALLOWED_HOST_SUFFIX = ".public.blob.vercel-storage.com";
 
 module.exports = async function handler(req, res) {
@@ -34,11 +36,14 @@ module.exports = async function handler(req, res) {
       return res.status(upstream.status).send("Upstream error");
     }
 
-    const html = await upstream.text();
+    const stored = await upstream.text();
+    /* v2 letter-page results get their fit-to-screen, PDF and Share script back */
+    const html = injectSavedReportFrame(stored);
 
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.setHeader("Content-Disposition", "inline");
-    res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+    /* letter-page copies cache for a day, so a fix to the script reaches links already sent */
+    res.setHeader("Cache-Control", isLetterPageSnapshot(stored) ? "public, max-age=86400" : "public, max-age=31536000, immutable");
     return res.status(200).send(html);
   } catch (err) {
     console.error("[View] Proxy error:", err);
