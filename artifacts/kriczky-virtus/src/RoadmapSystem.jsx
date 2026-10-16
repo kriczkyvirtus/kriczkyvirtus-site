@@ -56,7 +56,8 @@ const RESUME_MS = 9000;    /* quiet time after an interaction before it walks ag
 /* Stations sit clockwise from upper-left, so 01 to 03 share the top arc. */
 const ANGLES = [-150, -90, -30, 30, 90, 150].map(a => (a * Math.PI) / 180);
 
-export default function RoadmapSystem({ onCta, report = false, here = [], size = 340 }) {
+export default function RoadmapSystem({ onCta, report = false, here = [], size = 340, workshop = true }) {
+  /* workshop={false}: a page outside the workshop funnel (the scorecard landing) - no workshop arc or ticks. */
   const boxRef = useRef(null);
   const stageRef = useRef(null);
   const [S, setS] = useState(560);            /* the orbit's side length in px */
@@ -198,7 +199,7 @@ export default function RoadmapSystem({ onCta, report = false, here = [], size =
             <circle cx={cx} cy={cy} r={R * 0.52} fill="none" stroke="#E2DACB" strokeWidth="1" strokeDasharray="2 5" />
 
             {/* the workshop's share of the journey */}
-            {!report && <><path d={arc(R2, ANGLES[0] - wsPad, ANGLES[2] + wsPad)} fill="none" stroke={TONE.gold.fill} strokeWidth="2.5" strokeLinecap="round" opacity=".85" />
+            {!report && workshop && <><path d={arc(R2, ANGLES[0] - wsPad, ANGLES[2] + wsPad)} fill="none" stroke={TONE.gold.fill} strokeWidth="2.5" strokeLinecap="round" opacity=".85" />
             <text fontSize={narrow ? 9.5 : 11} fontWeight="700" letterSpacing=".2em" fill={TONE.gold.ink} style={{ fontFamily: "'DM Sans',sans-serif" }}>
               <textPath href="#vrs-ws" startOffset="50%" textAnchor="middle">THE WORKSHOP COVERS 01 TO 03</textPath>
             </text></>}
@@ -272,8 +273,8 @@ export default function RoadmapSystem({ onCta, report = false, here = [], size =
                   "--tone": tt.ink, "--fill": tt.fill, "--fill55": `${tt.fill}8c`, "--fill28": `${tt.fill}47`, "--fill40": `${tt.fill}66` }}>
                 <span className="vrs-tile vrs-sttile" style={{ width: T, height: T, borderRadius: Math.round(T * 0.27) }}>
                   <img src={`/icons/reinvest-harvest/${s.ic}.png`} alt="" width={Math.round(T * 0.66)} height={Math.round(T * 0.66)} draggable="false" />
-                  {report && isHere(i) && <span className="vrs-here" aria-hidden="true">You are here</span>}
-                  {!report && s.workshop && <span className="vrs-ws" aria-hidden="true" title="Covered in the workshop">
+                  {(report || here.length > 0) && isHere(i) && <span className="vrs-here" aria-hidden="true">You are here</span>}
+                  {!report && workshop && s.workshop && <span className="vrs-ws" aria-hidden="true" title="Covered in the workshop">
                     <svg width="10" height="10" viewBox="0 0 12 12"><path d="M2.5 6.4l2.3 2.3 4.7-5" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </span>}
                 </span>
@@ -292,7 +293,7 @@ export default function RoadmapSystem({ onCta, report = false, here = [], size =
         <div style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 11.5, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#6B6459", marginBottom: 12 }}>
           <span className="vrs-live" style={{ "--fill": tone.fill, "--fill70": `${tone.fill}b3` }} aria-hidden="true" />
           <span style={{ whiteSpace: "nowrap" }}>Station {st.n} of 06</span>
-          {report
+          {(report || !workshop)
             ? (isHere(active)
               ? <span className="vrs-tag" style={{ background: `${TONE.gold.fill}22`, color: TONE.gold.ink, borderColor: `${TONE.gold.fill}66` }}>You are here</span>
               : <span className="vrs-tag" style={{ background: "#FFFFFF", color: "#6B6459", borderColor: "#DCD4C5" }}>On your roadmap</span>)

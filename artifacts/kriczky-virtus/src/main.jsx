@@ -28,6 +28,7 @@ import WorkshopPage from './WorkshopPage.jsx'
 import WorkshopPageCream from './WorkshopPageCream.jsx'
 import ExecutionDebrief from './ExecutionDebrief.jsx'
 import ReinvestHarvestLanding from './tools/ReinvestHarvestLanding.jsx'
+import ReinvestHarvestLandingCream from './tools/ReinvestHarvestLandingCream.jsx'
 import ReinvestHarvestFlow from './tools/ReinvestHarvestFlow.jsx'
 import { ReinvestHarvestThankYouRoute, ReinvestHarvestReportRoute } from './tools/ReinvestHarvestRoutes.jsx'
 import RecurringRevenue12Cs from './tools/RecurringRevenue12Cs.jsx'
@@ -46,6 +47,7 @@ const TITLES = {
   '/cohort':                  'Virtus Collective — Cohort Program',
   '/tools/reinvest-harvest':  'Reinvest or Harvest — Capital Allocation Scorecard',
   '/reinvest-harvest':        'Reinvest or Harvest — Capital Allocation Scorecard',
+  '/reinvest-harvest/cream':  'Reinvest or Harvest — Capital Allocation Scorecard',
   '/reinvest-harvest/start':  'Reinvest or Harvest — Capital Allocation Scorecard',
   '/reinvest-harvest/next':   'Your Reinvest or Harvest Results',
   '/partnership':             'Growth & Harvest Partnership',
@@ -58,7 +60,7 @@ const TITLES = {
 }
 
 /* Unlinked previews and rollbacks stay out of search. */
-const NOINDEX = new Set(['/partnership', '/workshop-rh/dark', '/tools/structural-capital/v2'])
+const NOINDEX = new Set(['/partnership', '/workshop-rh/dark', '/tools/structural-capital/v2', '/reinvest-harvest/cream'])
 
 const DEFAULT_TITLE = 'Build Businesses Worth Owning - Kriczky Virtus'
 
@@ -102,6 +104,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/tools/structural-capital/v2" element={<StructuralCapitalV2 />} />
         <Route path="/tools/reinvest-harvest" element={<Navigate to="/reinvest-harvest" replace />} />
         <Route path="/reinvest-harvest" element={<ReinvestHarvestLanding />} />
+        {/* Cream redesign preview - unlinked and noindex until approved. */}
+        <Route path="/reinvest-harvest/cream" element={<ReinvestHarvestLandingCream />} />
         <Route path="/reinvest-harvest/start" element={<ReinvestHarvestFlow />} />
         <Route path="/reinvest-harvest/next" element={<ReinvestHarvestThankYouRoute />} />
         <Route path="/partnership" element={<GrowthHarvestPartnership variant="session" />} />
