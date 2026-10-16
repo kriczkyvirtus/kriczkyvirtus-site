@@ -1,0 +1,935 @@
+diff --git a/api/view.js b/api/view.js
+index f59a2e4621e6088100ddab869a802dfe891c2ee5..51e3110ffecdb61443c5b30349e4e3e0cc5acb77 100644
+--- a/api/view.js
++++ b/api/view.js
+@@ -4,6 +4,8 @@
+ // Vercel Blob CDN forces Content-Disposition: attachment for HTML files regardless
+ // of what is set at upload time, so proxying through our own function is required.
+ 
++const { injectSavedReportFrame, isLetterPageSnapshot } = require("../lib/saved-report");
++
+ const ALLOWED_HOST_SUFFIX = ".public.blob.vercel-storage.com";
+ 
+ module.exports = async function handler(req, res) {
+@@ -34,11 +36,14 @@ module.exports = async function handler(req, res) {
+       return res.status(upstream.status).send("Upstream error");
+     }
+ 
+-    const html = await upstream.text();
++    const stored = await upstream.text();
++    /* v2 letter-page results get their fit-to-screen, PDF and Share script back */
++    const html = injectSavedReportFrame(stored);
+ 
+     res.setHeader("Content-Type", "text/html; charset=utf-8");
+     res.setHeader("Content-Disposition", "inline");
+-    res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
++    /* letter-page copies cache for a day, so a fix to the script reaches links already sent */
++    res.setHeader("Cache-Control", isLetterPageSnapshot(stored) ? "public, max-age=86400" : "public, max-age=31536000, immutable");
+     return res.status(200).send(html);
+   } catch (err) {
+     console.error("[View] Proxy error:", err);
+diff --git a/artifacts/kriczky-virtus/src/tools/StructuralCapitalV2.jsx b/artifacts/kriczky-virtus/src/tools/StructuralCapitalV2.jsx
+index 653427cb99ec7d189edba746ad69a8e300f440b4..181bbbe440529de86c505efa799f15d75d4c0125 100644
+--- a/artifacts/kriczky-virtus/src/tools/StructuralCapitalV2.jsx
++++ b/artifacts/kriczky-virtus/src/tools/StructuralCapitalV2.jsx
+@@ -402,6 +402,7 @@ const CSS = `
+   .kvd .bar button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:.04em;padding:9px 18px;border-radius:9px;cursor:pointer;
+     color:#F2EEE6;background:#0A0E14;border:1px solid #0A0E14}
+   .kvd .bar button:disabled{opacity:.7;cursor:progress}
++  .kvd .bar button.ghost{color:${L.ink};background:transparent;border-color:${L.rule}}
+   .kvd .gate input{width:100%;padding:14px 16px;border-radius:10px;background:#fff;border:1px solid ${L.rule};color:${L.ink};
+     font:16px 'DM Sans',sans-serif;outline:none;margin-bottom:10px}
+   .kvd .gate input:focus{border-color:${TONE.gold.fill};box-shadow:0 0 0 3px ${TONE.gold.fill}33}
+@@ -551,7 +552,7 @@ async function buildPdf(root, filename) {
+ /* =================== EMAIL GATE =================== */
+ /* Sits between the pages, outside the scaled frame, so the form is full size
+    on a phone (16px inputs: iOS doesn't zoom). Same payload as v1. */
+-const EmailGate = ({ toolName, toolSlug, storeSlug, scores, summary, onUnlock }) => {
++const EmailGate = ({ toolName, toolSlug, storeSlug, scores, summary, onUnlock, onStored }) => {
+   const [gName, setGName] = useState("");
+   const [gEmail, setGEmail] = useState("");
+   const [gError, setGError] = useState("");
+@@ -569,12 +570,16 @@ const EmailGate = ({ toolName, toolSlug, storeSlug, scores, summary, onUnlock })
+     fetch("/api/lead-capture", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+       .catch(err => console.error("[Lead] Fetch failed:", err));
+     onUnlock(name);
+-    setTimeout(async () => {
++    /* The saved copy's link (the one in the email) is what Share hands out. */
++    const stored = new Promise(resolve => setTimeout(async () => {
+       try {
+         const res = await fetch("/api/store-results", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, email, tool: storeSlug, html: document.documentElement.outerHTML }) });
+-        if (!res.ok) console.error("[Tool] Failed to store results:", res.status);
+-      } catch (err) { console.error("[Tool] Store results failed:", err); }
+-    }, 2000);
++        if (!res.ok) { console.error("[Tool] Failed to store results:", res.status); resolve(null); return; }
++        const j = await res.json().catch(() => ({}));
++        resolve(j.url || null);
++      } catch (err) { console.error("[Tool] Store results failed:", err); resolve(null); }
++    }, 2000));
++    if (onStored) onStored(stored);
+   };
+   const g = TONE.gold;
+   return (
+@@ -617,6 +622,8 @@ export default function StructuralCapitalV2() {
+   const [gateUnlocked, setGateUnlocked] = useState(false);
+   const [who, setWho] = useState("");
+   const [busy, setBusy] = useState(false);
++  const [shareLabel, setShareLabel] = useState("Share");
++  const savedLink = useRef(null);
+   const [ref, s] = usePageScale();
+ 
+   const setScore = (key, val) => setScores(p => ({ ...p, [key]: val }));
+@@ -641,13 +648,40 @@ export default function StructuralCapitalV2() {
+     finally { setBusy(false); }
+   };
+ 
++  /* Share copies the link to the saved results (the same one emailed); until
++     that's ready, it waits for it. Falls back to this page's address. */
++  const share = async () => {
++    setShareLabel("Preparing link...");
++    const url = (savedLink.current && await savedLink.current) || window.location.href;
++    try {
++      if (navigator.share && window.matchMedia("(pointer: coarse)").matches) {
++        await navigator.share({ title: `${TOOL} Deep-Dive`, url });
++        setShareLabel("Share");
++        return;
++      }
++      await navigator.clipboard.writeText(url);
++    } catch (e) {
++      if (e && e.name === "AbortError") { setShareLabel("Share"); return; }
++      const ta = document.createElement("textarea");
++      ta.value = url; ta.style.position = "fixed"; ta.style.opacity = "0";
++      document.body.appendChild(ta); ta.select();
++      try { document.execCommand("copy"); } catch (e2) { /* nothing more to try */ }
++      ta.remove();
++    }
++    setShareLabel("Link copied");
++    setTimeout(() => setShareLabel("Share"), 1800);
++  };
++
+   return (
+     <div className="kvd" ref={ref}>
+       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+       <style>{CSS}</style>
+       <div className="bar">
+         {unlocked
+-          ? <button disabled={busy} onClick={download}>{busy ? "Preparing your PDF..." : "Download PDF"}</button>
++          ? <>
++              <button disabled={busy} onClick={download}>{busy ? "Preparing your PDF..." : "Download PDF"}</button>
++              <button className="ghost" onClick={share}>{shareLabel}</button>
++            </>
+           : <span style={{ fontSize: 13, fontWeight: 600, color: L.ink2, padding: "9px 0" }}>{scoredCount} of {DIMS.length} scored</span>}
+       </div>
+       <div className="pages" style={{ padding: "14px 0 10px" }}>
+@@ -835,7 +869,7 @@ export default function StructuralCapitalV2() {
+         {allScored && !gateUnlocked && (
+           <EmailGate toolName="Structural Capital Deep-Dive" toolSlug="structural-capital" storeSlug="structural-capital-deep-dive" scores={scores}
+             summary={{ totalScore, maxScore, pct: Math.round((totalScore / maxScore) * 100), band: activeBand?.label }}
+-            onUnlock={(name) => { setWho(name); setGateUnlocked(true); }} />
++            onUnlock={(name) => { setWho(name); setGateUnlocked(true); }} onStored={(p) => { savedLink.current = p; }} />
+         )}
+ 
+         {/* ═══ YOUR FIRST 3 MOVES (gated) ═══ */}
+diff --git a/artifacts/kriczky-virtus/src/tools/ValueDriversReport.jsx b/artifacts/kriczky-virtus/src/tools/ValueDriversReport.jsx
+index 3022b6b27e649b77357fc29198a4dec8ff5085b4..7f0dfef162077dff5f9c574af3a9f946e8b9e1c3 100644
+--- a/artifacts/kriczky-virtus/src/tools/ValueDriversReport.jsx
++++ b/artifacts/kriczky-virtus/src/tools/ValueDriversReport.jsx
+@@ -5,6 +5,7 @@ import {
+   zoneByKey, PILLAR_MAX, routeTo,
+ } from "./valueDriversData.js";
+ import { QUICK_WINS, tierFor } from "./valueDriversReportData.js";
++import RoadmapSystem from "../RoadmapSystem.jsx";
+ 
+ /* ═══════════════════════════════════════════════════════════════
+    VALUE DRIVERS - THE REPORT   /tools/wmbw/r/:token
+@@ -585,12 +586,29 @@ const BioCard = () => (
+   </div>
+ );
+ 
++/* ── WHERE THIS LEADS ── the Owner's Virtus Roadmap, live. The ten scores
++   go into station 02 of the workbook, so the reader is at station 02. */
++function RoadmapPage({ s, n, total, report }) {
++  const workshop = report.door === "workshop";
++  return (
++    <Page s={s} n={n} total={total} right="07 · Where this leads" tex="light">
++      <div className="kicker">Where this leads</div>
++      <h2>Your ten scores are <em>station 02.</em></h2>
++      <p className="lede" style={{ marginBottom: 18 }}>
++        Knowing which drivers carry the business and which hold its growth back is where Know Your Numbers starts. It tells you where the next dollar earns its keep, and the rest of the roadmap builds on it.
++        {workshop ? " It's the station your scores go into at the workshop." : ""}
++      </p>
++      <div style={{ marginTop: 34 }}><RoadmapSystem report here={[1]} size={380} /></div>
++    </Page>
++  );
++}
++
+ function NextPage({ s, n, total, report, token }) {
+   const key = report.door === "workshop" ? "workshop" : routeTo(report.revenueBand, report.ownerTier);
+   const o = NEXT[key];
+   const href = key === "collective" ? SKOOL_COLLECTIVE : ICLOSED_NEXT(token);
+   return (
+-    <Page s={s} n={n} total={total} right="07 · Your next step" tex="light">
++    <Page s={s} n={n} total={total} right="08 · Your next step" tex="light">
+       <div className="kicker">Your next step</div>
+       <h2 style={{ fontSize: 40, marginBottom: 12 }}>{o.title}</h2>
+       <p className="lede" style={{ fontSize: 17.5, lineHeight: 1.5, marginBottom: 2 }}>{o.body}</p>
+@@ -623,6 +641,9 @@ async function buildPdf(root, filename) {
+   const html2canvas = h2c.default || h2c;
+   const JsPDF = jspdf.jsPDF || jspdf.default;
+   const pages = Array.from(root.querySelectorAll(".page"));
++  /* hold the roadmap on the reader's station while the pages are drawn */
++  window.dispatchEvent(new Event("kv:freeze-orbit"));
++  await new Promise(r => setTimeout(r, 900));
+   const pdf = new JsPDF({ unit: "pt", format: "letter", compress: true });
+   for (let i = 0; i < pages.length; i++) {
+     const canvas = await html2canvas(pages[i], {
+@@ -631,7 +652,11 @@ async function buildPdf(root, filename) {
+       onclone: (doc, el) => {
+         el.style.transform = "none"; el.style.boxShadow = "none";
+         /* the soft radial glows draw as flat boxes in the image, so leave them out */
+-        el.querySelectorAll(".glow").forEach(g => { g.style.display = "none"; });
++        el.querySelectorAll(".glow, .vrs-wash, .vrs-pulse, .vrs-motion").forEach(g => { g.style.display = "none"; });
++        /* the clone restarts every animation from its first frame: show the end state */
++        const still = doc.createElement("style");
++        still.textContent = "*{animation:none!important;transition:none!important} .vrs-in{opacity:1!important}";
++        doc.head.appendChild(still);
+         /* html2canvas draws inset shadows as a pale inner box (the "square" behind
+            the tile icons), so keep only the outer shadows */
+         const win = doc.defaultView;
+@@ -667,7 +692,7 @@ export default function ValueDriversReport({ report, token = null, shareUrl = nu
+   const [busy, setBusy] = useState(false);
+   const [copied, setCopied] = useState(false);
+   const order = ranked(report.scores);
+-  const TOTAL = 7 + order.length + 1;
++  const TOTAL = 7 + order.length + 2;
+ 
+   const share = async () => {
+     const url = shareUrl || (typeof window !== "undefined" ? window.location.href : "");
+@@ -691,7 +716,7 @@ export default function ValueDriversReport({ report, token = null, shareUrl = nu
+           setBusy(true);
+           try { await buildPdf(ref.current, fileName(report)); }
+           catch (e) { window.print(); }
+-          finally { setBusy(false); }
++          finally { setBusy(false); window.dispatchEvent(new Event("kv:release-orbit")); }
+         }}>{busy ? "Preparing your PDF..." : "Download PDF"}</button>
+         <button className="ghost" onClick={share}>{copied ? "Link copied" : "Share"}</button>
+       </div>
+@@ -706,6 +731,7 @@ export default function ValueDriversReport({ report, token = null, shareUrl = nu
+         {order.map((x, i) => (
+           <DriverPage key={x.k} s={s} n={8 + i} total={TOTAL} k={x.k} score={x.v} checks={report.checks?.[x.k]} />
+         ))}
++        <RoadmapPage s={s} n={TOTAL - 1} total={TOTAL} report={report} />
+         <NextPage s={s} n={TOTAL} total={TOTAL} report={report} token={token} />
+       </div>
+     </div>
+diff --git a/lib/email.js b/lib/email.js
+index 71623543c25d2cb91ade3236c02aa708e6547abb..1eb9f10ffa40fd1e296cc8753c9126b8e0b89801 100644
+--- a/lib/email.js
++++ b/lib/email.js
+@@ -13,60 +13,60 @@ const TOOL_DETAILS = {
+     subject: "Your Personalized Constraint Roadmap",
+     previewText: "Here's your personalized 14-page Constraint Roadmap",
+     heading: "Your Constraint Roadmap Is Ready",
+-    description: "Here's your personalized 14-page Constraint Roadmap — built around your scores, your #1 constraint, and three specific moves you can start executing immediately.",
++    description: "Here's your personalized 14-page Constraint Roadmap - built around your scores, your #1 constraint, and three specific moves you can start executing immediately.",
+     buttonText: "View Your Constraint Roadmap",
+     ctaUrl: "https://www.kriczkyvirtus.com/roadmap-session",
+-    ctaText: "P.S. — do you want 1-on-1 help walking through it together so you can start making progress on your 90-day checklist?",
++    ctaText: "P.S. - do you want 1-on-1 help walking through it together so you can start making progress on your 90-day checklist?",
+     ctaButtonText: "Book Your Free Working Session",
+   },
+   "value-range-estimator": {
+     subject: "Your \"What's My Business Worth?\" Results",
+     previewText: "Your Value Range Estimate Is Ready",
+     heading: "Your Value Range Estimate Is Ready",
+-    description: "Here are your personalized results from the What's My Business Worth estimator — including your estimated value range and the key drivers behind it.",
++    description: "Here are your personalized results from the What's My Business Worth estimator - including your estimated value range and the key drivers behind it.",
+     buttonText: "View Your Results",
+     ctaUrl: "https://www.kriczkyvirtus.com/free-session",
+-    ctaText: "P.S. — Want to see your business's Profit Gap and Value Gap specific to your industry?",
++    ctaText: "P.S. - Want to see your business's Profit Gap and Value Gap specific to your industry?",
+     ctaButtonText: "Book Your Free Working Session",
+   },
+   "business-independence-blueprint": {
+     subject: "Your Business Independence Blueprint Results",
+     previewText: "Your Biggest Opportunities for Independence are Ready",
+     heading: "Your Blueprint Is Ready",
+-    description: "Here are your personalized Business Independence Blueprint results — showing how dependent your business is on you and where the biggest opportunities for independence are.",
++    description: "Here are your personalized Business Independence Blueprint results - showing how dependent your business is on you and where the biggest opportunities for independence are.",
+     buttonText: "View Your Blueprint",
+     ctaUrl: "https://www.kriczkyvirtus.com/free-session",
+-    ctaText: "P.S. — Want help executing these improvements for your business?",
++    ctaText: "P.S. - Want help executing these improvements for your business?",
+     ctaButtonText: "Book Your Free Working Session",
+   },
+   "structural-capital-deep-dive": {
+     subject: "Your Structural Capital Deep Dive Results",
+     previewText: "How your systems, processes, and intellectual property score against best-in-class benchmarks.",
+     heading: "Your Structural Capital Results Are Ready",
+-    description: "Here's your personalized Structural Capital Deep Dive — showing how your systems, processes, and intellectual property score against best-in-class benchmarks.",
++    description: "Here's your personalized Structural Capital Deep Dive - showing how your systems, processes, and intellectual property score against best-in-class benchmarks.",
+     buttonText: "View Your Results",
+     ctaUrl: "https://www.kriczkyvirtus.com/free-session",
+-    ctaText: "P.S. — Want help identifying where the biggest ROI opportunities are?",
++    ctaText: "P.S. - Want help identifying where the biggest ROI opportunities are?",
+     ctaButtonText: "Book Your Free Working Session",
+   },
+   "customer-capital-deep-dive": {
+     subject: "Your Customer Capital Deep Dive Results",
+     previewText: "How your revenue quality, customer concentration, and recurring revenue score against best-in-class benchmarks.",
+     heading: "Your Customer Capital Results Are Ready",
+-    description: "Here's your personalized Customer Capital Deep Dive — showing how your revenue quality, customer concentration, and recurring revenue score against best-in-class benchmarks.",
++    description: "Here's your personalized Customer Capital Deep Dive - showing how your revenue quality, customer concentration, and recurring revenue score against best-in-class benchmarks.",
+     buttonText: "View Your Results",
+     ctaUrl: "https://www.kriczkyvirtus.com/free-session",
+-    ctaText: "P.S. — Want help identifying where the biggest ROI opportunities are?",
++    ctaText: "P.S. - Want help identifying where the biggest ROI opportunities are?",
+     ctaButtonText: "Book Your Free Working Session",
+   },
+   "human-capital-deep-dive": {
+     subject: "Your Human Capital Deep Dive Results",
+     previewText: "How your team depth, management succession, and talent retention score against best-in-class benchmarks.",
+     heading: "Your Human Capital Results Are Ready",
+-    description: "Here's your personalized Human Capital Deep Dive — showing how your team depth, management succession, and talent retention score against best-in-class benchmarks.",
++    description: "Here's your personalized Human Capital Deep Dive - showing how your team depth, management succession, and talent retention score against best-in-class benchmarks.",
+     buttonText: "View Your Results",
+     ctaUrl: "https://www.kriczkyvirtus.com/free-session",
+-    ctaText: "P.S. — Want help identifying where the biggest ROI opportunities are?",
++    ctaText: "P.S. - Want help identifying where the biggest ROI opportunities are?",
+     ctaButtonText: "Book Your Free Working Session",
+   },
+   // Short slug aliases for Capital Deep Dive tools
+@@ -74,50 +74,50 @@ const TOOL_DETAILS = {
+     subject: "Your Structural Capital Deep Dive Results",
+     previewText: "How your systems, processes, and intellectual property score against best-in-class benchmarks.",
+     heading: "Your Structural Capital Results Are Ready",
+-    description: "Here's your personalized Structural Capital Deep Dive — showing how your systems, processes, and intellectual property score against best-in-class benchmarks.",
++    description: "Here's your personalized Structural Capital Deep Dive - showing how your systems, processes, and intellectual property score against best-in-class benchmarks.",
+     buttonText: "View Your Results",
+     ctaUrl: "https://www.kriczkyvirtus.com/free-session",
+-    ctaText: "P.S. — Want help identifying where the biggest ROI opportunities are?",
++    ctaText: "P.S. - Want help identifying where the biggest ROI opportunities are?",
+     ctaButtonText: "Book Your Free Working Session",
+   },
+   "customer-capital": {
+     subject: "Your Customer Capital Deep Dive Results",
+     previewText: "How your revenue quality, customer concentration, and recurring revenue score against best-in-class benchmarks.",
+     heading: "Your Customer Capital Results Are Ready",
+-    description: "Here's your personalized Customer Capital Deep Dive — showing how your revenue quality, customer concentration, and recurring revenue score against best-in-class benchmarks.",
++    description: "Here's your personalized Customer Capital Deep Dive - showing how your revenue quality, customer concentration, and recurring revenue score against best-in-class benchmarks.",
+     buttonText: "View Your Results",
+     ctaUrl: "https://www.kriczkyvirtus.com/free-session",
+-    ctaText: "P.S. — Want help identifying where the biggest ROI opportunities are?",
++    ctaText: "P.S. - Want help identifying where the biggest ROI opportunities are?",
+     ctaButtonText: "Book Your Free Working Session",
+   },
+   "human-capital": {
+     subject: "Your Human Capital Deep Dive Results",
+     previewText: "How your team depth, management succession, and talent retention score against best-in-class benchmarks.",
+     heading: "Your Human Capital Results Are Ready",
+-    description: "Here's your personalized Human Capital Deep Dive — showing how your team depth, management succession, and talent retention score against best-in-class benchmarks.",
++    description: "Here's your personalized Human Capital Deep Dive - showing how your team depth, management succession, and talent retention score against best-in-class benchmarks.",
+     buttonText: "View Your Results",
+     ctaUrl: "https://www.kriczkyvirtus.com/free-session",
+-    ctaText: "P.S. — Want help identifying where the biggest ROI opportunities are?",
++    ctaText: "P.S. - Want help identifying where the biggest ROI opportunities are?",
+     ctaButtonText: "Book Your Free Working Session",
+   },
+   "reinvest-harvest": {
+     subject: "Your Reinvest or Harvest results",
+-    previewText: "Where the next dollar should go — and why.",
++    previewText: "Where the next dollar should go - and why.",
+     heading: "Your Reinvest or Harvest Scorecard",
+     description: "You scored your business capacity and your personal foundation separately, because the reinvest-or-harvest question depends on both. Your results show which side is carrying you right now, the two dimensions holding your position back, and three moves you can start this month.",
+     buttonText: "View Your Results",
+     ctaUrl: "https://www.kriczkyvirtus.com/free-session",
+-    ctaText: "P.S. — ready to decide where the next dollar should go with your real numbers?",
++    ctaText: "P.S. - ready to decide where the next dollar should go with your real numbers?",
+     ctaButtonText: "Book your free working session",
+   },
+   "recurring-revenue-12cs": {
+     subject: "Your 12 Cs Recurring Revenue Score",
+     previewText: "Your scored 15-page recurring revenue roadmap",
+     heading: "Your Recurring Revenue Score Is Ready",
+-    description: "Here's your scored copy of the 12 Cs roadmap — your twelve dimension scores, your total stickiness score, and the specific action steps under each one.",
++    description: "Here's your scored copy of the 12 Cs roadmap - your twelve dimension scores, your total stickiness score, and the specific action steps under each one.",
+     buttonText: "View Your Scored Roadmap",
+     ctaUrl: "https://www.kriczkyvirtus.com/free-session",
+-    ctaText: "P.S. — want help turning the two lowest scores into a plan?",
++    ctaText: "P.S. - want help turning the two lowest scores into a plan?",
+     ctaButtonText: "Book Your Free Working Session",
+     bcc: "ekriczky@kriczkyvirtus.com",
+   },
+@@ -125,12 +125,12 @@ const TOOL_DETAILS = {
+ 
+ const COHORT_CONFIRMATION_TEXT = ({ firstName }) => `Hi ${firstName},
+ 
+-Your cohort application came through — thanks for taking the time on it.
++Your cohort application came through - thanks for taking the time on it.
+ 
+ I read every one of these personally. If there's a fit, I'll reach out when the next cohort opens with details on timing and seats. If there isn't, I'll tell you that too, and point you somewhere more useful.
+ 
+ Rooting for you,
+-— Edward
++Edward
+ 
+ You are receiving this email because you opted-in through our website.
+ 
+@@ -142,11 +142,58 @@ This message, including any hypothetical scenarios described, is provided for in
+ 
+ Please note that individual successes are influenced by personal abilities, market conditions, and other external factors. We assume no responsibility for decisions made or actions taken based on the content of this email. Always consult with qualified professionals before making significant business decisions.`;
+ 
++/* ═══════════════════════════════════════════════════════════════
++   PLAIN-TEXT STYLE (October 2026). Every automated email now matches the
++   Reinvest or Harvest and Value Drivers results emails: white, one column,
++   reads as written by a person, nothing to break in Outlook or dark mode.
++   The wording is unchanged from the old dark template; only the design and
++   the em dashes (now " - ") changed.
++   ═══════════════════════════════════════════════════════════════ */
++const P = "font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:24px;color:#222222;margin:0 0 18px;";
++const LINK = "color:#1155cc;text-decoration:underline;font-weight:bold;";
++const FOOT = "font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:12px;line-height:18px;color:#888888;";
++const DISCLAIMER_1 = "This message, including any hypothetical scenarios described, is provided for informational and illustrative purposes only and does not constitute professional advice. These scenarios are hypothetical and are not indicative of any specific outcome or past performance. Results will vary based on individual efforts and external factors. We make no promises or guarantees regarding your success or income level.";
++const DISCLAIMER_2 = "Please note that individual successes are influenced by personal abilities, market conditions, and other external factors. We assume no responsibility for decisions made or actions taken based on the content of this email. Always consult with qualified professionals before making significant business decisions.";
++
++const noDash = (s = "") => String(s).replace(/\s*(?:—|&mdash;|&#8212;)\s*/g, " - ");
++const unsubUrl = (email) => "https://www.kriczkyvirtus.com/unsubscribe?email=" + encodeURIComponent(email);
++
++/* The page around the body: preheader, one 560px column, the small grey footer. */
++function plainEmailHtml({ previewText, bodyHtml, email, includeUnsubscribe = true }) {
++  return '<!DOCTYPE html>\n<html>\n<head>\n<meta charset="utf-8" />\n<meta name="viewport" content="width=device-width,initial-scale=1" />\n</head>\n' +
++    '<body style="margin:0;padding:0;background-color:#ffffff;">\n' +
++    '<div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">' + noDash(previewText) + '</div>\n' +
++    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff;">\n' +
++    '<tr><td align="left" style="padding:24px 20px 40px;">\n' +
++    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">\n<tr><td>\n\n' +
++    noDash(bodyHtml) + '\n\n' +
++    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:32px;border-top:1px solid #e4e4e4;">\n' +
++    '<tr><td style="padding-top:16px;' + FOOT + '">\n' +
++    'You are receiving this email because you opted-in through our website.<br /><br />\n' +
++    'Kriczky Virtus, LLC &middot; 237 Roosevelt Avenue &middot; Downingtown, PA 19335' +
++    (includeUnsubscribe ? ' &middot; <a href="' + unsubUrl(email) + '" style="color:#888888;">Unsubscribe</a>' : '') + '<br /><br />\n' +
++    DISCLAIMER_1 + '<br /><br />\n' + DISCLAIMER_2 + '\n' +
++    '</td></tr>\n</table>\n\n</td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>';
++}
++
++function plainEmailText({ bodyText, email, includeUnsubscribe = true }) {
++  return noDash(bodyText) + "\n\n---\n" +
++    "You are receiving this email because you opted-in through our website.\n\n" +
++    "Kriczky Virtus, LLC\n237 Roosevelt Avenue\nDowningtown, PA 19335\n" +
++    (includeUnsubscribe ? "Unsubscribe: " + unsubUrl(email) + "\n" : "") + "\n" +
++    DISCLAIMER_1 + "\n\n" + DISCLAIMER_2;
++}
++
++const p = (html) => '<p style="' + P + '">' + html + '</p>\n';
++const a = (href, label) => '<a href="' + href + '" style="' + LINK + '">' + label + '</a>';
++/* "P.S. — text" → "P.S. - text" */
++const ps = (s) => noDash(s);
++
++/* The standard results email: greeting, what it is, the link, sign-off, P.S. */
+ function buildBrandedEmailHtml({
+   firstName,
+   email,
+   previewText,
+-  heading,
+   description,
+   descriptionHtml,
+   resultsUrl,
+@@ -158,159 +205,21 @@ function buildBrandedEmailHtml({
+   includeCta = true,
+   includeUnsubscribe = true,
+ }) {
+-  const renderedDescription = descriptionHtml || `              <p style="font-size: 15px; color: #8B95A5; margin: 0 0 32px 0; line-height: 1.6;">
+-                ${description}
+-              </p>`;
+-  const primaryButtonMarkup = includeCta ? `              <!-- Primary Button -->
+-              <table cellpadding="0" cellspacing="0" style="margin: 0 0 32px 0;">
+-                <tr>
+-                  <td style="background: linear-gradient(135deg, rgba(200,162,78,0.2), rgba(200,162,78,0.08)); border: 1.5px solid rgba(200,162,78,0.5); border-radius: 12px; padding: 14px 32px;">
+-                    <a href="${resultsUrl}" target="_blank" class="primary-btn-text" style="color: #C8A24E; font-size: 14px; font-weight: 700; text-decoration: none; letter-spacing: 0.02em;">
+-                      ${buttonText}
+-                    </a>
+-                  </td>
+-                </tr>
+-              </table>` : "";
+-  const ctaMarkup = includeCta ? `              <!-- Divider -->
+-              <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 0 0 24px 0;">
+-
+-              <!-- Secondary CTA -->
+-              <p style="font-size: 14px; color: #8B95A5; margin: 0 0 16px 0; line-height: 1.5;">
+-                ${ctaText}
+-              </p>
+-
+-              <table cellpadding="0" cellspacing="0">
+-                <tr>
+-                  <td style="border: 1px solid rgba(34,211,238,0.3); border-radius: 10px; padding: 12px 24px; background: rgba(34,211,238,0.06);">
+-                    <a href="${ctaUrl}" target="_blank" style="color: #22D3EE; font-size: 13px; font-weight: 600; text-decoration: none;">
+-                      ${ctaButtonText}
+-                    </a>
+-                  </td>
+-                </tr>
+-              </table>` : "";
+-  const unsubscribeMarkup = includeUnsubscribe ? `              <!-- Unsubscribe -->
+-              <p style="margin: 16px 0;">
+-                <a href="https://www.kriczkyvirtus.com/unsubscribe?email=${encodeURIComponent(email)}" style="font-size: 11px; color: #8B95A5; text-decoration: underline;">Unsubscribe</a>
+-              </p>` : "";
+-
+-  return `
+-<!DOCTYPE html>
+-<html>
+-<head>
+-  <meta charset="utf-8">
+-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+-  <style>
+-    @media only screen and (max-width: 480px) {
+-      .primary-btn-text {
+-        font-size: 12px !important;
+-      }
+-    }
+-  </style>
+-</head>
+-<body style="margin: 0; padding: 0; background-color: #0A0E14; font-family: Arial, Helvetica, sans-serif;">
+-  <!-- Preview text (hidden, shows in email client preview) -->
+-  <div style="display: none; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #0A0E14;">
+-    ${previewText}
+-    &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+-  </div>
+-
+-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0A0E14; padding: 40px 20px;">
+-    <tr>
+-      <td align="center">
+-        <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%;">
+-
+-          <!-- Logo -->
+-          <tr>
+-            <td align="center" style="padding-bottom: 32px; background-color: #0A0E14;">
+-              <img src="https://www.kriczkyvirtus.com/images/kriczky-virtus-email-logo.png" alt="Kriczky Virtus" width="200" draggable="false" style="width: 200px; height: auto; display: block; pointer-events: none; background-color: #0A0E14;" />
+-            </td>
+-          </tr>
+-
+-          <!-- Main Card -->
+-          <tr>
+-            <td style="background-color: #111720; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 40px 32px;">
+-
+-              <!-- Greeting -->
+-              <p style="font-size: 15px; color: #8B95A5; margin: 0 0 24px 0; line-height: 1.5;">
+-                Hi ${firstName},
+-              </p>
+-
+-              <!-- Heading -->
+-              <h1 style="font-family: Georgia, 'Times New Roman', serif; font-size: 28px; color: #E8ECF1; margin: 0 0 16px 0; font-weight: 400; line-height: 1.2;">
+-                ${heading}
+-              </h1>
+-
+-              <!-- Description -->
+-${renderedDescription}
+-
+-${primaryButtonMarkup}
+-
+-              <!-- Sign-off with headshot -->
+-              <table cellpadding="0" cellspacing="0" width="100%" style="margin: 0 0 32px 0;">
+-                <tr>
+-                  <td style="padding-bottom: 2px;">
+-                    <p style="font-size: 14px; color: #8B95A5; margin: 0 0 4px 0; line-height: 1.5;">
+-                      ${signoffIntro}
+-                    </p>
+-                    <p style="font-size: 14px; color: #E8ECF1; margin: 0 0 12px 0; font-weight: 600;">
+-                      Edward Kriczky, CEPA&reg;
+-                    </p>
+-                  </td>
+-                </tr>
+-                <tr>
+-                  <td align="center">
+-                    <img src="https://www.kriczkyvirtus.com/images/edward-kriczky-headshot.jpg" alt="Edward Kriczky" width="64" height="64" draggable="false" style="width: 64px; height: 64px; border-radius: 50%; display: block; object-fit: cover; pointer-events: none;" />
+-                  </td>
+-                </tr>
+-              </table>
+-
+-${ctaMarkup}
+-
+-            </td>
+-          </tr>
+-
+-          <!-- Footer -->
+-          <tr>
+-            <td align="center" style="padding-top: 32px;">
+-              <!-- Logo -->
+-              <table cellpadding="0" cellspacing="0" style="margin-bottom: 16px;">
+-                <tr>
+-                  <td align="center" style="background-color: #0A0E14;">
+-                    <img src="https://www.kriczkyvirtus.com/images/kriczky-virtus-email-logo.png" alt="Kriczky Virtus" width="240" draggable="false" style="width: 240px; height: auto; display: block; pointer-events: none; background-color: #0A0E14;" />
+-                  </td>
+-                </tr>
+-              </table>
+-
+-              <!-- Opt-in notice -->
+-              <p style="font-size: 11px; color: #5A6474; margin: 0 0 12px 0; line-height: 1.6;">
+-                You are receiving this email because you opted-in through our website.
+-              </p>
+-
+-              <!-- Address -->
+-              <p style="font-size: 11px; color: #5A6474; margin: 0; line-height: 1.6;">
+-                Kriczky Virtus, LLC<br>
+-                237 Roosevelt Avenue<br>
+-                Downingtown, PA 19335
+-              </p>
+-
+-${unsubscribeMarkup}
+-
+-              <!-- Disclaimer -->
+-              <p style="font-size: 9px; color: #3D4654; margin: 8px 0 0 0; line-height: 1.5; max-width: 500px;">
+-                This message, including any hypothetical scenarios described, is provided for informational and illustrative purposes only and does not constitute professional advice. These scenarios are hypothetical and are not indicative of any specific outcome or past performance. Results will vary based on individual efforts and external factors. We make no promises or guarantees regarding your success or income level.
+-              </p>
+-              <p style="font-size: 9px; color: #3D4654; margin: 8px 0 0 0; line-height: 1.5; max-width: 500px;">
+-                Please note that individual successes are influenced by personal abilities, market conditions, and other external factors. We assume no responsibility for decisions made or actions taken based on the content of this email. Always consult with qualified professionals before making significant business decisions.
+-              </p>
+-            </td>
+-          </tr>
++  const body = p(firstName + ",") +
++    (descriptionHtml || p(description)) +
++    (includeCta ? p(a(resultsUrl, buttonText)) : "") +
++    p(signoffIntro + "<br />\nEdward Kriczky, CEPA&reg;") +
++    (includeCta ? p(ps(ctaText) + " " + a(ctaUrl, ctaButtonText)) : "");
++  return plainEmailHtml({ previewText, bodyHtml: body, email, includeUnsubscribe });
++}
+ 
+-        </table>
+-      </td>
+-    </tr>
+-  </table>
+-</body>
+-</html>`;
++function buildPlainText({ firstName, email, description, resultsUrl, buttonText, ctaText, ctaUrl, ctaButtonText,
++  signoffIntro = "Hopefully this helps you build financial freedom through your business,", includeCta = true, includeUnsubscribe = true }) {
++  const body = firstName + ",\n\n" + description + "\n\n" +
++    (includeCta ? buttonText + ":\n" + resultsUrl + "\n\n" : "") +
++    signoffIntro + "\nEdward Kriczky, CEPA®" +
++    (includeCta ? "\n\n" + ctaText + " " + ctaButtonText + ":\n" + ctaUrl : "");
++  return plainEmailText({ bodyText: body, email, includeUnsubscribe });
+ }
+ 
+ /**
+@@ -354,106 +263,35 @@ async function sendResultsEmail({ name, email, tool, resultsUrl }) {
+ 
+   // ── Custom template: valuation-questionnaire ──────────────────────────────
+   if (tool === "valuation-questionnaire") {
+-    const customHtml = `
+-<!DOCTYPE html>
+-<html>
+-<head>
+-  <meta charset="utf-8">
+-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+-</head>
+-<body style="margin: 0; padding: 0; background-color: #0A0E14; font-family: Arial, Helvetica, sans-serif;">
+-  <div style="display: none; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #0A0E14;">
+-    We received your answers. Here's how to review your numbers.
+-    &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+-  </div>
+-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0A0E14; padding: 40px 20px;">
+-    <tr>
+-      <td align="center">
+-        <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%;">
+-          <tr>
+-            <td align="center" style="padding-bottom: 32px;">
+-              <img src="https://www.kriczkyvirtus.com/images/kriczky-virtus-email-logo.png" alt="Kriczky Virtus" width="200" style="width: 200px; height: auto; display: block;" />
+-            </td>
+-          </tr>
+-          <tr>
+-            <td style="background-color: #111720; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 40px 32px;">
+-              <p style="font-size: 15px; color: #E8ECF1; margin: 0 0 20px 0; line-height: 1.5;">
+-                Hey ${firstName},
+-              </p>
+-              <p style="font-size: 14px; color: #8B95A5; margin: 0 0 20px 0; line-height: 1.65;">
+-                Thanks for filling out the 14-question Snapshot. We received your answers.
+-              </p>
+-              <p style="font-size: 14px; color: #8B95A5; margin: 0 0 20px 0; line-height: 1.65;">
+-                Next step is simple: pick a 30-minute video call time so I can pull your Profit Gap &amp; Valuation Gap using live deal comps specific to your industry and walk you through what it means.
+-              </p>
+-              <p style="font-size: 14px; color: #E8ECF1; margin: 0 0 10px 0; line-height: 1.5; font-weight: 600;">
+-                On the call, we'll cover:
+-              </p>
+-              <table cellpadding="0" cellspacing="0" style="margin: 0 0 20px 0;">
+-                <tr>
+-                  <td style="padding: 3px 10px 3px 0; font-size: 14px; color: #C8A24E; vertical-align: top; line-height: 1.65;">&ndash;</td>
+-                  <td style="padding: 3px 0; font-size: 14px; color: #8B95A5; line-height: 1.65;">How much profit you're likely leaving on the table each year vs peers your size</td>
+-                </tr>
+-                <tr>
+-                  <td style="padding: 3px 10px 3px 0; font-size: 14px; color: #C8A24E; vertical-align: top; line-height: 1.65;">&ndash;</td>
+-                  <td style="padding: 3px 0; font-size: 14px; color: #8B95A5; line-height: 1.65;">What buyers are actually paying for businesses in your industry</td>
+-                </tr>
+-                <tr>
+-                  <td style="padding: 3px 10px 3px 0; font-size: 14px; color: #C8A24E; vertical-align: top; line-height: 1.65;">&ndash;</td>
+-                  <td style="padding: 3px 0; font-size: 14px; color: #8B95A5; line-height: 1.65;">The &ldquo;valuation gap&rdquo; between where you are and where you could reasonably be</td>
+-                </tr>
+-              </table>
+-              <p style="font-size: 14px; color: #8B95A5; margin: 0 0 24px 0; line-height: 1.65; font-style: italic;">
+-                I don't send raw numbers by email because, in my world, numbers without context are dangerous and usually misinterpreted. The call is where we translate the Snapshot into clear decisions and next steps for your business.
+-              </p>
+-              <table cellpadding="0" cellspacing="0" style="margin: 0 0 28px 0;">
+-                <tr>
+-                  <td style="background: linear-gradient(135deg, rgba(200,162,78,0.2), rgba(200,162,78,0.08)); border: 1.5px solid rgba(200,162,78,0.5); border-radius: 12px; padding: 14px 32px;">
+-                    <a href="https://app.iclosed.io/e/kriczkyvirtus/profit-valuation-snapshot" target="_blank" style="color: #C8A24E; font-size: 12px; font-weight: 700; text-decoration: none; letter-spacing: 0.02em;">
+-                      Schedule Your Snapshot Review
+-                    </a>
+-                  </td>
+-                </tr>
+-              </table>
+-              <p style="font-size: 14px; color: #8B95A5; margin: 0 0 4px 0; line-height: 1.5;">
+-                Talk soon,
+-              </p>
+-              <p style="font-size: 14px; color: #E8ECF1; margin: 0; font-weight: 600;">
+-                Edward
+-              </p>
+-            </td>
+-          </tr>
+-          <tr>
+-            <td align="center" style="padding-top: 32px;">
+-              <table cellpadding="0" cellspacing="0" style="margin-bottom: 16px;">
+-                <tr>
+-                  <td align="center">
+-                    <img src="https://www.kriczkyvirtus.com/images/kriczky-virtus-email-logo.png" alt="Kriczky Virtus" width="240" style="width: 240px; height: auto; display: block;" />
+-                  </td>
+-                </tr>
+-              </table>
+-              <p style="font-size: 11px; color: #5A6474; margin: 0; line-height: 1.6;">
+-                Kriczky Virtus, LLC<br>
+-                237 Roosevelt Avenue<br>
+-                Downingtown, PA 19335
+-              </p>
+-              <p style="margin: 16px 0;">
+-                <a href="https://www.kriczkyvirtus.com/unsubscribe?email=${encodeURIComponent(email)}" style="font-size: 11px; color: #8B95A5; text-decoration: underline;">Unsubscribe</a>
+-              </p>
+-              <p style="font-size: 9px; color: #3D4654; margin: 8px 0 0 0; line-height: 1.5; max-width: 500px;">
+-                This message, including any hypothetical scenarios described, is provided for informational and illustrative purposes only and does not constitute professional advice. These scenarios are hypothetical and are not indicative of any specific outcome or past performance. Results will vary based on individual efforts and external factors. We make no promises or guarantees regarding your success or income level.
+-              </p>
+-              <p style="font-size: 9px; color: #3D4654; margin: 8px 0 0 0; line-height: 1.5; max-width: 500px;">
+-                Please note that individual successes are influenced by personal abilities, market conditions, and other external factors. We assume no responsibility for decisions made or actions taken based on the content of this email. Always consult with qualified professionals before making significant business decisions.
+-              </p>
+-            </td>
+-          </tr>
+-        </table>
+-      </td>
+-    </tr>
+-  </table>
+-</body>
+-</html>`;
++    const SNAP = "https://app.iclosed.io/e/kriczkyvirtus/profit-valuation-snapshot";
++    const customHtml = plainEmailHtml({
++      previewText: "We received your answers. Here's how to review your numbers.",
++      email,
++      bodyHtml:
++        p("Hey " + firstName + ",") +
++        p("Thanks for filling out the 14-question Snapshot. We received your answers.") +
++        p("Next step is simple: pick a 30-minute video call time so I can pull your Profit Gap &amp; Valuation Gap using live deal comps specific to your industry and walk you through what it means.") +
++        p("<strong>On the call, we'll cover:</strong><br />\n" +
++          "- How much profit you're likely leaving on the table each year vs peers your size<br />\n" +
++          "- What buyers are actually paying for businesses in your industry<br />\n" +
++          "- The &ldquo;valuation gap&rdquo; between where you are and where you could reasonably be") +
++        p("I don't send raw numbers by email because, in my world, numbers without context are dangerous and usually misinterpreted. The call is where we translate the Snapshot into clear decisions and next steps for your business.") +
++        p(a(SNAP, "Schedule Your Snapshot Review")) +
++        p("Talk soon,<br />\nEdward"),
++    });
++    const customText = plainEmailText({
++      email,
++      bodyText: "Hey " + firstName + ",\n\n" +
++        "Thanks for filling out the 14-question Snapshot. We received your answers.\n\n" +
++        "Next step is simple: pick a 30-minute video call time so I can pull your Profit Gap & Valuation Gap using live deal comps specific to your industry and walk you through what it means.\n\n" +
++        "On the call, we'll cover:\n" +
++        "- How much profit you're likely leaving on the table each year vs peers your size\n" +
++        "- What buyers are actually paying for businesses in your industry\n" +
++        "- The “valuation gap” between where you are and where you could reasonably be\n\n" +
++        "I don't send raw numbers by email because, in my world, numbers without context are dangerous and usually misinterpreted. The call is where we translate the Snapshot into clear decisions and next steps for your business.\n\n" +
++        "Schedule Your Snapshot Review:\n" + SNAP + "\n\n" +
++        "Talk soon,\nEdward",
++    });
+     try {
+       const result = await resend.emails.send({
+         from: "Edward Kriczky <growth@kriczkyvirtus.com>",
+@@ -461,6 +299,7 @@ async function sendResultsEmail({ name, email, tool, resultsUrl }) {
+         to: email,
+         subject: "Your Profit & Valuation Snapshot (next step)",
+         html: customHtml,
++        text: customText,
+       });
+       console.log(`[Email] Sent Snapshot follow-up to ${email} — id: ${result.data?.id || "unknown"}`);
+     } catch (err) {
+@@ -483,6 +322,16 @@ async function sendResultsEmail({ name, email, tool, resultsUrl }) {
+     ctaUrl: details.ctaUrl,
+     ctaButtonText: details.ctaButtonText,
+   });
++  const text = buildPlainText({
++    firstName,
++    email,
++    description: details.description,
++    resultsUrl,
++    buttonText: details.buttonText,
++    ctaText: details.ctaText,
++    ctaUrl: details.ctaUrl,
++    ctaButtonText: details.ctaButtonText,
++  });
+ 
+   try {
+     const result = await resend.emails.send({
+@@ -492,6 +341,7 @@ async function sendResultsEmail({ name, email, tool, resultsUrl }) {
+       ...(details.bcc ? { bcc: details.bcc } : {}),
+       subject: details.subject,
+       html,
++      text,
+     });
+     console.log(`[Email] Sent "${details.subject}" to ${email} — id: ${result.data?.id || "unknown"}`);
+     return result;
+@@ -510,13 +360,9 @@ async function sendCohortConfirmationEmail({ name, email }) {
+     email,
+     previewText: "Your cohort application came through.",
+     heading: "Got your application",
+-    descriptionHtml: `
+-              <p style="font-size: 15px; color: #8B95A5; margin: 0 0 20px 0; line-height: 1.6;">
+-                Your cohort application came through — thanks for taking the time on it.
+-              </p>
+-              <p style="font-size: 15px; color: #8B95A5; margin: 0 0 32px 0; line-height: 1.6;">
+-                I read every one of these personally. If there's a fit, I'll reach out when the next cohort opens with details on timing and seats. If there isn't, I'll tell you that too, and point you somewhere more useful.
+-              </p>`,
++    descriptionHtml:
++      p("Your cohort application came through - thanks for taking the time on it.") +
++      p("I read every one of these personally. If there's a fit, I'll reach out when the next cohort opens with details on timing and seats. If there isn't, I'll tell you that too, and point you somewhere more useful."),
+     signoffIntro: "Rooting for you,",
+     includeCta: false,
+     includeUnsubscribe: false,
+diff --git a/lib/saved-report.js b/lib/saved-report.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..1adf3755d8cbd1651ee84a31bffac541701491c2
+--- /dev/null
++++ b/lib/saved-report.js
+@@ -0,0 +1,132 @@
++/* ═══════════════════════════════════════════════════════════════
++   SAVED DIAGNOSTIC RESULTS - the page behind the emailed link.
++
++   The diagnostic tools save a snapshot of the finished pages (scripts
++   stripped) and email a link to it through /api/view. The v2 tools
++   (cream letter pages, class "kvd") size their pages with JavaScript, so a
++   snapshot taken on a laptop opens on a phone at full laptop width - zoomed
++   in. This adds back, at view time, a small script that:
++     - fits the letter pages to the screen (same rule as the live tool),
++     - makes Download PDF work (html2canvas + jsPDF from cdnjs),
++     - adds Share (copies this page's link, or the phone's share sheet).
++   Snapshots already stored get the fix too, since it's added when served.
++   ═══════════════════════════════════════════════════════════════ */
++
++const FRAME = String.raw`
++(function () {
++  var W = 816, H = 1056;
++  var root = document.querySelector('.kvd');
++  if (!root) return;
++
++  /* Fit pages to the width available - the same layout on every screen. */
++  function fit() {
++    var w = document.documentElement.clientWidth;
++    var g = w < 600 ? 10 : 32;
++    var s = Math.min(1, (w - g * 2) / W);
++    root.querySelectorAll('.pw').forEach(function (pw) {
++      pw.style.width = (W * s) + 'px';
++      pw.style.height = (H * s) + 'px';
++      pw.style.marginBottom = (18 * s + 6) + 'px';
++      var p = pw.querySelector('.page');
++      if (p) p.style.transform = 'scale(' + s + ')';
++    });
++  }
++  fit();
++  window.addEventListener('resize', fit);
++
++  /* Nothing to fill in on a saved copy. */
++  root.querySelectorAll('.gate').forEach(function (g) { g.style.display = 'none'; });
++
++  function load(src) {
++    return new Promise(function (ok, fail) {
++      var s = document.createElement('script');
++      s.src = src; s.onload = ok; s.onerror = fail;
++      document.head.appendChild(s);
++    });
++  }
++
++  async function buildPdf(filename) {
++    if (!window.html2canvas) await load('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
++    if (!window.jspdf) await load('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
++    if (document.fonts && document.fonts.ready) await document.fonts.ready;
++    var pages = Array.prototype.slice.call(root.querySelectorAll('.page'));
++    var pdf = new window.jspdf.jsPDF({ unit: 'pt', format: 'letter', compress: true });
++    for (var i = 0; i < pages.length; i++) {
++      var canvas = await window.html2canvas(pages[i], {
++        scale: 2, useCORS: true, logging: false, backgroundColor: '#ffffff',
++        width: W, height: H, windowWidth: W + 200,
++        onclone: function (doc, el) {
++          el.style.transform = 'none'; el.style.boxShadow = 'none';
++          el.querySelectorAll('.glow').forEach(function (g) { g.style.display = 'none'; });
++          var win = doc.defaultView;
++          el.querySelectorAll('*').forEach(function (n) {
++            var bs = win.getComputedStyle(n).boxShadow;
++            if (!bs || bs.indexOf('inset') < 0) return;
++            var outer = bs.split(/,(?![^(]*\))/).filter(function (x) { return x.indexOf('inset') < 0; }).join(',');
++            n.style.boxShadow = outer || 'none';
++          });
++        }
++      });
++      if (i) pdf.addPage('letter', 'portrait');
++      pdf.addImage(canvas.toDataURL('image/jpeg', 0.85), 'JPEG', 0, 0, 612, 792, undefined, 'FAST');
++      canvas.width = 0; canvas.height = 0;
++      var box = pages[i].getBoundingClientRect(), k = 612 / box.width;
++      pages[i].querySelectorAll('a[href]').forEach(function (a) {
++        var r = a.getBoundingClientRect();
++        if (!r.width || !r.height) return;
++        pdf.link((r.left - box.left) * k, (r.top - box.top) * k, r.width * k, r.height * k, { url: a.href });
++      });
++    }
++    pdf.save(filename);
++  }
++
++  async function copy(url) {
++    try { await navigator.clipboard.writeText(url); return; } catch (e) { /* fall through */ }
++    var ta = document.createElement('textarea');
++    ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
++    document.body.appendChild(ta); ta.select();
++    try { document.execCommand('copy'); } catch (e2) { /* nothing more to try */ }
++    ta.remove();
++  }
++
++  var bar = root.querySelector('.bar');
++  if (!bar) return;
++  var title = (document.querySelector('.kvd .folio b') || {}).textContent || 'Kriczky Virtus Results';
++  var file = title.trim().replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.pdf';
++  bar.innerHTML = '';
++  var dl = document.createElement('button');
++  dl.textContent = 'Download PDF';
++  dl.addEventListener('click', async function () {
++    dl.disabled = true; dl.textContent = 'Preparing your PDF...';
++    try { await buildPdf(file); }
++    catch (e) { console.error(e); window.print(); }
++    finally { dl.disabled = false; dl.textContent = 'Download PDF'; }
++  });
++  var sh = document.createElement('button');
++  sh.textContent = 'Share';
++  sh.style.cssText = 'color:#0A0E14;background:transparent;border-color:#C9C2B4';
++  sh.addEventListener('click', async function () {
++    if (navigator.share && window.matchMedia('(pointer: coarse)').matches) {
++      try { await navigator.share({ title: title.trim(), url: window.location.href }); return; }
++      catch (e) { if (e && e.name === 'AbortError') return; }
++    }
++    await copy(window.location.href);
++    sh.textContent = 'Link copied';
++    setTimeout(function () { sh.textContent = 'Share'; }, 1800);
++  });
++  bar.appendChild(dl); bar.appendChild(sh);
++})();
++`;
++
++/* Only the v2 letter-page tools need it; older snapshots are served as stored. */
++function isLetterPageSnapshot(html) {
++  return /class="kvd"/.test(html);
++}
++
++function injectSavedReportFrame(html) {
++  if (!isLetterPageSnapshot(html)) return html;
++  const tag = "<script>" + FRAME + "</script>";
++  return /<\/body>/i.test(html) ? html.replace(/<\/body>/i, tag + "</body>") : html + tag;
++}
++
++module.exports = { injectSavedReportFrame, isLetterPageSnapshot };
