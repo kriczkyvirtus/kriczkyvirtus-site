@@ -515,7 +515,7 @@ const toForm = (e) => {
 const CTA = ({ note = true, align = "center" }) => (
   <div style={{ textAlign: align }}>
     <a href="#register" onClick={toForm} className="cta shine" style={{ display: "inline-block", padding: "24px 60px", borderRadius: 999, textDecoration: "none",
-      background: DARK_BTN, border: "1.5px solid #0A0E14", boxShadow: `0 0 30px ${C.goldFill}40, 0 10px 24px rgba(10,14,20,.18)` }}>
+      background: DARK_BTN, border: "1.5px solid #0A0E14" }}>
       <span style={{ fontWeight: 700, fontSize: "clamp(17.5px,2.5vw,21.5px)", color: C.goldFill }}>Reserve Your Seat &#8594;</span>
     </a>
     {note && <p style={{ fontSize: 13.5, color: C.text3, margin: "13px 0 0" }}>
@@ -976,15 +976,17 @@ export default function WorkshopPageCream() {
                 margin: "6px 26px 18px 0", shapeOutside: "inset(0 round 18px)" }} />
             <div style={KICKER}>Who’s running it</div>
             <h2 style={{ ...H2, fontSize: "clamp(28px,4.1vw,42px)", margin: "0 0 12px" }}>A quarterback for every domain of <span style={EM}>your wealth</span></h2>
-            <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58 }}>I started out as an aerospace engineer, designing weapons integration systems for US special forces. I went from entry level to co-leading a team of 25 - hiring, scaling the team, and building the comp plans that kept them.</p>
-            <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>Then I left to start my own firm. Three years of eighty-hour weeks, married, three kids and a fourth on the way.</p>
+            {/* Edward's own words, verbatim (bio-story-and-authority.md), reordered: career, the jump, the debt years, why both sides, the mission. */}
+            <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58 }}>I started my career as an aerospace engineer designing weapons integration systems for the US special forces. During that time I went from entry-level to co-leading a team of over 25 engineers, responsible for driving team performance, hiring and scaling the talent on the team, and developing compensation packages, all while being one of the core people on the company’s leadership team.</p>
+            <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>I went from a full-time aerospace engineer to making an entrepreneurial jump starting my own business in wealth management running my own firm from the very beginning, and in between that jump I worked about 80 hours per week for about 3 years straight while being married and going from 1 child to 3 children and baby number 4 on the way.</p>
 
             <div ref={bioRef} className={`biomore${bioOpen ? " open" : ""}`}>
-              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>Before any of that, my wife and I finished college with over $100,000 of student debt and went from two incomes to one. For years every dollar went to that debt. We couldn’t buy a home. I ate less than I needed to because I was frightened of the bills, and lost fifteen pounds doing it. I felt like a loser in front of my wife.</p>
-              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>I climbed out of that with almost no help. I don’t want another family in it, and I especially don’t want it for owners, who carry more risk than anyone I know.</p>
-              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10, color: C.text1 }}>Here’s what managing money for them taught me: <strong style={{ color: C.gold, fontWeight: 600 }}>roughly 80% of an owner’s net worth sits inside the business.</strong> You can compound the other 20% perfectly and it still won’t decide anything. Almost nobody helps with the 80% - and almost nobody gets the two sides working together instead of rowing in opposite directions.</p>
-              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>Most owners end up with five or ten advisors - an accountant, an attorney, an insurance broker, a banker, someone managing investments - none of whom speak to each other. Each one is paid separately, each sees one slice, and the advice comes back contradicting itself. You end up being the one coordinating all of it, on top of running the company.</p>
-              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10, color: C.text1 }}>My job is to be the quarterback across every domain of your financial life, the business included: keeping your existing advisors rowing in the same direction rather than opposite ones. That’s why I built both sides. That’s the barbell.</p>
+              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>I graduated college with an engineering degree, got married 2 weeks later, and combined we came out with over $100k in school debt. Within a year, we went from 2 incomes to 1 income, and we experienced specific health and work situations that caused us to not have enough money to pay our bills. We then entered a multi-year period where our family essentially had no money because everything was going to pay for school debt, we couldn’t afford to buy a home, and I felt so broke every single day that I literally ate less food than I wanted to and needed to because I was concerned about not being able to pay our bills and get out of this hole that I allowed my family to fall into.</p>
+              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>In high school I was a great athlete, in college I was extremely fit and in the best shape of my life, but because of this period and what it did to me mentally I lost about 15 lbs due to the stress, and because I didn’t feel like we had enough money for me to actually eat what I wanted to.</p>
+              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>Why do I share all this - because I felt so broke, I felt like a total loser in front of my wife, and I never wanted to be in a situation again where my family and I were not financially free. So if any of you have lived something similar, or maybe some of you are feeling this pressure even now in your business and finances - I’ve LIVED it and my entire goal now through my business is to help force business owners to be independently wealthy and have sustainable financial freedom so they can live the life they want (because I had to go through and do all of this by myself with very little help, if any).</p>
+              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>As I’ve worked with owners of landscaping businesses, residential remodeling companies, a manufacturing company, an auto-mechanic, a physical therapy clinic, a SaaS company and so on (including the reinvestment options inside and outside of my own business), what I’ve figured out by experience and through data is that what is going to dictate whether an owner is financially free is based on their business’s profits and the health and quality of the business itself.</p>
+              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>And the main reason for that is because typically 80% of an owner’s net-worth is tied up in the business - so I want to help sustainably compound the other 20%, but that 80% can make or break an owner’s financial freedom and I don’t see people helping with that 80%, let alone both sides aligned with each other rather than rowing in opposite directions.</p>
+              <p style={{ ...P, fontSize: "clamp(14.8px,1.8vw,16px)", lineHeight: 1.58, marginTop: 10 }}>I want to make financial freedom and sustainable wealth inevitable for business owners. I want to force owners to become independently wealthy and to have freedom over their time - rather than being a slave to their own schedule.</p>
               <p style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: 22, color: C.text1, margin: "18px 0 0" }}>
                 Edward Kriczky, <span style={{ color: C.gold }}>CEPA&reg;</span></p>
             </div>
@@ -1253,7 +1255,9 @@ export default function WorkshopPageCream() {
         .ptile img { display: block; user-select: none; pointer-events: none; }
 
         .cta { transition: all .25s ease; }
-        .cta:hover:not(:disabled) { box-shadow: 0 0 48px ${C.goldFill}66, 0 10px 24px rgba(10,14,20,.2) !important; transform: translateY(-2px); }
+        /* the dark buttons wear a gold halo: a fine gold ring, a close glow and a wide soft one */
+        .cta.shine { box-shadow: 0 0 0 1px rgba(200,162,78,.55), 0 0 20px rgba(200,162,78,.55), 0 0 52px rgba(200,162,78,.34), 0 10px 24px rgba(10,14,20,.18); }
+        .cta:hover:not(:disabled) { box-shadow: 0 0 0 1px rgba(200,162,78,.7), 0 0 24px rgba(200,162,78,.6), 0 0 64px rgba(200,162,78,.38), 0 12px 26px rgba(10,14,20,.2) !important; transform: translateY(-2px); }
         /* a quick shine across the dark buttons on hover, so they read as buttons */
         .shine { position: relative; overflow: hidden; isolation: isolate; }
         .shine::after { content: ""; position: absolute; top: -10%; bottom: -10%; left: -75%; width: 55%; pointer-events: none; opacity: 0;
@@ -1342,7 +1346,9 @@ export default function WorkshopPageCream() {
           .storycard:hover .chev { color: ${C.gold}; border-color: ${C.goldFill}; box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 0 16px ${C.goldFill}55, 0 6px 14px rgba(10,14,20,.08); }
         }
         /* the same edge, given by scroll position rather than by a cursor */
-        [data-lit]:not(.flip), .flip .face { transition: border-color .35s ease, box-shadow .35s ease; }
+        /* one smooth hover for every card that lifts, the same as the FAQ tiles */
+        [data-lit]:not(.flip) { transition: border-color .3s ease, box-shadow .3s ease, transform .3s ease, background .3s ease; }
+        .flip .face { transition: border-color .35s ease, box-shadow .35s ease; }
         [data-lit]:not(.flip).lit { border-color: rgba(200,162,78,.6) !important; box-shadow: 0 0 30px rgba(200,162,78,.22), 0 10px 28px rgba(10,14,20,.08) !important; }
         /* Keep the highlight on the rotating faces, not the stationary flip wrapper behind them. */
         .flip.lit .face { border-color: rgba(200,162,78,.6) !important; box-shadow: 0 0 30px rgba(200,162,78,.22) !important; }
