@@ -613,10 +613,11 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
     // Send user-facing Snapshot follow-up email for valuation-questionnaire (full submissions only)
     if (tool === "valuation-questionnaire" && !isPartial) {
       try {
+        /* Workshop pre-work (/workshop-rh/snapshot) gets its own email: no call to book. */
         await sendResultsEmail({
           name,
           email,
-          tool: "valuation-questionnaire",
+          tool: req.body.door === "workshop" ? "valuation-questionnaire-workshop" : "valuation-questionnaire",
           resultsUrl: "https://app.iclosed.io/e/kriczkyvirtus/profit-valuation-snapshot",
         });
       } catch (userEmailErr) {
