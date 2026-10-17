@@ -167,7 +167,7 @@ module.exports = async function handler(req, res) {
         });
         await syncContact({
           name: fullName, email: email.trim(), phone: phone.trim(), tool,
-          revenueBand: revenue, outcome, appetite,
+          revenueBand: revenue, outcome, appetite, businessName: company.trim(),
           ...(workshopId ? { kind, workshopId, workshopDate } : {}),
         });
       } catch (registrationError) {
@@ -206,7 +206,7 @@ module.exports = async function handler(req, res) {
         });
         await syncContact({
           name, email, phone, tool, door, summary: {}, utmSource: resolvedUtmSource,
-          utmCampaign: resolvedUtmCampaign, partial: true,
+          utmCampaign: resolvedUtmCampaign, partial: true, businessName: company,
         });
         return res.status(200).json({ success: true });
       }
@@ -250,7 +250,7 @@ module.exports = async function handler(req, res) {
       });
       await syncContact({
         name, email, phone, tool, door, summary: s, utmSource: resolvedUtmSource,
-        utmCampaign: resolvedUtmCampaign, revenueBand, ownership,
+        utmCampaign: resolvedUtmCampaign, revenueBand, ownership, businessName: company,
       });
 
       const emailData = {
@@ -286,7 +286,7 @@ module.exports = async function handler(req, res) {
       });
       await syncContact({
         name, email, phone, tool, summary: {}, utmSource: resolvedUtmSource,
-        utmCampaign: resolvedUtmCampaign, partial: true,
+        utmCampaign: resolvedUtmCampaign, partial: true, businessName: company,
       });
       return res.status(200).json({ success: true });
     }
@@ -349,7 +349,7 @@ module.exports = async function handler(req, res) {
       });
       await syncContact({
         name, email, phone, tool, summary: req.body.summary, utmSource: resolvedUtmSource,
-        utmCampaign: resolvedUtmCampaign, revenueBand, ownership,
+        utmCampaign: resolvedUtmCampaign, revenueBand, ownership, businessName: company,
       });
 
       const emailData = { firstName: first, company, email, token, quadrantKey, bizScore, persScore, guess, revenueBand, ownerTier };
@@ -496,6 +496,8 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         businessConstraint,
         timeline,
         reason,
+        businessName: req.body.businessName || "",
+        door: req.body.door,
       });
       console.log("[AC] syncContact completed");
     } catch (acErr) {
@@ -571,7 +573,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         await resend.emails.send({
           from: "Kriczky Virtus <growth@kriczkyvirtus.com>",
           to: "ekriczky@kriczkyvirtus.com",
-          subject: `New Valuation Questionnaire: ${name} — ${businessName}`,
+          subject: `New Valuation Questionnaire${req.body.door === "workshop" ? " (workshop pre-work)" : ""}: ${name} — ${businessName}`,
           html: `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"></head>

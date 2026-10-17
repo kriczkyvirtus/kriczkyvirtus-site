@@ -98,3 +98,29 @@ test("priority reservation gets only its priority tag", async () => {
   const tagged = calls.filter(c => c.url.endsWith("/contactTags")).map(c => String(c.body.contactTag.tag));
   assert.deepEqual(tagged, ["99"]);
 });
+
+test("business name is written to field 18 when a form sends one", async () => {
+  calls.length = 0;
+  await syncContact({
+    tool: "workshop-registration", name: "Test Owner", email: "test@example.com", phone: "5555550100",
+    revenueBand: "$1M – $3M", outcome: "Build cash runway", appetite: "Strong", businessName: "  Acme HVAC ",
+  });
+  assert.deepEqual(calls[0].body.contact.fieldValues.at(-1), { field: "18", value: "Acme HVAC" });
+});
+
+test("workshop valuation pre-work skips Website Lead and source tags", async () => {
+  calls.length = 0;
+  const realFetch = global.fetch;
+  global.fetch = async (url, options = {}) => {
+    calls.push({ url: String(url), body: options.body && JSON.parse(options.body) });
+    const u = String(url);
+    const data = u.endsWith("/contact/sync") ? { contact: { id: "contact-1" } }
+      : u.includes("/tags?search=") ? { tags: [{ id: "5", tag: decodeURIComponent(u.split("search=")[1]) }] }
+      : { contactTag: { id: "tagged" } };
+    return { ok: true, status: 200, json: async () => data };
+  };
+  await syncContact({ tool: "valuation-questionnaire", name: "Test Owner", email: "test@example.com", door: "workshop", businessName: "Acme" });
+  global.fetch = realFetch;
+  const searched = calls.filter(c => c.url.includes("/tags?search=")).map(c => decodeURIComponent(c.url.split("search=")[1]));
+  assert.deepEqual(searched, ["Tool: Valuation Questionnaire", "Snapshot: Workshop Pre-work"]);
+});

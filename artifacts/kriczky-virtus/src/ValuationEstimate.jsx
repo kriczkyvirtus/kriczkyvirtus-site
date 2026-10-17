@@ -4,7 +4,10 @@ import { C, T, glow, CARD, KICKER, CREAM_CSS, FONTS, Logo, Num, HaloButton, Page
 
 // ═══════════════════════════════════════════════════════════════════
 // VALUATION ESTIMATE - Baseline Questionnaire
-// URL: /valuation-estimate
+// URL: /valuation-estimate                (door="site": ends on the Snapshot Review calendar)
+//      /workshop-rh/snapshot?e=&n=        (door="workshop": pre-work for workshop attendees -
+//                                          ends on a "we're building your Snapshot" message,
+//                                          no call to book; e/n prefill email and first name)
 //
 // Cream (16 Oct 2026): still the compact, embedded single column, now on the
 // engraved ground with porcelain answers, the dark halo button and report
@@ -33,6 +36,10 @@ const useBp = () => {
   }, []);
   return { mob: bp === "mobile", tab: bp === "tablet" };
 };
+
+/* Workshop door: optional video on the thank-you message. Renders only once set. */
+const WORKSHOP_VSL_SRC = null;      // e.g. "/video/workshop-snapshot.mp4"
+const WORKSHOP_VSL_POSTER = null;
 
 /* Breaks out of the 680 column so the page strip has room either side. */
 const SpotlightPreview = ({ mob }) => (
@@ -231,8 +238,9 @@ const SECTIONS = [
 
 const TOTAL_STEPS = SECTIONS.length;
 
-export default function ValuationEstimate() {
+export default function ValuationEstimate({ door = "site" }) {
   const { mob } = useBp();
+  const workshop = door === "workshop";
   const topRef = useRef(null);
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
@@ -244,10 +252,12 @@ export default function ValuationEstimate() {
   const [submitHover, setSubmitHover] = useState(false);
 
   // Contact info
-  const [firstName, setFirstName] = useState("");
+  /* Workshop links carry ?e=<email>&n=<first name> so attendees don't retype them. */
+  const linked = typeof window === "undefined" ? null : new URLSearchParams(window.location.search);
+  const [firstName, setFirstName] = useState(() => (workshop && linked?.get("n")) || "");
   const [lastName, setLastName] = useState("");
   const [businessName, setBusinessName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() => (workshop && linked?.get("e")) || "");
 
   // Answers (keyed by question id)
   const [answers, setAnswers] = useState({});
@@ -301,6 +311,7 @@ export default function ValuationEstimate() {
           utmCampaign: utmCampaign || null,
           timestamp: new Date().toISOString(),
           partial: true,
+          door,
         }),
       }).catch(err => console.error("[Questionnaire] Early capture failed:", err));
     }
@@ -324,6 +335,7 @@ export default function ValuationEstimate() {
       email: email.trim(),
       businessName: businessName.trim(),
       tool: "valuation-questionnaire",
+      door,
       answers: {},
       utmSource: utmSource || null,
       utmCampaign: utmCampaign || null,
@@ -405,6 +417,7 @@ export default function ValuationEstimate() {
         {/* Title - hidden on thank-you page */}
         {!submitted && (
           <div style={{ textAlign: "center", marginBottom: 28 }}>
+            {workshop && <div style={{ ...KICKER, marginBottom: 14 }}>Reinvest or Harvest Workshop &middot; Pre-work</div>}
             <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: mob ? 31 : 44, lineHeight: 1.08, color: C.ink1, margin: 0, letterSpacing: "-.01em" }}>
               Get Your Personalized<br /><span style={{ color: T.gold.ink, fontStyle: "italic", fontWeight: 500 }}>Profit & Valuation Gaps</span> Snapshot
             </h1>
@@ -430,8 +443,57 @@ export default function ValuationEstimate() {
           </div>
         )}
 
+        {/* ─── SUBMITTED - WORKSHOP: no call to book, the Snapshot comes to the workshop ─── */}
+        {submitted && workshop && (
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 18 }}>
+              <span style={{ width: 62, height: 62, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
+                background: "linear-gradient(180deg,#FFFEFB 0%,#F3ECDF 100%)", border: `1px solid ${T.green.fill}88`,
+                boxShadow: `inset 0 1px 0 rgba(255,255,255,.95), 0 8px 18px rgba(10,14,20,.1), 0 0 22px ${T.green.fill}40` }}>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4.5 12.5L9.7 17.7L19.5 7" stroke={T.green.ink} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </span>
+            </div>
+            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: mob ? 30 : 42, fontWeight: 700, color: C.ink1, margin: "0 0 14px", lineHeight: 1.1, textAlign: "center", textWrap: "balance" }}>
+              You're all set - we're building <span style={{ color: T.gold.ink, fontStyle: "italic", fontWeight: 500 }}>your Snapshot</span>
+            </h2>
+            <div style={{ marginBottom: mob ? 22 : 28, textAlign: "center", maxWidth: 580, marginLeft: "auto", marginRight: "auto" }}>
+              <p style={{ fontSize: mob ? 15 : 16.5, lineHeight: 1.6, color: C.ink2, margin: "0 0 10px" }}>
+                Thanks{firstName.trim() ? `, ${firstName.trim()}` : ""}. We'll build your personalized Profit &amp; Valuation Gaps Snapshot from your answers, benchmarked against recent deals in your industry. It'll be ready for you at the workshop, where we walk through it together.
+              </p>
+              <p style={{ fontSize: mob ? 14 : 15, lineHeight: 1.6, color: C.ink3, margin: 0, fontStyle: "italic" }}>
+                Nothing to book. If your numbers change before the day, just reply to any of our emails.
+              </p>
+            </div>
+
+            {WORKSHOP_VSL_SRC && (
+              <div style={{ ...glow(T.gold), padding: 8, marginBottom: mob ? 26 : 32, overflow: "hidden" }}>
+                <video src={WORKSHOP_VSL_SRC} poster={WORKSHOP_VSL_POSTER || undefined} controls playsInline preload="metadata"
+                  style={{ width: "100%", display: "block", borderRadius: 12, aspectRatio: "16/9", background: "#0A0E14" }} />
+              </div>
+            )}
+
+            <div style={{ ...CARD, padding: mob ? "24px 20px" : "28px 30px" }}>
+              <p style={{ fontSize: 15.5, lineHeight: 1.5, color: C.ink1, margin: "0 0 14px", fontWeight: 700 }}>Between now and the workshop:</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {[
+                  "We build your Snapshot from your answers.",
+                  "You get the workshop reminders and any other pre-work by email.",
+                  "At the workshop, we walk through your Snapshot together and turn it into your next moves.",
+                ].map((text, i) => (
+                  <div key={text} style={{ display: "flex", gap: 13, alignItems: "center" }}>
+                    <Num n={String(i + 1)} size={30} />
+                    <span style={{ fontSize: 14.5, lineHeight: 1.5, color: C.ink2 }}>{text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <SpotlightPreview mob={mob} />
+          </div>
+        )}
+
         {/* ─── SUBMITTED STATE ─── */}
-        {submitted && (
+        {submitted && !workshop && (
           <div style={{ display: "flex", flexDirection: "column" }}>
             <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: mob ? 28 : 38, fontWeight: 700, color: C.ink1, margin: "0 0 14px", lineHeight: 1.12, textAlign: "center", textWrap: "balance" }}>
               You're Almost Done - Book Your <span style={{ color: T.gold.ink, fontStyle: "italic", fontWeight: 500 }}>Snapshot Review</span>

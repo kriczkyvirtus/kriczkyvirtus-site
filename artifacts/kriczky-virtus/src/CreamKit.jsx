@@ -44,6 +44,11 @@ export const CREAM_CSS = `
   .tile { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
     background: linear-gradient(180deg,#FFFEFB 0%,#F7F2E8 100%); border: 1px solid #E6DFD1;
     box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 1px 2px rgba(10,14,20,.06), 0 10px 22px rgba(10,14,20,.12); }
+  /* the glow pill from /workshop-rh: glazed body, an edge in the tone, a small lit gem */
+  .ppill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 999px; font-weight: 600; white-space: nowrap;
+    background: linear-gradient(180deg,#FFFEFB 0%,#F5EFE3 100%); border: 1px solid #E6DFD1; letter-spacing: .005em;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(10,14,20,.06), 0 6px 16px rgba(10,14,20,.08); }
+  .gem { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
   .pnum { flex: 0 0 auto; border-radius: 50%; display: flex; align-items: center; justify-content: center;
     font-family: 'Playfair Display',serif; font-weight: 700; line-height: 1; font-variant-numeric: lining-nums; font-feature-settings: 'lnum' 1;
     background: linear-gradient(180deg,#FFFEFB 0%,#F3ECDF 100%); border: 1px solid #E6DFD1; }

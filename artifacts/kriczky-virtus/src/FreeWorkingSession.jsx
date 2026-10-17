@@ -1,5 +1,5 @@
 import PageTexture from "./PageTexture.jsx";
-import { C, T, glow, CARD, KICKER, CREAM_CSS, FONTS, Logo, Num, ContactFooter } from "./CreamKit.jsx";
+import { C, T, glow, CARD, KICKER, CREAM_CSS, FONTS, Logo, ContactFooter } from "./CreamKit.jsx";
 
 // ═══════════════════════════════════════════════════════════════════
 // FREE WORKING SESSION - Booking Page
@@ -14,32 +14,27 @@ import { C, T, glow, CARD, KICKER, CREAM_CSS, FONTS, Logo, Num, ContactFooter } 
 // report glow cards, as on /reinvest-harvest. Copy unchanged.
 // ═══════════════════════════════════════════════════════════════════
 
-const icon = (t, d) => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={t.ink} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{d(t)}</svg>
-);
-
+/* Metallic roadmap icons (the Owner's Virtus Roadmap stations), each in a porcelain tile:
+   Profit Gap and Value Gap → 02 Know Your Numbers, constraint → 03 Find The Constraint,
+   what to do next → 01. */
 const SESSION_ITEMS = [
   {
-    t: T.gold,
-    icon: icon(T.gold, () => <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />),
+    t: T.gold, ic: "c2",
     title: "Your Profit Gap - quantified",
     desc: "See the dollar amount your business is leaving on the table each year relative to what it could be earning. Not a guess - a number you can act on.",
   },
   {
-    t: T.cyan,
-    icon: icon(T.cyan, (t) => <><path d="M3 3v18h18" /><path d="M7 14l4-4 4 4 5-7" /><circle cx="20" cy="7" r="1.3" fill={t.ink} stroke="none" /></>),
+    t: T.gold, ic: "c2",
     title: "Your Value Gap - mapped",
     desc: "The difference between what your business is worth today and what an above-average peer in your industry is worth - and why that gap exists.",
   },
   {
-    t: T.gold,
-    icon: icon(T.gold, (t) => <><circle cx="12" cy="12" r="10" /><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill={t.fill} fillOpacity="0.25" /></>),
+    t: T.gold, ic: "c3",
     title: "Your #1 constraint identified",
     desc: "Whether you've taken our diagnostic tools or not, we'll pinpoint the single biggest thing suppressing your valuation and cash flow right now.",
   },
   {
-    t: T.green,
-    icon: icon(T.green, (t) => <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill={t.fill} fillOpacity="0.25" />),
+    t: T.gold, ic: "c1",
     title: "Clarity on what to do next",
     desc: "You leave with a clear picture of where the opportunities are in your business. No commitment required - just actionable insight you can use immediately.",
   },
@@ -55,6 +50,15 @@ export default function FreeWorkingSession() {
       <link href={FONTS} rel="stylesheet" />
       <style>{CREAM_CSS + `
         .fws-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .fws-cap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 18px 0 0 34px; }
+        .fws-pills { display: flex; gap: 8px; flex-wrap: nowrap; }
+        .fws-pill { height: 34px; padding: 0 14px 0 11px; font-size: 13px; }
+        @media (max-width: 520px) {
+          .fws-cap { padding-left: 0; }
+          .fws-pills { gap: 6px; }
+          .fws-pill { height: 31px; padding: 0 10px 0 9px; gap: 6px; font-size: 11.5px; }
+          .fws-pill .gem { width: 7px; height: 7px; }
+        }
         .fws-split { display: flex; align-items: center; gap: clamp(28px,5vw,56px); }
         @media (max-width: 760px) {
           .fws-grid { grid-template-columns: 1fr; }
@@ -108,13 +112,14 @@ export default function FreeWorkingSession() {
               <span style={{ color: C.ink1, fontWeight: 700 }}>Profit Gap of $300K per year we are leaving on the table</span>{" "}
               that we are actively working to close so we can attract and retain better talent.
             </blockquote>
-            <figcaption style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "10px 16px", padding: "18px 0 0 34px" }}>
+            <figcaption className="fws-cap">
               <span style={{ fontSize: 13, color: C.ink3, fontWeight: 600 }}>Phil C. · $3.0M Revenue · Home Services</span>
-              <span style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <span className="fws-pills">
                 {[{ t: T.gold, l: "Profit Gap: $300K/yr" }, { t: T.cyan, l: "Value Gap: $779K" }].map(p => (
-                  <span key={p.l} style={{ padding: "5px 13px", borderRadius: 999, fontSize: 12, fontWeight: 700, color: p.t.ink,
-                    background: "linear-gradient(180deg,#FFFEFB 0%,#F5EFE3 100%)", border: `1px solid ${p.t.fill}77`,
-                    boxShadow: `inset 0 1px 0 rgba(255,255,255,.95), 0 2px 6px rgba(10,14,20,.06), 0 0 12px ${p.t.fill}26` }}>{p.l}</span>
+                  <span key={p.l} className="ppill fws-pill" style={{ color: p.t.ink, borderColor: `${p.t.fill}88`,
+                    boxShadow: `inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(10,14,20,.06), 0 6px 16px rgba(10,14,20,.08), 0 0 18px ${p.t.fill}26` }}>
+                    <span className="gem" style={{ background: `radial-gradient(circle at 35% 30%, #fff 0%, ${p.t.fill} 45%, ${p.t.ink} 100%)`, boxShadow: `0 0 8px ${p.t.fill}aa` }} />
+                    {p.l}</span>
                 ))}
               </span>
             </figcaption>
@@ -129,7 +134,8 @@ export default function FreeWorkingSession() {
           <div className="fws-grid">
             {SESSION_ITEMS.map(item => (
               <div key={item.title} className="lift" style={{ ...glow(item.t, false), display: "flex", gap: 16, alignItems: "flex-start", padding: "22px 22px" }}>
-                <Num t={item.t} size={48}>{item.icon}</Num>
+                <span className="tile" style={{ width: 58, height: 58, borderRadius: 15 }}>
+                  <img src={`/icons/reinvest-harvest/${item.ic}.png`} alt="" width="38" height="38" draggable="false" style={{ display: "block" }} /></span>
                 <div style={{ flex: 1 }}>
                   <div style={{ ...H, fontSize: 21, lineHeight: 1.2, marginBottom: 6 }}>{item.title}</div>
                   <p style={{ fontSize: 14.5, lineHeight: 1.6, color: C.ink2, margin: 0 }}>{item.desc}</p>

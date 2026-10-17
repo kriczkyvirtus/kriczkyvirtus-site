@@ -38,6 +38,7 @@ const TITLES = {
   '/tools/wmbw':              "Value Drivers — What's My Business Worth?",
   '/tools/wmbw/next':         'Your Value Drivers Results',
   '/workshop-rh/value-drivers': 'Value Drivers — Workshop Pre-work',
+  '/workshop-rh/snapshot':      'Profit & Valuation Snapshot — Workshop Pre-work',
   '/workshop-rh/value-drivers/next': 'Your Value Drivers Results',
   '/tools/bib':               'Business Independence Blueprint',
   '/tools/human-capital':     'Attracting Top Employees',
@@ -60,7 +61,7 @@ const TITLES = {
 }
 
 /* Unlinked previews and rollbacks stay out of search. */
-const NOINDEX = new Set(['/partnership', '/workshop-rh/dark', '/tools/structural-capital/v2', '/reinvest-harvest/dark'])
+const NOINDEX = new Set(['/partnership', '/workshop-rh/dark', '/tools/structural-capital/v2', '/reinvest-harvest/dark', '/workshop-rh/snapshot'])
 
 const DEFAULT_TITLE = 'Build Businesses Worth Owning - Kriczky Virtus'
 
@@ -130,6 +131,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/engage-giveaway-2026" element={<EngageGiveaway2026 />} />
         <Route path="/acq-vantage-bonus" element={<AcqVantageBonus />} />
         <Route path="/valuation-estimate" element={<ValuationEstimate />} />
+        {/* Workshop pre-work: the same questionnaire; the Snapshot is built for the workshop, no call to book. */}
+        <Route path="/workshop-rh/snapshot" element={<ValuationEstimate door="workshop" />} />
         <Route path="/cohort" element={<Cohort />} />
         <Route path="/disclosures" element={<Disclosures />} />
       </Routes>
