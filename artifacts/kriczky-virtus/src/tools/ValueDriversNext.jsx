@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { LIGHT, ThemeProvider, useT, fillOf } from "./kvTheme.js";
+import PageTexture from "../PageTexture.jsx";
+import RoadmapSystem from "../RoadmapSystem.jsx";
+import { CREAM_CSS, Logo, Num, HaloButton, glow, T } from "../CreamKit.jsx";
 import {
   GRAIN, PILLARS, PILLAR_MAX, DRIVER_KEYS, DRIVER_NAMES,
   zoneByKey, routeTo, scoreColor,
@@ -77,16 +80,14 @@ const wide = { maxWidth: 1120, margin: "0 auto", padding: "0 20px" };
 const serif = "'Cormorant Garamond',serif";
 /* Theme-dependent styles are built from the active theme (see kvTheme.js). */
 const glassCardOf = (C) => C.light
-  ? { padding: "32px 24px", borderRadius: 18, background: "#FFFFFF", border: `1px solid ${C.goldLight}55`, boxShadow: `0 0 26px ${C.goldLight}1f, 0 10px 30px rgba(10,14,20,.08)` }
+  ? { ...glow(T.gold), padding: "32px 24px" }
   : { padding: "32px 24px", borderRadius: 18, background: "linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,.02))", border: `1px solid ${C.gold}2e`, borderTop: "1px solid rgba(255,255,255,.12)", boxShadow: "0 10px 40px rgba(0,0,0,.45)" };
 const ctaStyleOf = (C) => ({ display: "block", maxWidth: 460, margin: "0 auto", padding: "21px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none",
   background: C.light ? C.btnBg : `linear-gradient(135deg,${C.gold}2e,${C.gold}12)`, border: `1.5px solid ${C.light ? C.btnLine : `${C.gold}88`}`,
   boxShadow: C.light ? `0 0 30px ${C.goldLight}33, 0 10px 24px rgba(10,14,20,.18)` : `0 0 34px ${C.gold}26`, transition: "all .25s ease" });
 
-const cssOf = (C) => `
-  *{box-sizing:border-box}
+const cssOf = (C) => `${C.light ? CREAM_CSS : "*{box-sizing:border-box}"}
   body{background:${C.bgDeep}}
-  .cta:hover{box-shadow:0 0 44px ${C.goldLight}55,0 6px 22px rgba(0,0,0,.35)!important;border-color:${C.goldLight}!important}
   .vsl-panel{animation:vslPulse 2.4s ease-in-out infinite}
   .vsl-unmute:hover .vsl-panel{transform:scale(1.04)}
   @keyframes vslPulse{0%,100%{transform:scale(1);box-shadow:0 10px 40px rgba(0,0,0,.45)}50%{transform:scale(1.035);box-shadow:0 10px 52px rgba(0,0,0,.5),0 0 34px rgba(200,162,78,.45)}}
@@ -104,21 +105,30 @@ const cssOf = (C) => `
 /* ── Module-scope pieces (see the remount note in ValueDriversFlow) ── */
 
 const Shell = ({ children }) => { const C = useT(); return (
-  <div style={{ background: C.bgDeep, minHeight: "100vh", fontFamily: "'DM Sans',sans-serif", color: C.text1, paddingBottom: 40 }}>
+  <div style={{ background: C.bgDeep, minHeight: "100vh", fontFamily: "'DM Sans',sans-serif", color: C.text1, paddingBottom: 40, position: "relative", isolation: "isolate", overflowX: "hidden" }}>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
     <style>{cssOf(C)}</style>
+    {C.light && <>
+      {/* the engraved ground, and a soft glow at the top (as on the landing pages) */}
+      <PageTexture />
+      <div aria-hidden="true" style={{ position: "absolute", top: -80, left: "50%", transform: "translateX(-50%)", width: "min(1100px,150vw)", height: 560,
+        background: `radial-gradient(ellipse at center, ${T.gold.fill}1c 0%, transparent 66%)`, pointerEvents: "none", zIndex: -1 }} />
+      <Logo style={{ padding: "25px 22px 0" }} />
+    </>}
     {C.grain ? <div style={{ position: "fixed", inset: 0, pointerEvents: "none", opacity: C.grain, mixBlendMode: "overlay", backgroundImage: GRAIN, backgroundSize: "128px 128px", zIndex: 0 }} /> : null}
     {children}
   </div>
 ); };
 
 const ConfirmBar = ({ email }) => { const C = useT(); return (
-  <div style={{ background: `linear-gradient(90deg, ${C.green}16, ${C.green}09)`, borderBottom: `1px solid ${C.green}33`, padding: "14px 20px", position: "relative", zIndex: 2 }}>
-    <div style={{ ...wrap, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, textAlign: "center" }}>
+  <div style={{ display: "flex", justifyContent: "center", padding: "22px 20px 0", position: "relative", zIndex: 2 }}>
+    <div style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "10px 20px", borderRadius: 999, maxWidth: "100%",
+      background: "linear-gradient(180deg,#FFFEFB 0%,#F5EFE3 100%)", border: `1px solid ${T.green.fill}88`,
+      boxShadow: `inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(10,14,20,.06), 0 6px 16px rgba(10,14,20,.08), 0 0 20px ${T.green.fill}33` }}>
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
         <polyline points="4 12 10 18 20 6" stroke={C.green} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
-      <span style={{ fontSize: 14, color: C.text1 }}>
+      <span style={{ fontSize: 14, color: C.text1, overflowWrap: "anywhere" }}>
         Your full results are on their way{email ? <> to <b style={{ color: C.green }}>{email}</b></> : "."}
       </span>
     </div>
@@ -160,8 +170,9 @@ const ZoneHero = ({ report, zone, reportUrl, qualifier }) => { const C = useT();
 ); };
 
 const NumberedSteps = ({ steps }) => { const C = useT(); return steps.map((s, i) => (
-  <div key={s.t} style={{ display: "flex", gap: 15, alignItems: "flex-start", padding: "14px 0", borderBottom: i < steps.length - 1 ? `1px solid ${C.lineSoft}` : "none" }}>
-    <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 23, fontWeight: 700, color: C.light ? C.goldLight : `${C.gold}66`, lineHeight: 1, minWidth: 30 }}>0{i + 1}</span>
+  <div key={s.t} style={{ display: "flex", gap: 15, alignItems: C.light ? "center" : "flex-start", padding: "14px 0", borderBottom: i < steps.length - 1 ? `1px solid ${C.lineSoft}` : "none" }}>
+    {C.light ? <Num n={`0${i + 1}`} size={38} />
+      : <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 23, fontWeight: 700, color: `${C.gold}66`, lineHeight: 1, minWidth: 30 }}>0{i + 1}</span>}
     <div>
       <div style={{ fontSize: 15, fontWeight: 700, color: C.text1, marginBottom: 3 }}>{s.t}</div>
       <div style={{ fontSize: 14, lineHeight: 1.55, color: C.text2 }}>{s.d}</div>
@@ -270,9 +281,7 @@ const SectionHead = ({ k, title, accent, body }) => { const C = useT(); return (
 const Footer = () => { const C = useT(); return (
   <footer style={{ ...wrap, paddingTop: 26, borderTop: `1px solid ${C.lineSoft}` }}>
     <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center", marginBottom: 14 }}>
-      <svg width="19" height="19" viewBox="0 0 64 64" fill="none">
-        <path d="M32 8L14 16V30C14 42 22 52 32 56C42 52 50 42 50 30V16L32 8Z" fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinejoin="round" />
-      </svg>
+      {C.light ? <img src="/icons/roadmap-system/shield.png" alt="" width="22" height="22" draggable="false" /> : <svg width="19" height="19" viewBox="0 0 64 64" fill="none"><path d="M32 8L14 16V30C14 42 22 52 32 56C42 52 50 42 50 30V16L32 8Z" fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinejoin="round" /></svg>}
       <span style={{ fontFamily: serif, fontSize: 15, letterSpacing: ".08em", textTransform: "uppercase", color: C.text2 }}>
         <b style={{ color: C.gold, fontWeight: 600 }}>Kriczky</b> Virtus
       </span>
@@ -424,10 +433,9 @@ function NextBody({ door = "site", report = null, token = null, C }) {
                   style={{ border: "none", display: "block" }} loading="lazy" />
               </div>
             ) : (
-              <a href={SKOOL_COLLECTIVE} className="cta" target="_blank" rel="noopener noreferrer"
-                style={{ ...ctaStyle, maxWidth: "none", marginTop: 26, padding: "20px 24px" }}>
-                <span style={{ fontSize: 16.5, fontWeight: 700, letterSpacing: ".02em", color: C.btnText }}>{offer.cta} →</span>
-              </a>
+              <div style={{ marginTop: 26 }}>
+                <HaloButton href={SKOOL_COLLECTIVE} target="_blank" rel="noopener noreferrer" block size={16.5}>{offer.cta}</HaloButton>
+              </div>
             )}
           </div>
         </section>
@@ -445,9 +453,7 @@ function NextBody({ door = "site", report = null, token = null, C }) {
 
         {offerKey === "oneToOne" && (
           <section style={{ ...wrap, paddingBottom: 46, textAlign: "center" }}>
-            <a href="#vd-scheduler" className="cta" onClick={scrollToScheduler} style={ctaStyle}>
-              <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".02em", color: C.btnText }}>{offer.cta} →</span>
-            </a>
+            <HaloButton href="#vd-scheduler" onClick={scrollToScheduler}>{offer.cta}</HaloButton>
             {!resolved && (
               <p style={{ fontSize: 13.5, color: C.text3, margin: "16px 0 0" }}>
                 <a href="/tools/wmbw" style={{ color: C.text3 }}>Haven't taken Value Drivers yet?</a>
@@ -463,6 +469,26 @@ function NextBody({ door = "site", report = null, token = null, C }) {
             <DriverGrid scores={report.scores} />
           </section>
         )}
+
+        {/* The Owner's Virtus Roadmap, live. The ten scores are station 02, so a
+            resolved visitor sees it marked "You are here" (the same words as the
+            report's roadmap page). A bad token hasn't scored: nothing is marked. */}
+        <section style={{ maxWidth: 1180, margin: "0 auto", padding: "10px 0 44px" }}>
+          <div style={{ textAlign: "center", maxWidth: 820, margin: "0 auto clamp(18px,3vw,34px)" }}>
+            <div style={{ ...kicker, fontSize: 15, color: C.gold, marginBottom: 14 }}>The Owner&rsquo;s Virtus Roadmap</div>
+            <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: "clamp(32px,7.9vw,60px)", lineHeight: 1.1, color: C.text1, margin: "0 0 16px" }}>
+              {resolved
+                ? <>Your ten scores are <span style={{ color: C.gold, fontStyle: "italic", fontWeight: 400 }}>station 02</span></>
+                : <>Six stations, <span style={{ color: C.gold, fontStyle: "italic", fontWeight: 400 }}>one system</span></>}
+            </h2>
+            {resolved && (
+              <p style={{ fontSize: "clamp(17px,4vw,23px)", lineHeight: 1.55, color: C.text2, margin: 0 }}>
+                Knowing which drivers carry the business and which hold its growth back is where Know Your Numbers starts. It tells you where the next dollar earns its keep, and the rest of the roadmap builds on it.
+              </p>
+            )}
+          </div>
+          <RoadmapSystem here={resolved ? [1] : []} workshop={false} />
+        </section>
 
         <Footer />
       </div>

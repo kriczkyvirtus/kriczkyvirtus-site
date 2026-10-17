@@ -61,7 +61,7 @@ export default function RoadmapSystem({ onCta, report = false, here = [], size =
   const boxRef = useRef(null);
   const stageRef = useRef(null);
   const [S, setS] = useState(560);            /* the orbit's side length in px */
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(here.length ? here[0] : 0);   /* opens on the reader's own station */
   const [paused, setPaused] = useState(false);   /* someone just picked a station */
   const [picks, setPicks] = useState(0);         /* restarts the resume timer on every pick */
   const [hovering, setHovering] = useState(false); /* pointer resting on a station */

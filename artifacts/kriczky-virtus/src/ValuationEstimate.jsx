@@ -1,18 +1,29 @@
 import React, { useState, useEffect, useRef } from "react";
+import PageTexture from "./PageTexture.jsx";
+import { C, T, glow, CARD, KICKER, CREAM_CSS, FONTS, Logo, Num, HaloButton, PageCarousel, ContactFooter } from "./CreamKit.jsx";
 
 // ═══════════════════════════════════════════════════════════════════
-// VALUATION ESTIMATE — Baseline Questionnaire
+// VALUATION ESTIMATE - Baseline Questionnaire
 // URL: /valuation-estimate
+//
+// Cream (16 Oct 2026): still the compact, embedded single column, now on the
+// engraved ground with porcelain answers, the dark halo button and report
+// glow cards. A strip of sample Spotlight pages sits under the form and under
+// the calendar, so owners see what the Snapshot Review walks them through.
+// Questions and answers are unchanged.
 // ═══════════════════════════════════════════════════════════════════
 
-const C = {
-  gold: "#C8A24E", cyan: "#22D3EE", green: "#34D399",
-  bgDeep: "#0A0E14", bgCard: "#111720", bgElev: "#1A2130",
-  text1: "#E8ECF1", text2: "#8B95A5", text3: "#5A6474", text4: "#3D4654",
-  border1: "rgba(255,255,255,0.06)", border2: "rgba(255,255,255,0.10)",
-};
-
-const GRAIN = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
+/* Seven pages of a sample Spotlight (the v2 template's sample company), with the
+   company and owner names blurred. Rendered from the live template. */
+const SPOTLIGHT_PAGES = [
+  { n: "01", t: "Your Spotlight report",          src: "/img/spotlight/page-01.jpg" },
+  { n: "04", t: "Executive summary",              src: "/img/spotlight/page-04.jpg" },
+  { n: "08", t: "The value picture",              src: "/img/spotlight/page-08.jpg" },
+  { n: "09", t: "Profitability vs. your sector",  src: "/img/spotlight/page-09.jpg" },
+  { n: "10", t: "When margin and multiple compound", src: "/img/spotlight/page-10.jpg" },
+  { n: "11", t: "Potential value gap issues",     src: "/img/spotlight/page-11.jpg" },
+  { n: "12", t: "Recommendations & next steps",   src: "/img/spotlight/page-12.jpg" },
+];
 
 const useBp = () => {
   const [bp, setBp] = useState("desktop");
@@ -23,14 +34,21 @@ const useBp = () => {
   return { mob: bp === "mobile", tab: bp === "tablet" };
 };
 
-const KVShield = ({ size = 22, glow = false }) => (
-  <svg width={size} height={size} viewBox="0 0 64 64" fill="none"
-    style={glow ? { filter: `drop-shadow(0 0 12px ${C.gold}60) drop-shadow(0 0 4px ${C.gold}90)` } : {}}>
-    <path d="M32 8L14 16V30C14 42 22 52 32 56C42 52 50 42 50 30V16L32 8Z"
-      fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinejoin="round" />
-    <path d="M32 12L18 18.5V30C18 40.5 24.5 49 32 52C39.5 49 46 40.5 46 30V18.5L32 12Z"
-      fill="rgba(200,162,78,0.06)" />
-  </svg>
+/* Breaks out of the 680 column so the page strip has room either side. */
+const SpotlightPreview = ({ mob }) => (
+  <section style={{ width: "min(1000px, 100vw)", marginLeft: "calc(50% - min(500px, 50vw))", padding: mob ? "44px 0 8px" : "56px 0 8px" }}>
+    <div style={{ textAlign: "center", padding: "0 22px", maxWidth: 640, margin: "0 auto" }}>
+      <div style={KICKER}>Your Spotlight report</div>
+      <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: mob ? 30 : 40, lineHeight: 1.1, color: C.ink1, margin: "0 0 12px" }}>
+        A look <span style={{ fontStyle: "italic", fontWeight: 500, color: T.gold.ink }}>inside</span>
+      </h2>
+      <p style={{ fontSize: mob ? 14.5 : 16, lineHeight: 1.6, color: C.ink2, margin: 0 }}>
+        Sample pages from a Spotlight report. Yours is built from your numbers and recent deals in your industry, and we walk through it together, live.
+      </p>
+    </div>
+    <div style={{ marginTop: 10 }}><PageCarousel pages={SPOTLIGHT_PAGES} alt="Sample Spotlight page" /></div>
+    <p style={{ fontSize: 11, color: C.ink4, textAlign: "center", fontStyle: "italic", margin: "6px 22px 0" }}>Sample company. Names blurred and figures illustrative.</p>
+  </section>
 );
 
 // ─── Currency Formatting ─────────────────────────────────────
@@ -344,248 +362,202 @@ export default function ValuationEstimate() {
   };
 
   const inputStyle = {
-    width: "100%", padding: "12px 16px", borderRadius: 10,
-    border: `1px solid ${C.border2}`, background: C.bgElev,
-    color: C.text1, fontSize: 14, fontFamily: "'DM Sans', sans-serif",
+    width: "100%", padding: "13px 16px", borderRadius: 11,
+    border: `1px solid ${C.rule}`, background: "#FFFFFF",
+    color: C.ink1, fontSize: 15, fontFamily: "'DM Sans', sans-serif",
     outline: "none", boxSizing: "border-box",
+    boxShadow: "inset 0 1px 2px rgba(10,14,20,.05)",
   };
+  const labelStyle = { fontSize: 11, color: C.ink3, marginBottom: 5, display: "block", fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase" };
 
-  const optionStyle = (selected) => ({
-    display: "block", width: "100%", textAlign: "left",
-    padding: mob ? "12px 14px" : "14px 18px", borderRadius: 10,
-    border: selected ? `1.5px solid ${C.gold}` : `1px solid ${C.border2}`,
-    background: selected ? `${C.gold}10` : C.bgElev,
-    color: selected ? C.text1 : C.text2,
-    fontSize: mob ? 12 : 13, lineHeight: 1.5,
-    fontFamily: "'DM Sans', sans-serif",
-    cursor: "pointer", transition: "all 0.2s ease",
-    marginBottom: 8,
-  });
+  const S = SECTIONS[step];
 
   return (
-    <div style={{ background: C.bgDeep, minHeight: "100vh", fontFamily: "'DM Sans', sans-serif", color: C.text1, position: "relative", overflow: "hidden" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      <style>{`
-        @keyframes drawCircle {
-          0% { stroke-dashoffset: 176; }
-          100% { stroke-dashoffset: 0; }
-        }
-        @keyframes drawCheck {
-          0% { stroke-dashoffset: 50; opacity: 1; }
-          100% { stroke-dashoffset: 0; opacity: 1; }
-        }
+    <div style={{ background: C.page, minHeight: "100vh", fontFamily: "'DM Sans', sans-serif", color: C.ink1, position: "relative", isolation: "isolate", overflowX: "hidden" }}>
+      <link href={FONTS} rel="stylesheet" />
+      <style>{CREAM_CSS + `
+        @keyframes drawCircle { 0% { stroke-dashoffset: 176; } 100% { stroke-dashoffset: 0; } }
+        @keyframes drawCheck { 0% { stroke-dashoffset: 50; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 1; } }
+        .ve-in:focus { border-color: ${T.gold.fill} !important; box-shadow: 0 0 0 3px ${T.gold.fill}33, inset 0 1px 2px rgba(10,14,20,.05) !important; }
+        /* porcelain answers: a gold edge and soft glow when picked */
+        .ve-opt { display: flex; gap: 12px; align-items: flex-start; width: 100%; text-align: left; margin-bottom: 9px; cursor: pointer;
+          border-radius: 12px; border: 1px solid #E6DFD1; background: linear-gradient(180deg,#FFFEFB 0%,#F7F2E8 100%); color: ${C.ink2};
+          font-family: 'DM Sans', sans-serif; line-height: 1.5;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(10,14,20,.05), 0 4px 10px rgba(10,14,20,.05);
+          transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease, color .3s ease, background .3s ease; }
+        .ve-opt .dot { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 1px; border-radius: 50%; border: 1.5px solid #CFC6B5; background: #fff;
+          transition: all .3s ease; }
+        @media (hover: hover) and (pointer: fine) { .ve-opt:hover { transform: translateY(-1px); border-color: ${T.gold.fill}88; color: ${C.ink1}; } }
+        .ve-opt.on { border-color: ${T.gold.fill}; color: ${C.ink1}; background: linear-gradient(135deg, #FFFFFF 50%, ${T.gold.tint});
+          box-shadow: 0 0 0 1px ${T.gold.fill}88, 0 0 20px ${T.gold.fill}40, 0 6px 14px rgba(10,14,20,.07); }
+        .ve-opt.on .dot { border-color: ${T.gold.fill}; background: radial-gradient(circle, ${T.gold.fill} 0 42%, #fff 46%); box-shadow: 0 0 8px ${T.gold.fill}88; }
       `}</style>
+      <PageTexture />
+      <div aria-hidden="true" style={{ position: "absolute", top: -80, left: "50%", transform: "translateX(-50%)", width: "min(1100px,150vw)", height: 560,
+        background: `radial-gradient(ellipse at center, ${T.gold.fill}1c 0%, transparent 66%)`, pointerEvents: "none", zIndex: -1 }} />
 
-      {/* Background */}
-      <div style={{ position: "fixed", inset: 0, zIndex: 0, background: `radial-gradient(ellipse 80% 60% at 25% 85%, #221a08 0%, transparent 55%), radial-gradient(ellipse 60% 50% at 75% 15%, #151a30 0%, transparent 55%), linear-gradient(155deg, #070a10 0%, #0c1018 25%, #151208 50%, #0e1220 75%, #090d14 100%)` }} />
-      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 1, opacity: 0.07, mixBlendMode: "overlay", backgroundImage: GRAIN, backgroundSize: "128px 128px" }} />
-
-      {/* Content */}
-      <div style={{ position: "relative", zIndex: 10, maxWidth: 680, margin: "0 auto", padding: mob ? "25px 20px 60px" : "40px 40px 80px" }}>
+      <div style={{ position: "relative", maxWidth: 680, margin: "0 auto", padding: mob ? "25px 18px 50px" : "25px 40px 70px" }}>
         <div ref={topRef} />
 
-        {/* Logo */}
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: 40 }}>
-          {/* landing page: the logo is not a way off it */}<div style={{ display: "flex", alignItems: "center", gap: mob ? 8 : 12 }}>
-            <div style={{ width: mob ? 34 : 40, height: mob ? 34 : 40, borderRadius: mob ? 8 : 10, background: "rgba(200,162,78,0.06)", border: "1px solid rgba(200,162,78,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <KVShield size={mob ? 18 : 22} glow />
-            </div>
-            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: mob ? 15 : 19, color: C.text1, letterSpacing: 1.2, textTransform: "uppercase" }}>KRICZKY VIRTUS</span>
-          </div>
-        </div>
+        {/* Not a link: one way forward */}
+        <Logo style={{ marginBottom: mob ? 30 : 38 }} />
 
-        {/* Title — hidden on thank-you page */}
+        {/* Title - hidden on thank-you page */}
         {!submitted && (
-          <div style={{ textAlign: "center", marginBottom: 32 }}>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: mob ? 26 : 36, lineHeight: 1.1, color: C.text1, margin: 0 }}>
-              Get Your Personalized<br /><span style={{ color: C.gold, fontStyle: "italic" }}>Profit & Valuation Gaps</span> Snapshot
+          <div style={{ textAlign: "center", marginBottom: 28 }}>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: mob ? 31 : 44, lineHeight: 1.08, color: C.ink1, margin: 0, letterSpacing: "-.01em" }}>
+              Get Your Personalized<br /><span style={{ color: T.gold.ink, fontStyle: "italic", fontWeight: 500 }}>Profit & Valuation Gaps</span> Snapshot
             </h1>
           </div>
         )}
 
-        {/* Progress Bar */}
+        {/* Progress - a porcelain track with a gold fill */}
         {!submitted && (
-          <div style={{ marginBottom: 32 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-              <span style={{ fontSize: 11, color: C.text3, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+          <div style={{ marginBottom: 26 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 9 }}>
+              <span style={{ fontSize: 11, color: C.ink3, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em" }}>
                 Step {step + 1} of {TOTAL_STEPS}
               </span>
-              <span style={{ fontSize: 11, color: C.text3 }}>
+              <span style={{ fontSize: 12, color: T.gold.ink, fontWeight: 700 }}>
                 {Math.round((step / TOTAL_STEPS) * 100)}%
               </span>
             </div>
-            <div style={{ height: 4, borderRadius: 2, background: "rgba(255,255,255,0.06)" }}>
-              <div style={{
-                height: "100%", borderRadius: 2,
-                background: `linear-gradient(90deg, ${C.gold}, ${C.gold}cc)`,
-                width: `${(step / TOTAL_STEPS) * 100}%`,
-                transition: "width 0.4s ease",
-              }} />
+            <div style={{ height: 8, borderRadius: 999, padding: 1, background: "linear-gradient(180deg,#FFFEFB 0%,#F3ECDF 100%)", border: "1px solid #E6DFD1",
+              boxShadow: "inset 0 1px 2px rgba(10,14,20,.06)" }}>
+              <div style={{ height: "100%", borderRadius: 999, background: `linear-gradient(90deg, ${T.gold.ink}, ${T.gold.fill})`,
+                width: `${Math.max(3, (step / TOTAL_STEPS) * 100)}%`, transition: "width 0.4s ease", boxShadow: `0 0 10px ${T.gold.fill}66` }} />
             </div>
           </div>
         )}
 
-        {/* ─── SUBMITTED STATE ──────────────────────────── */}
+        {/* ─── SUBMITTED STATE ─── */}
         {submitted && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-            {/* Headline — tight spacing */}
-            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: mob ? 18 : 28, fontWeight: 400, color: C.text1, margin: "0 0 12px", lineHeight: 1.15, textAlign: "center", whiteSpace: mob ? "normal" : "nowrap" }}>
-              You're Almost Done – Book Your <span style={{ color: C.gold, fontStyle: "italic" }}>Snapshot Review</span>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: mob ? 28 : 38, fontWeight: 700, color: C.ink1, margin: "0 0 14px", lineHeight: 1.12, textAlign: "center", textWrap: "balance" }}>
+              You're Almost Done - Book Your <span style={{ color: T.gold.ink, fontStyle: "italic", fontWeight: 500 }}>Snapshot Review</span>
             </h2>
 
-            {/* Short body */}
-            <div style={{ marginBottom: mob ? 20 : 24, textAlign: "center", maxWidth: 580, marginLeft: "auto", marginRight: "auto" }}>
-              <p style={{ fontSize: mob ? 12 : 13, lineHeight: 1.6, color: C.text2, margin: "0 0 8px" }}>
-                Next step: Pick a 30‑minute video call time below so we can pull your live industry deal comps and walk you through your Profit Gap & Valuation Gap.
+            <div style={{ marginBottom: mob ? 20 : 26, textAlign: "center", maxWidth: 580, marginLeft: "auto", marginRight: "auto" }}>
+              <p style={{ fontSize: mob ? 14 : 15, lineHeight: 1.6, color: C.ink2, margin: "0 0 8px" }}>
+                Next step: Pick a 30-minute video call time below so we can pull your live industry deal comps and walk you through your Profit Gap & Valuation Gap.
               </p>
-              <p style={{ fontSize: mob ? 12 : 13, lineHeight: 1.6, color: C.text2, margin: 0, fontStyle: "italic" }}>
+              <p style={{ fontSize: mob ? 14 : 15, lineHeight: 1.6, color: C.ink3, margin: 0, fontStyle: "italic" }}>
                 We don't send raw numbers by email because numbers without context are dangerous. We only deliver Snapshots live so you leave with clear decisions, not more confusion.
               </p>
             </div>
 
-            {/* iClosed Calendar — the hero */}
-            <div style={{
-              padding: mob ? "16px 12px" : "24px 28px",
-              background: "linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015) 50%, rgba(255,255,255,0.025))",
-              border: `1px solid ${C.border2}`, borderTop: "1px solid rgba(255,255,255,0.10)",
-              borderRadius: 18, boxShadow: `0 4px 12px rgba(0,0,0,0.3), 0 16px 48px rgba(0,0,0,0.25)`,
-              marginBottom: mob ? 28 : 36, overflow: "hidden",
-            }}>
+            {/* iClosed Calendar - the hero */}
+            <div style={{ ...glow(T.gold), padding: mob ? "12px 8px" : "20px 22px", marginBottom: mob ? 26 : 32, overflow: "hidden" }}>
               <iframe
                 src="https://app.iclosed.io/e/kriczkyvirtus/profit-valuation-snapshot"
                 title="Profit & Valuation Snapshot"
-                style={{ width: "100%", height: 820, border: "none", borderRadius: 12, background: "transparent" }}
+                style={{ width: "100%", height: 820, border: "none", borderRadius: 12, background: "transparent", display: "block" }}
                 allow="payment"
                 scrolling="no"
               />
             </div>
 
-            {/* Below calendar — what we'll cover */}
-            <div style={{
-              padding: mob ? "24px 20px" : "28px 28px",
-              background: "linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015) 50%, rgba(255,255,255,0.025))",
-              border: `1px solid ${C.border2}`,
-              borderRadius: 16,
-            }}>
-              <p style={{ fontSize: 14, lineHeight: 1.5, color: C.text1, margin: "0 0 12px", fontWeight: 600 }}>
+            {/* Below calendar - what we'll cover */}
+            <div style={{ ...CARD, padding: mob ? "24px 20px" : "28px 30px" }}>
+              <p style={{ fontSize: 15.5, lineHeight: 1.5, color: C.ink1, margin: "0 0 12px", fontWeight: 700 }}>
                 On your Snapshot Review we will:
               </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 24, paddingLeft: 4 }}>
-                <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                  <span style={{ color: C.gold, fontSize: 14, lineHeight: "22px", flexShrink: 0 }}>–</span>
-                  <span style={{ fontSize: 13, lineHeight: 1.6, color: C.text2 }}>Benchmark your margins and valuation against real deals in your industry</span>
-                </div>
-                <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                  <span style={{ color: C.gold, fontSize: 14, lineHeight: "22px", flexShrink: 0 }}>–</span>
-                  <span style={{ fontSize: 13, lineHeight: 1.6, color: C.text2 }}>Quantify how much profit and valuation you're likely leaving on the table</span>
-                </div>
-                <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                  <span style={{ color: C.gold, fontSize: 14, lineHeight: "22px", flexShrink: 0 }}>–</span>
-                  <span style={{ fontSize: 13, lineHeight: 1.6, color: C.text2 }}>Highlight 2–3 levers to focus on over the next 12–24 months</span>
-                </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 24 }}>
+                {[
+                  "Benchmark your margins and valuation against real deals in your industry",
+                  "Quantify how much profit and valuation you're likely leaving on the table",
+                  "Highlight 2-3 levers to focus on over the next 12-24 months",
+                ].map(x => (
+                  <div key={x} style={{ display: "flex", gap: 11, alignItems: "flex-start" }}>
+                    <span style={{ flex: "0 0 auto", width: 7, height: 7, borderRadius: "50%", background: T.gold.fill, marginTop: 9, boxShadow: `0 0 8px ${T.gold.fill}88` }} />
+                    <span style={{ fontSize: 14.5, lineHeight: 1.6, color: C.ink2 }}>{x}</span>
+                  </div>
+                ))}
               </div>
-
-              <div style={{ borderTop: `1px solid ${C.border1}`, paddingTop: 20, display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ borderTop: `1px solid ${C.ruleLight}`, paddingTop: 20, display: "flex", flexDirection: "column", gap: 12 }}>
                 {[
                   { num: "1", text: "Book a time above." },
                   { num: "2", text: "Confirm the invite link for your calendar." },
                   { num: "3", text: "Join from a computer so you can see your numbers on screen." },
                 ].map(s => (
-                  <div key={s.num} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-                    <div style={{
-                      width: 24, height: 24, borderRadius: "50%", flexShrink: 0,
-                      background: `${C.gold}12`, border: `1px solid ${C.gold}30`,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: 12, fontWeight: 700, color: C.gold,
-                    }}>
-                      {s.num}
-                    </div>
-                    <span style={{ fontSize: 13, lineHeight: 1.5, color: C.text2, paddingTop: 2 }}>{s.text}</span>
+                  <div key={s.num} style={{ display: "flex", gap: 13, alignItems: "center" }}>
+                    <Num n={s.num} size={30} />
+                    <span style={{ fontSize: 14.5, lineHeight: 1.5, color: C.ink2 }}>{s.text}</span>
                   </div>
                 ))}
               </div>
             </div>
+
+            <SpotlightPreview mob={mob} />
           </div>
         )}
 
-        {/* ─── FORM SECTIONS ───────────────────────────── */}
+        {/* ─── FORM SECTIONS ─── */}
         {!submitted && (
-          <div style={{
-            padding: mob ? "28px 20px" : "36px 32px",
-            background: "linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015) 50%, rgba(255,255,255,0.025))",
-            border: `1px solid ${C.border2}`, borderTop: "1px solid rgba(255,255,255,0.10)",
-            borderRadius: 18, boxShadow: `0 4px 12px rgba(0,0,0,0.3), 0 16px 48px rgba(0,0,0,0.25)`,
-          }}>
-            {/* Section header */}
-            <div style={{ marginBottom: 24 }}>
-              <div style={{ fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: C.gold, fontWeight: 600, marginBottom: 6 }}>
-                {section.title}
+          <div style={{ ...glow(T.gold), padding: mob ? "26px 18px" : "34px 32px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 24 }}>
+              <Num n={String(step + 1).padStart(2, "0")} size={42} />
+              <div>
+                <div style={{ fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: T.gold.ink, fontWeight: 700, marginBottom: 4 }}>
+                  {S.title}
+                </div>
+                <p style={{ fontSize: 14, color: C.ink3, margin: 0 }}>{S.subtitle}</p>
               </div>
-              <p style={{ fontSize: 13, color: C.text3, margin: 0 }}>{section.subtitle}</p>
             </div>
 
-            {/* Contact info section */}
             {step === 0 && (
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 <div style={{ display: "flex", gap: 12, flexDirection: mob ? "column" : "row" }}>
                   <div style={{ flex: 1 }}>
-                    <label style={{ fontSize: 11, color: C.text3, marginBottom: 4, display: "block", fontWeight: 600 }}>First Name *</label>
-                    <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="First name" style={inputStyle} />
+                    <label style={labelStyle}>First Name *</label>
+                    <input className="ve-in" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="First name" style={inputStyle} />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label style={{ fontSize: 11, color: C.text3, marginBottom: 4, display: "block", fontWeight: 600 }}>Last Name *</label>
-                    <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Last name" style={inputStyle} />
+                    <label style={labelStyle}>Last Name *</label>
+                    <input className="ve-in" value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Last name" style={inputStyle} />
                   </div>
                 </div>
                 <div>
-                  <label style={{ fontSize: 11, color: C.text3, marginBottom: 4, display: "block", fontWeight: 600 }}>Business Name *</label>
-                  <input value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="Your business name" style={inputStyle} />
+                  <label style={labelStyle}>Business Name *</label>
+                  <input className="ve-in" value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="Your business name" style={inputStyle} />
                 </div>
                 <div>
-                  <label style={{ fontSize: 11, color: C.text3, marginBottom: 4, display: "block", fontWeight: 600 }}>Email *</label>
-                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@yourbusiness.com" style={inputStyle} />
+                  <label style={labelStyle}>Email *</label>
+                  <input className="ve-in" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@yourbusiness.com" style={inputStyle} />
                 </div>
               </div>
             )}
 
-            {/* Question sections */}
-            {step > 0 && section.questions && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-                {section.questions.map((q) => (
+            {step > 0 && S.questions && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
+                {S.questions.map((q) => (
                   <div key={q.id}>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: C.text1, marginBottom: 12, lineHeight: 1.4 }}>
+                    <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: mob ? 20 : 22, fontWeight: 700, color: C.ink1, marginBottom: 12, lineHeight: 1.25 }}>
                       {q.text}
                     </div>
                     {q.type === "currency" ? (
-                      <input
+                      <input className="ve-in"
                         value={answers[q.id] ? formatCurrency(answers[q.id]) : ""}
-                        onChange={e => {
-                          const raw = parseCurrencyToRaw(e.target.value);
-                          setAnswer(q.id, raw);
-                        }}
+                        onChange={e => setAnswer(q.id, parseCurrencyToRaw(e.target.value))}
                         inputMode="numeric"
                         placeholder={q.placeholder}
                         style={inputStyle}
                       />
                     ) : q.options ? (
-                      <div>
-                        {q.options.map((opt, oi) => (
-                          <button
-                            key={oi}
-                            onClick={() => setAnswer(q.id, opt)}
-                            style={optionStyle(answers[q.id] === opt)}
-                          >
-                            {opt}
-                          </button>
-                        ))}
+                      <div role="radiogroup">
+                        {q.options.map((opt, oi) => {
+                          const on = answers[q.id] === opt;
+                          return (
+                            <button key={oi} role="radio" aria-checked={on} onClick={() => setAnswer(q.id, opt)}
+                              className={`ve-opt${on ? " on" : ""}`}
+                              style={{ padding: mob ? "12px 14px" : "14px 18px", fontSize: mob ? 13.5 : 14.5 }}>
+                              <span className="dot" /><span>{opt}</span>
+                            </button>
+                          );
+                        })}
                       </div>
                     ) : (
-                      <input
-                        value={answers[q.id] || ""}
-                        onChange={e => setAnswer(q.id, e.target.value)}
-                        placeholder={q.placeholder}
-                        style={inputStyle}
-                      />
+                      <input className="ve-in" value={answers[q.id] || ""} onChange={e => setAnswer(q.id, e.target.value)} placeholder={q.placeholder} style={inputStyle} />
                     )}
                   </div>
                 ))}
@@ -593,100 +565,40 @@ export default function ValuationEstimate() {
             )}
 
             {/* Navigation */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 28, paddingTop: 20, borderTop: `1px solid ${C.border1}` }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, marginTop: 30, paddingTop: 22, borderTop: `1px solid ${C.ruleLight}` }}>
               {step > 0 ? (
-                <button
-                  onMouseEnter={() => setBackHover(true)}
-                  onMouseLeave={() => setBackHover(false)}
-                  onClick={handleBack}
-                  style={{
-                    padding: "10px 20px", borderRadius: 8,
-                    border: `1px solid ${backHover ? C.border2 : C.border1}`,
-                    background: backHover ? "rgba(255,255,255,0.03)" : "transparent",
-                    color: backHover ? C.text1 : C.text2,
-                    fontSize: 13, cursor: "pointer",
-                    fontFamily: "'DM Sans', sans-serif",
-                    transition: "all 0.3s ease",
-                  }}
-                >
+                <button className="pbtn" onClick={handleBack}
+                  style={{ padding: "12px 22px", borderRadius: 999, fontSize: 14, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>
                   Back
                 </button>
               ) : <div />}
 
               {step < TOTAL_STEPS - 1 ? (
-                <button
-                  onMouseEnter={() => setContinueHover(true)}
-                  onMouseLeave={() => setContinueHover(false)}
-                  onClick={handleContinue}
-                  disabled={!canAdvance()}
-                  style={{
-                    padding: "10px 24px", borderRadius: 8,
-                    border: `1.5px solid ${canAdvance() ? (continueHover ? C.gold : C.gold + "80") : C.border2}`,
-                    background: canAdvance()
-                      ? (continueHover ? `linear-gradient(135deg, ${C.gold}22, ${C.gold}12)` : `linear-gradient(135deg, ${C.gold}15, ${C.gold}08)`)
-                      : "transparent",
-                    color: canAdvance() ? C.gold : C.text4,
-                    fontSize: 13, fontWeight: 600, cursor: canAdvance() ? "pointer" : "not-allowed",
-                    fontFamily: "'DM Sans', sans-serif",
-                    transition: "all 0.3s ease",
-                    boxShadow: canAdvance() && continueHover ? `0 0 20px ${C.gold}25` : "none",
-                    transform: continueHover && canAdvance() ? "translateY(-1px)" : "none",
-                  }}
-                >
-                  Continue
-                </button>
+                <HaloButton onClick={handleContinue} disabled={!canAdvance()} size={15} style={{ padding: "14px 30px" }}>Continue</HaloButton>
               ) : (
-                <button
-                  onMouseEnter={() => setSubmitHover(true)}
-                  onMouseLeave={() => setSubmitHover(false)}
-                  onClick={handleSubmit}
-                  disabled={!canAdvance() || submitting}
-                  style={{
-                    padding: "12px 32px", borderRadius: 10,
-                    border: `1.5px solid ${canAdvance() ? (submitHover ? C.gold : C.gold + "80") : C.border2}`,
-                    background: canAdvance()
-                      ? (submitHover ? `linear-gradient(135deg, ${C.gold}22, ${C.gold}12)` : `linear-gradient(135deg, ${C.gold}20, ${C.gold}08)`)
-                      : "transparent",
-                    color: canAdvance() ? C.gold : C.text4,
-                    fontSize: 14, fontWeight: 700, cursor: canAdvance() ? "pointer" : "not-allowed",
-                    fontFamily: "'DM Sans', sans-serif",
-                    transition: "all 0.3s ease",
-                    boxShadow: canAdvance() && submitHover ? `0 0 24px ${C.gold}30` : (canAdvance() ? `0 0 20px ${C.gold}15` : "none"),
-                    transform: submitHover && canAdvance() ? "translateY(-1px)" : "none",
-                  }}
-                >
+                <HaloButton onClick={handleSubmit} disabled={!canAdvance() || submitting} size={15.5} style={{ padding: "15px 34px" }}>
                   {submitting ? "Submitting..." : "Submit"}
-                </button>
+                </HaloButton>
               )}
             </div>
           </div>
         )}
 
-        {/* Disclaimers — only on first and last step */}
+        {!submitted && <SpotlightPreview mob={mob} />}
+
+        {/* Disclaimers - only on first and last step */}
         {!submitted && (step === 0 || step === TOTAL_STEPS - 1) && (
-          <div style={{ marginTop: 40, marginBottom: 24 }}>
-            <p style={{ fontSize: 10, lineHeight: 1.55, color: C.text3, textAlign: "center", maxWidth: 560, margin: "0 auto 16px" }}>
+          <div style={{ marginTop: 36, marginBottom: 24 }}>
+            <p style={{ fontSize: 10.5, lineHeight: 1.6, color: C.ink4, textAlign: "center", maxWidth: 560, margin: "0 auto 16px" }}>
               This report serves as an indication of value based on current market trends and benchmarks. It is not intended as an income-based or certified valuation. For exit planning, financing, or transactional purposes, a credentialed Valuation Expert should be engaged to produce a certified valuation report.
             </p>
-            <p style={{ fontSize: 10, lineHeight: 1.55, color: C.text3, textAlign: "center", maxWidth: 560, margin: "0 auto" }}>
+            <p style={{ fontSize: 10.5, lineHeight: 1.6, color: C.ink4, textAlign: "center", maxWidth: 560, margin: "0 auto" }}>
               By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our Privacy Policy and Terms of Service.
             </p>
           </div>
         )}
 
-        {/* Footer */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", paddingTop: 24, marginTop: submitted ? 40 : 0, borderTop: `1px solid ${C.border1}` }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.text3} strokeWidth="1.5"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M22 7l-10 7L2 7" /></svg>
-              <span style={{ fontSize: 11, color: C.text3 }}>ekriczky@kriczkyvirtus.com</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.text3} strokeWidth="1.5"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" /></svg>
-              <span style={{ fontSize: 11, color: C.text3 }}>kriczkyvirtus.com</span>
-            </div>
-          </div>
-        </div>
+        <ContactFooter style={{ marginTop: 36 }} />
       </div>
     </div>
   );

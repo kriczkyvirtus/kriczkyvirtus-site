@@ -9,6 +9,7 @@ const { sendResultsEmail, sendCohortConfirmationEmail } = require("../lib/email"
 const { syncContact } = require("../lib/activecampaign");
 const { makeReportToken, writeReport } = require("../lib/reinvest-harvest-reports");
 const valueDriversReports = require("../lib/value-drivers-reports");
+const { WORKSHOP_DATES, ID_PATTERN, KINDS } = require("../lib/workshop-events");
 
 const VALUE_DRIVER_KEYS = [
   "marketPosition", "revenueQuality", "financialPerformance", "customerConcentration", "managementTeam",
@@ -111,30 +112,63 @@ module.exports = async function handler(req, res) {
     const totalScore = summary?.totalScore;
 
     if (tool === "workshop-registration") {
+      /* kind: "seat" (default - goes on to the $250 Stripe deposit), "client" (existing
+         client via the private link, no deposit), "priority" (a quarter with no date yet,
+         no deposit) or "waitlist" (a full date). See lib/workshop-events.js. */
       const { firstName, lastName, phone, company, printName, revenue, outcome, appetite } = req.body;
-      const required = { firstName, lastName, email, phone, company, printName, revenue, outcome, appetite };
+      const kind = req.body.kind || "seat";
+      const workshopId = req.body.workshopId || null;
+      if (!KINDS.includes(kind)) {
+        return res.status(400).json({ error: "Invalid workshop registration details" });
+      }
+      const short = kind === "priority" || kind === "waitlist";
+      const required = short
+        ? { firstName, lastName, email, phone, company, revenue }
+        : { firstName, lastName, email, phone, company, printName, revenue, outcome, appetite };
       if (Object.values(required).some(value => typeof value !== "string" || !value.trim())) {
         return res.status(400).json({ error: "All workshop registration fields are required" });
       }
       const fullName = `${firstName.trim()} ${lastName.trim()}`;
-      if (printName.trim() !== fullName || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      if ((!short && printName.trim() !== fullName) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
         return res.status(400).json({ error: "Invalid workshop registration details" });
       }
       const revenueBands = ["Under $500K", "$500K – $1M", "$1M – $3M", "$3M – $10M", "$10M+"];
       if (!revenueBands.includes(revenue)) {
         return res.status(400).json({ error: "Invalid revenue band" });
       }
+      if (workshopId !== null && (!ID_PATTERN.test(workshopId) || !(workshopId in WORKSHOP_DATES))) {
+        return res.status(400).json({ error: "Unknown workshop" });
+      }
+      if (kind !== "seat" && !workshopId) {
+        return res.status(400).json({ error: "Unknown workshop" });
+      }
+      const workshopDate = workshopId ? WORKSHOP_DATES[workshopId] : null;
+      if ((kind === "client" || kind === "waitlist") && !workshopDate) {
+        return res.status(400).json({ error: "That workshop doesn't have a date yet" });
+      }
+      if (kind === "priority" && workshopDate) {
+        return res.status(400).json({ error: "That workshop already has a date" });
+      }
+      /* The private client link carries a code; only a matching code skips the deposit. */
+      if (kind === "client") {
+        const code = process.env.WORKSHOP_CLIENT_CODE;
+        if (!code || req.body.clientCode !== code) {
+          return res.status(403).json({ error: "This client link isn't valid. Please contact Edward." });
+        }
+      }
       try {
         await appendLead({
           name: fullName, firstName: firstName.trim(), lastName: lastName.trim(),
           email: email.trim(), phone: phone.trim(), businessName: company.trim(),
-          tool, printName: fullName, revenueBand: revenue,
-          outcome, appetite,
+          tool, printName: short ? "" : fullName, revenueBand: revenue,
+          outcome: outcome || "", appetite: appetite || "",
+          kind, workshopId: workshopId || "",
           summary: {}, answers: {}, timestamp: new Date().toISOString(),
         });
         await syncContact({
           name: fullName, email: email.trim(), phone: phone.trim(), tool,
           revenueBand: revenue, outcome, appetite,
+          ...(workshopId ? { kind, workshopId, workshopDate } : {}),
         });
       } catch (registrationError) {
         console.error("[Workshop] Registration capture failed:", registrationError);

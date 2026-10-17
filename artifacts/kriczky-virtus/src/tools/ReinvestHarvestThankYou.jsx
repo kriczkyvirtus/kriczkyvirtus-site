@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 /* Cream, like the report and the printed workbooks (see kvTheme.js). */
-import { LIGHT as C, fillOf } from "./kvTheme.js";
+import { LIGHT as C } from "./kvTheme.js";
+import PageTexture from "../PageTexture.jsx";
+import RoadmapSystem from "../RoadmapSystem.jsx";
+import { CREAM_CSS, Logo, Num, HaloButton, glow, T } from "../CreamKit.jsx";
 
 /* ═══════════════════════════════════════════════════════════════
    REINVEST OR HARVEST - THANK-YOU PAGE
@@ -92,168 +95,6 @@ const OFFERS = {
     note: null,
   },
 };
-
-const ICON_C1 = `<svg width="512" height="512" viewBox="-210 -210 420 420" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
-<defs>
-  <linearGradient id="metalxcompass" gradientUnits="userSpaceOnUse" x1="0" y1="-150" x2="0" y2="150"><stop offset="0%" stop-color="#F8ECC4"/><stop offset="14%" stop-color="#DFC177"/><stop offset="28%" stop-color="#C8A24E"/><stop offset="42%" stop-color="#5A4419"/><stop offset="50%" stop-color="#F8ECC4"/><stop offset="64%" stop-color="#C8A24E"/><stop offset="80%" stop-color="#8A6C2A"/><stop offset="100%" stop-color="#5A4419"/></linearGradient>
-  <filter id="softxcompass" x="-60%" y="-60%" width="220%" height="220%">
-    <feGaussianBlur stdDeviation="2.50"/>
-  </filter>
-  <filter id="liftxcompass" x="-70%" y="-70%" width="240%" height="240%">
-    <feDropShadow dx="0" dy="6.0" stdDeviation="9.0" flood-color="#000" flood-opacity="0.55"/>
-    <feDropShadow dx="0" dy="0" stdDeviation="16.0" flood-color="#C8A24E" flood-opacity="0.38"/>
-  </filter>
-  <radialGradient id="ambxcompass">
-    <stop offset="0%" stop-color="#C8A24E" stop-opacity="0.16"/>
-    <stop offset="100%" stop-color="#C8A24E" stop-opacity="0"/>
-  </radialGradient>
-</defs>
-<circle cx="0" cy="0" r="215" fill="url(#ambxcompass)"/>
-<g fill="none" stroke="#000" stroke-opacity="0.55" stroke-width="28.00"
-   stroke-linecap="round" stroke-linejoin="round"
-   transform="translate(0,7.0)" filter="url(#softxcompass)"><circle cx="0" cy="0" r="118"/><path d="M0 -150 L34 -34 L150 0 L34 34 L0 150 L-34 34 L-150 0 L-34 -34 Z"/></g>
-<g fill="none" stroke="url(#metalxcompass)" stroke-width="22.00"
-   stroke-linecap="round" stroke-linejoin="round" filter="url(#liftxcompass)"><circle cx="0" cy="0" r="118"/><path d="M0 -150 L34 -34 L150 0 L34 34 L0 150 L-34 34 L-150 0 L-34 -34 Z"/></g>
-<g fill="none" stroke="#FFFDF5" stroke-opacity="0.55" stroke-width="5.00"
-   stroke-linecap="round" stroke-linejoin="round"
-   transform="translate(0,-5.0)"><circle cx="0" cy="0" r="118"/><path d="M0 -150 L34 -34 L150 0 L34 34 L0 150 L-34 34 L-150 0 L-34 -34 Z"/></g>
-</svg>`;
-const ICON_C2 = `<svg width="512" height="512" viewBox="-210 -210 420 420" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
-<defs>
-  <linearGradient id="metalxbars" gradientUnits="userSpaceOnUse" x1="0" y1="-130" x2="0" y2="130"><stop offset="0%" stop-color="#F8ECC4"/><stop offset="14%" stop-color="#DFC177"/><stop offset="28%" stop-color="#C8A24E"/><stop offset="42%" stop-color="#5A4419"/><stop offset="50%" stop-color="#F8ECC4"/><stop offset="64%" stop-color="#C8A24E"/><stop offset="80%" stop-color="#8A6C2A"/><stop offset="100%" stop-color="#5A4419"/></linearGradient>
-  <filter id="softxbars" x="-60%" y="-60%" width="220%" height="220%">
-    <feGaussianBlur stdDeviation="2.50"/>
-  </filter>
-  <filter id="liftxbars" x="-70%" y="-70%" width="240%" height="240%">
-    <feDropShadow dx="0" dy="6.0" stdDeviation="9.0" flood-color="#000" flood-opacity="0.55"/>
-    <feDropShadow dx="0" dy="0" stdDeviation="16.0" flood-color="#C8A24E" flood-opacity="0.38"/>
-  </filter>
-  <radialGradient id="ambxbars">
-    <stop offset="0%" stop-color="#C8A24E" stop-opacity="0.16"/>
-    <stop offset="100%" stop-color="#C8A24E" stop-opacity="0"/>
-  </radialGradient>
-</defs>
-<circle cx="0" cy="0" r="215" fill="url(#ambxbars)"/>
-<g fill="none" stroke="#000" stroke-opacity="0.55" stroke-width="28.00"
-   stroke-linecap="round" stroke-linejoin="round"
-   transform="translate(0,7.0)" filter="url(#softxbars)"><path d="M-150 -130 L-150 130 L150 130"/><path d="M-72 60 L-72 -10"/><path d="M4 60 L4 -60"/><path d="M80 60 L80 -112"/></g>
-<g fill="none" stroke="url(#metalxbars)" stroke-width="22.00"
-   stroke-linecap="round" stroke-linejoin="round" filter="url(#liftxbars)"><path d="M-150 -130 L-150 130 L150 130"/><path d="M-72 60 L-72 -10"/><path d="M4 60 L4 -60"/><path d="M80 60 L80 -112"/></g>
-<g fill="none" stroke="#FFFDF5" stroke-opacity="0.55" stroke-width="5.00"
-   stroke-linecap="round" stroke-linejoin="round"
-   transform="translate(0,-5.0)"><path d="M-150 -130 L-150 130 L150 130"/><path d="M-72 60 L-72 -10"/><path d="M4 60 L4 -60"/><path d="M80 60 L80 -112"/></g>
-</svg>`;
-const ICON_C3 = `<svg width="512" height="512" viewBox="-210 -210 420 420" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
-<defs>
-  <linearGradient id="metalxfunnel" gradientUnits="userSpaceOnUse" x1="0" y1="-140" x2="0" y2="150"><stop offset="0%" stop-color="#F8ECC4"/><stop offset="14%" stop-color="#DFC177"/><stop offset="28%" stop-color="#C8A24E"/><stop offset="42%" stop-color="#5A4419"/><stop offset="50%" stop-color="#F8ECC4"/><stop offset="64%" stop-color="#C8A24E"/><stop offset="80%" stop-color="#8A6C2A"/><stop offset="100%" stop-color="#5A4419"/></linearGradient>
-  <filter id="softxfunnel" x="-60%" y="-60%" width="220%" height="220%">
-    <feGaussianBlur stdDeviation="2.50"/>
-  </filter>
-  <filter id="liftxfunnel" x="-70%" y="-70%" width="240%" height="240%">
-    <feDropShadow dx="0" dy="6.0" stdDeviation="9.0" flood-color="#000" flood-opacity="0.55"/>
-    <feDropShadow dx="0" dy="0" stdDeviation="16.0" flood-color="#C8A24E" flood-opacity="0.38"/>
-  </filter>
-  <radialGradient id="ambxfunnel">
-    <stop offset="0%" stop-color="#C8A24E" stop-opacity="0.16"/>
-    <stop offset="100%" stop-color="#C8A24E" stop-opacity="0"/>
-  </radialGradient>
-</defs>
-<circle cx="0" cy="0" r="215" fill="url(#ambxfunnel)"/>
-<g fill="none" stroke="#000" stroke-opacity="0.55" stroke-width="28.00"
-   stroke-linecap="round" stroke-linejoin="round"
-   transform="translate(0,7.0)" filter="url(#softxfunnel)"><path d="M-160 -140 L160 -140 L34 -6 L34 96 L-34 150 L-34 -6 Z"/></g>
-<g fill="none" stroke="url(#metalxfunnel)" stroke-width="22.00"
-   stroke-linecap="round" stroke-linejoin="round" filter="url(#liftxfunnel)"><path d="M-160 -140 L160 -140 L34 -6 L34 96 L-34 150 L-34 -6 Z"/></g>
-<g fill="none" stroke="#FFFDF5" stroke-opacity="0.55" stroke-width="5.00"
-   stroke-linecap="round" stroke-linejoin="round"
-   transform="translate(0,-5.0)"><path d="M-160 -140 L160 -140 L34 -6 L34 96 L-34 150 L-34 -6 Z"/></g>
-</svg>`;
-const ICON_C4 = `<svg width="512" height="512" viewBox="-210 -210 420 420" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
-<defs>
-  <linearGradient id="metalxdiverge" gradientUnits="userSpaceOnUse" x1="0" y1="-140" x2="0" y2="150"><stop offset="0%" stop-color="#D8FCEE"/><stop offset="14%" stop-color="#7CE7BF"/><stop offset="28%" stop-color="#34D399"/><stop offset="42%" stop-color="#0F5C42"/><stop offset="50%" stop-color="#EAFFF7"/><stop offset="64%" stop-color="#34D399"/><stop offset="80%" stop-color="#1B8A63"/><stop offset="100%" stop-color="#0F5C42"/></linearGradient>
-  <filter id="softxdiverge" x="-60%" y="-60%" width="220%" height="220%">
-    <feGaussianBlur stdDeviation="2.50"/>
-  </filter>
-  <filter id="liftxdiverge" x="-70%" y="-70%" width="240%" height="240%">
-    <feDropShadow dx="0" dy="6.0" stdDeviation="9.0" flood-color="#000" flood-opacity="0.55"/>
-    <feDropShadow dx="0" dy="0" stdDeviation="16.0" flood-color="#34D399" flood-opacity="0.38"/>
-  </filter>
-  <radialGradient id="ambxdiverge">
-    <stop offset="0%" stop-color="#34D399" stop-opacity="0.16"/>
-    <stop offset="100%" stop-color="#34D399" stop-opacity="0"/>
-  </radialGradient>
-</defs>
-<circle cx="0" cy="0" r="215" fill="url(#ambxdiverge)"/>
-<g fill="none" stroke="#000" stroke-opacity="0.55" stroke-width="28.00"
-   stroke-linecap="round" stroke-linejoin="round"
-   transform="translate(0,7.0)" filter="url(#softxdiverge)"><path d="M0 150 L0 20"/><path d="M0 20 L-120 -100"/><path d="M0 20 L120 -100"/><path d="M-120 -100 L-120 -20 M-120 -100 L-40 -100"/><path d="M120 -100 L120 -20 M120 -100 L40 -100"/></g>
-<g fill="none" stroke="url(#metalxdiverge)" stroke-width="22.00"
-   stroke-linecap="round" stroke-linejoin="round" filter="url(#liftxdiverge)"><path d="M0 150 L0 20"/><path d="M0 20 L-120 -100"/><path d="M0 20 L120 -100"/><path d="M-120 -100 L-120 -20 M-120 -100 L-40 -100"/><path d="M120 -100 L120 -20 M120 -100 L40 -100"/></g>
-<g fill="none" stroke="#FFFDF5" stroke-opacity="0.55" stroke-width="5.00"
-   stroke-linecap="round" stroke-linejoin="round"
-   transform="translate(0,-5.0)"><path d="M0 150 L0 20"/><path d="M0 20 L-120 -100"/><path d="M0 20 L120 -100"/><path d="M-120 -100 L-120 -20 M-120 -100 L-40 -100"/><path d="M120 -100 L120 -20 M120 -100 L40 -100"/></g>
-</svg>`;
-const ICON_C5 = `<svg width="512" height="512" viewBox="-210 -210 420 420" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
-<defs>
-  <linearGradient id="metalxoutward" gradientUnits="userSpaceOnUse" x1="0" y1="-150" x2="0" y2="150"><stop offset="0%" stop-color="#D8FCEE"/><stop offset="14%" stop-color="#7CE7BF"/><stop offset="28%" stop-color="#34D399"/><stop offset="42%" stop-color="#0F5C42"/><stop offset="50%" stop-color="#EAFFF7"/><stop offset="64%" stop-color="#34D399"/><stop offset="80%" stop-color="#1B8A63"/><stop offset="100%" stop-color="#0F5C42"/></linearGradient>
-  <filter id="softxoutward" x="-60%" y="-60%" width="220%" height="220%">
-    <feGaussianBlur stdDeviation="2.50"/>
-  </filter>
-  <filter id="liftxoutward" x="-70%" y="-70%" width="240%" height="240%">
-    <feDropShadow dx="0" dy="6.0" stdDeviation="9.0" flood-color="#000" flood-opacity="0.55"/>
-    <feDropShadow dx="0" dy="0" stdDeviation="16.0" flood-color="#34D399" flood-opacity="0.38"/>
-  </filter>
-  <radialGradient id="ambxoutward">
-    <stop offset="0%" stop-color="#34D399" stop-opacity="0.16"/>
-    <stop offset="100%" stop-color="#34D399" stop-opacity="0"/>
-  </radialGradient>
-</defs>
-<circle cx="0" cy="0" r="215" fill="url(#ambxoutward)"/>
-<g fill="none" stroke="#000" stroke-opacity="0.55" stroke-width="28.00"
-   stroke-linecap="round" stroke-linejoin="round"
-   transform="translate(0,7.0)" filter="url(#softxoutward)"><circle cx="0" cy="0" r="46"/><path d="M-150 0 A150 150 0 0 1 -34 -146"/><path d="M-96 132 A150 150 0 0 1 -128 96"/><path d="M96 132 A150 150 0 0 0 150 34"/><path d="M40 -40 L142 -142"/><path d="M142 -142 L64 -142 M142 -142 L142 -64"/></g>
-<g fill="none" stroke="url(#metalxoutward)" stroke-width="22.00"
-   stroke-linecap="round" stroke-linejoin="round" filter="url(#liftxoutward)"><circle cx="0" cy="0" r="46"/><path d="M-150 0 A150 150 0 0 1 -34 -146"/><path d="M-96 132 A150 150 0 0 1 -128 96"/><path d="M96 132 A150 150 0 0 0 150 34"/><path d="M40 -40 L142 -142"/><path d="M142 -142 L64 -142 M142 -142 L142 -64"/></g>
-<g fill="none" stroke="#FFFDF5" stroke-opacity="0.55" stroke-width="5.00"
-   stroke-linecap="round" stroke-linejoin="round"
-   transform="translate(0,-5.0)"><circle cx="0" cy="0" r="46"/><path d="M-150 0 A150 150 0 0 1 -34 -146"/><path d="M-96 132 A150 150 0 0 1 -128 96"/><path d="M96 132 A150 150 0 0 0 150 34"/><path d="M40 -40 L142 -142"/><path d="M142 -142 L64 -142 M142 -142 L142 -64"/></g>
-</svg>`;
-const ICON_C6 = `<svg width="512" height="512" viewBox="-210 -210 420 420" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
-<defs>
-  <linearGradient id="metalxhorizon" gradientUnits="userSpaceOnUse" x1="0" y1="-170" x2="0" y2="155"><stop offset="0%" stop-color="#D6F8FE"/><stop offset="14%" stop-color="#7EE9F7"/><stop offset="28%" stop-color="#22D3EE"/><stop offset="42%" stop-color="#0B5A68"/><stop offset="50%" stop-color="#EAFEFF"/><stop offset="64%" stop-color="#22D3EE"/><stop offset="80%" stop-color="#128FA6"/><stop offset="100%" stop-color="#0B5A68"/></linearGradient>
-  <filter id="softxhorizon" x="-60%" y="-60%" width="220%" height="220%">
-    <feGaussianBlur stdDeviation="2.50"/>
-  </filter>
-  <filter id="liftxhorizon" x="-70%" y="-70%" width="240%" height="240%">
-    <feDropShadow dx="0" dy="6.0" stdDeviation="9.0" flood-color="#000" flood-opacity="0.55"/>
-    <feDropShadow dx="0" dy="0" stdDeviation="16.0" flood-color="#22D3EE" flood-opacity="0.38"/>
-  </filter>
-  <radialGradient id="ambxhorizon">
-    <stop offset="0%" stop-color="#22D3EE" stop-opacity="0.16"/>
-    <stop offset="100%" stop-color="#22D3EE" stop-opacity="0"/>
-  </radialGradient>
-</defs>
-<circle cx="0" cy="0" r="215" fill="url(#ambxhorizon)"/>
-<g fill="none" stroke="#000" stroke-opacity="0.55" stroke-width="28.00"
-   stroke-linecap="round" stroke-linejoin="round"
-   transform="translate(0,7.0)" filter="url(#softxhorizon)"><path d="M0 155 C0 155 116 26 116 -54 A116 116 0 1 0 -116 -54 C-116 26 0 155 0 155 Z"/><circle cx="0" cy="-54" r="44"/></g>
-<g fill="none" stroke="url(#metalxhorizon)" stroke-width="22.00"
-   stroke-linecap="round" stroke-linejoin="round" filter="url(#liftxhorizon)"><path d="M0 155 C0 155 116 26 116 -54 A116 116 0 1 0 -116 -54 C-116 26 0 155 0 155 Z"/><circle cx="0" cy="-54" r="44"/></g>
-<g fill="none" stroke="#FFFDF5" stroke-opacity="0.55" stroke-width="5.00"
-   stroke-linecap="round" stroke-linejoin="round"
-   transform="translate(0,-5.0)"><path d="M0 155 C0 155 116 26 116 -54 A116 116 0 1 0 -116 -54 C-116 26 0 155 0 155 Z"/><circle cx="0" cy="-54" r="44"/></g>
-</svg>`;
-
-/* Course 06 spans both pillars, so it takes the gold→green blend rather than
-   cyan - cyan is Customer Capital elsewhere in the system. */
-const ROADMAP = [
-  { n: "01", icon: ICON_C1, title: "Start Here",            desc: "The one decision everything else hangs on.",                    tint: C.gold },
-  { n: "02", icon: ICON_C2, title: "Know Your Numbers",     desc: "What your last reinvestment returned, and how your margin compares.", tint: C.gold },
-  { n: "03", icon: ICON_C3, title: "Find The Constraint",   desc: "The one thing capping sustainable growth.",                     tint: C.gold },
-  { n: "04", icon: ICON_C4, title: "The Profit Split System", desc: "What goes back in, what holds in reserve, what comes out to you.", tint: C.green },
-  { n: "05", icon: ICON_C5, title: "Build The Outside",     desc: "Assets that aren't the company, and a tax plan that isn't paperwork.", tint: C.green },
-  { n: "06", icon: ICON_C6, title: "Your Wealth North Star", desc: "The one thing that makes every Reinvest-or-Harvest decision answerable.", tint: C.cyan },
-];
 
 /* Reached two ways:
      1. straight after the flow, with state passed in as props
@@ -388,34 +229,31 @@ export default function ReinvestHarvestThankYou({
   const kicker = { fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase" };
 
   return (
-    <div style={{ background: C.bgDeep, minHeight: "100vh", fontFamily: "'DM Sans',sans-serif", color: C.text1, paddingBottom: PREVIEW ? 90 : 40 }}>
+    <div style={{ background: C.bgDeep, minHeight: "100vh", fontFamily: "'DM Sans',sans-serif", color: C.text1, paddingBottom: PREVIEW ? 90 : 40, position: "relative", isolation: "isolate", overflowX: "hidden" }}>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
-      <style>{`
-        *{box-sizing:border-box}
+      <style>{CREAM_CSS + `
         body{background:${C.bgDeep}}
-        .cta:hover{box-shadow:0 0 44px ${C.goldLight}66,0 8px 22px rgba(10,14,20,.25)!important;border-color:${C.goldLight}!important}
         .vsl-panel{animation:vslPulse 2.4s ease-in-out infinite}
         .vsl-unmute:hover .vsl-panel{transform:scale(1.04)}
         @keyframes vslPulse{0%,100%{transform:scale(1);box-shadow:0 10px 40px rgba(0,0,0,.45)}50%{transform:scale(1.035);box-shadow:0 10px 52px rgba(0,0,0,.5),0 0 34px rgba(200,162,78,.45)}}
         @media(prefers-reduced-motion:reduce){.vsl-panel{animation:none}}
-        .roadmap{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-        .rcard{transition:box-shadow .3s ease,border-color .3s ease,transform .3s ease}
-        /* The same hover as the report cards: a slight lift, an edge in the
-           card's colour, and a soft glow all the way round. Pointer devices only. */
-        @media (hover:hover) and (pointer:fine){
-          .rcard:hover{transform:translateY(-2px);border-color:var(--glowEdge)!important;
-            box-shadow:0 0 0 1px var(--glowEdge),0 0 22px var(--glowHi),0 0 52px var(--glowHi),0 14px 30px rgba(10,14,20,.10)!important}
-        }
-        @media(min-width:700px){.roadmap{grid-template-columns:repeat(3,1fr);gap:16px}}
       `}</style>
+      {/* the engraved ground, and a soft glow at the top (as on the landing page) */}
+      <PageTexture />
+      <div aria-hidden="true" style={{ position: "absolute", top: -80, left: "50%", transform: "translateX(-50%)", width: "min(1100px,150vw)", height: 560,
+        background: `radial-gradient(ellipse at center, ${T.gold.fill}1c 0%, transparent 66%)`, pointerEvents: "none", zIndex: -1 }} />
 
-      {/* ── CONFIRMATION BAR ── */}
-      {resolved && <div style={{ background: `linear-gradient(90deg, ${C.green}16, ${C.green}09)`, borderBottom: `1px solid ${C.green}33`, padding: "14px 20px", position: "relative", zIndex: 2 }}>
-        <div style={{ ...wrap, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, textAlign: "center" }}>
+      <Logo style={{ padding: "25px 22px 0" }} />
+
+      {/* ── CONFIRMATION - a porcelain pill with a green edge ── */}
+      {resolved && <div style={{ display: "flex", justifyContent: "center", padding: "22px 20px 0" }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "10px 20px", borderRadius: 999, maxWidth: "100%",
+          background: "linear-gradient(180deg,#FFFEFB 0%,#F5EFE3 100%)", border: `1px solid ${T.green.fill}88`,
+          boxShadow: `inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(10,14,20,.06), 0 6px 16px rgba(10,14,20,.08), 0 0 20px ${T.green.fill}33` }}>
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
             <polyline points="4 12 10 18 20 6" stroke={C.green} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <span style={{ fontSize: 14, color: C.text1 }}>
+          <span style={{ fontSize: 14, color: C.text1, overflowWrap: "anywhere" }}>
             Your scorecard is on its way to <b style={{ color: C.green }}>{email}</b>
           </span>
         </div>
@@ -466,7 +304,7 @@ export default function ReinvestHarvestThankYou({
              underneath. The calendar on its own, above any reason to book, was
              asking before explaining. */}
         <section id="rh-scheduler" style={{ ...wrap, padding: "4px 0 40px", scrollMarginTop: 24 }}>
-          <div style={{ padding: "32px 24px", borderRadius: 18, background: "#FFFFFF", border: `1px solid ${C.goldLight}55`, boxShadow: `0 0 26px ${C.goldLight}1f, 0 10px 30px rgba(10,14,20,.08)` }}>
+          <div style={{ ...glow(T.gold), padding: "32px 24px" }}>
 
             {/* Same block in both states. Someone on a bad token has almost always
                 taken the scorecard - a forwarded or mangled link - so the steps and
@@ -481,7 +319,7 @@ export default function ReinvestHarvestThankYou({
 
             {offer.steps.map((s, i) => (
               <div key={s.t} style={{ display: "flex", gap: 15, alignItems: "flex-start", padding: "14px 0", borderBottom: i < 2 ? `1px solid ${C.lineSoft}` : "none" }}>
-                <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 23, fontWeight: 700, color: C.goldLight, lineHeight: 1, minWidth: 30 }}>0{i + 1}</span>
+                <Num n={`0${i + 1}`} size={38} />
                 <div>
                   <div style={{ fontSize: 15, fontWeight: 700, color: C.text1, marginBottom: 3 }}>{s.t}</div>
                   <div style={{ fontSize: 14, lineHeight: 1.55, color: C.text2 }}>{s.d}</div>
@@ -503,10 +341,9 @@ export default function ReinvestHarvestThankYou({
                   style={{ border: "none", display: "block" }} loading="lazy" />
               </div>
             ) : (
-              <a href={offer.url} className="cta" target="_blank" rel="noopener noreferrer"
-                style={{ display: "block", marginTop: 26, padding: "20px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none", background: C.btnBg, border: `1.5px solid ${C.btnLine}`, boxShadow: `0 0 30px ${C.goldLight}33, 0 10px 24px rgba(10,14,20,.18)`, transition: "all .25s ease" }}>
-                <span style={{ fontSize: 16.5, fontWeight: 700, letterSpacing: ".02em", color: C.btnText }}>{offer.cta} →</span>
-              </a>
+              <div style={{ marginTop: 26 }}>
+                <HaloButton href={offer.url} target="_blank" rel="noopener noreferrer" block size={16.5}>{offer.cta}</HaloButton>
+              </div>
             )}
           </div>
         </section>
@@ -602,20 +439,13 @@ export default function ReinvestHarvestThankYou({
              buttons 134px apart, since the card already carries one. ── */}
         {resolved && offerKey === "oneToOne" && (
         <section style={{ ...wrap, paddingBottom: 46, textAlign: "center" }}>
-          <a href={ctaHref} className="cta" {...ctaProps}
-            style={{ display: "block", maxWidth: 460, margin: "0 auto", padding: "21px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none", background: C.btnBg, border: `1.5px solid ${C.btnLine}`, boxShadow: `0 0 30px ${C.goldLight}33, 0 10px 24px rgba(10,14,20,.18)`, transition: "all .25s ease" }}>
-            <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".02em", color: C.btnText }}>{offer.cta} →</span>
-          </a>
+          <HaloButton href={ctaHref} {...ctaProps}>{offer.cta}</HaloButton>
         </section>
         )}
 
         {!resolved && (
           <section style={{ ...wrap, paddingBottom: 46, textAlign: "center" }}>
-            <a href="#rh-scheduler" className="cta" onClick={scrollToScheduler}
-              style={{ display: "block", maxWidth: 460, margin: "0 auto", padding: "21px 24px", borderRadius: 13, textAlign: "center", textDecoration: "none",
-                background: C.btnBg, border: `1.5px solid ${C.btnLine}`, boxShadow: `0 0 30px ${C.goldLight}33, 0 10px 24px rgba(10,14,20,.18)`, transition: "all .25s ease" }}>
-              <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".02em", color: C.btnText }}>BOOK YOUR FREE WORKING SESSION →</span>
-            </a>
+            <HaloButton href="#rh-scheduler" onClick={scrollToScheduler}>BOOK YOUR FREE WORKING SESSION</HaloButton>
             <p style={{ fontSize: 13.5, color: C.text3, margin: "16px 0 0" }}>
               <a href="/reinvest-harvest" style={{ color: C.text3 }}>Haven't taken the scorecard yet?</a>
             </p>
@@ -624,8 +454,8 @@ export default function ReinvestHarvestThankYou({
 
 
         {/* ── ROADMAP - supporting material, below the video ── */}
-        <section style={{ maxWidth: 940, margin: "0 auto", padding: "10px 0 44px" }}>
-          <div style={{ textAlign: "center", marginBottom: 34 }}>
+        <section style={{ maxWidth: 1180, margin: "0 auto", padding: "10px 0 44px" }}>
+          <div style={{ textAlign: "center", marginBottom: "clamp(18px,3vw,34px)", maxWidth: 940, marginLeft: "auto", marginRight: "auto" }}>
             {/* Scaled to match the video section above - this and the VSL block are
                 the two supporting sections and were reading much smaller than it. */}
             <div style={{ ...kicker, fontSize: 15, color: C.gold, marginBottom: 14 }}>Where this leads</div>
@@ -637,28 +467,10 @@ export default function ReinvestHarvestThankYou({
             </p>
           </div>
 
-          <div className="roadmap">
-            {ROADMAP.map(r0 => {
-              /* "You Are Here" only makes sense if they just took it. Someone
-                 arriving on a bad token hasn't scored, so 01 reverts. */
-              const r = (resolved && r0.n === "01")
-                ? { ...r0, title: "You Are Here", desc: "The one decision everything else hangs on - the one you just scored." }
-                : r0;
-              return (
-              <div key={r.n} className="rcard" style={{ padding: "20px 16px 22px", borderRadius: 14, textAlign: "center",
-                background: `linear-gradient(160deg, #FFFFFF 45%, ${r.tint}10)`,
-                border: `1px solid ${r.tint}40`, boxShadow: `0 0 18px ${r.tint}1c, 0 6px 16px rgba(10,14,20,.06)`,
-                /* per-card glow, driven off the icon's own colour */
-                "--glow": r.tint, "--glowSoft": `${r.tint}2e`, "--glowEdge": `${fillOf(r.tint)}cc`, "--glowHi": `${fillOf(r.tint)}8c` }}>
-                <div style={{ height: 62, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}
-                  dangerouslySetInnerHTML={{ __html: r.icon.replace('width="512" height="512"', 'width="58" height="58"') }} />
-                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 13, fontWeight: 700, color: `${r.tint}88`, letterSpacing: ".06em", marginBottom: 5 }}>{r.n}</div>
-                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 19, fontWeight: 700, color: C.text1, lineHeight: 1.2, marginBottom: 7 }}>{r.title}</div>
-                <div style={{ fontSize: 12.5, lineHeight: 1.5, color: C.text3 }}>{r.desc}</div>
-              </div>
-              );
-            })}
-          </div>
+          {/* The Owner's Virtus Roadmap, live. They just took the scorecard, so
+              station 01 is marked "You are here". Someone arriving on a bad token
+              hasn't scored, so nothing is marked. */}
+          <RoadmapSystem here={resolved ? [0] : []} workshop={false} />
         </section>
 
 
@@ -666,9 +478,7 @@ export default function ReinvestHarvestThankYou({
         {/* ── DISCLOSURE ── */}
         <footer style={{ ...wrap, paddingTop: 26, borderTop: `1px solid ${C.lineSoft}` }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center", marginBottom: 14 }}>
-            <svg width="19" height="19" viewBox="0 0 64 64" fill="none">
-              <path d="M32 8L14 16V30C14 42 22 52 32 56C42 52 50 42 50 30V16L32 8Z" fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinejoin="round" />
-            </svg>
+            {C.light ? <img src="/icons/roadmap-system/shield.png" alt="" width="22" height="22" draggable="false" /> : <svg width="19" height="19" viewBox="0 0 64 64" fill="none"><path d="M32 8L14 16V30C14 42 22 52 32 56C42 52 50 42 50 30V16L32 8Z" fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinejoin="round" /></svg>}
             <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 15, letterSpacing: ".08em", textTransform: "uppercase", color: C.text2 }}>
               <b style={{ color: C.gold, fontWeight: 600 }}>Kriczky</b> Virtus
             </span>

@@ -54,3 +54,47 @@ test("workshop answers use supplied field IDs, scorecard revenue field, and tag 
   ]);
   assert.deepEqual(calls[1].body.contactTag, { contact: "contact-1", tag: 90 });
 });
+test("client seat writes Workshop ID and date, then tags 90, 91, 101 and the event seat tag", async () => {
+  calls.length = 0;
+  const realFetch = global.fetch;
+  global.fetch = async (url, options = {}) => {
+    calls.push({ url: String(url), body: options.body && JSON.parse(options.body) });
+    const u = String(url);
+    const data = u.endsWith("/contact/sync") ? { contact: { id: "contact-1" } }
+      : u.includes("/tags?search=") ? { tags: [{ id: "97", tag: "workshop-2026q4-seat" }] }
+      : { contactTag: { id: "tagged" } };
+    return { ok: true, status: 200, json: async () => data };
+  };
+  await syncContact({
+    tool: "workshop-registration", name: "Test Owner", email: "test@example.com", phone: "5555550100",
+    revenueBand: "$1M – $3M", outcome: "Build cash runway", appetite: "Strong",
+    kind: "client", workshopId: "2026q4", workshopDate: "2026-12-04",
+  });
+  global.fetch = realFetch;
+  assert.deepEqual(calls[0].body.contact.fieldValues.slice(-2), [
+    { field: "17", value: "2026q4" }, { field: "14", value: "2026-12-04" },
+  ]);
+  const tagged = calls.filter(c => c.url.endsWith("/contactTags")).map(c => String(c.body.contactTag.tag));
+  assert.deepEqual(tagged, ["90", "91", "101", "97"]);
+});
+
+test("priority reservation gets only its priority tag", async () => {
+  calls.length = 0;
+  const realFetch = global.fetch;
+  global.fetch = async (url, options = {}) => {
+    calls.push({ url: String(url), body: options.body && JSON.parse(options.body) });
+    const u = String(url);
+    const data = u.endsWith("/contact/sync") ? { contact: { id: "contact-1" } }
+      : u.includes("/tags?search=") ? { tags: [{ id: "99", tag: "workshop-2027q1-priority" }] }
+      : { contactTag: { id: "tagged" } };
+    return { ok: true, status: 200, json: async () => data };
+  };
+  await syncContact({
+    tool: "workshop-registration", name: "Test Owner", email: "test@example.com", phone: "5555550100",
+    revenueBand: "$1M – $3M", kind: "priority", workshopId: "2027q1", workshopDate: null,
+  });
+  global.fetch = realFetch;
+  assert.deepEqual(calls[0].body.contact.fieldValues, [{ field: "2", value: "$1M – $3M" }, { field: "17", value: "2027q1" }]);
+  const tagged = calls.filter(c => c.url.endsWith("/contactTags")).map(c => String(c.body.contactTag.tag));
+  assert.deepEqual(tagged, ["99"]);
+});
