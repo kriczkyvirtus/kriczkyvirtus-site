@@ -206,7 +206,7 @@ describe("Reinvest or Harvest ActiveCampaign tags", () => {
   });
 });
 describe("Reinvest or Harvest workshop pre-work door", () => {
-  test("finished pre-work gets only the RH: Workshop Pre-work tag, no website-lead tags", async () => {
+  test("finished pre-work gets RH: Workshop Pre-work plus position, tier and ownership - no website-lead tags", async () => {
     const realFetch = global.fetch;
     global.fetch = async (url, options = {}) => {
       calls.push({ url: String(url), method: options.method || "GET", body: options.body ? JSON.parse(options.body) : undefined });
@@ -223,7 +223,29 @@ describe("Reinvest or Harvest workshop pre-work door", () => {
     });
     global.fetch = realFetch;
     const tagged = calls.filter(c => c.url.endsWith("/contactTags")).map(c => String(c.body.contactTag.tag));
-    assert.deepEqual(tagged, ["120"]);
+    // 120 = RH: Workshop Pre-work, 18 = $1M-$3M tier, 69 = split position, 75 = 100% owner.
+    // Never 67 (starts the Post-Scorecard emails), 84 (abandonment) or a source tag (12/38).
+    assert.deepEqual(tagged, ["120", "18", "69", "75"]);
+  });
+
+  test("workshop pre-work, small business: tier tags only, still no 67", async () => {
+    const realFetch = global.fetch;
+    global.fetch = async (url, options = {}) => {
+      calls.push({ url: String(url), method: options.method || "GET", body: options.body ? JSON.parse(options.body) : undefined });
+      const u = String(url);
+      const data = u.endsWith("/contact/sync") ? { contact: { id: "contact-1" } }
+        : u.includes("/tags?search=") ? { tags: [{ id: "120", tag: "RH: Workshop Pre-work" }] }
+        : { contactTag: { id: "contact-tag-1" } };
+      return { ok: true, status: 200, json: async () => data, text: async () => JSON.stringify(data) };
+    };
+    await syncContact({
+      name: "Test Owner", email: "owner@example.test", phone: "555-123-4567", tool: "reinvest-harvest",
+      summary: { bizScore: 9, persScore: 8, quadrant: "Stabilize First", quadrantKey: "stabilize" },
+      revenueBand: "Under $500K", ownership: "Employee", door: "workshop",
+    });
+    global.fetch = realFetch;
+    const tagged = calls.filter(c => c.url.endsWith("/contactTags")).map(c => String(c.body.contactTag.tag));
+    assert.deepEqual(tagged, ["120", "51", "62", "71", "77"]);
   });
 
   test("partial workshop pre-work gets no tags (no abandonment emails)", async () => {
