@@ -1,0 +1,569 @@
+diff --git a/api/lead-capture.js b/api/lead-capture.js
+index cd2c8f4f77da97977bb5658b4fd5ee0d81721817..eddeb38194e9882061e1753a0d9ad34e43969caf 100644
+--- a/api/lead-capture.js
++++ b/api/lead-capture.js
+@@ -268,6 +268,10 @@ module.exports = async function handler(req, res) {
+       return res.status(200).json({ token });
+     }
+ 
++    /* door "workshop" = /workshop-rh/scorecard (workshop pre-work): no website-lead tags,
++       a workshop ending page, and a results email that points at the workshop. */
++    const rhDoor = req.body.door === "workshop" ? "workshop" : "site";
++
+     if (tool === "reinvest-harvest" && partial === true) {
+       const { first, last, company, phone } = req.body;
+       const required = { first, last, company, email, phone };
+@@ -286,7 +290,7 @@ module.exports = async function handler(req, res) {
+       });
+       await syncContact({
+         name, email, phone, tool, summary: {}, utmSource: resolvedUtmSource,
+-        utmCampaign: resolvedUtmCampaign, partial: true, businessName: company,
++        utmCampaign: resolvedUtmCampaign, partial: true, businessName: company, door: rhDoor,
+       });
+       return res.status(200).json({ success: true });
+     }
+@@ -334,6 +338,7 @@ module.exports = async function handler(req, res) {
+         totalScore,
+         quadrantKey,
+         trackIntent,
++        door: rhDoor,
+       };
+       await writeReport(report);
+ 
+@@ -349,10 +354,10 @@ module.exports = async function handler(req, res) {
+       });
+       await syncContact({
+         name, email, phone, tool, summary: req.body.summary, utmSource: resolvedUtmSource,
+-        utmCampaign: resolvedUtmCampaign, revenueBand, ownership, businessName: company,
++        utmCampaign: resolvedUtmCampaign, revenueBand, ownership, businessName: company, door: rhDoor,
+       });
+ 
+-      const emailData = { firstName: first, company, email, token, quadrantKey, bizScore, persScore, guess, revenueBand, ownerTier };
++      const emailData = { firstName: first, company, email, token, quadrantKey, bizScore, persScore, guess, revenueBand, ownerTier, door: rhDoor };
+       try {
+         await sendReinvestHarvestEmail(emailData);
+       } catch (emailErr) {
+diff --git a/artifacts/kriczky-virtus/src/main.jsx b/artifacts/kriczky-virtus/src/main.jsx
+index bdbde4a417cc6ef40ae8b508a77d0b66647473e2..c28b60e7d6360bff5e266b4d20a1e62b70827c96 100644
+--- a/artifacts/kriczky-virtus/src/main.jsx
++++ b/artifacts/kriczky-virtus/src/main.jsx
+@@ -30,7 +30,7 @@ import ExecutionDebrief from './ExecutionDebrief.jsx'
+ import ReinvestHarvestLanding from './tools/ReinvestHarvestLanding.jsx'
+ import ReinvestHarvestLandingCream from './tools/ReinvestHarvestLandingCream.jsx'
+ import ReinvestHarvestFlow from './tools/ReinvestHarvestFlow.jsx'
+-import { ReinvestHarvestThankYouRoute, ReinvestHarvestReportRoute } from './tools/ReinvestHarvestRoutes.jsx'
++import { ReinvestHarvestThankYouRoute, ReinvestHarvestReportRoute, WorkshopScorecardNextRoute } from './tools/ReinvestHarvestRoutes.jsx'
+ import RecurringRevenue12Cs from './tools/RecurringRevenue12Cs.jsx'
+ import './index.css'
+ 
+@@ -39,6 +39,8 @@ const TITLES = {
+   '/tools/wmbw/next':         'Your Value Drivers Results',
+   '/workshop-rh/value-drivers': 'Value Drivers — Workshop Pre-work',
+   '/workshop-rh/snapshot':      'Profit & Valuation Snapshot — Workshop Pre-work',
++  '/workshop-rh/scorecard':     'Reinvest or Harvest Scorecard — Workshop Pre-work',
++  '/workshop-rh/scorecard/next': 'Your Scorecard — Workshop Pre-work',
+   '/workshop-rh/value-drivers/next': 'Your Value Drivers Results',
+   '/tools/bib':               'Business Independence Blueprint',
+   '/tools/human-capital':     'Attracting Top Employees',
+@@ -61,7 +63,7 @@ const TITLES = {
+ }
+ 
+ /* Unlinked previews and rollbacks stay out of search. */
+-const NOINDEX = new Set(['/partnership', '/workshop-rh/dark', '/tools/structural-capital/v2', '/reinvest-harvest/dark', '/workshop-rh/snapshot'])
++const NOINDEX = new Set(['/partnership', '/workshop-rh/dark', '/tools/structural-capital/v2', '/reinvest-harvest/dark', '/workshop-rh/snapshot', '/workshop-rh/scorecard', '/workshop-rh/scorecard/next'])
+ 
+ const DEFAULT_TITLE = 'Build Businesses Worth Owning - Kriczky Virtus'
+ 
+@@ -133,6 +135,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
+         <Route path="/valuation-estimate" element={<ValuationEstimate />} />
+         {/* Workshop pre-work: the same questionnaire; the Snapshot is built for the workshop, no call to book. */}
+         <Route path="/workshop-rh/snapshot" element={<ValuationEstimate door="workshop" />} />
++        {/* Workshop pre-work: the same scorecard, ending on a workshop page with no sales tags. */}
++        <Route path="/workshop-rh/scorecard" element={<ReinvestHarvestFlow door="workshop" />} />
++        <Route path="/workshop-rh/scorecard/next" element={<WorkshopScorecardNextRoute />} />
+         <Route path="/cohort" element={<Cohort />} />
+         <Route path="/disclosures" element={<Disclosures />} />
+       </Routes>
+diff --git a/artifacts/kriczky-virtus/src/tools/ReinvestHarvestFlow.jsx b/artifacts/kriczky-virtus/src/tools/ReinvestHarvestFlow.jsx
+index 0b98bd4b680cc7c45ef68b4230d60d863d35e7d2..3c20e2765d61fc76e5241714c6ac7ea32df34e90 100644
+--- a/artifacts/kriczky-virtus/src/tools/ReinvestHarvestFlow.jsx
++++ b/artifacts/kriczky-virtus/src/tools/ReinvestHarvestFlow.jsx
+@@ -254,7 +254,12 @@ const PERS_KEYS = ["p1", "p2", "p3", "p4", "p5"];
+ 
+ /* ═══════════════════════════════════════════════════════════════ */
+ 
+-export default function ReinvestHarvestFlow() {
++/* door="workshop" (/workshop-rh/scorecard): the same scorecard as workshop pre-work.
++   It ends on /workshop-rh/scorecard/next instead of the working-session page, and the
++   contact gets no website-lead tags, so attendees stay out of the sales emails. */
++export default function ReinvestHarvestFlow({ door = "site" }) {
++  const workshop = door === "workshop";
++  const nextPath = workshop ? "/workshop-rh/scorecard/next" : "/reinvest-harvest/next";
+   const [step, setStep] = useState(0);
+   const [contact, setContact] = useState({ first: "", last: "", company: "", email: "", phone: "" });
+   const [answers, setAnswers] = useState({});
+@@ -302,6 +307,7 @@ export default function ReinvestHarvestFlow() {
+     const body = {
+       tool: "reinvest-harvest",
+       partial: true,
++      door,
+       first: contact.first.trim(),
+       last: contact.last.trim(),
+       name: `${contact.first} ${contact.last}`.trim(),
+@@ -322,7 +328,7 @@ export default function ReinvestHarvestFlow() {
+     setSending(true);
+     setCaptureFailed(false);
+     const payload = {
+-      tool: "reinvest-harvest", toolName: "Reinvest or Harvest Scorecard",
++      tool: "reinvest-harvest", toolName: "Reinvest or Harvest Scorecard", door,
+       ...contact,
+       name: `${contact.first} ${contact.last}`.trim(),
+       company: contact.company.trim(),
+@@ -357,7 +363,7 @@ export default function ReinvestHarvestFlow() {
+     setSending(false); setDone(true);
+     if (token) {
+       setTimeout(() => {
+-        window.location.assign(`/reinvest-harvest/next?t=${encodeURIComponent(token)}`);
++        window.location.assign(`${nextPath}?t=${encodeURIComponent(token)}`);
+       }, 2600);
+     }
+   };
+@@ -438,10 +444,10 @@ export default function ReinvestHarvestFlow() {
+           </div>
+ 
+           <p style={{ fontSize: 12.5, color: C.text4, marginTop: 26 }}>
+-            Taking you to a short video next - watch it before you check your email.
++            {workshop ? "Taking you to your workshop pre-work next." : "Taking you to a short video next - watch it before you check your email."}
+           </p>
+           {captureFailed && (
+-            <a href="/reinvest-harvest/next" style={{ display: "inline-block", marginTop: 14, color: C.gold, fontSize: 15, fontWeight: 700, textDecoration: "none" }}>
++            <a href={nextPath} style={{ display: "inline-block", marginTop: 14, color: C.gold, fontSize: 15, fontWeight: 700, textDecoration: "none" }}>
+               Continue to your next step →
+             </a>
+           )}
+diff --git a/artifacts/kriczky-virtus/src/tools/ReinvestHarvestReport.jsx b/artifacts/kriczky-virtus/src/tools/ReinvestHarvestReport.jsx
+index 7a7707f0618e0a51c0d31f63042bedee8bf853fe..7f122cde3d78b208f0a41ef5b0bb42300222c02d 100644
+--- a/artifacts/kriczky-virtus/src/tools/ReinvestHarvestReport.jsx
++++ b/artifacts/kriczky-virtus/src/tools/ReinvestHarvestReport.jsx
+@@ -369,7 +369,7 @@ const ranked = (scores) => DIMS.map((d, i) => ({ d, i, v: scores?.[d.key] || 0 }
+ const tierFor = (v) => (v <= 2 ? "low" : v <= 4 ? "mid" : "high");
+ 
+ /* ── PAGE 6 · YOUR FIRST THREE MOVES ── */
+-function MovesPage({ s, n, total, scores, oneToOne }) {
++function MovesPage({ s, n, total, scores, oneToOne, workshop = false }) {
+   const three = ranked(scores).slice(0, 3);
+   return (
+     <Page s={s} n={n} total={total} right="04 · Your first three moves">
+@@ -394,7 +394,7 @@ function MovesPage({ s, n, total, scores, oneToOne }) {
+         );
+       })}
+       <p style={{ fontSize: 16, lineHeight: 1.5, color: L.ink3, margin: "2px 0 0" }}>
+-        {oneToOne ? "Whether your real numbers back the direction you're leaning is what the working session on the last page is for. " : ""}Each dimension has its own page next, weakest first.
++        {oneToOne ? "Whether your real numbers back the direction you're leaning is what the working session on the last page is for. " : ""}{workshop ? "Whether your real numbers back the direction you're leaning is what the workshop is for. " : ""}Each dimension has its own page next, weakest first.
+       </p>
+     </Page>
+   );
+@@ -473,6 +473,16 @@ const NEXT = {
+     ],
+     cta: "Book your free working session",
+   },
++  workshop: {
++    title: <>Bring this to <em>the workshop.</em></>,
++    body: "Your scorecard is the first page of your workbook. At the workshop we start from where you landed, test it against your real numbers, and turn it into your next 90 days.",
++    steps: [
++      { t: "Your scorecard - done", d: "This report. It's station 01 on the Owner's Virtus Roadmap." },
++      { t: "Value Drivers and your Snapshot", d: "The other two pieces of pre-work, about ten minutes each." },
++      { t: "The workshop", d: "We walk through all three with your numbers in the room." },
++    ],
++    cta: "Finish your workshop pre-work",
++  },
+   collective: {
+     title: <>Start with the owners already <em>working on this.</em></>,
+     body: "The Virtus Collective is where owners at your stage work through exactly these decisions - with the playbooks, and with other owners running them at the same time. It's free.",
+@@ -504,7 +514,9 @@ const BioCard = () => (
+ 
+ function NextPage({ s, n, total, offerKey, token }) {
+   const x = NEXT[offerKey] || NEXT.oneToOne;
+-  const href = offerKey === "oneToOne" ? CTA_QUALIFIED(token) : SKOOL_COLLECTIVE;
++  const href = offerKey === "oneToOne" ? CTA_QUALIFIED(token)
++    : offerKey === "workshop" ? `/workshop-rh/scorecard/next${token ? `?t=${encodeURIComponent(token)}` : ""}`
++    : SKOOL_COLLECTIVE;
+   return (
+     <Page s={s} n={n} total={total} right="07 · Your next step" tex="light">
+       <div className="kicker">Your next step</div>
+@@ -585,7 +597,8 @@ export default function ReinvestHarvestReport({ report, token = null, shareUrl =
+   const biz = BIZ_KEYS.reduce((a, k) => a + (scores[k] || 0), 0);
+   const pers = PERS_KEYS.reduce((a, k) => a + (scores[k] || 0), 0);
+   const quad = getQuadrant(biz, pers);
+-  const offerKey = routeTo(report.revenueBand, report.ownerTier);
++  /* Workshop pre-work reports point at the workshop, not the working session. */
++  const offerKey = report.door === "workshop" ? "workshop" : routeTo(report.revenueBand, report.ownerTier);
+   const [ref, s] = usePageScale();
+   const [busy, setBusy] = useState(false);
+   const [copied, setCopied] = useState(false);
+@@ -625,7 +638,7 @@ export default function ReinvestHarvestReport({ report, token = null, shareUrl =
+         <MeaningPage s={s} n={3} total={TOTAL} quad={quad} biz={biz} pers={pers} />
+         <SidePage s={s} n={4} total={TOTAL} scores={scores} side="biz" />
+         <SidePage s={s} n={5} total={TOTAL} scores={scores} side="pers" />
+-        <MovesPage s={s} n={6} total={TOTAL} scores={scores} oneToOne={offerKey === "oneToOne"} />
++        <MovesPage s={s} n={6} total={TOTAL} scores={scores} oneToOne={offerKey === "oneToOne"} workshop={offerKey === "workshop"} />
+         {order.map(({ d, v }, i) => <DimPage key={d.key} s={s} n={7 + i} total={TOTAL} d={d} score={v} />)}
+         <RoadmapPage s={s} n={TOTAL - 1} total={TOTAL} />
+         <NextPage s={s} n={TOTAL} total={TOTAL} offerKey={offerKey} token={token} />
+diff --git a/artifacts/kriczky-virtus/src/tools/ReinvestHarvestRoutes.jsx b/artifacts/kriczky-virtus/src/tools/ReinvestHarvestRoutes.jsx
+index 72e51b1654752b2169bf48fe91d504141201f102..6aadd93014385d3c0630f475e557cfd2724b46d6 100644
+--- a/artifacts/kriczky-virtus/src/tools/ReinvestHarvestRoutes.jsx
++++ b/artifacts/kriczky-virtus/src/tools/ReinvestHarvestRoutes.jsx
+@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
+ import { useLocation, useParams } from "react-router-dom";
+ import ReinvestHarvestThankYou from "./ReinvestHarvestThankYou.jsx";
+ import ReinvestHarvestReport from "./ReinvestHarvestReport.jsx";
++import WorkshopScorecardNext from "./WorkshopScorecardNext.jsx";
+ 
+ function useReport(token) {
+   const [state, setState] = useState({ loading: Boolean(token), report: null });
+@@ -60,6 +61,14 @@ export function ReinvestHarvestThankYouRoute() {
+   );
+ }
+ 
++/* /workshop-rh/scorecard/next?t= - the workshop pre-work ending page. */
++export function WorkshopScorecardNextRoute() {
++  const token = new URLSearchParams(useLocation().search).get("t");
++  const { loading, report } = useReport(token);
++  if (loading) return <Loading />;
++  return <WorkshopScorecardNext key={token || "unresolved"} report={report} token={report ? token : null} />;
++}
++
+ export function ReinvestHarvestReportRoute() {
+   const { token } = useParams();
+   const { loading, report } = useReport(token);
+diff --git a/artifacts/kriczky-virtus/src/tools/ReinvestHarvestThankYou.jsx b/artifacts/kriczky-virtus/src/tools/ReinvestHarvestThankYou.jsx
+index c8f24435c82bfbd2345287496817208488133604..6c1e59d7d31c28af8389284e67f21a6c078668ee 100644
+--- a/artifacts/kriczky-virtus/src/tools/ReinvestHarvestThankYou.jsx
++++ b/artifacts/kriczky-virtus/src/tools/ReinvestHarvestThankYou.jsx
+@@ -26,7 +26,7 @@ const SKOOL_COLLECTIVE = "https://www.skool.com/virtus-collective";
+ const VSL_SRC = "/video/reinvest-harvest-next.mp4";
+ const VSL_POSTER = "/video/reinvest-harvest-next-poster.jpg";
+ 
+-const QUADRANTS = {
++export const QUADRANTS = {
+   reinvest: {
+     label: "Reinvest-Weighted", color: C.green,
+     line: "You've earned the right to be aggressive if you want to. Real opportunities inside, and enough outside that a bad year is a setback, not a reset. Few owners have both.",
+diff --git a/artifacts/kriczky-virtus/src/tools/WorkshopScorecardNext.jsx b/artifacts/kriczky-virtus/src/tools/WorkshopScorecardNext.jsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..3e81c9008d2d241160bb79264ae6fad9416904bd
+--- /dev/null
++++ b/artifacts/kriczky-virtus/src/tools/WorkshopScorecardNext.jsx
+@@ -0,0 +1,167 @@
++import PageTexture from "../PageTexture.jsx";
++import RoadmapSystem from "../RoadmapSystem.jsx";
++import { C, T, glow, CARD, KICKER, CREAM_CSS, FONTS, Logo, Num } from "../CreamKit.jsx";
++import { QUADRANTS } from "./ReinvestHarvestThankYou.jsx";
++
++/* ═══════════════════════════════════════════════════════════════
++   WORKSHOP SCORECARD - NEXT PAGE
++   Route: /workshop-rh/scorecard/next?t=<token>
++   Where the workshop door of the Reinvest or Harvest scorecard ends
++   (/workshop-rh/scorecard). Attendees have already reserved a seat, so this
++   page sells nothing: their position, what happens with it at the workshop,
++   the other two pieces of pre-work, and the roadmap with station 01 marked.
++   A bad or missing token drops to the pre-work checklist on its own.
++   ═══════════════════════════════════════════════════════════════ */
++
++/* Optional video. The section renders only once this is set. */
++const WORKSHOP_VSL_SRC = null;      // e.g. "/video/workshop-scorecard.mp4"
++const WORKSHOP_VSL_POSTER = null;
++
++const H = { fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, color: C.ink1, letterSpacing: "-.01em" };
++const EM = { fontStyle: "italic", fontWeight: 500, color: T.gold.ink };
++
++/* Fill colour for each position (the ink lives in QUADRANTS). */
++const FILL = { reinvest: T.green, split: T.gold, harvest: T.cyan, stabilize: T.red };
++
++export default function WorkshopScorecardNext({ report = null }) {
++  const resolved = Boolean(report && QUADRANTS[report.quadrantKey]);
++  const q = resolved ? QUADRANTS[report.quadrantKey] : null;
++  const tone = resolved ? FILL[report.quadrantKey] || T.gold : T.gold;
++  const email = report?.email || "";
++  const first = report?.firstName || "";
++
++  const vdLink = `/workshop-rh/value-drivers${email ? `?e=${encodeURIComponent(email)}${first ? `&n=${encodeURIComponent(first)}` : ""}` : ""}`;
++  const STEPS = [
++    { t: "The Reinvest or Harvest scorecard", d: resolved ? "Done. Your full scorecard is in your inbox." : "If you've already taken it, you're set.", done: resolved, href: resolved ? null : "/workshop-rh/scorecard" },
++    { t: "Value Drivers", d: "Ten questions on what makes your business valuable. About ten minutes.", href: vdLink },
++    { t: "Your Profit & Valuation Gaps Snapshot", d: "Fourteen questions. We build your Snapshot from it and bring it to the workshop.", href: "/workshop-rh/snapshot" },
++  ];
++
++  return (
++    <div style={{ background: C.page, minHeight: "100vh", fontFamily: "'DM Sans',sans-serif", color: C.ink1, position: "relative", isolation: "isolate", overflowX: "hidden" }}>
++      <link href={FONTS} rel="stylesheet" />
++      <style>{CREAM_CSS + `
++        .wsn-step { display: flex; gap: 14px; align-items: center; padding: 16px 0; border-bottom: 1px solid ${C.ruleLight}; }
++        .wsn-step:last-child { border-bottom: none; }
++        .wsn-go { flex: 0 0 auto; padding: 10px 18px; border-radius: 999px; text-decoration: none; font-weight: 700; font-size: 14px; color: ${T.gold.fill};
++          background: linear-gradient(160deg,#141B26 0%,#0A0E14 72%); border: 1.5px solid #0A0E14; white-space: nowrap; }
++        @media (max-width: 520px) { .wsn-step { flex-wrap: wrap; row-gap: 10px; } .wsn-txt { flex-basis: calc(100% - 56px) !important; } .wsn-go { margin-left: 52px; } }
++      `}</style>
++      <PageTexture />
++      <div aria-hidden="true" style={{ position: "absolute", top: -80, left: "50%", transform: "translateX(-50%)", width: "min(1100px,150vw)", height: 560,
++        background: `radial-gradient(ellipse at center, ${T.gold.fill}1c 0%, transparent 66%)`, pointerEvents: "none", zIndex: -1 }} />
++
++      <Logo style={{ padding: "25px 22px 0" }} />
++
++      {resolved && email && (
++        <div style={{ display: "flex", justifyContent: "center", padding: "22px 20px 0" }}>
++          <div style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "10px 20px", borderRadius: 999, maxWidth: "100%",
++            background: "linear-gradient(180deg,#FFFEFB 0%,#F5EFE3 100%)", border: `1px solid ${T.green.fill}88`,
++            boxShadow: `inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(10,14,20,.06), 0 6px 16px rgba(10,14,20,.08), 0 0 20px ${T.green.fill}33` }}>
++            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
++              <polyline points="4 12 10 18 20 6" stroke={T.green.ink} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
++            </svg>
++            <span style={{ fontSize: 14, color: C.ink1, overflowWrap: "anywhere" }}>
++              Your scorecard is on its way to <b style={{ color: T.green.ink }}>{email}</b>
++            </span>
++          </div>
++        </div>
++      )}
++
++      <div style={{ maxWidth: 1180, margin: "0 auto", padding: "0 20px" }}>
++        {/* ── HERO ── */}
++        <section style={{ padding: "34px 0 26px", textAlign: "center" }}>
++          <div style={{ ...KICKER, marginBottom: 14 }}>Reinvest or Harvest Workshop &middot; Pre-work</div>
++          {resolved ? (
++            <>
++              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: tone.ink, marginBottom: 10 }}>You landed in</div>
++              <h1 style={{ ...H, fontSize: "clamp(40px,9.6vw,64px)", textTransform: "uppercase", letterSpacing: ".01em", color: tone.ink, lineHeight: 1.06, margin: "0 0 20px" }}>{q.label}</h1>
++              <p style={{ fontSize: "clamp(16px,3.9vw,20px)", lineHeight: 1.5, color: C.ink1, maxWidth: 820, margin: "0 auto", textWrap: "pretty" }}>{q.line}</p>
++              <div style={{ display: "flex", gap: 12, margin: "26px auto 0", maxWidth: 440 }}>
++                {[{ l: "Business Capacity", v: report.bizScore, t: T.gold }, { l: "Personal Foundation", v: report.persScore, t: T.green }].map(p => (
++                  <div key={p.l} style={{ ...glow(p.t, false), flex: 1, padding: "14px 10px", borderRadius: 14 }}>
++                    <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: p.t.ink, marginBottom: 6 }}>{p.l}</div>
++                    <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 30, fontWeight: 700, color: p.t.ink, lineHeight: 1 }}>
++                      {p.v}<span style={{ fontSize: 14, color: C.ink3 }}>/30</span>
++                    </div>
++                  </div>
++                ))}
++              </div>
++            </>
++          ) : (
++            <h1 style={{ ...H, fontSize: "clamp(34px,8.4vw,60px)", lineHeight: 1.08, margin: 0 }}>
++              Your workshop <span style={EM}>pre-work</span>
++            </h1>
++          )}
++        </section>
++
++        {/* ── WHAT HAPPENS WITH IT ── */}
++        {resolved && (
++          <section style={{ maxWidth: 820, margin: "0 auto", padding: "10px 0 30px", textAlign: "center" }}>
++            <h2 style={{ ...H, fontSize: "clamp(30px,6vw,46px)", lineHeight: 1.1, margin: "0 0 14px" }}>
++              We start the workshop <span style={EM}>from here</span>
++            </h2>
++            <p style={{ fontSize: "clamp(16px,3.8vw,19px)", lineHeight: 1.6, color: C.ink2, margin: 0, textWrap: "pretty" }}>
++              Your scorecard is the first page of your workbook. At the workshop we test where you landed against your real numbers, and turn it into your next 90 days.
++            </p>
++          </section>
++        )}
++
++        {WORKSHOP_VSL_SRC && (
++          <section style={{ maxWidth: 1000, margin: "0 auto", padding: "0 0 34px" }}>
++            <div style={{ ...glow(T.gold), padding: 8, overflow: "hidden" }}>
++              <video src={WORKSHOP_VSL_SRC} poster={WORKSHOP_VSL_POSTER || undefined} controls playsInline preload="metadata"
++                style={{ width: "100%", display: "block", borderRadius: 12, aspectRatio: "16/9", background: "#0A0E14" }} />
++            </div>
++          </section>
++        )}
++
++        {/* ── THE THREE PIECES OF PRE-WORK ── */}
++        <section style={{ maxWidth: 720, margin: "0 auto", padding: "0 0 46px" }}>
++          <div style={{ ...glow(T.gold), padding: "28px 26px" }}>
++            <div style={{ ...KICKER, textAlign: "center" }}>Before the workshop</div>
++            <h2 style={{ ...H, fontSize: "clamp(24px,5.6vw,32px)", lineHeight: 1.18, textAlign: "center", margin: "0 0 10px" }}>
++              {resolved ? "One down, two to go" : "Three pieces of pre-work"}
++            </h2>
++            <p style={{ fontSize: 15, lineHeight: 1.6, color: C.ink2, textAlign: "center", maxWidth: 520, margin: "0 auto 14px" }}>
++              They're what we use to build your reports before you arrive, so the afternoon runs on your numbers rather than averages.
++            </p>
++            {STEPS.map((s, i) => (
++              <div key={s.t} className="wsn-step">
++                <Num n={s.done ? "✓" : `0${i + 1}`} t={s.done ? T.green : T.gold} size={38} />
++                <div className="wsn-txt" style={{ flex: 1, minWidth: 0 }}>
++                  <div style={{ fontSize: 15.5, fontWeight: 700, color: C.ink1, marginBottom: 3 }}>{s.t}</div>
++                  <div style={{ fontSize: 14, lineHeight: 1.5, color: C.ink2 }}>{s.d}</div>
++                </div>
++                {s.href && <a href={s.href} className="cta wsn-go">Start →</a>}
++              </div>
++            ))}
++          </div>
++        </section>
++
++        {/* ── THE ROADMAP - station 01 marked ── */}
++        <section style={{ padding: "10px 0 44px" }}>
++          <div style={{ textAlign: "center", maxWidth: 820, margin: "0 auto clamp(18px,3vw,34px)" }}>
++            <div style={{ ...KICKER, fontSize: 13 }}>The Owner&rsquo;s Virtus Roadmap</div>
++            <h2 style={{ ...H, fontSize: "clamp(32px,6.6vw,52px)", lineHeight: 1.1, margin: 0 }}>
++              Your scorecard is <span style={EM}>station 01</span>
++            </h2>
++          </div>
++          <RoadmapSystem here={resolved ? [0] : []} />
++        </section>
++
++        <footer style={{ maxWidth: 720, margin: "0 auto", padding: "26px 0 50px", borderTop: `1px solid ${C.ruleLight}` }}>
++          <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center", marginBottom: 14 }}>
++            <img src="/icons/roadmap-system/shield.png" alt="" width="22" height="22" draggable="false" />
++            <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 15, letterSpacing: ".08em", textTransform: "uppercase", color: C.ink2 }}>
++              <b style={{ color: T.gold.ink, fontWeight: 600 }}>Kriczky</b> Virtus
++            </span>
++          </div>
++          <p style={{ fontSize: 10.5, lineHeight: 1.6, color: C.ink3, textAlign: "center", margin: 0 }}>
++            This scorecard is an educational self-assessment tool from Kriczky Virtus. It is general in nature, is based entirely on your own self-reported answers, and does not constitute individualized financial, tax, legal, or accounting advice, nor a recommendation to pursue any particular course of action. No outcome is projected or guaranteed. Your situation is specific to you - coordinate any decision with your CPA, attorney, and other advisors before acting.
++          </p>
++        </footer>
++      </div>
++    </div>
++  );
++}
+diff --git a/lib/activecampaign.js b/lib/activecampaign.js
+index f9baeeba5d41d893609cbd3e882117395b875e54..010cbb875c5dd379220f04d231df55bd1de5957a 100644
+--- a/lib/activecampaign.js
++++ b/lib/activecampaign.js
+@@ -338,6 +338,21 @@ async function syncContact({
+   // the general website-lead behavior because summary.trackIntent is a score
+   // result, not an expressed content interest.
+   if (isReinvestHarvest) {
++    /* Workshop pre-work (/workshop-rh/scorecard): ticket-holders, so none of the website
++       tags that start the sales emails (67, source, RH: Started). Field 11 still holds
++       their position. One tag marks the finished pre-work. */
++    if (door === "workshop") {
++      if (!partial) {
++        try {
++          const tagId = await getOrCreateTag("RH: Workshop Pre-work");
++          await acFetch("contactTags", "POST", { contactTag: { contact: contactId, tag: tagId } });
++        } catch (tagErr) {
++          console.error(`[AC] Failed to apply "RH: Workshop Pre-work" to ${email}:`, tagErr.message);
++        }
++      }
++      console.log(`[AC] Done: ${email} — Reinvest or Harvest workshop pre-work${partial ? " (partial)" : ""}`);
++      return;
++    }
+     if (partial) {
+       const sourceTagId = utmSource?.toLowerCase() === "instagram" ? 38 : 12;
+       const tagIds = [84, sourceTagId];
+diff --git a/lib/reinvest-harvest-results-email.js b/lib/reinvest-harvest-results-email.js
+index 6c0810ae1fef7c1f433f0c142854b568d530a93d..e42c1e48c9ae7466edd0db6a9d694c3f126b480b 100644
+--- a/lib/reinvest-harvest-results-email.js
++++ b/lib/reinvest-harvest-results-email.js
+@@ -17,6 +17,7 @@ const A = "color:#1155cc;text-decoration:underline;font-weight:bold;";
+ 
+ const REPORT_BASE = "https://www.kriczkyvirtus.com/r";
+ const NEXT_BASE   = "https://www.kriczkyvirtus.com/reinvest-harvest/next";
++const WORKSHOP_NEXT_BASE = "https://www.kriczkyvirtus.com/workshop-rh/scorecard/next";
+ const UNSUB_URL   = "https://www.kriczkyvirtus.com/unsubscribe";
+ 
+ const QUADRANTS = {
+@@ -60,10 +61,12 @@ export function renderResultsEmail({
+   guess = null,
+   revenueBand = "",
+   ownerTier = "Owner",
++  door = "site",
+ }) {
+   const q = QUADRANTS[quadrantKey];
++  const workshop = door === "workshop";
+   const reportUrl = REPORT_BASE + "/" + token;
+-  const nextUrl = NEXT_BASE + "?t=" + token;
++  const nextUrl = (workshop ? WORKSHOP_NEXT_BASE : NEXT_BASE) + "?t=" + token;
+   const offer = routeTo(revenueBand, ownerTier);
+   const disagreed = guess && guess !== quadrantKey;
+ 
+@@ -86,10 +89,14 @@ export function renderResultsEmail({
+       ? "You went into this leaning " + GUESS_LABEL[guess] + ", and your answers agree. That's a confident read.\n\n"
+       : "";
+ 
+-  const ps = offer === "oneToOne"
++  const ps = workshop
++    ? 'PS: This is the first of your three pieces of workshop pre-work. <a href="' + nextUrl + '" style="' + A + '">The other two are here</a>, about ten minutes each, and we\'ll walk through all three together at the workshop.'
++    : offer === "oneToOne"
+     ? 'PS: Naming the position is one thing. Knowing which specific dollar to move next takes a look at your actual numbers, not self-reported answers. If you want to do that, <a href="' + nextUrl + '" style="' + A + '">there\'s a short video and a calendar here</a>.'
+     : 'PS: Naming the position is one thing. Working through it alongside other owners doing the same is another. <a href="' + nextUrl + '" style="' + A + '">There\'s a short video and a link to the Virtus Collective here</a> - it\'s free.';
+-  const psText = offer === "oneToOne"
++  const psText = workshop
++    ? "PS: This is the first of your three pieces of workshop pre-work. The other two are here, about ten minutes each, and we'll walk through all three together at the workshop:\n" + nextUrl
++    : offer === "oneToOne"
+     ? "PS: Naming the position is one thing. Knowing which specific dollar to move next takes a look at your actual numbers, not self-reported answers. If you want to do that, there's a short video and a calendar here:\n" + nextUrl
+     : "PS: Naming the position is one thing. Working through it alongside other owners doing the same is another. There's a short video and a link to the Virtus Collective here (it's free):\n" + nextUrl;
+ 
+diff --git a/test/activecampaign-reinvest-harvest.test.js b/test/activecampaign-reinvest-harvest.test.js
+index 16b93484693f6c23af443bcc414080a54379abde..66548d7fa0540889efe08009499b6d0f2938e1d2 100644
+--- a/test/activecampaign-reinvest-harvest.test.js
++++ b/test/activecampaign-reinvest-harvest.test.js
+@@ -204,4 +204,33 @@ describe("Reinvest or Harvest ActiveCampaign tags", () => {
+       });
+     }
+   });
+-});
+\ No newline at end of file
++});
++describe("Reinvest or Harvest workshop pre-work door", () => {
++  test("finished pre-work gets only the RH: Workshop Pre-work tag, no website-lead tags", async () => {
++    const realFetch = global.fetch;
++    global.fetch = async (url, options = {}) => {
++      calls.push({ url: String(url), method: options.method || "GET", body: options.body ? JSON.parse(options.body) : undefined });
++      const u = String(url);
++      const data = u.endsWith("/contact/sync") ? { contact: { id: "contact-1" } }
++        : u.includes("/tags?search=") ? { tags: [{ id: "120", tag: "RH: Workshop Pre-work" }] }
++        : { contactTag: { id: "contact-tag-1" } };
++      return { ok: true, status: 200, json: async () => data, text: async () => JSON.stringify(data) };
++    };
++    await syncContact({
++      name: "Test Owner", email: "owner@example.test", phone: "555-123-4567", tool: "reinvest-harvest",
++      summary: { bizScore: 20, persScore: 10, quadrant: "Concentrated Inside", quadrantKey: "split" },
++      revenueBand: "$1M - $3M", ownership: "100% owner", door: "workshop",
++    });
++    global.fetch = realFetch;
++    const tagged = calls.filter(c => c.url.endsWith("/contactTags")).map(c => String(c.body.contactTag.tag));
++    assert.deepEqual(tagged, ["120"]);
++  });
++
++  test("partial workshop pre-work gets no tags (no abandonment emails)", async () => {
++    await syncContact({
++      name: "Test Owner", email: "owner@example.test", phone: "555-123-4567", tool: "reinvest-harvest",
++      summary: {}, partial: true, door: "workshop",
++    });
++    assert.equal(calls.filter(c => c.url.endsWith("/contactTags")).length, 0);
++  });
++});
+diff --git a/test/rh-workshop-email.test.js b/test/rh-workshop-email.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..b06a2da0c69d4e240cff5dd312d32180df7dfcf8
+--- /dev/null
++++ b/test/rh-workshop-email.test.js
+@@ -0,0 +1,12 @@
++const { test } = require("node:test");
++const assert = require("node:assert/strict");
++
++test("workshop results email points at the workshop pre-work page, not the calendar", async () => {
++  const { renderResultsEmail } = await import("../lib/reinvest-harvest-results-email.js");
++  const base = { firstName: "Ann", company: "Acme", email: "a@example.test", token: "TOK", quadrantKey: "split", bizScore: 20, persScore: 10, revenueBand: "$3M - $10M", ownerTier: "Owner" };
++  const ws = renderResultsEmail({ ...base, door: "workshop" });
++  assert.match(ws.html, /workshop-rh\/scorecard\/next\?t=TOK/);
++  assert.doesNotMatch(ws.html, /calendar/);
++  const site = renderResultsEmail(base);
++  assert.match(site.html, /reinvest-harvest\/next\?t=TOK/);
++});
+diff --git a/test/valuation-workshop-email.test.js b/test/valuation-workshop-email.test.js
+index 0c7a24c49c12e24153a5ca24de6f9280cd49afbc..9261894cd916d409638cc29c5b34f719d75ceea8 100644
+--- a/test/valuation-workshop-email.test.js
++++ b/test/valuation-workshop-email.test.js
+@@ -7,6 +7,12 @@ const emailPath = require.resolve("../lib/email");
+ const handlerPath = require.resolve("../api/lead-capture");
+ const saved = [sheetsPath, acPath, emailPath].map(p => [p, require.cache[p]]);
+ const sent = [];
++/* The handler also emails Edward a notification through Resend directly. Stub Resend so
++   running the tests (the deploy build runs them) never sends a real email. */
++const resendPath = require.resolve("resend");
++saved.push([resendPath, require.cache[resendPath]]);
++require.cache[resendPath] = { id: resendPath, filename: resendPath, loaded: true,
++  exports: { Resend: class { constructor() { this.emails = { send: async () => ({ data: { id: "test" } }) }; } } } };
+ require.cache[sheetsPath] = { id: sheetsPath, filename: sheetsPath, loaded: true, exports: { appendLead: async () => {} } };
+ require.cache[acPath] = { id: acPath, filename: acPath, loaded: true, exports: { syncContact: async () => {} } };
+ require.cache[emailPath] = { id: emailPath, filename: emailPath, loaded: true,
