@@ -1,0 +1,58 @@
+diff --git a/api/lead-capture.js b/api/lead-capture.js
+index eddeb38194e9882061e1753a0d9ad34e43969caf..0035f00d80f7382a268d5a9047670c39673dd944 100644
+--- a/api/lead-capture.js
++++ b/api/lead-capture.js
+@@ -286,7 +286,7 @@ module.exports = async function handler(req, res) {
+         name, firstName: first, lastName: last, businessName: company, email, phone,
+         tool, summary: {}, answers: {}, timestamp: timestamp || new Date().toISOString(),
+         utmSource: resolvedUtmSource, utmCampaign: resolvedUtmCampaign,
+-        notes: "PARTIAL",
++        notes: "PARTIAL", door: rhDoor,
+       });
+       await syncContact({
+         name, email, phone, tool, summary: {}, utmSource: resolvedUtmSource,
+@@ -350,7 +350,7 @@ module.exports = async function handler(req, res) {
+         tool, revenueBand, ownerTier, industry, ownership, timing, guess, scores,
+         summary: { ...req.body.summary }, trackIntent, timestamp: timestamp || report.createdAt,
+         blobUrl: reportUrl, utmSource: resolvedUtmSource, utmCampaign: resolvedUtmCampaign,
+-        answers: {},
++        answers: {}, door: rhDoor,
+       });
+       await syncContact({
+         name, email, phone, tool, summary: req.body.summary, utmSource: resolvedUtmSource,
+@@ -468,6 +468,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
+         utmSource: resolvedUtmSource,
+         utmCampaign: resolvedUtmCampaign,
+         businessName: req.body.businessName || "",
++        door: req.body.door,
+         revenueBand,
+         revenueRange,
+         ownership,
+diff --git a/artifacts/kriczky-virtus/src/tools/WorkshopScorecardNext.jsx b/artifacts/kriczky-virtus/src/tools/WorkshopScorecardNext.jsx
+index 3e81c9008d2d241160bb79264ae6fad9416904bd..a57c74862eb96eae8de7485fc821aedaf7a69ce0 100644
+--- a/artifacts/kriczky-virtus/src/tools/WorkshopScorecardNext.jsx
++++ b/artifacts/kriczky-virtus/src/tools/WorkshopScorecardNext.jsx
+@@ -133,7 +133,8 @@ export default function WorkshopScorecardNext({ report = null }) {
+                   <div style={{ fontSize: 15.5, fontWeight: 700, color: C.ink1, marginBottom: 3 }}>{s.t}</div>
+                   <div style={{ fontSize: 14, lineHeight: 1.5, color: C.ink2 }}>{s.d}</div>
+                 </div>
+-                {s.href && <a href={s.href} className="cta wsn-go">Start →</a>}
++                {/* New tab, so this checklist stays open to come back to for the next one. */}
++                {s.href && <a href={s.href} target="_blank" rel="noopener" className="cta wsn-go">Start →</a>}
+               </div>
+             ))}
+           </div>
+diff --git a/lib/sheets.js b/lib/sheets.js
+index d0ab6c4406cceeed9d449660c6dcf52c3e06efa1..e65ff70696f05018b28ca57f868a4d92c8a7ff22 100644
+--- a/lib/sheets.js
++++ b/lib/sheets.js
+@@ -188,7 +188,8 @@ async function appendLead({ name, email, tool, summary, answers, timestamp, blob
+   const link = blobUrl || "";
+   const normalizedRevenueBand = revenueBand || REVENUE_LABELS[summary?.revenue] || summary?.revenue || "";
+ 
+-  const source = utmSource || "website";
++  /* Workshop pre-work (the /workshop-rh/... doors) arrives from the workshop emails, not the website. */
++  const source = utmSource || (door === "workshop" ? "Email - Workshop Pre-work" : "website");
+   const campaign = utmCampaign || "";
+ 
+   let toolRow, toolRange;
