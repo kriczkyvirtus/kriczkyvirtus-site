@@ -30,7 +30,7 @@ import ExecutionDebrief from './ExecutionDebrief.jsx'
 import ReinvestHarvestLanding from './tools/ReinvestHarvestLanding.jsx'
 import ReinvestHarvestLandingCream from './tools/ReinvestHarvestLandingCream.jsx'
 import ReinvestHarvestFlow from './tools/ReinvestHarvestFlow.jsx'
-import { ReinvestHarvestThankYouRoute, ReinvestHarvestReportRoute } from './tools/ReinvestHarvestRoutes.jsx'
+import { ReinvestHarvestThankYouRoute, ReinvestHarvestReportRoute, WorkshopScorecardNextRoute } from './tools/ReinvestHarvestRoutes.jsx'
 import RecurringRevenue12Cs from './tools/RecurringRevenue12Cs.jsx'
 import './index.css'
 
@@ -39,6 +39,8 @@ const TITLES = {
   '/tools/wmbw/next':         'Your Value Drivers Results',
   '/workshop-rh/value-drivers': 'Value Drivers — Workshop Pre-work',
   '/workshop-rh/snapshot':      'Profit & Valuation Snapshot — Workshop Pre-work',
+  '/workshop-rh/scorecard':     'Reinvest or Harvest Scorecard — Workshop Pre-work',
+  '/workshop-rh/scorecard/next': 'Your Scorecard — Workshop Pre-work',
   '/workshop-rh/value-drivers/next': 'Your Value Drivers Results',
   '/tools/bib':               'Business Independence Blueprint',
   '/tools/human-capital':     'Attracting Top Employees',
@@ -61,7 +63,7 @@ const TITLES = {
 }
 
 /* Unlinked previews and rollbacks stay out of search. */
-const NOINDEX = new Set(['/partnership', '/workshop-rh/dark', '/tools/structural-capital/v2', '/reinvest-harvest/dark', '/workshop-rh/snapshot'])
+const NOINDEX = new Set(['/partnership', '/workshop-rh/dark', '/tools/structural-capital/v2', '/reinvest-harvest/dark', '/workshop-rh/snapshot', '/workshop-rh/scorecard', '/workshop-rh/scorecard/next'])
 
 const DEFAULT_TITLE = 'Build Businesses Worth Owning - Kriczky Virtus'
 
@@ -133,6 +135,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/valuation-estimate" element={<ValuationEstimate />} />
         {/* Workshop pre-work: the same questionnaire; the Snapshot is built for the workshop, no call to book. */}
         <Route path="/workshop-rh/snapshot" element={<ValuationEstimate door="workshop" />} />
+        {/* Workshop pre-work: the same scorecard, ending on a workshop page with no sales tags. */}
+        <Route path="/workshop-rh/scorecard" element={<ReinvestHarvestFlow door="workshop" />} />
+        <Route path="/workshop-rh/scorecard/next" element={<WorkshopScorecardNextRoute />} />
         <Route path="/cohort" element={<Cohort />} />
         <Route path="/disclosures" element={<Disclosures />} />
       </Routes>

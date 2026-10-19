@@ -26,7 +26,7 @@ const SKOOL_COLLECTIVE = "https://www.skool.com/virtus-collective";
 const VSL_SRC = "/video/reinvest-harvest-next.mp4";
 const VSL_POSTER = "/video/reinvest-harvest-next-poster.jpg";
 
-const QUADRANTS = {
+export const QUADRANTS = {
   reinvest: {
     label: "Reinvest-Weighted", color: C.green,
     line: "You've earned the right to be aggressive if you want to. Real opportunities inside, and enough outside that a bad year is a setback, not a reset. Few owners have both.",

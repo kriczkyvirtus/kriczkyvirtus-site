@@ -7,6 +7,12 @@ const emailPath = require.resolve("../lib/email");
 const handlerPath = require.resolve("../api/lead-capture");
 const saved = [sheetsPath, acPath, emailPath].map(p => [p, require.cache[p]]);
 const sent = [];
+/* The handler also emails Edward a notification through Resend directly. Stub Resend so
+   running the tests (the deploy build runs them) never sends a real email. */
+const resendPath = require.resolve("resend");
+saved.push([resendPath, require.cache[resendPath]]);
+require.cache[resendPath] = { id: resendPath, filename: resendPath, loaded: true,
+  exports: { Resend: class { constructor() { this.emails = { send: async () => ({ data: { id: "test" } }) }; } } } };
 require.cache[sheetsPath] = { id: sheetsPath, filename: sheetsPath, loaded: true, exports: { appendLead: async () => {} } };
 require.cache[acPath] = { id: acPath, filename: acPath, loaded: true, exports: { syncContact: async () => {} } };
 require.cache[emailPath] = { id: emailPath, filename: emailPath, loaded: true,

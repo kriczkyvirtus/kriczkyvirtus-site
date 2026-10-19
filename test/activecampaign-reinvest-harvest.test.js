@@ -205,3 +205,32 @@ describe("Reinvest or Harvest ActiveCampaign tags", () => {
     }
   });
 });
+describe("Reinvest or Harvest workshop pre-work door", () => {
+  test("finished pre-work gets only the RH: Workshop Pre-work tag, no website-lead tags", async () => {
+    const realFetch = global.fetch;
+    global.fetch = async (url, options = {}) => {
+      calls.push({ url: String(url), method: options.method || "GET", body: options.body ? JSON.parse(options.body) : undefined });
+      const u = String(url);
+      const data = u.endsWith("/contact/sync") ? { contact: { id: "contact-1" } }
+        : u.includes("/tags?search=") ? { tags: [{ id: "120", tag: "RH: Workshop Pre-work" }] }
+        : { contactTag: { id: "contact-tag-1" } };
+      return { ok: true, status: 200, json: async () => data, text: async () => JSON.stringify(data) };
+    };
+    await syncContact({
+      name: "Test Owner", email: "owner@example.test", phone: "555-123-4567", tool: "reinvest-harvest",
+      summary: { bizScore: 20, persScore: 10, quadrant: "Concentrated Inside", quadrantKey: "split" },
+      revenueBand: "$1M - $3M", ownership: "100% owner", door: "workshop",
+    });
+    global.fetch = realFetch;
+    const tagged = calls.filter(c => c.url.endsWith("/contactTags")).map(c => String(c.body.contactTag.tag));
+    assert.deepEqual(tagged, ["120"]);
+  });
+
+  test("partial workshop pre-work gets no tags (no abandonment emails)", async () => {
+    await syncContact({
+      name: "Test Owner", email: "owner@example.test", phone: "555-123-4567", tool: "reinvest-harvest",
+      summary: {}, partial: true, door: "workshop",
+    });
+    assert.equal(calls.filter(c => c.url.endsWith("/contactTags")).length, 0);
+  });
+});

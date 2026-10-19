@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import ReinvestHarvestThankYou from "./ReinvestHarvestThankYou.jsx";
 import ReinvestHarvestReport from "./ReinvestHarvestReport.jsx";
+import WorkshopScorecardNext from "./WorkshopScorecardNext.jsx";
 
 function useReport(token) {
   const [state, setState] = useState({ loading: Boolean(token), report: null });
@@ -58,6 +59,14 @@ export function ReinvestHarvestThankYouRoute() {
       resolved={Boolean(token && report)}
     />
   );
+}
+
+/* /workshop-rh/scorecard/next?t= - the workshop pre-work ending page. */
+export function WorkshopScorecardNextRoute() {
+  const token = new URLSearchParams(useLocation().search).get("t");
+  const { loading, report } = useReport(token);
+  if (loading) return <Loading />;
+  return <WorkshopScorecardNext key={token || "unresolved"} report={report} token={report ? token : null} />;
 }
 
 export function ReinvestHarvestReportRoute() {

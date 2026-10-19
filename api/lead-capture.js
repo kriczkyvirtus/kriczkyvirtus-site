@@ -268,6 +268,10 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ token });
     }
 
+    /* door "workshop" = /workshop-rh/scorecard (workshop pre-work): no website-lead tags,
+       a workshop ending page, and a results email that points at the workshop. */
+    const rhDoor = req.body.door === "workshop" ? "workshop" : "site";
+
     if (tool === "reinvest-harvest" && partial === true) {
       const { first, last, company, phone } = req.body;
       const required = { first, last, company, email, phone };
@@ -286,7 +290,7 @@ module.exports = async function handler(req, res) {
       });
       await syncContact({
         name, email, phone, tool, summary: {}, utmSource: resolvedUtmSource,
-        utmCampaign: resolvedUtmCampaign, partial: true, businessName: company,
+        utmCampaign: resolvedUtmCampaign, partial: true, businessName: company, door: rhDoor,
       });
       return res.status(200).json({ success: true });
     }
@@ -334,6 +338,7 @@ module.exports = async function handler(req, res) {
         totalScore,
         quadrantKey,
         trackIntent,
+        door: rhDoor,
       };
       await writeReport(report);
 
@@ -349,10 +354,10 @@ module.exports = async function handler(req, res) {
       });
       await syncContact({
         name, email, phone, tool, summary: req.body.summary, utmSource: resolvedUtmSource,
-        utmCampaign: resolvedUtmCampaign, revenueBand, ownership, businessName: company,
+        utmCampaign: resolvedUtmCampaign, revenueBand, ownership, businessName: company, door: rhDoor,
       });
 
-      const emailData = { firstName: first, company, email, token, quadrantKey, bizScore, persScore, guess, revenueBand, ownerTier };
+      const emailData = { firstName: first, company, email, token, quadrantKey, bizScore, persScore, guess, revenueBand, ownerTier, door: rhDoor };
       try {
         await sendReinvestHarvestEmail(emailData);
       } catch (emailErr) {

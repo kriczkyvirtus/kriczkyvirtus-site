@@ -369,7 +369,7 @@ const ranked = (scores) => DIMS.map((d, i) => ({ d, i, v: scores?.[d.key] || 0 }
 const tierFor = (v) => (v <= 2 ? "low" : v <= 4 ? "mid" : "high");
 
 /* ── PAGE 6 · YOUR FIRST THREE MOVES ── */
-function MovesPage({ s, n, total, scores, oneToOne }) {
+function MovesPage({ s, n, total, scores, oneToOne, workshop = false }) {
   const three = ranked(scores).slice(0, 3);
   return (
     <Page s={s} n={n} total={total} right="04 · Your first three moves">
@@ -394,7 +394,7 @@ function MovesPage({ s, n, total, scores, oneToOne }) {
         );
       })}
       <p style={{ fontSize: 16, lineHeight: 1.5, color: L.ink3, margin: "2px 0 0" }}>
-        {oneToOne ? "Whether your real numbers back the direction you're leaning is what the working session on the last page is for. " : ""}Each dimension has its own page next, weakest first.
+        {oneToOne ? "Whether your real numbers back the direction you're leaning is what the working session on the last page is for. " : ""}{workshop ? "Whether your real numbers back the direction you're leaning is what the workshop is for. " : ""}Each dimension has its own page next, weakest first.
       </p>
     </Page>
   );
@@ -473,6 +473,16 @@ const NEXT = {
     ],
     cta: "Book your free working session",
   },
+  workshop: {
+    title: <>Bring this to <em>the workshop.</em></>,
+    body: "Your scorecard is the first page of your workbook. At the workshop we start from where you landed, test it against your real numbers, and turn it into your next 90 days.",
+    steps: [
+      { t: "Your scorecard - done", d: "This report. It's station 01 on the Owner's Virtus Roadmap." },
+      { t: "Value Drivers and your Snapshot", d: "The other two pieces of pre-work, about ten minutes each." },
+      { t: "The workshop", d: "We walk through all three with your numbers in the room." },
+    ],
+    cta: "Finish your workshop pre-work",
+  },
   collective: {
     title: <>Start with the owners already <em>working on this.</em></>,
     body: "The Virtus Collective is where owners at your stage work through exactly these decisions - with the playbooks, and with other owners running them at the same time. It's free.",
@@ -504,7 +514,9 @@ const BioCard = () => (
 
 function NextPage({ s, n, total, offerKey, token }) {
   const x = NEXT[offerKey] || NEXT.oneToOne;
-  const href = offerKey === "oneToOne" ? CTA_QUALIFIED(token) : SKOOL_COLLECTIVE;
+  const href = offerKey === "oneToOne" ? CTA_QUALIFIED(token)
+    : offerKey === "workshop" ? `/workshop-rh/scorecard/next${token ? `?t=${encodeURIComponent(token)}` : ""}`
+    : SKOOL_COLLECTIVE;
   return (
     <Page s={s} n={n} total={total} right="07 · Your next step" tex="light">
       <div className="kicker">Your next step</div>
@@ -585,7 +597,8 @@ export default function ReinvestHarvestReport({ report, token = null, shareUrl =
   const biz = BIZ_KEYS.reduce((a, k) => a + (scores[k] || 0), 0);
   const pers = PERS_KEYS.reduce((a, k) => a + (scores[k] || 0), 0);
   const quad = getQuadrant(biz, pers);
-  const offerKey = routeTo(report.revenueBand, report.ownerTier);
+  /* Workshop pre-work reports point at the workshop, not the working session. */
+  const offerKey = report.door === "workshop" ? "workshop" : routeTo(report.revenueBand, report.ownerTier);
   const [ref, s] = usePageScale();
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -625,7 +638,7 @@ export default function ReinvestHarvestReport({ report, token = null, shareUrl =
         <MeaningPage s={s} n={3} total={TOTAL} quad={quad} biz={biz} pers={pers} />
         <SidePage s={s} n={4} total={TOTAL} scores={scores} side="biz" />
         <SidePage s={s} n={5} total={TOTAL} scores={scores} side="pers" />
-        <MovesPage s={s} n={6} total={TOTAL} scores={scores} oneToOne={offerKey === "oneToOne"} />
+        <MovesPage s={s} n={6} total={TOTAL} scores={scores} oneToOne={offerKey === "oneToOne"} workshop={offerKey === "workshop"} />
         {order.map(({ d, v }, i) => <DimPage key={d.key} s={s} n={7 + i} total={TOTAL} d={d} score={v} />)}
         <RoadmapPage s={s} n={TOTAL - 1} total={TOTAL} />
         <NextPage s={s} n={TOTAL} total={TOTAL} offerKey={offerKey} token={token} />

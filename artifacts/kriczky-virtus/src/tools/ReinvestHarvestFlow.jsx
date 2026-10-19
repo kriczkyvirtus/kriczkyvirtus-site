@@ -254,7 +254,12 @@ const PERS_KEYS = ["p1", "p2", "p3", "p4", "p5"];
 
 /* ═══════════════════════════════════════════════════════════════ */
 
-export default function ReinvestHarvestFlow() {
+/* door="workshop" (/workshop-rh/scorecard): the same scorecard as workshop pre-work.
+   It ends on /workshop-rh/scorecard/next instead of the working-session page, and the
+   contact gets no website-lead tags, so attendees stay out of the sales emails. */
+export default function ReinvestHarvestFlow({ door = "site" }) {
+  const workshop = door === "workshop";
+  const nextPath = workshop ? "/workshop-rh/scorecard/next" : "/reinvest-harvest/next";
   const [step, setStep] = useState(0);
   const [contact, setContact] = useState({ first: "", last: "", company: "", email: "", phone: "" });
   const [answers, setAnswers] = useState({});
@@ -302,6 +307,7 @@ export default function ReinvestHarvestFlow() {
     const body = {
       tool: "reinvest-harvest",
       partial: true,
+      door,
       first: contact.first.trim(),
       last: contact.last.trim(),
       name: `${contact.first} ${contact.last}`.trim(),
@@ -322,7 +328,7 @@ export default function ReinvestHarvestFlow() {
     setSending(true);
     setCaptureFailed(false);
     const payload = {
-      tool: "reinvest-harvest", toolName: "Reinvest or Harvest Scorecard",
+      tool: "reinvest-harvest", toolName: "Reinvest or Harvest Scorecard", door,
       ...contact,
       name: `${contact.first} ${contact.last}`.trim(),
       company: contact.company.trim(),
@@ -357,7 +363,7 @@ export default function ReinvestHarvestFlow() {
     setSending(false); setDone(true);
     if (token) {
       setTimeout(() => {
-        window.location.assign(`/reinvest-harvest/next?t=${encodeURIComponent(token)}`);
+        window.location.assign(`${nextPath}?t=${encodeURIComponent(token)}`);
       }, 2600);
     }
   };
@@ -438,10 +444,10 @@ export default function ReinvestHarvestFlow() {
           </div>
 
           <p style={{ fontSize: 12.5, color: C.text4, marginTop: 26 }}>
-            Taking you to a short video next - watch it before you check your email.
+            {workshop ? "Taking you to your workshop pre-work next." : "Taking you to a short video next - watch it before you check your email."}
           </p>
           {captureFailed && (
-            <a href="/reinvest-harvest/next" style={{ display: "inline-block", marginTop: 14, color: C.gold, fontSize: 15, fontWeight: 700, textDecoration: "none" }}>
+            <a href={nextPath} style={{ display: "inline-block", marginTop: 14, color: C.gold, fontSize: 15, fontWeight: 700, textDecoration: "none" }}>
               Continue to your next step →
             </a>
           )}
