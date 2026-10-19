@@ -286,7 +286,7 @@ module.exports = async function handler(req, res) {
         name, firstName: first, lastName: last, businessName: company, email, phone,
         tool, summary: {}, answers: {}, timestamp: timestamp || new Date().toISOString(),
         utmSource: resolvedUtmSource, utmCampaign: resolvedUtmCampaign,
-        notes: "PARTIAL",
+        notes: "PARTIAL", door: rhDoor,
       });
       await syncContact({
         name, email, phone, tool, summary: {}, utmSource: resolvedUtmSource,
@@ -350,7 +350,7 @@ module.exports = async function handler(req, res) {
         tool, revenueBand, ownerTier, industry, ownership, timing, guess, scores,
         summary: { ...req.body.summary }, trackIntent, timestamp: timestamp || report.createdAt,
         blobUrl: reportUrl, utmSource: resolvedUtmSource, utmCampaign: resolvedUtmCampaign,
-        answers: {},
+        answers: {}, door: rhDoor,
       });
       await syncContact({
         name, email, phone, tool, summary: req.body.summary, utmSource: resolvedUtmSource,
@@ -468,6 +468,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:24
         utmSource: resolvedUtmSource,
         utmCampaign: resolvedUtmCampaign,
         businessName: req.body.businessName || "",
+        door: req.body.door,
         revenueBand,
         revenueRange,
         ownership,

@@ -133,7 +133,8 @@ export default function WorkshopScorecardNext({ report = null }) {
                   <div style={{ fontSize: 15.5, fontWeight: 700, color: C.ink1, marginBottom: 3 }}>{s.t}</div>
                   <div style={{ fontSize: 14, lineHeight: 1.5, color: C.ink2 }}>{s.d}</div>
                 </div>
-                {s.href && <a href={s.href} className="cta wsn-go">Start →</a>}
+                {/* New tab, so this checklist stays open to come back to for the next one. */}
+                {s.href && <a href={s.href} target="_blank" rel="noopener" className="cta wsn-go">Start →</a>}
               </div>
             ))}
           </div>
