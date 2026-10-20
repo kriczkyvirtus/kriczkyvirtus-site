@@ -1,0 +1,31 @@
+diff --git a/artifacts/kriczky-virtus/src/WorkshopDates.jsx b/artifacts/kriczky-virtus/src/WorkshopDates.jsx
+index 0b4a5be3a355c8f04355b00f28c69ba49f98873b..521638cdc20fd41d3103073cd9a3f744210df01a 100644
+--- a/artifacts/kriczky-virtus/src/WorkshopDates.jsx
++++ b/artifacts/kriczky-virtus/src/WorkshopDates.jsx
+@@ -57,7 +57,10 @@ export default function WorkshopDates({ counts, picked, onPick, client = false }
+             <div className="wsub">{w.date ? `${w.time} · West Chester, PA` : `${SEAT_CAP} owners · one workshop a quarter`}</div>
+             <div className="wnote">
+               {s.kind === "priority"
+-                ? (s.priority ? <><b>{s.priority} owners</b> on the priority list</> : "Reserve now. You hear first when the date is set.")
++                ? (s.priority
++                    ? <span className="wcount"><span className="wnum">{s.priority}</span>
++                        <span className="wlbl">{s.priority > SEAT_CAP ? <>owners for <b>{SEAT_CAP} seats</b></> : "owners on the priority list"}</span></span>
++                    : "Reserve now. You hear first when the date is set.")
+                 : s.kind === "waitlist" ? "If a seat opens, the waitlist hears first."
+                 : client ? "Client seat · no deposit" : "Free · $250 refundable deposit"}
+             </div>
+@@ -86,6 +89,14 @@ export default function WorkshopDates({ counts, picked, onPick, client = false }
+         .wsub { font-size: 14.5px; color: #3E4652; }
+         .wnote { font-size: 13.5px; color: #6B6459; line-height: 1.45; min-height: 20px; }
+         .wnote b { color: #0E7490; }
++        /* priority count (from SHOW_PRIORITY_FROM): a big number, "owners for 20 seats" once the list passes the cap */
++        .wcount { display: flex; align-items: baseline; gap: 12px; padding: 10px 16px 10px 14px; border-radius: 14px;
++          background: linear-gradient(135deg, rgba(34,211,238,.10), rgba(34,211,238,.03)); border: 1px solid rgba(34,211,238,.38);
++          box-shadow: inset 0 1px 0 rgba(255,255,255,.9); }
++        .wnum { font-family: 'Playfair Display',serif; font-weight: 700; font-size: 40px; line-height: 1; color: #0E7490;
++          text-shadow: 0 0 14px rgba(34,211,238,.35); }
++        .wlbl { font-size: 15px; font-weight: 600; color: #0A0E14; line-height: 1.3; }
++        .wlbl b { color: #0E7490; }
+         .wbtn { margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 9px; padding: 15px 18px; border-radius: 999px; text-decoration: none;
+           border: 1.5px solid #0A0E14; font-weight: 700; font-size: 15.5px; color: #C8A24E; }
+       `}</style>
