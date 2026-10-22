@@ -1330,16 +1330,14 @@ export default function WorkshopPageCream() {
           <div style={wrap}><CTA /></div>
         </Sec>
 
-        {/* ── CLOSING STATEMENT - the homepage's closing quote, in a dark band ── */}
+        {/* ── CLOSING STATEMENT - the homepage's closing quote, on the cream ground ── */}
         <div className="closer">
-          <div aria-hidden="true" style={{ position: "absolute", inset: 0, backgroundImage: TEX_DARK, opacity: .5, pointerEvents: "none",
-            WebkitMaskImage: "radial-gradient(ellipse 70% 80% at 50% 40%, #000 0%, transparent 80%)", maskImage: "radial-gradient(ellipse 70% 80% at 50% 40%, #000 0%, transparent 80%)" }} />
-          <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 50% 60% at 50% 40%, rgba(200,162,78,0.10) 0%, transparent 70%)", pointerEvents: "none" }} />
-          <div style={{ position: "relative", zIndex: 1, padding: "clamp(72px,10vw,120px) 20px 0", textAlign: "center" }}>
+          <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 46% 62% at 50% 42%, ${C.goldFill}2e 0%, ${C.goldFill}10 40%, transparent 72%)`, pointerEvents: "none" }} />
+          <div style={{ position: "relative", zIndex: 1, padding: "clamp(56px,8vw,96px) 20px 0", textAlign: "center" }}>
             <div className="closerule" style={{ margin: "0 auto 32px" }} />
-            <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "clamp(25px,3.6vw,38px)", fontWeight: 400, fontStyle: "italic", color: "#E8ECF1",
-              maxWidth: 720, margin: "0 auto", lineHeight: 1.45, textShadow: "0 0 40px rgba(200,162,78,0.15)", textWrap: "balance" }}>
-              Building <span style={{ fontStyle: "normal", fontWeight: 700, color: C.goldFill }}>Businesses Worth Owning</span> shouldn&rsquo;t require doing it alone.
+            <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "clamp(27px,3.9vw,42px)", fontWeight: 500, fontStyle: "italic", color: C.text1,
+              maxWidth: 760, margin: "0 auto", lineHeight: 1.4, textWrap: "balance" }}>
+              Building <span style={{ fontStyle: "normal", fontWeight: 700, color: C.gold }}>Businesses Worth Owning</span> shouldn&rsquo;t require doing it alone.
             </p>
             <div className="closerule" style={{ margin: "32px auto 0" }} />
           </div>
@@ -1347,7 +1345,8 @@ export default function WorkshopPageCream() {
           <div aria-hidden="true" className="closerword">VIRTUS</div>
         </div>
 
-        <div style={{ ...wrap, paddingTop: 34, paddingBottom: 60 }}>
+        <div style={{ ...wrap, paddingTop: 10, paddingBottom: 60 }}>
+          <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${C.border1}, transparent)`, marginBottom: 24 }} />
           <p style={{ fontSize: 11.5, lineHeight: 1.65, color: C.text4, textAlign: "center", maxWidth: 820, margin: "0 auto" }}>
             The workshop is provided by Kriczky Virtus, LLC. The Personalized Wealth Roadmap is an investment advisory service provided by Kriczky Wealth Management LLC, an Investment Advisor in the state of Pennsylvania and Virginia, and requires an advisory agreement; Form ADV is provided before any agreement is signed. Professionals are registered with Kriczky Wealth Management LLC. Edward Kriczky owns both firms, which is a conflict of interest disclosed in Form ADV. You are never required to engage either firm, and you may use any business consultant or investment advisor you choose. Client examples describe individual engagements; individual results vary and are not representative of all clients. No outcome is projected or guaranteed. Nothing on this page is individualized financial, tax, legal, or accounting advice.
           </p>
@@ -1356,12 +1355,13 @@ export default function WorkshopPageCream() {
 
       <style>{`
         /* closing statement: a full-width dark band, like the homepage's last screen */
-        .closer { position: relative; overflow: hidden; background: linear-gradient(180deg,#141B26 0%,#0A0E14 70%); border-top: 1px solid rgba(200,162,78,.35); }
-        .closerule { width: 60px; height: 2px; background: linear-gradient(90deg, transparent, ${C.goldFill}, transparent); }
+        /* closing statement: cream, like the rest of the page - ink and gold carry the quote */
+        .closer { position: relative; overflow: hidden; }
+        .closerule { width: 64px; height: 2px; background: linear-gradient(90deg, transparent, ${C.goldMuted}, transparent); }
         .closerword { font-family: 'Cormorant Garamond',serif; font-weight: 700; text-transform: uppercase; letter-spacing: .2em; white-space: nowrap; text-align: center;
-          font-size: clamp(50px,14.5vw,240px); line-height: .85; color: transparent; -webkit-text-stroke: 1.5px rgba(200,162,78,0.24);
-          margin: clamp(36px,5vw,56px) 0 0; padding-left: .2em; height: clamp(46px,11vw,170px); overflow: hidden; user-select: none; pointer-events: none;
-          -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.75) 0%, rgba(0,0,0,0) 100%); mask-image: linear-gradient(180deg, rgba(0,0,0,.75) 0%, rgba(0,0,0,0) 100%); }
+          font-size: clamp(50px,14.5vw,240px); line-height: .85; color: transparent; -webkit-text-stroke: 1.5px rgba(122,92,30,0.30);
+          margin: clamp(30px,4.5vw,50px) 0 0; padding-left: .2em; height: clamp(46px,11vw,170px); overflow: hidden; user-select: none; pointer-events: none;
+          -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.85) 0%, rgba(0,0,0,0) 100%); mask-image: linear-gradient(180deg, rgba(0,0,0,.85) 0%, rgba(0,0,0,0) 100%); }
         .marqwrap { overflow: hidden; padding: 6px 0 24px; margin-bottom: -18px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
                     mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent); }
         .marq { display: flex; width: max-content; animation: marq 46s linear infinite; }
