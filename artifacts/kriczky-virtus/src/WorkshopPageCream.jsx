@@ -471,14 +471,6 @@ const Icon = ({ name, size = 54, style }) => (
   <svg viewBox={ICONS[name].vb} style={{ width: size, height: "auto", overflow: "visible", display: "block", ...style }}>{ICONS[name].inner}</svg>
 );
 
-const Shield = ({ size = 30 }) => (
-  <svg width={size} height={size} viewBox="0 0 64 64" fill="none"
-    style={{ filter: "drop-shadow(0 0 12px rgba(200,162,78,0.38)) drop-shadow(0 0 4px rgba(200,162,78,0.56))" }}>
-    <path d="M32 8L14 16V30C14 42 22 52 32 56C42 52 50 42 50 30V16L32 8Z" fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinejoin="round" />
-    <path d="M32 12L18 18.5V30C18 39.5 24 47.5 32 51C40 47.5 46 39.5 46 30V18.5L32 12Z" fill="none" stroke={C.gold} strokeWidth="1" opacity="0.4" strokeLinejoin="round" />
-  </svg>
-);
-
 /* One place decides how every icon on the page is stroked and lit: the cream
    ("-light") cut of each metallic icon, seated in a porcelain tile like the
    reports and the roadmap. `size` is the tile; the icon takes ~70% of it. */
@@ -779,7 +771,9 @@ export default function WorkshopPageCream() {
 
       <div style={{ position: "relative", zIndex: 2 }}>
         <div style={{ ...wrap, paddingTop: 30, display: "flex", justifyContent: "center", alignItems: "center", gap: 12 }}>
-          <Shield />
+          {/* the metallic shield in a porcelain tile - the brand mark on every cream page */}
+          <span className="ptile" style={{ width: 44, height: 44, borderRadius: 12 }}>
+            <img src="/icons/roadmap-system/shield.png" alt="" width="31" height="31" draggable="false" style={{ display: "block" }} /></span>
           <span style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: 21, letterSpacing: ".14em", color: C.text1 }}>
             KRICZKY <span style={{ color: C.goldMuted }}>VIRTUS</span></span>
         </div>
@@ -818,6 +812,143 @@ export default function WorkshopPageCream() {
               Six stations, <span style={EM}>one system</span>
             </Head>
             <div style={{ marginTop: "clamp(18px,3vw,34px)" }}><RoadmapSystem onCta={toForm} /></div>
+          </div>
+        </Sec>
+
+        {/* ── DATES - the next three workshops, live seat and priority counts ── */}
+        <Sec id="dates" style={{ scrollMarginTop: 16, paddingBottom: "clamp(10px,2vw,20px)" }}>
+          <div style={wrap}>
+            <Head kicker="Upcoming workshops" align="center"
+              sub={clientCode
+                ? "Client reservation: pick the workshop you want. No deposit for clients."
+                : "Reserve a seat at the next workshop, or get priority access to the two after it before their dates go public."}>
+              One room a quarter, <span style={EM}>twenty owners</span>
+            </Head>
+            <div style={{ marginTop: "clamp(22px,3vw,34px)" }}>
+              <WorkshopDates counts={counts} picked={pick.kind ? pick.id : null} onPick={choose} client={Boolean(clientCode)} />
+            </div>
+          </div>
+        </Sec>
+
+        {/* ── REGISTER - the form does what the picked card asked for ── */}
+        <Sec id="register" style={{ scrollMarginTop: 16, paddingBottom: "clamp(40px,5vw,62px)" }}>
+          <div style={{ ...wrap, display: "flex", gap: "clamp(24px,3.4vw,48px)", alignItems: "flex-start" }} className="split">
+           <div style={{ flex: "1 1 0", minWidth: 0 }}>
+            {kind === "seat" && <>
+            <Head kicker="Reserve your seat">Free - <span style={EM}>with a deposit you get back</span></Head>
+
+            <div style={{ ...card, margin: "10px 0 16px", borderColor: `${C.gold}3d` }}>
+              <div style={KICKER}>Why there’s a deposit</div>
+              <p style={{ ...P, fontSize: 15.5 }}>Before the day, your seat is bought and paid for: lunch is catered by headcount, and a workbook is printed with your name on the cover alongside your Sprint Ledger. None of that can be given to someone else afterwards.</p>
+              <p style={{ ...P, fontSize: 15.5, marginTop: 12 }}>The room matters more than any of it. Twenty owners spend an afternoon working on the business instead of in it, and what makes that afternoon worth your time is that everyone else in the room made the same call.</p>
+              <p style={{ ...P, fontSize: 15.5, marginTop: 12, color: C.text1 }}>So the deposit is a commitment, not a booking fee. <strong style={{ color: C.green, fontWeight: 600 }}>You get it back in full when you arrive.</strong> <strong style={{ color: C.text1, fontWeight: 600 }}>If you don’t attend, it isn’t refunded.</strong></p>
+            </div>
+            </>}
+
+            {kind === "client" && <>
+            <Head kicker="Client reservation">Your seat, <span style={EM}>no deposit</span></Head>
+            <div style={{ ...card, margin: "10px 0 16px", borderColor: `${C.gold}3d` }}>
+              <p style={{ ...P, fontSize: 15.5 }}>As a client, you skip the deposit. Your seat counts toward the twenty, so your workbook and Sprint Ledger are printed with your name on them, and you get the same pre-work and reminders as everyone else.</p>
+              <p style={{ ...P, fontSize: 15.5, marginTop: 12, color: C.text1 }}>If your plans change, let us know as early as you can so the seat can go to someone on the waitlist.</p>
+            </div>
+            </>}
+
+            {kind === "priority" && <>
+            <Head kicker={`${event.quarter} · Date TBA`}>Priority <span style={EM}>access</span></Head>
+            <div style={{ ...card, margin: "10px 0 16px", borderColor: `${C.cyan}3d` }}>
+              <p style={{ ...P, fontSize: 15.5 }}>No deposit now. When the {event.quarter} date is set, everyone on the priority list hears first and gets seven days to claim a seat before the date goes public.</p>
+              <p style={{ ...P, fontSize: 15.5, marginTop: 12, color: C.text1 }}>Seats are still capped at twenty, and still held by the $250 refundable deposit once you claim one.</p>
+            </div>
+            </>}
+
+            {kind === "waitlist" && <>
+            <Head kicker={`${event.quarter} · ${event.short || ""}`}>Join the <span style={EM}>waitlist</span></Head>
+            <div style={{ ...card, margin: "10px 0 16px", borderColor: `${C.red}3d` }}>
+              <p style={{ ...P, fontSize: 15.5 }}>This workshop is full. If a seat opens, the waitlist hears first, in the order people joined, and has a short window to take it with the $250 refundable deposit.</p>
+            </div>
+            </>}
+
+            {!short && (
+            <div id="venue-block" style={{ display: "flex", gap: 14, alignItems: "center", padding: "14px 18px", borderRadius: 12, border: `1px solid ${C.border2}`, background: "rgba(255,255,255,.72)", scrollMarginTop: 14 }}>
+              <Mark of="venue-pin" size={52} />
+              {EVENT.venueConfirmed
+                ? <div><div style={{ color: C.text1, fontWeight: 600, fontSize: 15 }}>{EVENT.venueLine1}, {EVENT.venueLine2}</div>
+                    <div style={{ color: C.text3, fontSize: 13.5, marginTop: 4 }}>Happy hour afterward is a short walk into town.</div></div>
+                : <div><div style={{ color: C.text1, fontWeight: 600, fontSize: 15 }}>{event.long || EVENT.date} &middot; {EVENT.area}</div>
+                    <div style={{ color: C.text3, fontSize: 13.5, marginTop: 4 }}>Exact venue announced soon. Happy hour afterward is in town.</div></div>}
+            </div>
+            )}
+           </div>
+
+           <div style={{ flex: "1 1 0", minWidth: 0 }}>
+            <div id="pick-pill" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap", margin: "0 0 12px", scrollMarginTop: 14 }}>
+              <span className="ppill" style={{ height: 34, padding: "0 15px 0 12px", fontSize: 13.5, color: C.text1, borderColor: `${C.goldFill}88`,
+                boxShadow: `inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(10,14,20,.06), 0 6px 16px rgba(10,14,20,.08), 0 0 16px ${C.goldFill}26` }}>
+                <span className="gem" style={{ background: `radial-gradient(circle at 35% 30%, #fff 0%, ${C.goldFill} 45%, ${C.gold} 100%)` }} />
+                {kind === "priority" ? "Priority access" : kind === "waitlist" ? "Waitlist" : "Reserving"} &middot; {event.quarter}{event.short ? ` · ${event.short}` : ""}</span>
+              <a href="#dates" onClick={toForm} style={{ fontSize: 13.5, color: C.text3 }}>Change</a>
+            </div>
+            {state === "done" ? (
+            <div style={{ ...card, textAlign: "center", borderColor: `${C.green}55` }}>
+              <div style={{ width: 54, height: 54, margin: "0 auto 14px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
+                background: "linear-gradient(180deg,#FFFEFB 0%,#F3ECDF 100%)", border: "1px solid #34D39988", boxShadow: "inset 0 1px 0 rgba(255,255,255,.95), 0 6px 14px rgba(10,14,20,.08), 0 0 16px #34D39940" }}>
+                <TickMark size={22} /></div>
+              <div style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: 30, color: C.text1, lineHeight: 1.1 }}>
+                {kind === "client" ? "Your seat is reserved." : kind === "priority" ? "You're on the priority list." : "You're on the waitlist."}</div>
+              <p style={{ ...P, fontSize: 15.5, margin: "12px auto 0", maxWidth: 420 }}>
+                {kind === "client" ? `See you on ${event.long}. Your confirmation and pre-work are on their way to ${f.email.trim()}.`
+                  : kind === "priority" ? `You'll hear first when the ${event.quarter} date is set, with seven days to claim a seat before it goes public.`
+                  : "If a seat opens, you'll hear first. We'll email you either way before the day."}</p>
+            </div>
+            ) : (
+            <div style={card}>
+              <div className="grid2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                <div><label style={label}>First name</label><input style={fieldStyle("firstName")} value={f.firstName} onChange={set("firstName")} autoComplete="given-name" /><Err msg={touched && errors.firstName} /></div>
+                <div><label style={label}>Last name</label><input style={fieldStyle("lastName")} value={f.lastName} onChange={set("lastName")} autoComplete="family-name" /><Err msg={touched && errors.lastName} /></div>
+                <div><label style={label}>Email</label><input style={fieldStyle("email")} type="email" value={f.email} onChange={set("email")} autoComplete="email" /><Err msg={touched && errors.email} /></div>
+                <div><label style={label}>Phone</label><input style={fieldStyle("phone")} type="tel" inputMode="numeric" placeholder="610-555-0100" value={f.phone} onChange={setPhone} autoComplete="tel" /><Err msg={touched && errors.phone} /></div>
+              </div>
+              <div style={{ marginTop: 14 }}><label style={label}>Business name</label>
+                <input style={fieldStyle("business")} value={f.business} onChange={set("business")} autoComplete="organization" /><Err msg={touched && errors.business} /></div>
+              <div style={{ marginTop: 14 }}><label style={label}>Where is your business revenue today?</label>
+                <select style={fieldStyle("revenue")} value={f.revenue} onChange={set("revenue")}>
+                  <option value="" style={{ background: "#FFFFFF", color: C.text3 }}>Select…</option>
+                  {REVENUE.map(r => <option key={r} value={r} style={{ background: "#FFFFFF", color: C.text1 }}>{r}</option>)}</select><Err msg={touched && errors.revenue} /></div>
+              {!short && <>
+              <div style={{ marginTop: 14 }}><label style={label}>What’s the single biggest money outcome you want in the next 12 months?</label>
+                <select style={fieldStyle("outcome")} value={f.outcome} onChange={set("outcome")}>
+                  <option value="" style={{ background: "#FFFFFF", color: C.text3 }}>Select…</option>
+                  {OUTCOMES.map(r => <option key={r} value={r} style={{ background: "#FFFFFF", color: C.text1 }}>{r}</option>)}</select><Err msg={touched && errors.outcome} /></div>
+              <div style={{ marginTop: 14 }}><label style={label}>If you leave with a 90-day plan you believe in, what’s your appetite for getting help executing it?</label>
+                <select style={fieldStyle("appetite")} value={f.appetite} onChange={set("appetite")}>
+                  <option value="" style={{ background: "#FFFFFF", color: C.text3 }}>Select…</option>
+                  {APPETITE.map(r => <option key={r} value={r} style={{ background: "#FFFFFF", color: C.text1 }}>{r.replace("\u2014", "-")}</option>)}</select><Err msg={touched && errors.appetite} /></div>
+              </>}
+
+              <button onClick={submit} disabled={state === "sending"} className={valid ? "cta shine" : "cta"}
+                style={{ width: "100%", marginTop: 24, padding: "22px 18px", borderRadius: 999, cursor: "pointer",
+                  background: valid ? DARK_BTN : "#E9E3D7",
+                  border: `1.5px solid ${valid ? "#0A0E14" : C.border2}`, opacity: state === "sending" ? .7 : 1 }}>
+                <span style={{ fontWeight: 700, fontSize: "clamp(14.5px,3.6vw,18.5px)", color: valid ? C.goldFill : C.text3, whiteSpace: "nowrap" }}>
+                  {state === "sending" ? (short ? "Saving…" : "Holding your seat…")
+                    : kind === "client" ? "Reserve my seat →"
+                    : kind === "priority" ? "Get priority access →"
+                    : kind === "waitlist" ? "Join the waitlist →"
+                    : "Continue to the $250 deposit →"}</span>
+              </button>
+              {touched && !valid && state !== "error" &&
+                <p style={{ ...errStyle, textAlign: "center", marginTop: 12 }}>Please fix the fields marked above.</p>}
+              {state === "error" && <p style={{ color: C.red, fontSize: 14, textAlign: "center", margin: "12px 0 0" }}>Something went wrong. Please try again, or email growth@kriczkyvirtus.com.</p>}
+              {state === "sent" && <p style={{ color: C.green, fontSize: 14, textAlign: "center", margin: "12px 0 0" }}>Your deposit page opened in a new tab. This page stays here.</p>}
+              {state === "badcode" && <p style={{ color: C.red, fontSize: 14, textAlign: "center", margin: "12px 0 0" }}>This client link isn't valid. Please contact Edward for a new one.</p>}
+
+              <p style={{ fontSize: 11.5, lineHeight: 1.6, color: C.text3, margin: "16px 0 0" }}>
+                By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our Privacy Policy and Terms of Service.
+              </p>
+            </div>
+            )}
+
+           </div>
           </div>
         </Sec>
 
@@ -1193,145 +1324,30 @@ export default function WorkshopPageCream() {
           </div>
         </Sec>
 
-        {/* ── DATES - the next three workshops, live seat and priority counts ── */}
-        <Sec id="dates" style={{ scrollMarginTop: 16, paddingBottom: "clamp(10px,2vw,20px)" }}>
-          <div style={wrap}>
-            <Head kicker="Upcoming workshops" align="center"
-              sub={clientCode
-                ? "Client reservation: pick the workshop you want. No deposit for clients."
-                : "Reserve a seat at the next workshop, or get priority access to the two after it before their dates go public."}>
-              One room a quarter, <span style={EM}>twenty owners</span>
-            </Head>
-            <div style={{ marginTop: "clamp(22px,3vw,34px)" }}>
-              <WorkshopDates counts={counts} picked={pick.kind ? pick.id : null} onPick={choose} client={Boolean(clientCode)} />
-            </div>
-          </div>
+
+        {/* ── LAST CALL - back up to the dates ── */}
+        <Sec style={{ paddingTop: 0 }}>
+          <div style={wrap}><CTA /></div>
         </Sec>
 
-        {/* ── REGISTER - the form does what the picked card asked for ── */}
-        <Sec id="register" style={{ scrollMarginTop: 16, paddingBottom: "clamp(40px,5vw,62px)" }}>
-          <div style={{ ...wrap, display: "flex", gap: "clamp(24px,3.4vw,48px)", alignItems: "flex-start" }} className="split">
-           <div style={{ flex: "1 1 0", minWidth: 0 }}>
-            {kind === "seat" && <>
-            <Head kicker="Reserve your seat">Free - <span style={EM}>with a deposit you get back</span></Head>
-
-            <div style={{ ...card, margin: "10px 0 16px", borderColor: `${C.gold}3d` }}>
-              <div style={KICKER}>Why there’s a deposit</div>
-              <p style={{ ...P, fontSize: 15.5 }}>Before the day, your seat is bought and paid for: lunch is catered by headcount, and a workbook is printed with your name on the cover alongside your Sprint Ledger. None of that can be given to someone else afterwards.</p>
-              <p style={{ ...P, fontSize: 15.5, marginTop: 12 }}>The room matters more than any of it. Twenty owners spend an afternoon working on the business instead of in it, and what makes that afternoon worth your time is that everyone else in the room made the same call.</p>
-              <p style={{ ...P, fontSize: 15.5, marginTop: 12, color: C.text1 }}>So the deposit is a commitment, not a booking fee. <strong style={{ color: C.green, fontWeight: 600 }}>You get it back in full when you arrive.</strong> <strong style={{ color: C.text1, fontWeight: 600 }}>If you don’t attend, it isn’t refunded.</strong></p>
-            </div>
-            </>}
-
-            {kind === "client" && <>
-            <Head kicker="Client reservation">Your seat, <span style={EM}>no deposit</span></Head>
-            <div style={{ ...card, margin: "10px 0 16px", borderColor: `${C.gold}3d` }}>
-              <p style={{ ...P, fontSize: 15.5 }}>As a client, you skip the deposit. Your seat counts toward the twenty, so your workbook and Sprint Ledger are printed with your name on them, and you get the same pre-work and reminders as everyone else.</p>
-              <p style={{ ...P, fontSize: 15.5, marginTop: 12, color: C.text1 }}>If your plans change, let us know as early as you can so the seat can go to someone on the waitlist.</p>
-            </div>
-            </>}
-
-            {kind === "priority" && <>
-            <Head kicker={`${event.quarter} · Date TBA`}>Priority <span style={EM}>access</span></Head>
-            <div style={{ ...card, margin: "10px 0 16px", borderColor: `${C.cyan}3d` }}>
-              <p style={{ ...P, fontSize: 15.5 }}>No deposit now. When the {event.quarter} date is set, everyone on the priority list hears first and gets seven days to claim a seat before the date goes public.</p>
-              <p style={{ ...P, fontSize: 15.5, marginTop: 12, color: C.text1 }}>Seats are still capped at twenty, and still held by the $250 refundable deposit once you claim one.</p>
-            </div>
-            </>}
-
-            {kind === "waitlist" && <>
-            <Head kicker={`${event.quarter} · ${event.short || ""}`}>Join the <span style={EM}>waitlist</span></Head>
-            <div style={{ ...card, margin: "10px 0 16px", borderColor: `${C.red}3d` }}>
-              <p style={{ ...P, fontSize: 15.5 }}>This workshop is full. If a seat opens, the waitlist hears first, in the order people joined, and has a short window to take it with the $250 refundable deposit.</p>
-            </div>
-            </>}
-
-            {!short && (
-            <div id="venue-block" style={{ display: "flex", gap: 14, alignItems: "center", padding: "14px 18px", borderRadius: 12, border: `1px solid ${C.border2}`, background: "rgba(255,255,255,.72)", scrollMarginTop: 14 }}>
-              <Mark of="venue-pin" size={52} />
-              {EVENT.venueConfirmed
-                ? <div><div style={{ color: C.text1, fontWeight: 600, fontSize: 15 }}>{EVENT.venueLine1}, {EVENT.venueLine2}</div>
-                    <div style={{ color: C.text3, fontSize: 13.5, marginTop: 4 }}>Happy hour afterward is a short walk into town.</div></div>
-                : <div><div style={{ color: C.text1, fontWeight: 600, fontSize: 15 }}>{event.long || EVENT.date} &middot; {EVENT.area}</div>
-                    <div style={{ color: C.text3, fontSize: 13.5, marginTop: 4 }}>Exact venue announced soon. Happy hour afterward is in town.</div></div>}
-            </div>
-            )}
-           </div>
-
-           <div style={{ flex: "1 1 0", minWidth: 0 }}>
-            <div id="pick-pill" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap", margin: "0 0 12px", scrollMarginTop: 14 }}>
-              <span className="ppill" style={{ height: 34, padding: "0 15px 0 12px", fontSize: 13.5, color: C.text1, borderColor: `${C.goldFill}88`,
-                boxShadow: `inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(10,14,20,.06), 0 6px 16px rgba(10,14,20,.08), 0 0 16px ${C.goldFill}26` }}>
-                <span className="gem" style={{ background: `radial-gradient(circle at 35% 30%, #fff 0%, ${C.goldFill} 45%, ${C.gold} 100%)` }} />
-                {kind === "priority" ? "Priority access" : kind === "waitlist" ? "Waitlist" : "Reserving"} &middot; {event.quarter}{event.short ? ` · ${event.short}` : ""}</span>
-              <a href="#dates" onClick={toForm} style={{ fontSize: 13.5, color: C.text3 }}>Change</a>
-            </div>
-            {state === "done" ? (
-            <div style={{ ...card, textAlign: "center", borderColor: `${C.green}55` }}>
-              <div style={{ width: 54, height: 54, margin: "0 auto 14px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
-                background: "linear-gradient(180deg,#FFFEFB 0%,#F3ECDF 100%)", border: "1px solid #34D39988", boxShadow: "inset 0 1px 0 rgba(255,255,255,.95), 0 6px 14px rgba(10,14,20,.08), 0 0 16px #34D39940" }}>
-                <TickMark size={22} /></div>
-              <div style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: 30, color: C.text1, lineHeight: 1.1 }}>
-                {kind === "client" ? "Your seat is reserved." : kind === "priority" ? "You're on the priority list." : "You're on the waitlist."}</div>
-              <p style={{ ...P, fontSize: 15.5, margin: "12px auto 0", maxWidth: 420 }}>
-                {kind === "client" ? `See you on ${event.long}. Your confirmation and pre-work are on their way to ${f.email.trim()}.`
-                  : kind === "priority" ? `You'll hear first when the ${event.quarter} date is set, with seven days to claim a seat before it goes public.`
-                  : "If a seat opens, you'll hear first. We'll email you either way before the day."}</p>
-            </div>
-            ) : (
-            <div style={card}>
-              <div className="grid2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-                <div><label style={label}>First name</label><input style={fieldStyle("firstName")} value={f.firstName} onChange={set("firstName")} autoComplete="given-name" /><Err msg={touched && errors.firstName} /></div>
-                <div><label style={label}>Last name</label><input style={fieldStyle("lastName")} value={f.lastName} onChange={set("lastName")} autoComplete="family-name" /><Err msg={touched && errors.lastName} /></div>
-                <div><label style={label}>Email</label><input style={fieldStyle("email")} type="email" value={f.email} onChange={set("email")} autoComplete="email" /><Err msg={touched && errors.email} /></div>
-                <div><label style={label}>Phone</label><input style={fieldStyle("phone")} type="tel" inputMode="numeric" placeholder="610-555-0100" value={f.phone} onChange={setPhone} autoComplete="tel" /><Err msg={touched && errors.phone} /></div>
-              </div>
-              <div style={{ marginTop: 14 }}><label style={label}>Business name</label>
-                <input style={fieldStyle("business")} value={f.business} onChange={set("business")} autoComplete="organization" /><Err msg={touched && errors.business} /></div>
-              <div style={{ marginTop: 14 }}><label style={label}>Where is your business revenue today?</label>
-                <select style={fieldStyle("revenue")} value={f.revenue} onChange={set("revenue")}>
-                  <option value="" style={{ background: "#FFFFFF", color: C.text3 }}>Select…</option>
-                  {REVENUE.map(r => <option key={r} value={r} style={{ background: "#FFFFFF", color: C.text1 }}>{r}</option>)}</select><Err msg={touched && errors.revenue} /></div>
-              {!short && <>
-              <div style={{ marginTop: 14 }}><label style={label}>What’s the single biggest money outcome you want in the next 12 months?</label>
-                <select style={fieldStyle("outcome")} value={f.outcome} onChange={set("outcome")}>
-                  <option value="" style={{ background: "#FFFFFF", color: C.text3 }}>Select…</option>
-                  {OUTCOMES.map(r => <option key={r} value={r} style={{ background: "#FFFFFF", color: C.text1 }}>{r}</option>)}</select><Err msg={touched && errors.outcome} /></div>
-              <div style={{ marginTop: 14 }}><label style={label}>If you leave with a 90-day plan you believe in, what’s your appetite for getting help executing it?</label>
-                <select style={fieldStyle("appetite")} value={f.appetite} onChange={set("appetite")}>
-                  <option value="" style={{ background: "#FFFFFF", color: C.text3 }}>Select…</option>
-                  {APPETITE.map(r => <option key={r} value={r} style={{ background: "#FFFFFF", color: C.text1 }}>{r.replace("\u2014", "-")}</option>)}</select><Err msg={touched && errors.appetite} /></div>
-              </>}
-
-              <button onClick={submit} disabled={state === "sending"} className={valid ? "cta shine" : "cta"}
-                style={{ width: "100%", marginTop: 24, padding: "22px 18px", borderRadius: 999, cursor: "pointer",
-                  background: valid ? DARK_BTN : "#E9E3D7",
-                  border: `1.5px solid ${valid ? "#0A0E14" : C.border2}`, opacity: state === "sending" ? .7 : 1 }}>
-                <span style={{ fontWeight: 700, fontSize: "clamp(14.5px,3.6vw,18.5px)", color: valid ? C.goldFill : C.text3, whiteSpace: "nowrap" }}>
-                  {state === "sending" ? (short ? "Saving…" : "Holding your seat…")
-                    : kind === "client" ? "Reserve my seat →"
-                    : kind === "priority" ? "Get priority access →"
-                    : kind === "waitlist" ? "Join the waitlist →"
-                    : "Continue to the $250 deposit →"}</span>
-              </button>
-              {touched && !valid && state !== "error" &&
-                <p style={{ ...errStyle, textAlign: "center", marginTop: 12 }}>Please fix the fields marked above.</p>}
-              {state === "error" && <p style={{ color: C.red, fontSize: 14, textAlign: "center", margin: "12px 0 0" }}>Something went wrong. Please try again, or email growth@kriczkyvirtus.com.</p>}
-              {state === "sent" && <p style={{ color: C.green, fontSize: 14, textAlign: "center", margin: "12px 0 0" }}>Your deposit page opened in a new tab. This page stays here.</p>}
-              {state === "badcode" && <p style={{ color: C.red, fontSize: 14, textAlign: "center", margin: "12px 0 0" }}>This client link isn't valid. Please contact Edward for a new one.</p>}
-
-              <p style={{ fontSize: 11.5, lineHeight: 1.6, color: C.text3, margin: "16px 0 0" }}>
-                By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our Privacy Policy and Terms of Service.
-              </p>
-            </div>
-            )}
-
-           </div>
+        {/* ── CLOSING STATEMENT - the homepage's closing quote, in a dark band ── */}
+        <div className="closer">
+          <div aria-hidden="true" style={{ position: "absolute", inset: 0, backgroundImage: TEX_DARK, opacity: .5, pointerEvents: "none",
+            WebkitMaskImage: "radial-gradient(ellipse 70% 80% at 50% 40%, #000 0%, transparent 80%)", maskImage: "radial-gradient(ellipse 70% 80% at 50% 40%, #000 0%, transparent 80%)" }} />
+          <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 50% 60% at 50% 40%, rgba(200,162,78,0.10) 0%, transparent 70%)", pointerEvents: "none" }} />
+          <div style={{ position: "relative", zIndex: 1, padding: "clamp(72px,10vw,120px) 20px 0", textAlign: "center" }}>
+            <div className="closerule" style={{ margin: "0 auto 32px" }} />
+            <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "clamp(25px,3.6vw,38px)", fontWeight: 400, fontStyle: "italic", color: "#E8ECF1",
+              maxWidth: 720, margin: "0 auto", lineHeight: 1.45, textShadow: "0 0 40px rgba(200,162,78,0.15)", textWrap: "balance" }}>
+              Building <span style={{ fontStyle: "normal", fontWeight: 700, color: C.goldFill }}>Businesses Worth Owning</span> shouldn&rsquo;t require doing it alone.
+            </p>
+            <div className="closerule" style={{ margin: "32px auto 0" }} />
           </div>
-        </Sec>
+          {/* VIRTUS, engraved in outline and fading out */}
+          <div aria-hidden="true" className="closerword">VIRTUS</div>
+        </div>
 
-        <div style={{ ...wrap, paddingBottom: 60 }}>
-          <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${C.border1}, transparent)`, marginBottom: 24 }} />
+        <div style={{ ...wrap, paddingTop: 34, paddingBottom: 60 }}>
           <p style={{ fontSize: 11.5, lineHeight: 1.65, color: C.text4, textAlign: "center", maxWidth: 820, margin: "0 auto" }}>
             The workshop is provided by Kriczky Virtus, LLC. The Personalized Wealth Roadmap is an investment advisory service provided by Kriczky Wealth Management LLC, an Investment Advisor in the state of Pennsylvania and Virginia, and requires an advisory agreement; Form ADV is provided before any agreement is signed. Professionals are registered with Kriczky Wealth Management LLC. Edward Kriczky owns both firms, which is a conflict of interest disclosed in Form ADV. You are never required to engage either firm, and you may use any business consultant or investment advisor you choose. Client examples describe individual engagements; individual results vary and are not representative of all clients. No outcome is projected or guaranteed. Nothing on this page is individualized financial, tax, legal, or accounting advice.
           </p>
@@ -1339,6 +1355,13 @@ export default function WorkshopPageCream() {
       </div>
 
       <style>{`
+        /* closing statement: a full-width dark band, like the homepage's last screen */
+        .closer { position: relative; overflow: hidden; background: linear-gradient(180deg,#141B26 0%,#0A0E14 70%); border-top: 1px solid rgba(200,162,78,.35); }
+        .closerule { width: 60px; height: 2px; background: linear-gradient(90deg, transparent, ${C.goldFill}, transparent); }
+        .closerword { font-family: 'Cormorant Garamond',serif; font-weight: 700; text-transform: uppercase; letter-spacing: .2em; white-space: nowrap; text-align: center;
+          font-size: clamp(50px,14.5vw,240px); line-height: .85; color: transparent; -webkit-text-stroke: 1.5px rgba(200,162,78,0.24);
+          margin: clamp(36px,5vw,56px) 0 0; padding-left: .2em; height: clamp(46px,11vw,170px); overflow: hidden; user-select: none; pointer-events: none;
+          -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.75) 0%, rgba(0,0,0,0) 100%); mask-image: linear-gradient(180deg, rgba(0,0,0,.75) 0%, rgba(0,0,0,0) 100%); }
         .marqwrap { overflow: hidden; padding: 6px 0 24px; margin-bottom: -18px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
                     mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent); }
         .marq { display: flex; width: max-content; animation: marq 46s linear infinite; }
