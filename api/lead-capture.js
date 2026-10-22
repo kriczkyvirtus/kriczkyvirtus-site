@@ -174,6 +174,11 @@ module.exports = async function handler(req, res) {
         console.error("[Workshop] Registration capture failed:", registrationError);
         return res.status(503).json({ error: "Registration could not be saved. Please try again." });
       }
+      /* Tell Edward - best effort, never fails the registration (lib/workshop-alert.js). */
+      await require("../lib/workshop-alert").sendWorkshopAlert({
+        kind, workshopId, workshopDate, name: fullName, company: company.trim(),
+        email: email.trim(), phone: phone.trim(), revenue, outcome: outcome || "", appetite: appetite || "",
+      });
       return res.status(200).json({ success: true });
     }
 
