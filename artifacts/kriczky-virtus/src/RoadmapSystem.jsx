@@ -39,15 +39,15 @@ const STATIONS = [
   { n: "04", t: "The Profit Split System", tone: "green", ic: "c4",
     pain: "What is reinvested, held in reserves, and comes out to you is made by guessing every month.",
     shift: "A standing split, so profit is allocated on purpose every time it lands, not when there's time to think.",
-    why: "The business keeps the fuel it needs to grow, and you keep building wealth while it does." },
+    why: "The business keeps the fuel it needs to grow, and you keep building wealth and financial freedom while it does." },
   { n: "05", t: "Build The Outside", tone: "green", ic: "c5",
     pain: "Nearly everything you own is tied up in one company, and tax is something that happens to you each April.",
-    shift: "A Wealth Roadmap to build assets that aren't the company, and a tax plan that looks years ahead instead of 1 year back.",
+    shift: "A Wealth Roadmap to build assets that aren't the company, and a tax plan that looks years ahead (instead of 1 year back).",
     why: "Your personal wealth and financial freedom stops riding solely on how your business performs each quarter." },
   { n: "06", t: "Your Wealth North Star", tone: "cyan", ic: "c6",
     pain: "You're growing, but toward what? No number and no date tells you what enough looks like.",
     shift: "A specific destination: the number, the date, and the life it's meant to pay for.",
-    why: "Every reinvest-or-harvest decision becomes a question with an answer." },
+    why: "Every reinvest-or-harvest decision becomes a question with a clear answer." },
 ];
 
 const CYCLE_MS = 5200;     /* time on each station while it walks on its own */

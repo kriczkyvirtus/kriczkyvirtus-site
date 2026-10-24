@@ -91,7 +91,7 @@ const AGENDA = [
   ["1:00", "Where your next dollar of profit actually goes"],
   ["1:30", "Your two scores, and the direction they’re heading"],
   ["2:10", "Your three gaps and your value drivers"],
-  ["2:55", "The one stage capping everything else"],
+  ["2:55", "The one stage preventing your business from growing"],
   ["3:35", "Your vision, and the “One Thing” that decides next year"],
   ["4:05", "Your 90-day plan, and the first move this week"],
   ["5:00", "Happy hour - food and drinks provided"],
@@ -738,7 +738,7 @@ export default function WorkshopPage() {
         <Sec>
           <div style={wrap}>
             <Head kicker="The framework" align="center"
-              sub="Three stages carry every business. The first one that breaks as demand rises is the only thing worth working on - everything else is effort spent on a problem you don’t have yet.">
+              sub="Three stages carry every business. The one that is preventing growth right now is the only thing worth working on - everything else is effort spent on a problem you don’t have yet.">
               The 3-Stage Constraint <span style={EM}>Framework</span>
             </Head>
             <div className="stagerow" style={{ display: "flex", alignItems: "stretch", gap: 10, marginTop: 34 }}>
@@ -775,7 +775,7 @@ export default function WorkshopPage() {
               ))}
             </div>
             <p style={{ ...P, textAlign: "center", maxWidth: 680, margin: "26px auto 0" }}>
-              Underneath whichever stage binds you sit the sub-bottlenecks causing it - and the landmines that make growth cost more than it returns. You’ll work through both.
+              Underneath whichever stage is preventing you from growing are the sub-bottlenecks causing it - and the landmines that make growth damage the business long-term. You’ll work through both.
             </p>
             <div style={{ marginTop: 34 }}><CTA note={false} /></div>
           </div>
@@ -884,7 +884,7 @@ export default function WorkshopPage() {
         <Sec>
           <div style={wrap}>
             <Head kicker="Two owners, two wrong diagnoses" align="center"
-              subWide sub="Both were about to spend real money fixing a stage that wasn’t binding them.">
+              subWide sub="Both were about to spend real money fixing a stage that wasn’t preventing their growth.">
               What this looks like <span style={EM}>in practice</span>
             </Head>
             {STORIES.map((s, i) => (

@@ -141,7 +141,7 @@ const AGENDA = [
   ["1:00", "Where your next dollar of profit actually goes"],
   ["1:30", "Your two scores, and the direction they’re heading"],
   ["2:10", "Your three gaps and your value drivers"],
-  ["2:55", "The one stage capping everything else"],
+  ["2:55", "The one stage preventing your business from growing"],
   ["3:35", "Your vision, and the “One Thing” that decides next year"],
   ["4:05", "Your 90-day plan, and the first move this week"],
   ["5:00", "Happy hour - food and drinks provided"],
@@ -499,6 +499,10 @@ const card = { padding: "clamp(22px,3.4vw,30px)", borderRadius: 18, background: 
   border: `1px solid ${C.border2}`, boxShadow: "0 1px 2px rgba(10,14,20,.05), 0 10px 28px rgba(10,14,20,.07)" };
 const input = { width: "100%", boxSizing: "border-box", padding: "14px 16px", borderRadius: 10, fontSize: 16, fontFamily: "'DM Sans',sans-serif",
   background: "#FFFFFF", border: `1px solid ${C.border2}`, color: C.text1, outline: "none", colorScheme: "light" };
+/* Dropdowns: our own chevron, set 16px in from the right edge (the browser's sits almost on it). */
+const SELECT_CHEVRON = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236B6459' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`;
+const selectExtra = { appearance: "none", WebkitAppearance: "none", MozAppearance: "none", paddingRight: 46,
+  backgroundImage: SELECT_CHEVRON, backgroundRepeat: "no-repeat", backgroundPosition: "right 18px center", backgroundSize: "14px 14px" };
 const label = { display: "block", fontSize: 12.5, fontWeight: 600, color: C.text2, margin: "0 0 7px" };
 const errStyle = { color: C.red, fontSize: 12.5, lineHeight: 1.4, margin: "6px 0 0" };
 const Err = ({ msg }) => (msg ? <p style={errStyle}>{msg}</p> : null);
@@ -818,7 +822,7 @@ export default function WorkshopPageCream() {
         <Sec style={{ paddingTop: "clamp(10px,2vw,24px)" }}>
           <div style={wrap}>
             <Head kicker="The Owner’s Virtus Roadmap" align="center"
-              sub="Six stations that work as one system. Each one feeds the next, and the workshop walks the first three on your own numbers.">
+              sub="Six stations that work as one system. Each one affects all the others, and the workshop walks the first three on your own numbers.">
               Six stations, <span style={EM}>one system</span>
             </Head>
             <div style={{ marginTop: "clamp(18px,3vw,34px)" }}><RoadmapSystem onCta={toForm} /></div>
@@ -850,7 +854,7 @@ export default function WorkshopPageCream() {
             <div style={{ ...card, margin: "10px 0 16px", borderColor: `${C.gold}3d` }}>
               <div style={KICKER}>Why there’s a deposit</div>
               <p style={{ ...P, fontSize: 15.5 }}>Before the day, your seat is bought and paid for: lunch is catered by headcount, and a workbook is printed with your name on the cover alongside your Sprint Ledger. None of that can be given to someone else afterwards.</p>
-              <p style={{ ...P, fontSize: 15.5, marginTop: 12 }}>The room matters more than any of it. Twenty owners spend an afternoon working on the business instead of in it, and what makes that afternoon worth your time is that everyone else in the room made the same call.</p>
+              <p style={{ ...P, fontSize: 15.5, marginTop: 12 }}>The room matters more than any of it. Twenty owners spending an afternoon working on their business across similar problems.</p>
               <p style={{ ...P, fontSize: 15.5, marginTop: 12, color: C.text1 }}>So the deposit is a commitment, not a booking fee. <strong style={{ color: C.green, fontWeight: 600 }}>You get it back in full when you arrive.</strong> <strong style={{ color: C.text1, fontWeight: 600 }}>If you don’t attend, it isn’t refunded.</strong></p>
             </div>
             </>}
@@ -921,16 +925,16 @@ export default function WorkshopPageCream() {
               <div style={{ marginTop: 14 }}><label style={label}>Business name</label>
                 <input style={fieldStyle("business")} value={f.business} onChange={set("business")} autoComplete="organization" /><Err msg={touched && errors.business} /></div>
               <div style={{ marginTop: 14 }}><label style={label}>Where is your business revenue today?</label>
-                <select style={fieldStyle("revenue")} value={f.revenue} onChange={set("revenue")}>
+                <select style={{ ...fieldStyle("revenue"), ...selectExtra }} value={f.revenue} onChange={set("revenue")}>
                   <option value="" style={{ background: "#FFFFFF", color: C.text3 }}>Select…</option>
                   {REVENUE.map(r => <option key={r} value={r} style={{ background: "#FFFFFF", color: C.text1 }}>{r}</option>)}</select><Err msg={touched && errors.revenue} /></div>
               {!short && <>
               <div style={{ marginTop: 14 }}><label style={label}>What’s the single biggest money outcome you want in the next 12 months?</label>
-                <select style={fieldStyle("outcome")} value={f.outcome} onChange={set("outcome")}>
+                <select style={{ ...fieldStyle("outcome"), ...selectExtra }} value={f.outcome} onChange={set("outcome")}>
                   <option value="" style={{ background: "#FFFFFF", color: C.text3 }}>Select…</option>
                   {OUTCOMES.map(r => <option key={r} value={r} style={{ background: "#FFFFFF", color: C.text1 }}>{r}</option>)}</select><Err msg={touched && errors.outcome} /></div>
               <div style={{ marginTop: 14 }}><label style={label}>If you leave with a 90-day plan you believe in, what’s your appetite for getting help executing it?</label>
-                <select style={fieldStyle("appetite")} value={f.appetite} onChange={set("appetite")}>
+                <select style={{ ...fieldStyle("appetite"), ...selectExtra }} value={f.appetite} onChange={set("appetite")}>
                   <option value="" style={{ background: "#FFFFFF", color: C.text3 }}>Select…</option>
                   {APPETITE.map(r => <option key={r} value={r} style={{ background: "#FFFFFF", color: C.text1 }}>{r.replace("\u2014", "-")}</option>)}</select><Err msg={touched && errors.appetite} /></div>
               </>}
@@ -1020,7 +1024,7 @@ export default function WorkshopPageCream() {
         <Sec>
           <div style={wrap}>
             <Head kicker="The framework" align="center"
-              sub="Three stages carry every business. The first one that breaks as demand rises is the only thing worth working on - everything else is effort spent on a problem you don’t have yet.">
+              sub="Three stages carry every business. The one that is preventing growth right now is the only thing worth working on - everything else is effort spent on a problem you don’t have yet.">
               The 3-Stage Constraint <span style={EM}>Framework</span>
             </Head>
             <div className="stagerow" style={{ display: "flex", alignItems: "stretch", gap: 10, marginTop: 34 }}>
@@ -1057,7 +1061,7 @@ export default function WorkshopPageCream() {
               ))}
             </div>
             <p style={{ ...P, textAlign: "center", maxWidth: 680, margin: "26px auto 0" }}>
-              Underneath whichever stage binds you sit the sub-bottlenecks causing it - and the landmines that make growth cost more than it returns. You’ll work through both.
+              Underneath whichever stage is preventing you from growing are the sub-bottlenecks causing it - and the landmines that make growth damage the business long-term. You’ll work through both.
             </p>
             <div style={{ marginTop: 34 }}><CTA note={false} /></div>
           </div>
@@ -1180,7 +1184,7 @@ export default function WorkshopPageCream() {
         <Sec>
           <div style={wrap}>
             <Head kicker="Two owners, two wrong diagnoses" align="center"
-              subWide sub="Both were about to spend real money fixing a stage that wasn’t binding them.">
+              subWide sub="Both were about to spend real money fixing a stage that wasn’t preventing their growth.">
               What this looks like <span style={EM}>in practice</span>
             </Head>
             {STORIES.map((s, i) => (
