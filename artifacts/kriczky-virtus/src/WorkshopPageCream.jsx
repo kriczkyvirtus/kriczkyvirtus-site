@@ -520,11 +520,21 @@ const toFields = () => {
   target?.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 
+/* The house button arrow (as on /reinvest-harvest): a thicker stroked arrow that
+   glides right on hover. Sized in em, so each button keeps its size. */
+const CtaArrow = () => (
+  <svg className="ctaArrow" width="0.95em" height="0.95em" viewBox="0 0 24 24" fill="none" aria-hidden="true"
+    stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"
+    style={{ display: "inline-block", verticalAlign: "-0.14em", marginLeft: "0.4em" }}>
+    <line x1="4" y1="12" x2="19" y2="12" /><polyline points="13 6 19 12 13 18" />
+  </svg>
+);
+
 const CTA = ({ note = true, align = "center" }) => (
   <div style={{ textAlign: align }}>
     <a href="#register" onClick={toForm} className="cta shine" style={{ display: "inline-block", padding: "24px 60px", borderRadius: 999, textDecoration: "none",
       background: DARK_BTN, border: "1.5px solid #0A0E14" }}>
-      <span style={{ fontWeight: 700, fontSize: "clamp(17.5px,2.5vw,21.5px)", color: C.goldFill }}>Reserve Your Seat &#8594;</span>
+      <span style={{ fontWeight: 700, fontSize: "clamp(17.5px,2.5vw,21.5px)", color: C.goldFill }}>Reserve Your Seat<CtaArrow /></span>
     </a>
     {note && <p style={{ fontSize: 13.5, color: C.text3, margin: "13px 0 0" }}>
       Free. Limited to {EVENT.seats} owners. A $250 deposit holds your seat, and you get it back when you walk in.</p>}
@@ -856,7 +866,7 @@ export default function WorkshopPageCream() {
             {kind === "priority" && <>
             <Head kicker={`${event.quarter} · Date TBA`}>Priority <span style={EM}>access</span></Head>
             <div style={{ ...card, margin: "10px 0 16px", borderColor: `${C.cyan}3d` }}>
-              <p style={{ ...P, fontSize: 15.5 }}>No deposit now. When the {event.quarter} date is set, everyone on the priority list hears first and gets seven days to claim a seat before the date goes public.</p>
+              <p style={{ ...P, fontSize: 15.5 }}>No deposit now. When the {event.quarter} date is set, everyone on the priority list hears first and gets 48 hours to claim a seat before the date goes public.</p>
               <p style={{ ...P, fontSize: 15.5, marginTop: 12, color: C.text1 }}>Seats are still capped at twenty, and still held by the $250 refundable deposit once you claim one.</p>
             </div>
             </>}
@@ -897,7 +907,7 @@ export default function WorkshopPageCream() {
                 {kind === "client" ? "Your seat is reserved." : kind === "priority" ? "You're on the priority list." : "You're on the waitlist."}</div>
               <p style={{ ...P, fontSize: 15.5, margin: "12px auto 0", maxWidth: 420 }}>
                 {kind === "client" ? `See you on ${event.long}. Your confirmation and pre-work are on their way to ${f.email.trim()}.`
-                  : kind === "priority" ? `You'll hear first when the ${event.quarter} date is set, with seven days to claim a seat before it goes public.`
+                  : kind === "priority" ? `You'll hear first when the ${event.quarter} date is set, with 48 hours to claim a seat before it goes public.`
                   : "If a seat opens, you'll hear first. We'll email you either way before the day."}</p>
             </div>
             ) : (
@@ -931,10 +941,10 @@ export default function WorkshopPageCream() {
                   border: `1.5px solid ${valid ? "#0A0E14" : C.border2}`, opacity: state === "sending" ? .7 : 1 }}>
                 <span style={{ fontWeight: 700, fontSize: "clamp(14.5px,3.6vw,18.5px)", color: valid ? C.goldFill : C.text3, whiteSpace: "nowrap" }}>
                   {state === "sending" ? (short ? "Saving…" : "Holding your seat…")
-                    : kind === "client" ? "Reserve my seat →"
-                    : kind === "priority" ? "Get priority access →"
-                    : kind === "waitlist" ? "Join the waitlist →"
-                    : "Continue to the $250 deposit →"}</span>
+                    : kind === "client" ? <>Reserve my seat<CtaArrow /></>
+                    : kind === "priority" ? <>Get priority access<CtaArrow /></>
+                    : kind === "waitlist" ? <>Join the waitlist<CtaArrow /></>
+                    : <>Continue to the $250 deposit<CtaArrow /></>}</span>
               </button>
               {touched && !valid && state !== "error" &&
                 <p style={{ ...errStyle, textAlign: "center", marginTop: 12 }}>Please fix the fields marked above.</p>}
@@ -1379,6 +1389,9 @@ export default function WorkshopPageCream() {
         .ptile img { display: block; user-select: none; pointer-events: none; }
 
         .cta { transition: all .25s ease; }
+        .ctaArrow { transition: transform .3s cubic-bezier(.4,0,.2,1); }
+        @media (hover: hover) and (pointer: fine) { .cta:hover:not(:disabled) .ctaArrow { transform: translateX(5px); } }
+        @media (prefers-reduced-motion: reduce) { .ctaArrow, .cta:hover .ctaArrow { transition: none; transform: none; } }
         /* the dark buttons wear a gold halo: a fine gold ring, a close glow and a wide soft one */
         .cta.shine { box-shadow: 0 0 0 1px rgba(200,162,78,.55), 0 0 20px rgba(200,162,78,.55), 0 0 52px rgba(200,162,78,.34), 0 10px 24px rgba(10,14,20,.18); }
         .cta:hover:not(:disabled) { box-shadow: 0 0 0 1px rgba(200,162,78,.7), 0 0 24px rgba(200,162,78,.6), 0 0 64px rgba(200,162,78,.38), 0 12px 26px rgba(10,14,20,.2) !important; transform: translateY(-2px); }

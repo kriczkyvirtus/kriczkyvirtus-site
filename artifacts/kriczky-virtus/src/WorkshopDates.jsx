@@ -67,7 +67,7 @@ export default function WorkshopDates({ counts, picked, onPick, client = false }
             <a href="#register" className="cta shine wbtn" onClick={(e) => { e.preventDefault(); onPick(w.id, kind); }}
               style={{ background: DARK_BTN }}>
               <span>{action}</span>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={T.gold.fill} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="12" x2="19" y2="12" /><polyline points="13 6 19 12 13 18" /></svg>
+              <svg className="ctaArrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={T.gold.fill} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="12" x2="19" y2="12" /><polyline points="13 6 19 12 13 18" /></svg>
             </a>
           </div>
         );
