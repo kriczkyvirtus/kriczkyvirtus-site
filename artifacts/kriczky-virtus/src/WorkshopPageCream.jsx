@@ -511,6 +511,24 @@ const Sec = ({ children, style, id }) => <section id={id} style={{ padding: "cla
 /* Lives at module scope so it isn't a new component on every render - a new
    identity remounts the subtree and kills focus in whatever input is being typed in. */
 /* Every "Reserve" button lands on the dates cards: pick a workshop, then the form. */
+/* Attribution: the utm_* and ref= on the link a visitor arrived by (a CPA one-pager QR or
+   button, the flyer, an email). Kept for 30 days so a visitor who comes back later and signs
+   up is still credited; a newer tagged link replaces it. Storage can fail - then the link in
+   the address bar is all we use. */
+const ATTR_KEY = "kv_workshop_attr";
+const readAttribution = () => {
+  if (typeof window === "undefined") return {};
+  const q = new URLSearchParams(window.location.search);
+  const now = { utmSource: q.get("utm_source"), utmMedium: q.get("utm_medium"), utmCampaign: q.get("utm_campaign"), ref: q.get("ref") };
+  const has = Object.values(now).some(Boolean);
+  try {
+    if (has) { localStorage.setItem(ATTR_KEY, JSON.stringify({ ...now, at: Date.now() })); return now; }
+    const saved = JSON.parse(localStorage.getItem(ATTR_KEY) || "null");
+    if (saved && Date.now() - saved.at < 30 * 864e5) { const { at, ...rest } = saved; return rest; }
+  } catch { /* private window / blocked storage */ }
+  return has ? now : {};
+};
+
 const toForm = (e) => {
   e.preventDefault();
   document.getElementById("dates")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -602,6 +620,7 @@ export default function WorkshopPageCream() {
   const [state, setState] = useState("idle");
   /* ?seat=<code> is the private client link: no deposit. The server checks the code. */
   const [clientCode] = useState(() => (typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("seat")));
+  const [attribution] = useState(readAttribution);
   const counts = useWorkshopCounts();
   const [pick, setPick] = useState({ id: WORKSHOPS[0].id, kind: null });
   const event = WORKSHOPS.find(w => w.id === pick.id) || WORKSHOPS[0];
@@ -752,6 +771,7 @@ export default function WorkshopPageCream() {
           printName: `${f.firstName.trim()} ${f.lastName.trim()}`,
           revenue: f.revenue, outcome: short ? "" : f.outcome, appetite: short ? "" : f.appetite,
           kind, workshopId: event.id, ...(kind === "client" ? { clientCode } : {}),
+          ...attribution,
         }),
       });
       if (r.status === 403) { if (tab) tab.close(); setState("badcode"); return; }

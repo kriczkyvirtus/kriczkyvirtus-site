@@ -117,6 +117,11 @@ module.exports = async function handler(req, res) {
          no deposit) or "waitlist" (a full date). See lib/workshop-events.js. */
       const { firstName, lastName, phone, company, printName, revenue, outcome, appetite } = req.body;
       const kind = req.body.kind || "seat";
+      /* Where the sign-up came from: the utm_* and ref= on the link they arrived by (a CPA
+         one-pager's QR / button, the flyer, an email). Sent by the page; cleaned here. */
+      const tidy = (v) => (typeof v === "string" ? v.trim().toLowerCase().replace(/[^a-z0-9_.-]/g, "").slice(0, 60) : "") || null;
+      const attribution = { utmSource: tidy(req.body.utmSource), utmMedium: tidy(req.body.utmMedium),
+        utmCampaign: tidy(req.body.utmCampaign), ref: tidy(req.body.ref) };
       const workshopId = req.body.workshopId || null;
       if (!KINDS.includes(kind)) {
         return res.status(400).json({ error: "Invalid workshop registration details" });
@@ -164,11 +169,13 @@ module.exports = async function handler(req, res) {
           outcome: outcome || "", appetite: appetite || "",
           kind, workshopId: workshopId || "",
           summary: {}, answers: {}, timestamp: new Date().toISOString(),
+          ...attribution,
         });
         await syncContact({
           name: fullName, email: email.trim(), phone: phone.trim(), tool,
           revenueBand: revenue, outcome, appetite, businessName: company.trim(),
           ...(workshopId ? { kind, workshopId, workshopDate } : {}),
+          utmSource: attribution.utmSource, utmCampaign: attribution.utmCampaign, ref: attribution.ref,
         });
       } catch (registrationError) {
         console.error("[Workshop] Registration capture failed:", registrationError);
@@ -178,6 +185,7 @@ module.exports = async function handler(req, res) {
       await require("../lib/workshop-alert").sendWorkshopAlert({
         kind, workshopId, workshopDate, name: fullName, company: company.trim(),
         email: email.trim(), phone: phone.trim(), revenue, outcome: outcome || "", appetite: appetite || "",
+        ...attribution,
       });
       return res.status(200).json({ success: true });
     }
