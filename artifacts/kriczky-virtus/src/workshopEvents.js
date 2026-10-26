@@ -15,8 +15,8 @@ export const SHOW_COUNT_AT = 10;        /* "Open" until this many seats are left
 export const SHOW_PRIORITY_FROM = 5;    /* the priority-list count appears once it reaches this */
 
 export const WORKSHOPS = [
-  { id: "2026q4", quarter: "Q4 2026", date: "2026-12-04",
-    short: "Fri, Dec 4", long: "Friday, December 4, 2026", time: "Noon – 5:00 PM" },
+  { id: "2026q4", quarter: "Q4 2026", date: "2026-12-11",
+    short: "Fri, Dec 11", long: "Friday, December 11, 2026", time: "Noon – 5:00 PM" },
   { id: "2027q1", quarter: "Q1 2027", date: null },
   { id: "2027q2", quarter: "Q2 2027", date: null },
 ];

@@ -68,11 +68,11 @@ test("client seat writes Workshop ID and date, then tags 90, 91, 101 and the eve
   await syncContact({
     tool: "workshop-registration", name: "Test Owner", email: "test@example.com", phone: "5555550100",
     revenueBand: "$1M – $3M", outcome: "Build cash runway", appetite: "Strong",
-    kind: "client", workshopId: "2026q4", workshopDate: "2026-12-04",
+    kind: "client", workshopId: "2026q4", workshopDate: "2026-12-11",
   });
   global.fetch = realFetch;
   assert.deepEqual(calls[0].body.contact.fieldValues.slice(-2), [
-    { field: "17", value: "2026q4" }, { field: "14", value: "2026-12-04" },
+    { field: "17", value: "2026q4" }, { field: "14", value: "2026-12-11" },
   ]);
   const tagged = calls.filter(c => c.url.endsWith("/contactTags")).map(c => String(c.body.contactTag.tag));
   assert.deepEqual(tagged, ["90", "91", "101", "97"]);

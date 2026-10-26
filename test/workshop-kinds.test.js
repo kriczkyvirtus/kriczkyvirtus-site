@@ -56,7 +56,7 @@ test("client seat needs the right code and writes the workshop date", async () =
   assert.deepEqual(calls, []);
   const ok = await submit({ ...full, kind: "client", workshopId: "2026q4", clientCode: "secret" });
   assert.equal(ok.statusCode, 200);
-  assert.equal(calls[1][1].workshopDate, "2026-12-04");
+  assert.equal(calls[1][1].workshopDate, "2026-12-11");
   delete process.env.WORKSHOP_CLIENT_CODE;
   assert.equal((await submit({ ...full, kind: "client", workshopId: "2026q4", clientCode: "" })).statusCode, 403);
 });
