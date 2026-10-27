@@ -3,8 +3,9 @@ import { WORKSHOPS, SEAT_CAP, statusOf } from "./workshopEvents.js";
 
 /* ═══════════════════════════════════════════════════════════════
    The "Upcoming workshops" cards on /workshop-rh.
-   Three porcelain glow cards: the dated workshop (Open → "N seats left" →
-   Full - join the waitlist) and the next two quarters (Date TBA - priority
+   Three porcelain glow cards: the dated workshop (Open, with a bright red
+   "N seats left" pill on the button once 10 or fewer remain → Full - join
+   the waitlist) and the next two quarters (Date TBA - priority
    access). Every number comes from /api/workshop-seats (live ActiveCampaign
    tag counts). Picking a card sets what the form below does.
    ═══════════════════════════════════════════════════════════════ */
@@ -30,8 +31,7 @@ export function useWorkshopCounts() {
   return counts;
 }
 
-const toneOf = (s) => s.kind === "priority" ? T.cyan : s.kind === "waitlist" ? T.red
-  : s.left !== null && s.left <= 3 ? T.red : s.left !== null && s.left <= 10 ? T.gold : T.green;
+const toneOf = (s) => s.kind === "priority" ? T.cyan : s.kind === "waitlist" ? T.red : T.green;
 
 export default function WorkshopDates({ counts, picked, onPick, client = false }) {
   return (
@@ -51,7 +51,7 @@ export default function WorkshopDates({ counts, picked, onPick, client = false }
               <span className="wq">{w.quarter}</span>
               <span className="wchip" style={{ color: t.ink, borderColor: `${t.fill}88`, boxShadow: `inset 0 1px 0 rgba(255,255,255,.95), 0 2px 6px rgba(10,14,20,.06), 0 0 12px ${t.fill}33` }}>
                 <span className="wgem" style={{ background: `radial-gradient(circle at 35% 30%, #fff 0%, ${t.fill} 45%, ${t.ink} 100%)`, boxShadow: `0 0 7px ${t.fill}aa` }} />
-                {s.label}</span>
+                {s.kind === "seat" ? "Open" : s.label}</span>
             </div>
             <div className="wday">{w.date ? w.short : "Date TBA"}</div>
             <div className="wsub">{w.date ? `${w.time} · West Chester, PA` : `${SEAT_CAP} owners · one workshop a quarter`}</div>
@@ -64,11 +64,16 @@ export default function WorkshopDates({ counts, picked, onPick, client = false }
                 : s.kind === "waitlist" ? "If a seat opens, the waitlist hears first."
                 : client ? "Client seat · no deposit" : "Free · $250 refundable deposit"}
             </div>
+            <div className="wact">
+            {s.kind === "seat" && s.label !== "Open" && (
+              <span className="wleft"><span className="wleftDot" />{s.label}</span>
+            )}
             <a href="#register" className="cta shine wbtn" onClick={(e) => { e.preventDefault(); onPick(w.id, kind); }}
               style={{ background: DARK_BTN }}>
               <span>{action}</span>
               <svg className="ctaArrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={T.gold.fill} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="12" x2="19" y2="12" /><polyline points="13 6 19 12 13 18" /></svg>
             </a>
+            </div>
           </div>
         );
       })}
@@ -97,7 +102,17 @@ export default function WorkshopDates({ counts, picked, onPick, client = false }
           text-shadow: 0 0 14px rgba(34,211,238,.35); }
         .wlbl { font-size: 15px; font-weight: 600; color: #0A0E14; line-height: 1.3; }
         .wlbl b { color: #0E7490; }
-        .wbtn { margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 9px; padding: 15px 18px; border-radius: 999px; text-decoration: none;
+        .wact { margin-top: auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        /* seats-left alert: bright red, sitting on the button's top edge */
+        .wleft { position: relative; z-index: 2; margin-bottom: -11px; display: inline-flex; align-items: center; gap: 7px; height: 26px; padding: 0 13px 0 10px;
+          border-radius: 999px; font-size: 12.5px; font-weight: 800; letter-spacing: .02em; color: #fff; white-space: nowrap;
+          background: linear-gradient(180deg,#F23A3A 0%,#D41F1F 100%); border: 1px solid #B91515;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 3px 10px rgba(220,38,38,.35), 0 0 14px rgba(239,68,68,.35); }
+        .wleftDot { width: 7px; height: 7px; border-radius: 50%; background: #fff; box-shadow: 0 0 6px rgba(255,255,255,.9);
+          animation: wleftPulse 1.6s ease-in-out infinite; }
+        @keyframes wleftPulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+        @media (prefers-reduced-motion: reduce) { .wleftDot { animation: none; } }
+        .wbtn { width: 100%; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 9px; padding: 15px 18px; border-radius: 999px; text-decoration: none;
           border: 1.5px solid #0A0E14; font-weight: 700; font-size: 15.5px; color: #C8A24E; }
       `}</style>
     </div>
