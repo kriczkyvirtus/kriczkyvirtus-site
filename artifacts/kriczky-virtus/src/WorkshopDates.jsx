@@ -66,7 +66,7 @@ export default function WorkshopDates({ counts, picked, onPick, client = false }
             </div>
             <div className="wact">
             {s.kind === "seat" && s.label !== "Open" && (
-              <span className="wleft"><span className="wleftDot" />{s.label}</span>
+              <span className="wleft">{s.label}</span>
             )}
             <a href="#register" className="cta shine wbtn" onClick={(e) => { e.preventDefault(); onPick(w.id, kind); }}
               style={{ background: DARK_BTN }}>
@@ -104,14 +104,10 @@ export default function WorkshopDates({ counts, picked, onPick, client = false }
         .wlbl b { color: #0E7490; }
         .wact { margin-top: auto; position: relative; display: flex; flex-direction: column; align-items: center; }
         /* seats-left alert: bright red, sitting on the button's top edge */
-        .wleft { position: relative; z-index: 2; margin-bottom: -11px; display: inline-flex; align-items: center; gap: 7px; height: 26px; padding: 0 13px 0 10px;
+        .wleft { position: relative; z-index: 2; margin-bottom: -11px; display: inline-flex; align-items: center; height: 26px; padding: 0 14px;
           border-radius: 999px; font-size: 12.5px; font-weight: 800; letter-spacing: .02em; color: #fff; white-space: nowrap;
           background: linear-gradient(180deg,#F23A3A 0%,#D41F1F 100%); border: 1px solid #B91515;
           box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 3px 10px rgba(220,38,38,.35), 0 0 14px rgba(239,68,68,.35); }
-        .wleftDot { width: 7px; height: 7px; border-radius: 50%; background: #fff; box-shadow: 0 0 6px rgba(255,255,255,.9);
-          animation: wleftPulse 1.6s ease-in-out infinite; }
-        @keyframes wleftPulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
-        @media (prefers-reduced-motion: reduce) { .wleftDot { animation: none; } }
         .wbtn { width: 100%; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 9px; padding: 15px 18px; border-radius: 999px; text-decoration: none;
           border: 1.5px solid #0A0E14; font-weight: 700; font-size: 15.5px; color: #C8A24E; }
       `}</style>
