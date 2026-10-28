@@ -35,7 +35,7 @@ const EVENT = {
   area: "West Chester, PA",
   venueLine1: "2 W. Market Street",
   venueLine2: "West Chester, PA 19382",
-  mapUrl: "https://www.google.com/maps/dir/?api=1&destination=2%20W%20Market%20St%2C%20West%20Chester%2C%20PA%2019382%2C%20USA",
+  mapUrl: "https://www.google.com/maps/dir/?api=1&destination=align.Space%2C%202%20W%20Market%20St%2C%20West%20Chester%2C%20PA%2019382&destination_place_id=ChIJmWvIvkbxxokRd2mjuB1jyS4&travelmode=driving", /* pinned to align.Space by place ID - the street address alone drops the pin on the wrong building */
   seats: 20,
   fullPrice: "$2,000",
 };
