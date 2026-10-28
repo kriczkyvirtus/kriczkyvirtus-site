@@ -99,6 +99,28 @@ test("priority reservation gets only its priority tag", async () => {
   assert.deepEqual(tagged, ["99"]);
 });
 
+test("waitlist joins its waitlist and the priority list of every Date TBA workshop", async () => {
+  calls.length = 0;
+  const realFetch = global.fetch;
+  const ids = { "workshop-2026q4-waitlist": "98", "workshop-2027q1-priority": "99", "workshop-2027q2-priority": "100" };
+  global.fetch = async (url, options = {}) => {
+    calls.push({ url: String(url), body: options.body && JSON.parse(options.body) });
+    const u = String(url);
+    const q = u.includes("/tags?search=") ? decodeURIComponent(u.split("search=")[1].split("&")[0]) : null;
+    const data = u.endsWith("/contact/sync") ? { contact: { id: "contact-1" } }
+      : q ? { tags: [{ id: ids[q], tag: q }] }
+      : { contactTag: { id: "tagged" } };
+    return { ok: true, status: 200, json: async () => data };
+  };
+  await syncContact({
+    tool: "workshop-registration", name: "Test Owner", email: "test@example.com", phone: "5555550100",
+    revenueBand: "$1M – $3M", kind: "waitlist", workshopId: "2026q4", workshopDate: "2026-12-11",
+  });
+  global.fetch = realFetch;
+  const tagged = calls.filter(c => c.url.endsWith("/contactTags")).map(c => String(c.body.contactTag.tag));
+  assert.deepEqual(tagged, ["98", "99", "100"]);
+});
+
 test("business name is written to field 18 when a form sends one", async () => {
   calls.length = 0;
   await syncContact({

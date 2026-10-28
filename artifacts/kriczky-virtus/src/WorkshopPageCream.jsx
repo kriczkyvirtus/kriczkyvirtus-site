@@ -898,7 +898,8 @@ export default function WorkshopPageCream() {
             {kind === "waitlist" && <>
             <Head kicker={`${event.quarter} · ${event.short || ""}`}>Join the <span style={EM}>waitlist</span></Head>
             <div style={{ ...card, margin: "10px 0 16px", borderColor: `${C.red}3d` }}>
-              <p style={{ ...P, fontSize: 15.5 }}>This workshop is full. If a seat opens, the waitlist hears first, in the order people joined, and has a short window to take it with the $250 refundable deposit.</p>
+              <p style={{ ...P, fontSize: 15.5 }}>This workshop is full. If a seat opens, the waitlist hears first. Whoever at that point grabs the seat opening first with the $250 deposit gets it.</p>
+              <p style={{ ...P, fontSize: 15.5, marginTop: 12, color: C.text1 }}>You will also automatically be added to the priority list for the next workshops so that you hear about them opening before the rest of the public.</p>
             </div>
             </>}
 

@@ -4,8 +4,8 @@ import { WORKSHOPS, SEAT_CAP, statusOf } from "./workshopEvents.js";
 /* ═══════════════════════════════════════════════════════════════
    The "Upcoming workshops" cards on /workshop-rh.
    Three porcelain glow cards: the dated workshop (Open, with a bright red
-   "N seats left" pill on the button once 10 or fewer remain → Full - join
-   the waitlist) and the next two quarters (Date TBA - priority
+   "N seats left" pill on the button once 10 or fewer remain → Full, with a
+   red "SOLD OUT" pill on the "Join the waitlist" button) and the next two quarters (Date TBA - priority
    access). Every number comes from /api/workshop-seats (live ActiveCampaign
    tag counts). Picking a card sets what the form below does.
    ═══════════════════════════════════════════════════════════════ */
@@ -68,6 +68,7 @@ export default function WorkshopDates({ counts, picked, onPick, client = false }
             {s.kind === "seat" && s.label !== "Open" && (
               <span className="wleft">{s.label}</span>
             )}
+            {s.kind === "waitlist" && <span className="wleft">SOLD OUT</span>}
             <a href="#register" className="cta shine wbtn" onClick={(e) => { e.preventDefault(); onPick(w.id, kind); }}
               style={{ background: DARK_BTN }}>
               <span>{action}</span>
