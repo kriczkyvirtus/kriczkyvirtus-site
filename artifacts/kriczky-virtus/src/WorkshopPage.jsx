@@ -16,9 +16,9 @@ const ICON = (slug) => `/img/icons/${slug}-metallic.svg`;
 const EVENT = {
   date: null,                         // e.g. "Thursday, March 12, 2027"
   time: "Noon – 5:00 PM",
-  venueLine1: "430 Hannum Ave",
-  venueLine2: "West Chester, PA 19380",
-  mapUrl: "https://www.google.com/maps/dir/?api=1&destination=430%20Hannum%20Ave%2C%20West%20Chester%2C%20PA%2019380%2C%20USA",
+  venueLine1: "2 W. Market Street",
+  venueLine2: "West Chester, PA 19382",
+  mapUrl: "https://www.google.com/maps/dir/?api=1&destination=2%20W%20Market%20St%2C%20West%20Chester%2C%20PA%2019382%2C%20USA",
   seats: 20,
   fullPrice: "$2,000",
 };
@@ -491,7 +491,7 @@ const Head = ({ kicker, children, align = "left", sub, subWide }) => (
 const Meta = ({ k, v, href, note }) => (
   <div style={{ padding: "14px 16px", borderRadius: 12, border: `1px solid ${C.border2}`, background: "rgba(255,255,255,.025)" }}>
     <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: C.text3, marginBottom: 5 }}>{k}</div>
-    {href ? <a href={href} target="_blank" rel="noopener" style={{ color: C.text1, fontSize: 15, fontWeight: 600, textDecoration: "none", lineHeight: 1.35, display: "block" }}>{v}</a>
+    {href ? <a href={href} target="_blank" rel="noopener noreferrer" style={{ color: C.text1, fontSize: 15, fontWeight: 600, textDecoration: "none", lineHeight: 1.35, display: "block" }}>{v}</a>
           : <div style={{ color: C.text1, fontSize: 15, fontWeight: 600, lineHeight: 1.35 }}>{v}</div>}
     {note && <div style={{ color: C.text3, fontSize: 12.5, lineHeight: 1.4, marginTop: 6 }}>{note}</div>}
   </div>
@@ -690,7 +690,7 @@ export default function WorkshopPage() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(165px, 1fr))", gap: 10, maxWidth: 860, margin: "32px auto 0", textAlign: "left" }}>
               <Meta k="Date" v={EVENT.date || "Announced soon"} />
               <Meta k="Time" v={EVENT.time} note="Happy Hour afterwards - food and drinks covered" />
-              <Meta k="Where" v={`${EVENT.venueLine1} ${EVENT.venueLine2}`} href={EVENT.mapUrl} />
+              <Meta k="Where" v={`${EVENT.venueLine1}, ${EVENT.venueLine2}`} href={EVENT.mapUrl} />
               <Meta k="Cost" v="Free" />
             </div>
           </div>

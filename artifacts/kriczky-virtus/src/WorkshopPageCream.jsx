@@ -31,11 +31,11 @@ const EVENT = {
   date: WORKSHOPS[0].long,            /* the next dated workshop - see workshopEvents.js */
   time: "Noon – 5:00 PM",
   /* Set venueConfirmed once the venue is booked; until then the page shows the town. */
-  venueConfirmed: false,
+  venueConfirmed: true,
   area: "West Chester, PA",
-  venueLine1: "430 Hannum Ave",
-  venueLine2: "West Chester, PA 19380",
-  mapUrl: "https://www.google.com/maps/dir/?api=1&destination=430%20Hannum%20Ave%2C%20West%20Chester%2C%20PA%2019380%2C%20USA",
+  venueLine1: "2 W. Market Street",
+  venueLine2: "West Chester, PA 19382",
+  mapUrl: "https://www.google.com/maps/dir/?api=1&destination=2%20W%20Market%20St%2C%20West%20Chester%2C%20PA%2019382%2C%20USA",
   seats: 20,
   fullPrice: "$2,000",
 };
@@ -571,14 +571,18 @@ const Head = ({ kicker, children, align = "left", sub, subWide }) => (
   </div>
 );
 
-const Meta = ({ k, v, href, note }) => (
-  <div style={{ padding: "14px 16px", borderRadius: 12, border: `1px solid ${C.border2}`, background: "#FFFFFF", boxShadow: "0 1px 2px rgba(10,14,20,.04)" }}>
+const Meta = ({ k, v, href, note }) => {
+  const box = { padding: "14px 16px", borderRadius: 12, border: `1px solid ${C.border2}`, background: "#FFFFFF", boxShadow: "0 1px 2px rgba(10,14,20,.04)" };
+  const inner = <>
     <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: C.text3, marginBottom: 5 }}>{k}</div>
-    {href ? <a href={href} target="_blank" rel="noopener" style={{ color: C.text1, fontSize: 15, fontWeight: 600, textDecoration: "none", lineHeight: 1.35, display: "block" }}>{v}</a>
-          : <div style={{ color: C.text1, fontSize: 15, fontWeight: 600, lineHeight: 1.35 }}>{v}</div>}
-    {note && <div style={{ color: C.text3, fontSize: 12.5, lineHeight: 1.4, marginTop: 6 }}>{note}</div>}
-  </div>
-);
+    <div style={{ color: C.text1, fontSize: 15, fontWeight: 600, lineHeight: 1.35 }}>{v}</div>
+    {note && <div style={{ color: href ? C.gold : C.text3, fontSize: 12.5, lineHeight: 1.4, marginTop: 6, textDecoration: href ? "underline" : "none", textUnderlineOffset: 3 }}>{note}</div>}
+  </>;
+  /* a linked card (the venue) opens in a new tab or the Maps app - never replaces this page */
+  return href
+    ? <a href={href} target="_blank" rel="noopener noreferrer" style={{ ...box, display: "block", textDecoration: "none" }}>{inner}</a>
+    : <div style={box}>{inner}</div>;
+};
 
 const TickMark = ({ no, size = 14 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -831,7 +835,7 @@ export default function WorkshopPageCream() {
               <Meta k="Date" v={EVENT.date || "Announced soon"} />
               <Meta k="Time" v={EVENT.time} note="Happy Hour afterwards - food and drinks covered" />
               {EVENT.venueConfirmed
-                ? <Meta k="Where" v={`${EVENT.venueLine1} ${EVENT.venueLine2}`} href={EVENT.mapUrl} />
+                ? <Meta k="Where" v={<>{EVENT.venueLine1}<br />{EVENT.venueLine2}</>} href={EVENT.mapUrl} note="Tap for directions" />
                 : <Meta k="Where" v={EVENT.area} note="Exact venue announced soon" />}
               <Meta k="Cost" v="Free" />
             </div>
@@ -907,8 +911,8 @@ export default function WorkshopPageCream() {
             <div id="venue-block" style={{ display: "flex", gap: 14, alignItems: "center", padding: "14px 18px", borderRadius: 12, border: `1px solid ${C.border2}`, background: "rgba(255,255,255,.72)", scrollMarginTop: 14 }}>
               <Mark of="venue-pin" size={52} />
               {EVENT.venueConfirmed
-                ? <div><div style={{ color: C.text1, fontWeight: 600, fontSize: 15 }}>{EVENT.venueLine1}, {EVENT.venueLine2}</div>
-                    <div style={{ color: C.text3, fontSize: 13.5, marginTop: 4 }}>Happy hour afterward is a short walk into town.</div></div>
+                ? <div><a href={EVENT.mapUrl} target="_blank" rel="noopener noreferrer" style={{ color: C.text1, fontWeight: 600, fontSize: 15, lineHeight: 1.4, textDecoration: "none", display: "block" }}>{EVENT.venueLine1}<br />{EVENT.venueLine2}</a>
+                    <div style={{ color: C.text3, fontSize: 13.5, marginTop: 4 }}>Happy hour afterward is a short walk away, in town.</div></div>
                 : <div><div style={{ color: C.text1, fontWeight: 600, fontSize: 15 }}>{event.long || EVENT.date} &middot; {EVENT.area}</div>
                     <div style={{ color: C.text3, fontSize: 13.5, marginTop: 4 }}>Exact venue announced soon. Happy hour afterward is in town.</div></div>}
             </div>
