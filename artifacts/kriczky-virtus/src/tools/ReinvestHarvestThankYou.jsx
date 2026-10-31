@@ -23,8 +23,8 @@ const SKOOL_COLLECTIVE = "https://www.skool.com/virtus-collective";
    element directly - with YouTube or Vimeo this would mean loading their
    player API and talking to an iframe. Poster fills the 16:9 box while the
    video decodes, otherwise it's a black rectangle for a beat. */
-const VSL_SRC = "/video/reinvest-harvest-next.mp4";
-const VSL_POSTER = "/video/reinvest-harvest-next-poster.jpg";
+const VSL_SRC = "/video/reinvest-harvest-next-v2.mp4";        /* VSL001_PP2026_MAINv2, web encode (31 Oct 2026) */
+const VSL_POSTER = "/video/reinvest-harvest-next-v2-poster.jpg";
 
 export const QUADRANTS = {
   reinvest: {
