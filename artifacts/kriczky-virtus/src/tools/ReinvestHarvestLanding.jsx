@@ -10,8 +10,8 @@ const HEADSHOT = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgc
 
 /* Landing VSL. Raw MP4 rather than an embed so the unmute overlay can control
    the element directly - same reasoning as the thank-you page. */
-const VSL_SRC = "/video/reinvest-harvest-landing.mp4";
-const VSL_POSTER = "/video/reinvest-harvest-landing-poster.jpg";
+const VSL_SRC = "/video/reinvest-harvest-landing-v2.mp4";
+const VSL_POSTER = "/video/reinvest-harvest-landing-v2-poster.jpg";
 
 const C = {
   bgDeep: "#0A0E14", bgCard: "#111720", bgElev: "#1A2130",

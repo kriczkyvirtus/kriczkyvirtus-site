@@ -14,8 +14,8 @@ import RoadmapSystem from "../RoadmapSystem.jsx";
    Mobile-first: traffic is ManyChat DMs off Reels + paid IG.
    ═══════════════════════════════════════════════════════════════ */
 
-const VSL_SRC = "/video/reinvest-harvest-landing.mp4";
-const VSL_POSTER = "/video/reinvest-harvest-landing-poster.jpg";
+const VSL_SRC = "/video/reinvest-harvest-landing-v2.mp4";
+const VSL_POSTER = "/video/reinvest-harvest-landing-v2-poster.jpg";
 
 const C = {
   page: "#F2EEE6",
