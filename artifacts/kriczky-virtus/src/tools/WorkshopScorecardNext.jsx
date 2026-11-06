@@ -61,7 +61,7 @@ export default function WorkshopScorecardNext({ report = null }) {
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
               <polyline points="4 12 10 18 20 6" stroke={T.green.ink} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <span style={{ fontSize: 14, color: C.ink1, overflowWrap: "anywhere" }}>
+            <span style={{ fontSize: 14, color: C.ink1, overflowWrap: "anywhere", textAlign: "center" }}>
               Your scorecard is on its way to <b style={{ color: T.green.ink }}>{email}</b>
             </span>
           </div>

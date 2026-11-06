@@ -253,7 +253,7 @@ export default function ReinvestHarvestThankYou({
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
             <polyline points="4 12 10 18 20 6" stroke={C.green} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <span style={{ fontSize: 14, color: C.text1, overflowWrap: "anywhere" }}>
+          <span style={{ fontSize: 14, color: C.text1, overflowWrap: "anywhere", textAlign: "center" }}>
             Your scorecard is on its way to <b style={{ color: C.green }}>{email}</b>
           </span>
         </div>
