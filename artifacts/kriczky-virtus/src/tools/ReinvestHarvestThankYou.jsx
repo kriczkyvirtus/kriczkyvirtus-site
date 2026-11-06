@@ -254,7 +254,10 @@ export default function ReinvestHarvestThankYou({
             <polyline points="4 12 10 18 20 6" stroke={C.green} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           <span style={{ fontSize: 14, color: C.text1, overflowWrap: "anywhere", textAlign: "center" }}>
-            Your scorecard is on its way to <b style={{ color: C.green }}>{email}</b>
+{/* phones: the email gets its own line, so the pill shrinks to the text instead of filling the screen */}
+<style>{`@media (max-width: 600px){ .okpill-email{ display:block } }`}</style>
+
+            Your scorecard is on its way to <b className="okpill-email" style={{ color: C.green }}>{email}</b>
           </span>
         </div>
       </div>}

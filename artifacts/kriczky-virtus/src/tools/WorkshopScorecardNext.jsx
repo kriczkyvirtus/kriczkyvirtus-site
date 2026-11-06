@@ -62,7 +62,10 @@ export default function WorkshopScorecardNext({ report = null }) {
               <polyline points="4 12 10 18 20 6" stroke={T.green.ink} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <span style={{ fontSize: 14, color: C.ink1, overflowWrap: "anywhere", textAlign: "center" }}>
-              Your scorecard is on its way to <b style={{ color: T.green.ink }}>{email}</b>
+{/* phones: the email gets its own line, so the pill shrinks to the text instead of filling the screen */}
+<style>{`@media (max-width: 600px){ .okpill-email{ display:block } }`}</style>
+
+              Your scorecard is on its way to <b className="okpill-email" style={{ color: T.green.ink }}>{email}</b>
             </span>
           </div>
         </div>
