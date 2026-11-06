@@ -27,8 +27,8 @@ const SITE_VSL_SRC = null;          // e.g. "/video/value-drivers-next.mp4"
 const SITE_VSL_POSTER = null;
 const SITE_VSL_LENGTH = "";         // e.g. "1 MIN 40 SEC"
 
-/* ⚠️ Workshop VSL - set once the video is recorded. While null, the page shows a
-   clearly marked placeholder instead of an empty player. */
+/* Workshop VSL - set once the video is recorded. While null, the video and its
+   "Here's how we'll use these scores... Watch this" heading are hidden (6 Nov 2026). */
 const WORKSHOP_VSL_SRC = null;      // e.g. "/video/workshop-value-drivers.mp4"
 const WORKSHOP_VSL_POSTER = null;   // e.g. "/video/workshop-value-drivers-poster.jpg"
 const WORKSHOP_VSL_LENGTH = "";     // e.g. "2 MIN 10 SEC"
@@ -350,6 +350,9 @@ function NextBody({ door = "site", report = null, token = null, C }) {
             </section>
           )}
 
+          {/* Hidden until the workshop video exists: the heading says "Watch this", so it hides with the player.
+              Set WORKSHOP_VSL_SRC (top of file) and both come back. */}
+          {WORKSHOP_VSL_SRC && (<>
           <section style={{ textAlign: "center", padding: "18px 0 22px" }}>
             <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: "clamp(28px,4.4vw,60px)", lineHeight: 1.1, color: C.text1, margin: "0 auto 20px", maxWidth: 1000, textWrap: "balance" }}>
               {first}ere's how we'll use these scores on the day of the workshop.
@@ -358,7 +361,8 @@ function NextBody({ door = "site", report = null, token = null, C }) {
               Watch this before you arrive. It takes a couple of minutes.
             </p>
           </section>
-          <Vsl src={WORKSHOP_VSL_SRC} poster={WORKSHOP_VSL_POSTER} length={WORKSHOP_VSL_LENGTH} placeholder />
+          <Vsl src={WORKSHOP_VSL_SRC} poster={WORKSHOP_VSL_POSTER} length={WORKSHOP_VSL_LENGTH} />
+          </>)}
 
           {resolved && (
             <section style={{ maxWidth: 1040, margin: "0 auto", padding: "10px 0 44px" }}>

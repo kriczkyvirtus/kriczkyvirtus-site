@@ -103,6 +103,8 @@ describe("Value Drivers results email", () => {
     assert.match(r.text, /page 7/);
     assert.match(r.text, /01  Market Position: 4/);
     assert.match(r.text, /10  Leadership Depth: 3/);
-    assert.match(r.html, /workshop-rh\/value-drivers\/next\?t=xyz/);
+    // until the workshop video is recorded the P.S. has no link (restore this check with the video)
+    assert.match(r.text, /two lowest scores/);
+    assert.doesNotMatch(r.text, /video/);
   });
 });
