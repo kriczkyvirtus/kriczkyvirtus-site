@@ -640,6 +640,21 @@ export default function WorkshopPageCream() {
   const [bioOpen, setBioOpen] = useState(false);      /* mobile only - desktop shows it all */
   const bioRef = useRef(null);
 
+  /* Printed QR codes (speaking-event one-pager, priority-list postcard) link to /workshop-rh#dates.
+     The browser tries the jump before React has drawn the page, so do it here once the section
+     exists, then once more after fonts and images settle, since they push it down. */
+  useEffect(() => {
+    if (window.location.hash !== "#dates") return;
+    const go = () => document.getElementById("dates")?.scrollIntoView({ behavior: "auto", block: "start" });
+    go();
+    document.fonts?.ready?.then(go);
+    const t1 = setTimeout(go, 400), t2 = setTimeout(go, 1200);
+    const stop = () => { clearTimeout(t1); clearTimeout(t2); };   // the reader scrolls first: leave them be
+    window.addEventListener("wheel", stop, { once: true, passive: true });
+    window.addEventListener("touchstart", stop, { once: true, passive: true });
+    return () => { stop(); window.removeEventListener("wheel", stop); window.removeEventListener("touchstart", stop); };
+  }, []);
+
   /* On a phone there's no cursor, so scroll position decides what's lit: the card
      nearest the middle of the screen picks up the same gold edge the story cards
      take on hover, and hands it to the next one as you scroll past. It marks where
