@@ -17,7 +17,7 @@ const C = {
 };
 
 /* ── DIMENSIONS (10) ── */
-const DIMS = [
+export const DIMS = [
   {
     key: "d1", num: 1, of: 10,
     title: "SOP Coverage & Documentation",
@@ -347,7 +347,7 @@ const L = {
   ink: "#0A0E14", ink2: "#3E4652", ink3: "#6B6459", ink4: "#8C8476", rule: "#C9C2B4", ruleLight: "#E2DBCD",
 };
 /* Every colour as ink (text on cream), fill (bars, glows) and tint (washes). */
-const TONE = {
+export const TONE = {
   red:   { ink: "#B4403F", fill: "#F87171", tint: "#F6E3DF" },
   amber: { ink: "#9A6A00", fill: "#FBBF24", tint: "#F5EAD0" },
   gold:  { ink: "#7A5C1E", fill: "#C8A24E", tint: "#F1E7D0" },
@@ -358,7 +358,7 @@ const TONE = {
 /* This tool's accent. Structural Capital has always been blue. */
 const A = TONE.blue;
 const TOOL = "Structural Capital";
-const scoreTone = (n) => (!n ? null : TONE[n <= 2 ? "red" : n === 3 ? "amber" : n === 4 ? "gold" : n === 5 ? "cyan" : "green"]);
+export const scoreTone = (n) => (!n ? null : TONE[n <= 2 ? "red" : n === 3 ? "amber" : n === 4 ? "gold" : n === 5 ? "cyan" : "green"]);
 /* BANDS carry the dark-theme fill; map it back to a tone. */
 const bandTone = (b) => Object.values(TONE).find(t => t.fill === b.color) || A;
 const pad2 = (n) => String(n).padStart(2, "0");
@@ -616,14 +616,16 @@ const EmailGate = ({ toolName, toolSlug, storeSlug, scores, summary, onUnlock, o
 /* ═══════════════════════════════════════════════════════════════
    MAIN COMPONENT
    ═══════════════════════════════════════════════════════════════ */
-export default function StructuralCapitalV2() {
-  const [scores, setScores] = useState({});
-  const [checks, setChecks] = useState({});
-  const [gateUnlocked, setGateUnlocked] = useState(false);
-  const [who, setWho] = useState("");
+/* prefill: the question flow (/tools/structural-capital) hands over the owner's scores, ticks and
+   name once they've unlocked, and this renders as their finished report - no gate. */
+export default function StructuralCapitalV2({ prefill = null }) {
+  const [scores, setScores] = useState(() => prefill?.scores || {});
+  const [checks, setChecks] = useState(() => prefill?.checks || {});
+  const [gateUnlocked, setGateUnlocked] = useState(() => !!prefill);
+  const [who, setWho] = useState(() => prefill?.who || "");
   const [busy, setBusy] = useState(false);
   const [shareLabel, setShareLabel] = useState("Share");
-  const savedLink = useRef(null);
+  const savedLink = useRef(prefill?.savedLink || null);
   const [ref, s] = usePageScale();
 
   const setScore = (key, val) => setScores(p => ({ ...p, [key]: val }));
