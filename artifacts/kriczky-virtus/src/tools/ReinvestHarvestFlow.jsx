@@ -1,5 +1,7 @@
 import PageTexture from "../PageTexture.jsx";
 import { useState, useEffect, useRef } from "react";
+import FlowFrame, { useBp, scrollToFlow, CardHead, Option, NavRow } from "./FlowFrame.jsx";
+import { T as KT, Logo, HaloButton } from "../CreamKit.jsx";
 /* Cream, like the report and the printed workbooks. Accents are the deeper
    "ink" versions (see kvTheme.js) so they stay readable on cream. */
 import { LIGHT as C } from "./kvTheme.js";
@@ -8,6 +10,9 @@ import { LIGHT as C } from "./kvTheme.js";
    REINVEST OR HARVEST - 20-STEP FLOW
    Route: /reinvest-harvest/start
    Mobile-first. One question per screen.
+   (22 Nov 2026) Dressed in the /workshop-rh/snapshot frame (FlowFrame.jsx): title,
+   progress bar, the question in a glow card, sample scorecard pages underneath.
+   Questions, scoring and the submit are unchanged.
    ═══════════════════════════════════════════════════════════════ */
 
 /* Selecting an option advances automatically after a short beat.
@@ -249,6 +254,15 @@ const fmtPhone = (v) => {
 };
 
 const TOTAL = STEPS.length;
+
+/* Sample scorecard pages, from a fictional owner's answers ("Sample Owner", "Sample Company"). */
+const RH_SAMPLES = [
+  { n: "01", t: "Your scorecard", src: "/img/rh-sample/page-01.jpg" },
+  { n: "02", t: "Your position", src: "/img/rh-sample/page-02.jpg" },
+  { n: "04", t: "Business capacity, scored", src: "/img/rh-sample/page-04.jpg" },
+  { n: "05", t: "Personal foundation, scored", src: "/img/rh-sample/page-05.jpg" },
+  { n: "06", t: "Your first three moves", src: "/img/rh-sample/page-06.jpg" },
+];
 const BIZ_KEYS = ["b1", "b2", "b3", "b4", "b5"];
 const PERS_KEYS = ["p1", "p2", "p3", "p4", "p5"];
 
@@ -269,9 +283,16 @@ export default function ReinvestHarvestFlow({ door = "site" }) {
   const [done, setDone] = useState(false);
   const [captureFailed, setCaptureFailed] = useState(false);
   const topRef = useRef(null);
+  const barRef = useRef(null);
   const partialSent = useRef(false);
+  const mob = useBp();
+  const first = useRef(null);   /* the step last scrolled to; the first paint stays at the top */
 
-  useEffect(() => { topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }, [step]);
+  useEffect(() => {
+    if (first.current === null || first.current === step + (done ? 1000 : 0)) { first.current = step + (done ? 1000 : 0); return; }
+    first.current = step + (done ? 1000 : 0);
+    scrollToFlow(topRef.current, barRef.current);
+  }, [step]);
 
   const S = STEPS[step];
   const bizScore = BIZ_KEYS.reduce((a, k) => a + (scores[k] || 0), 0);
@@ -368,44 +389,12 @@ export default function ReinvestHarvestFlow({ door = "site" }) {
     }
   };
 
-  /* ── shared styles ── */
+  /* ── shared styles (the teaser) ── */
   const shell = { background: C.bgDeep, minHeight: "100vh", fontFamily: "'DM Sans',sans-serif", color: C.text1, position: "relative", isolation: "isolate" };
   const wrap = { maxWidth: 620, margin: "0 auto", padding: "0 20px 60px" };
-  const qStyle = { fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(27px,6.6vw,38px)", lineHeight: 1.16, margin: "0 0 10px", color: C.text1 };
-  const subStyle = { fontSize: 14.5, lineHeight: 1.55, color: C.text3, margin: "0 0 20px" };
-
-  const optionCard = (label, selected, onClick, letter, compact = false) => (
-    <div key={label} onClick={onClick} className="opt"
-      style={{
-        display: "flex", alignItems: "center", gap: 14, padding: compact ? "14px 16px" : "17px 16px", marginBottom: compact ? 8 : 10,
-        borderRadius: 12, cursor: "pointer", userSelect: "none", transition: "all .18s ease",
-        background: selected ? `${C.gold}18` : C.surface,
-        border: `1.5px solid ${selected ? C.gold : C.line}`,
-        boxShadow: selected ? `0 0 20px ${C.gold}22` : C.shadowCard,
-      }}>
-      <span style={{
-        flexShrink: 0, width: 30, height: 30, borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: 12, fontWeight: 700, transition: "all .18s ease",
-        background: selected ? C.gold : "transparent",
-        border: `1.5px solid ${selected ? C.gold : C.lineHi}`,
-        color: selected ? C.onAccent : C.text3,
-      }}>{letter}</span>
-      <span style={{ fontSize: 15.5, lineHeight: 1.35, color: selected ? C.text1 : C.text2 }}>{label}</span>
-    </div>
-  );
-
   const ALPHA = "ABCDEFGH";
-
-  const PrevButton = () => step === 0 ? null : (
-    <button onClick={back} className="prev"
-      style={{ display: "inline-block", marginTop: 16, padding: "9px 24px", borderRadius: 10,
-        background: C.surfaceCard, border: `1.5px solid ${C.lineHi}`,
-        cursor: "pointer", color: C.text2, fontSize: 20, fontWeight: 700,
-        fontFamily: "'DM Sans',sans-serif", lineHeight: 1.1, transition: "all .2s ease" }}>
-      Previous
-    </button>
-  );
-
+  const btn = (label, onClick, extra = {}) => <HaloButton onClick={onClick} size={15} style={{ padding: "14px 28px", ...extra }}>{label}</HaloButton>;
+  const answered = S.type === "score" ? scores[S.key] != null : (S.type === "choice" && S.key in answers);
 
   /* ═══ TEASER ═══ */
   if (done) {
@@ -415,7 +404,8 @@ export default function ReinvestHarvestFlow({ door = "site" }) {
       <div style={shell}>
         <PageTexture />
         <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
-        <div style={{ ...wrap, paddingTop: 80, textAlign: "center" }}>
+        <div style={{ ...wrap, paddingTop: 26, textAlign: "center" }}>
+          <Logo style={{ marginBottom: 50 }} />
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: quadrant.color, marginBottom: 14 }}>Your position</div>
           <h1 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(34px,8.4vw,52px)", lineHeight: 1.1, textTransform: "uppercase", letterSpacing: ".01em", color: quadrant.color, margin: "0 0 22px" }}>
             {quadrant.label}
@@ -457,68 +447,49 @@ export default function ReinvestHarvestFlow({ door = "site" }) {
   }
 
   /* ═══ FLOW ═══ */
+  const label = S.type === "contact" ? "Your information"
+    : S.type === "score" ? (S.pillar === "biz" ? "Business Capacity" : "Personal Foundation")
+    : S.type === "choice" ? "About you"
+    : S.type === "interstitial" ? S.kicker : "Last step";
+  const tone = S.type === "score" ? (S.pillar === "biz" ? KT.gold : KT.green) : KT.gold;
   return (
-    <div style={shell} ref={topRef}>
-        <PageTexture />
-      <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
-      <style>{`
-        *{box-sizing:border-box}
-        input,select{font-family:'DM Sans',sans-serif}
-        body{background:${C.bgDeep}}
-        .opt:hover{background:${C.surfaceHi}!important;border-color:${C.lineHover}!important}
-        .prev:hover{color:${C.text1}!important;border-color:${C.lineHover}!important;background:${C.surfaceHi}!important}
-        .btn:hover{box-shadow:0 0 34px ${C.btnGlow}!important;border-color:${C.btnLineHover}!important}
-         @media (max-width:430px) and (max-height:860px){
-           .flow-wrap{padding-top:18px!important}
-           .opt{padding:12px 14px!important;margin-bottom:7px!important}
-           .prev{margin-top:10px!important}
-         }
-      `}</style>
-
-      {/* progress */}
-      <div style={{ position: "sticky", top: 0, zIndex: 10, background: `${C.bgDeep}f2`, backdropFilter: "blur(8px)" }}>
-        <div style={{ height: 3, background: C.lineSoft }}>
-          <div style={{ height: "100%", width: `${((step + 1) / TOTAL) * 100}%`, background: `linear-gradient(90deg,${C.goldLight},${C.gold})`, transition: "width .35s ease", boxShadow: `0 0 10px ${C.gold}66` }} />
-        </div>
-        <div style={{ maxWidth: 620, margin: "0 auto", padding: "14px 20px", textAlign: "right" }}>
-          <span style={{ fontSize: 13, color: C.text3 }}>{step + 1} <span style={{ color: C.text4 }}>of</span> {TOTAL}</span>
-        </div>
-      </div>
-
-      <div className="flow-wrap" style={{ ...wrap, paddingTop: 26, position: "relative", zIndex: 1 }}>
+    <FlowFrame A={KT.gold} topRef={topRef} barRef={barRef}
+      kicker={workshop ? "Reinvest or Harvest Workshop · Pre-work" : "The Reinvest or Harvest Scorecard"}
+      title={<>Where should your next dollar of profit go - <span style={{ color: KT.gold.ink, fontStyle: "italic", fontWeight: 500 }}>back into the business</span>, or <span style={{ color: KT.green.ink, fontStyle: "italic", fontWeight: 500 }}>out to you</span>?</>}
+      progress={{ label: `Step ${step + 1} of ${TOTAL}`, pct: Math.round((step / TOTAL) * 100) }}
+      samples={{ kicker: "Your Reinvest or Harvest scorecard", pages: RH_SAMPLES,
+        text: "Sample pages from a finished scorecard. Yours is built from your answers: your position, both scores, and your first three moves." }}>
+      <div className="ff-step" key={step}>
+        <CardHead n={step + 1} label={label} labelTone={tone} mob={mob} A={KT.gold}
+          q={S.type === "contact" ? "Before we start - where should we send your results?" : S.type === "final" ? "That's everything." : S.type === "interstitial" ? S.title : S.q}
+          sub={S.type === "contact" ? "Your scorecard lands in your inbox the moment you finish." : S.type === "final" ? null : S.sub} />
 
         {/* ── CONTACT ── */}
         {S.type === "contact" && (
           <>
-            <h1 style={qStyle}>Before we start - where should we send your results?</h1>
-            <p style={subStyle}>Your scorecard lands in your inbox the moment you finish.</p>
-            {[
-              { k: "first", ph: "First name", type: "text" },
-              { k: "last", ph: "Last name", type: "text" },
-              { k: "company", ph: "Company name", type: "text" },
-              { k: "email", ph: "Email address", type: "email" },
-              { k: "phone", ph: "Phone number", type: "tel" },
-            ].map(f => (
-              <input key={f.k} type={f.type} placeholder={f.ph} value={contact[f.k]}
-                onChange={e => { const v = f.k === "phone" ? fmtPhone(e.target.value) : e.target.value; setContact(c => ({ ...c, [f.k]: v })); setErr(""); }}
-                inputMode={f.k === "phone" ? "tel" : undefined} maxLength={f.k === "phone" ? 12 : undefined}
-                style={{ width: "100%", padding: "16px 16px", marginBottom: 10, borderRadius: 11, background: C.input, border: `1px solid ${C.inputLine}`, color: C.text1, fontSize: 15.5, outline: "none" }}
-                onFocus={e => e.target.style.borderColor = `${C.gold}88`}
-                onBlur={e => e.target.style.borderColor = C.inputLine} />
-            ))}
-            {err && <p style={{ color: C.red, fontSize: 13.5, margin: "4px 0 12px" }}>{err}</p>}
-            <button className="btn" onClick={() => {
+            <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: 10 }}>
+              {[
+                { k: "first", ph: "First name", type: "text", ac: "given-name" },
+                { k: "last", ph: "Last name", type: "text", ac: "family-name" },
+                { k: "company", ph: "Company name", type: "text", ac: "organization", wide: true },
+                { k: "email", ph: "Email address", type: "email", ac: "email", wide: true },
+                { k: "phone", ph: "Phone number", type: "tel", ac: "tel", wide: true },
+              ].map(f => (
+                <input key={f.k} className="ff-in" type={f.type} placeholder={f.ph} value={contact[f.k]} autoComplete={f.ac}
+                  onChange={e => { const v = f.k === "phone" ? fmtPhone(e.target.value) : e.target.value; setContact(c => ({ ...c, [f.k]: v })); setErr(""); }}
+                  inputMode={f.k === "phone" ? "tel" : undefined} maxLength={f.k === "phone" ? 12 : undefined}
+                  style={f.wide && !mob ? { gridColumn: "1 / -1" } : undefined} />
+              ))}
+            </div>
+            {err && <p style={{ color: KT.red.ink, fontSize: 13.5, margin: "10px 0 0" }}>{err}</p>}
+            <NavRow mob={mob} right={btn("Continue", () => {
               const e = contactValid();
               if (e) { setErr(e); return; }
               sendPartial();
               next();
-            }}
-              style={{ width: "100%", padding: "18px 0", marginTop: 8, borderRadius: 12, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 16, color: C.btnText, background: C.btnBg, border: `1.5px solid ${C.btnLine}`, transition: "all .25s ease" }}>
-              Continue →
-            </button>
-            {/* Matches the consent wording on /free-session. Privacy Policy and Terms are
-                named but not linked - neither page exists as a route yet. */}
-            <p style={{ fontSize: 10.5, lineHeight: 1.55, color: C.text4, textAlign: "center", marginTop: 14 }}>
+            })} />
+            {/* Matches the consent wording on /free-session. */}
+            <p style={{ fontSize: 10.5, lineHeight: 1.55, color: C.text4, textAlign: "center", margin: "14px 0 0" }}>
               By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our Privacy Policy and Terms of Service.
             </p>
           </>
@@ -527,96 +498,61 @@ export default function ReinvestHarvestFlow({ door = "site" }) {
         {/* ── SCORE / CHOICE ── */}
         {(S.type === "score" || S.type === "choice") && (
           <>
-            {S.pillar && (
-              <div style={{ display: "inline-block", padding: "4px 11px", borderRadius: 5, marginBottom: 14, background: `${S.pillar === "biz" ? C.gold : C.green}14`, border: `1px solid ${S.pillar === "biz" ? C.gold : C.green}40` }}>
-                <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: S.pillar === "biz" ? C.gold : C.green }}>
-                  {S.pillar === "biz" ? "Business Capacity" : "Personal Foundation"}
-                </span>
-              </div>
-            )}
-            <h1 style={qStyle}>{S.q}</h1>
-            {S.sub && <p style={subStyle}>{S.sub}</p>}
-            {!S.sub && <div style={{ height: 14 }} />}
-            {S.options.map((o, i) => {
-              const val = S.type === "score" ? o.s : o.v;
-              const cur = S.type === "score" ? scores[S.key] : answers[S.key];
-              const sel = S.type === "score" ? cur === o.s : (S.key in answers && cur === o.v);
-              return optionCard(o.t, sel, () => pick(val), ALPHA[i], S.options.length > 6);
-            })}
-            {!AUTO_ADVANCE && (
-              <button className="btn" onClick={next}
-                style={{ width: "100%", padding: "17px 0", marginTop: 14, borderRadius: 12, cursor: "pointer", fontWeight: 700, fontSize: 16, color: C.btnText, background: C.btnBg, border: `1.5px solid ${C.btnLine}` }}>
-                Next →
-              </button>
-            )}
-            <PrevButton />
+            <div role="radiogroup">
+              {S.options.map((o, i) => {
+                const val = S.type === "score" ? o.s : o.v;
+                const cur = S.type === "score" ? scores[S.key] : answers[S.key];
+                const sel = S.type === "score" ? cur === o.s : (S.key in answers && cur === o.v);
+                return <Option key={o.t} letter={ALPHA[i]} label={o.t} on={sel} onClick={() => pick(val)} />;
+              })}
+            </div>
+            <NavRow mob={mob} onBack={back} right={(!AUTO_ADVANCE || answered) ? btn("Next", next) : null} />
           </>
         )}
 
         {/* ── INTERSTITIAL ── */}
         {S.type === "interstitial" && (
           <>
-            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: C.gold, marginBottom: 16 }}>{S.kicker}</div>
-            {S.stat && (
-              <div style={{ display: "inline-block", padding: "14px 24px 16px", marginBottom: 16, borderRadius: 14, background: C.statBg, border: `1px solid ${C.goldLight}66`, boxShadow: C.statShadow }}>
-                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(44px,13vw,66px)", fontWeight: 700, color: C.statText, lineHeight: 1, whiteSpace: "nowrap" }}>{S.stat}</div>
-              </div>
-            )}
-            <h1 style={{ ...qStyle, fontSize: S.stat ? "clamp(20px,4.8vw,26px)" : "clamp(27px,6.6vw,38px)", fontWeight: S.stat ? 500 : 700 }}>{S.title}</h1>
-            {S.cite && <p style={{ fontSize: 12, fontStyle: "italic", color: C.text4, margin: "0 0 22px" }}>{S.cite}</p>}
-
             {S.body && (
-              <div style={{ margin: "22px 0" }}>
+              <div style={{ margin: "6px 0 10px" }}>
                 {S.body.map(b => (
-                  <div key={b.label} style={{ padding: "16px 18px", marginBottom: 12, borderRadius: 12, background: `linear-gradient(135deg,#FFFFFF 55%,${b.color}10)`, border: `1px solid ${b.color}2e`, boxShadow: C.shadowCard }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: b.color, marginBottom: 6 }}>{b.label}</div>
+                  <div key={b.label} style={{ padding: "14px 16px", marginBottom: 10, borderRadius: 12, background: `linear-gradient(135deg,#FFFFFF 55%,${b.color}10)`, border: `1px solid ${b.color}2e`, boxShadow: C.shadowCard }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: b.color, marginBottom: 5 }}>{b.label}</div>
                     <div style={{ fontSize: 15, lineHeight: 1.5, color: C.text2 }}>{b.text}</div>
                   </div>
                 ))}
               </div>
             )}
-
             {S.list && (
-              <div style={{ margin: "22px 0" }}>
+              <div style={{ margin: "6px 0 10px" }}>
                 {S.list.map(item => (
-                  <div key={item} style={{ display: "flex", gap: 11, alignItems: "flex-start", marginBottom: 13 }}>
+                  <div key={item} style={{ display: "flex", gap: 11, alignItems: "flex-start", marginBottom: 11 }}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 3 }}>
-                      <polyline points="4 12 10 18 20 6" stroke={C.gold} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+                      <polyline points="4 12 10 18 20 6" stroke={KT.gold.ink} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                     <span style={{ fontSize: 15, lineHeight: 1.5, color: C.text2 }}>{item}</span>
                   </div>
                 ))}
               </div>
             )}
-
-            {S.foot && <p style={{ fontSize: 15, lineHeight: 1.6, color: C.text2, margin: "0 0 8px" }}>{S.foot}</p>}
-
-            <button className="btn" onClick={next}
-              style={{ width: "100%", padding: "18px 0", marginTop: 26, borderRadius: 12, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 16, color: C.btnText, background: C.btnBg, border: `1.5px solid ${C.btnLine}`, transition: "all .25s ease" }}>
-              Continue →
-            </button>
-            <PrevButton />
+            {S.foot && <p style={{ fontSize: 15, lineHeight: 1.6, color: C.text2, margin: "0 0 4px" }}>{S.foot}</p>}
+            <NavRow mob={mob} onBack={back} right={btn("Continue", next)} />
           </>
         )}
 
         {/* ── FINAL ── */}
         {S.type === "final" && (
           <>
-            <h1 style={qStyle}>That's everything.</h1>
-            <p style={subStyle}>
-              Your position and your full scorecard are ready. We'll show you where you landed, then email the complete report to <b style={{ color: C.text2 }}>{contact.email}</b>.
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: C.text2, margin: "0 0 4px" }}>
+              Your position and your full scorecard are ready. We'll show you where you landed, then email the complete report to <b style={{ color: C.text1 }}>{contact.email}</b>.
             </p>
-            <button className="btn" onClick={submit} disabled={sending}
-              style={{ width: "100%", padding: "20px 0", borderRadius: 12, cursor: sending ? "wait" : "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 17, color: C.btnText, background: C.btnBg, border: `1.5px solid ${C.btnLine}`, boxShadow: `0 0 26px ${C.btnGlow}`, opacity: sending ? .7 : 1, transition: "all .25s ease" }}>
-              {sending ? "Scoring your answers…" : "SHOW ME MY POSITION →"}
-            </button>
-            <p style={{ fontSize: 11.5, lineHeight: 1.55, color: C.text4, textAlign: "center", marginTop: 16 }}>
+            <NavRow mob={mob} onBack={back} right={<HaloButton onClick={submit} disabled={sending} size={15.5} style={{ padding: "15px 28px" }}>{sending ? "Scoring your answers…" : "Show me my position"}</HaloButton>} />
+            <p style={{ fontSize: 11.5, lineHeight: 1.55, color: C.text4, textAlign: "center", margin: "14px 0 0" }}>
               Educational self-assessment only. Not individualized financial, tax, or legal advice.
             </p>
-            <PrevButton />
           </>
         )}
       </div>
-    </div>
+    </FlowFrame>
   );
 }

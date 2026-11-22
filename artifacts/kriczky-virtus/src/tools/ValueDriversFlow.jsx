@@ -1,6 +1,8 @@
 import PageTexture from "../PageTexture.jsx";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { LIGHT, ThemeProvider, useT } from "./kvTheme.js";
+import FlowFrame, { useBp, scrollToFlow, CardHead, Option, NavRow, Story } from "./FlowFrame.jsx";
+import { T as KT, Logo, HaloButton } from "../CreamKit.jsx";
 import {
   GRAIN, PILLARS, PILLAR_MAX, DRIVER_KEYS, DRIVER_NAMES, ATTRACT_KEYS,
   zoneByKey, score, buildSteps, NEXT_PATH, scoreColor,
@@ -15,6 +17,11 @@ import {
 
    Workshop link from ActiveCampaign carries the contact, so the contact
    step is skipped:  /workshop-rh/value-drivers?e=%EMAIL%&n=%FIRSTNAME%
+
+   (22 Nov 2026) Dressed in the /workshop-rh/snapshot frame (FlowFrame.jsx): title,
+   progress bar, the question in a glow card, sample report pages underneath. The
+   driver description opens as two faded lines that glide open. Questions, scoring,
+   saved progress and the submit are unchanged.
    ═══════════════════════════════════════════════════════════════ */
 
 /* Selecting an option advances automatically after a short beat. */
@@ -64,6 +71,15 @@ const clearProgress = (door) => {
 };
 const ALPHA = "ABCDEFGH";
 
+/* Sample report pages, from a fictional owner's answers ("Sample Owner", "Sample Company"). */
+const VD_SAMPLES = [
+  { n: "01", t: "Your Value Drivers report", src: "/img/vd-sample/page-01.jpg" },
+  { n: "02", t: "Your zone", src: "/img/vd-sample/page-02.jpg" },
+  { n: "03", t: "Business attractiveness, scored", src: "/img/vd-sample/page-03.jpg" },
+  { n: "05", t: "What closing the gap is worth", src: "/img/vd-sample/page-05.jpg" },
+  { n: "07", t: "Your first three moves", src: "/img/vd-sample/page-07.jpg" },
+];
+
 /* Module scope, never inside the page function - a component defined inside
    remounts on every state change (the SliderBlock bug). */
 const OptionCard = ({ label, selected, onClick, letter, compact }) => { const C = useT(); return (
@@ -98,7 +114,7 @@ const CheckRow = ({ text, sub, checked, onToggle }) => { const C = useT(); retur
     </svg>
     <div style={{ flex: 1 }}>
       <div style={{ fontSize: 15, lineHeight: 1.45, color: checked ? C.text1 : C.text2, transition: "color .2s" }}>{text}</div>
-      {sub && <div style={{ fontSize: 13, lineHeight: 1.5, color: C.text3, marginTop: 4 }}>{sub}</div>}
+      {sub && <div className="chk-sub" style={{ fontSize: 13, lineHeight: 1.5, color: C.text3, marginTop: 4 }}>{sub}</div>}
     </div>
   </div>
 ); };
@@ -113,7 +129,7 @@ function Characteristics({ items, checked, onToggle }) {
   const [full, setFull] = useState(0);
   const boxRef = useRef(null);
   const restRef = useRef(null);
-  const PREVIEW_H = 50;
+  const PREVIEW_H = typeof window !== "undefined" && window.innerWidth < 768 ? 36 : 50;
   useEffect(() => {
     const measure = () => { if (restRef.current) setFull(restRef.current.scrollHeight); };
     measure();
@@ -298,9 +314,17 @@ function FlowBody({ door, C }) {
   const [token, setToken] = useState(null);
   const [captureFailed, setCaptureFailed] = useState(false);
   const topRef = useRef(null);
+  const barRef = useRef(null);
   const partialSent = useRef(false);
+  const mob = useBp();
+  const firstPaint = useRef(null);   /* the step last scrolled to; the first paint stays at the top */
 
-  useEffect(() => { topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }, [step, done]);
+  useEffect(() => {
+    if (firstPaint.current === null || firstPaint.current === step + (done ? 1000 : 0)) { firstPaint.current = step + (done ? 1000 : 0); return; }
+    firstPaint.current = step + (done ? 1000 : 0);
+    if (done) { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+    scrollToFlow(topRef.current, barRef.current);
+  }, [step, done]);
 
   /* Save after every answer once they're past the contact screen. */
   useEffect(() => {
@@ -451,16 +475,6 @@ function FlowBody({ door, C }) {
   );
   const grain = C.grain ? <div style={{ position: "fixed", inset: 0, pointerEvents: "none", opacity: C.grain, mixBlendMode: "overlay", backgroundImage: GRAIN, backgroundSize: "128px 128px", zIndex: 0 }} /> : null;
 
-  const PrevButton = step === 0 ? null : (
-    <button onClick={back} className="prev"
-      style={{ display: "inline-block", marginTop: 16, padding: "9px 24px", borderRadius: 10,
-        background: C.surfaceCard, border: `1.5px solid ${C.lineHi}`,
-        cursor: "pointer", color: C.text2, fontSize: 20, fontWeight: 700,
-        fontFamily: "'DM Sans',sans-serif", lineHeight: 1.1, transition: "all .2s ease" }}>
-      Previous
-    </button>
-  );
-
   /* ═══ RESULT ═══ */
   if (done) {
     const guessZone = answers.guess ? zoneByKey(answers.guess) : null;
@@ -473,7 +487,8 @@ function FlowBody({ door, C }) {
       <div style={shell} ref={topRef}>
         <PageTexture />
         {fonts}{css}{grain}
-        <div style={{ ...wrap, paddingTop: 70, textAlign: "center", position: "relative", zIndex: 1 }}>
+        <div style={{ ...wrap, paddingTop: 26, textAlign: "center", position: "relative", zIndex: 1 }}>
+          <Logo style={{ marginBottom: 44 }} />
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: zc, marginBottom: 14 }}>Your zone</div>
           <h1 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(34px,8.4vw,52px)", lineHeight: 1.1, textTransform: "uppercase", letterSpacing: ".01em", color: zc, margin: "0 0 18px" }}>
             {zone.label}
@@ -528,68 +543,67 @@ function FlowBody({ door, C }) {
   }
 
   /* ═══ FLOW ═══ */
+  const btn = (label, onClick) => <HaloButton onClick={onClick} size={15} style={{ padding: "14px 28px" }}>{label}</HaloButton>;
+  const answered = S.type === "score" || S.type === "rate" ? scores[S.key] != null : (S.type === "choice" && S.key in answers);
+  const pill = S.pillar ? PILLARS[S.pillar] : null;
+  const pillTone = pill ? { ink: C.t(pill.color), fill: C.t(pill.color), tint: `${C.t(pill.color)}14` } : null;
+  const label = S.type === "contact" ? "Your information"
+    : S.type === "rate" ? `Driver ${String(DRIVER_KEYS.indexOf(S.key) + 1).padStart(2, "0")} of 10 · ${pill.long}`
+    : pill ? pill.long
+    : S.type === "choice" ? "About you"
+    : S.type === "interstitial" ? S.kicker : "Last step";
+  const q = S.type === "contact" ? (door === "workshop" ? "Before we start - confirm it's you." : "Before we start - where should we send your results?")
+    : S.type === "final" ? "That's everything." : S.type === "interstitial" ? null : S.type === "rate" ? S.title : S.q;
+  const sub = S.type === "contact" ? (door === "workshop" ? "Use the email you registered for the workshop with, so your results land on your seat." : "Your results land in your inbox the moment you finish.")
+    : (S.type === "score" || S.type === "choice") ? S.sub : null;
   return (
-    <div style={shell} ref={topRef}>
-        <PageTexture />
-      {fonts}{css}{grain}
-
-      {/* progress */}
-      <div style={{ position: "sticky", top: 0, zIndex: 10, background: `${C.bgDeep}f2`, backdropFilter: "blur(8px)" }}>
-        <div style={{ height: 3, background: C.lineSoft }}>
-          <div style={{ height: "100%", width: `${((step + 1) / TOTAL) * 100}%`, background: C.light ? `linear-gradient(90deg,${C.goldLight},${C.gold})` : `linear-gradient(90deg,${C.gold},${C.goldLight})`, transition: "width .35s ease", boxShadow: `0 0 10px ${C.gold}66` }} />
-        </div>
-        <div style={{ maxWidth: 620, margin: "0 auto", padding: "14px 20px", display: "flex", justifyContent: "space-between" }}>
-          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: C.text4 }}>
-            {door === "workshop" ? "Workshop pre-work · Value Drivers" : "Value Drivers"}
+    <FlowFrame A={KT.gold} topRef={topRef} barRef={barRef}
+      kicker={door === "workshop" ? "Reinvest or Harvest Workshop · Pre-work" : "Value Drivers"}
+      title={<>What's my business <span style={{ color: KT.gold.ink, fontStyle: "italic", fontWeight: 500 }}>worth</span>, and what drives it?</>}
+      progress={{ label: `Step ${step + 1} of ${TOTAL}`, pct: Math.round((step / TOTAL) * 100) }}
+      samples={{ kicker: "Your Value Drivers report", pages: VD_SAMPLES,
+        text: "Sample pages from a finished report. Yours is built from your ten scores: your zone, both pillars, and where to focus first.", caption: "Sample business. Scores and figures are illustrative." }}>
+      {resumed && (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "11px 14px", marginBottom: 16, borderRadius: 10,
+          background: `${C.green}10`, border: `1px solid ${C.green}33`, fontSize: 13.5, color: C.text1 }}>
+          <span>Welcome back{contact.first ? `, ${contact.first}` : ""} - we saved your answers. Picking up where you left off.</span>
+          <span style={{ display: "flex", gap: 12, flexShrink: 0 }}>
+            <button onClick={startOver} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: C.text3, fontSize: 12.5, textDecoration: "underline", fontFamily: "'DM Sans',sans-serif" }}>Start over</button>
+            <button onClick={() => setResumed(false)} aria-label="Dismiss" style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: C.text3, fontSize: 16, lineHeight: 1 }}>×</button>
           </span>
-          <span style={{ fontSize: 13, color: C.text3 }}>{step + 1} <span style={{ color: C.text4 }}>of</span> {TOTAL}</span>
         </div>
-      </div>
-
-      <div className="flow-wrap" style={{ ...wrap, paddingTop: 26, position: "relative", zIndex: 1 }}>
-        {resumed && (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "11px 14px", marginBottom: 18, borderRadius: 10,
-            background: `${C.green}10`, border: `1px solid ${C.green}33`, fontSize: 13.5, color: C.text1 }}>
-            <span>Welcome back{contact.first ? `, ${contact.first}` : ""} - we saved your answers. Picking up where you left off.</span>
-            <span style={{ display: "flex", gap: 12, flexShrink: 0 }}>
-              <button onClick={startOver} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: C.text3, fontSize: 12.5, textDecoration: "underline", fontFamily: "'DM Sans',sans-serif" }}>Start over</button>
-              <button onClick={() => setResumed(false)} aria-label="Dismiss" style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: C.text3, fontSize: 16, lineHeight: 1 }}>×</button>
-            </span>
-          </div>
-        )}
+      )}
+      {/* On a phone the checklist's fine print hides, so the score buttons sit on screen (as on the capital deep dives). */}
+      <style>{`@media (max-width: 767px) { .chk-sub { display: none; } .chk { padding: 9px 0 !important; } .chk > div > div:first-child { font-size: 14px !important; } .more { padding: 9px 0 !important; margin: 6px 0 4px !important; } }`}</style>
+      <div className="ff-step" key={step}>
+        <CardHead n={step + 1} label={label} labelTone={pillTone} mob={mob} A={KT.gold} q={q} sub={sub} />
 
         {/* ── CONTACT ── */}
         {S.type === "contact" && (
           <>
-            <h1 style={qStyle}>
-              {door === "workshop" ? "Before we start - confirm it's you." : "Before we start - where should we send your results?"}
-            </h1>
-            <p style={subStyle}>
-              {door === "workshop" ? "Use the email you registered for the workshop with, so your results land on your seat." : "Your results land in your inbox the moment you finish."}
-            </p>
-            {[
-              { k: "first", ph: "First name", type: "text" },
-              { k: "last", ph: "Last name", type: "text" },
-              ...(door === "site" ? [{ k: "company", ph: "Company name", type: "text" }] : []),
-              { k: "email", ph: "Email address", type: "email" },
-              ...(door === "site" ? [{ k: "phone", ph: "Phone number", type: "tel" }] : []),
-            ].map(f => (
-              <input key={f.k} type={f.type} placeholder={f.ph} value={contact[f.k]}
-                onChange={e => { const v = f.k === "phone" ? fmtPhone(e.target.value) : e.target.value; setContact(c => ({ ...c, [f.k]: v })); setErr(""); }}
-                inputMode={f.k === "phone" ? "tel" : undefined} maxLength={f.k === "phone" ? 12 : undefined}
-                style={{ width: "100%", padding: "16px 16px", marginBottom: 10, borderRadius: 11, background: C.input, border: `1px solid ${C.inputLine}`, color: C.text1, fontSize: 15.5, outline: "none" }}
-                onFocus={e => e.target.style.borderColor = `${C.gold}88`}
-                onBlur={e => e.target.style.borderColor = C.inputLine} />
-            ))}
-            {err && <p style={{ color: C.red, fontSize: 13.5, margin: "4px 0 12px" }}>{err}</p>}
-            <GoldButton onClick={() => {
+            <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: 10 }}>
+              {[
+                { k: "first", ph: "First name", type: "text", ac: "given-name" },
+                { k: "last", ph: "Last name", type: "text", ac: "family-name" },
+                ...(door === "site" ? [{ k: "company", ph: "Company name", type: "text", ac: "organization", wide: true }] : []),
+                { k: "email", ph: "Email address", type: "email", ac: "email", wide: true },
+                ...(door === "site" ? [{ k: "phone", ph: "Phone number", type: "tel", ac: "tel", wide: true }] : []),
+              ].map(f => (
+                <input key={f.k} className="ff-in" type={f.type} placeholder={f.ph} value={contact[f.k]} autoComplete={f.ac}
+                  onChange={e => { const v = f.k === "phone" ? fmtPhone(e.target.value) : e.target.value; setContact(c => ({ ...c, [f.k]: v })); setErr(""); }}
+                  inputMode={f.k === "phone" ? "tel" : undefined} maxLength={f.k === "phone" ? 12 : undefined}
+                  style={f.wide && !mob ? { gridColumn: "1 / -1" } : undefined} />
+              ))}
+            </div>
+            {err && <p style={{ color: KT.red.ink, fontSize: 13.5, margin: "10px 0 0" }}>{err}</p>}
+            <NavRow mob={mob} right={btn("Continue", () => {
               const e = contactValid();
               if (e) { setErr(e); return; }
               sendPartial();
               next();
-            }}>Continue →</GoldButton>
+            })} />
             {/* Matches the consent wording on /free-session and the scorecard. */}
-            <p style={{ fontSize: 10.5, lineHeight: 1.55, color: C.text4, textAlign: "center", marginTop: 14 }}>
+            <p style={{ fontSize: 10.5, lineHeight: 1.55, color: C.text4, textAlign: "center", margin: "14px 0 0" }}>
               By providing your information you consent to Kriczky Virtus, LLC contacting you by phone, text, or email using automated telephone dialing systems and AI to the information provided, even if the phone number is present on a state or national Do Not Call List. We do not sell your personal information. By providing this information you agree to our Privacy Policy and Terms of Service.
             </p>
           </>
@@ -598,115 +612,87 @@ function FlowBody({ door, C }) {
         {/* ── SCORE / CHOICE ── */}
         {(S.type === "score" || S.type === "choice") && (
           <>
-            {S.pillar && (
-              <div style={{ display: "inline-flex", alignItems: "center", height: 26, padding: "0 11px", borderRadius: 5, marginBottom: 14, background: `${C.t(PILLARS[S.pillar].color)}14`, border: `1px solid ${C.t(PILLARS[S.pillar].color)}40` }}>
-                <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".12em", lineHeight: 1, textTransform: "uppercase", color: C.t(PILLARS[S.pillar].color) }}>
-                  {PILLARS[S.pillar].long}
-                </span>
-              </div>
-            )}
-            <h1 style={qStyle}>{S.q}</h1>
-            {S.sub ? <p style={subStyle}>{S.sub}</p> : <div style={{ height: 14 }} />}
-            {S.options.map((o, i) => {
-              const val = S.type === "score" ? o.s : o.v;
-              const sel = S.type === "score" ? scores[S.key] === o.s : (S.key in answers && answers[S.key] === o.v);
-              return <OptionCard key={o.t} label={o.t} selected={sel} onClick={() => pick(val)} letter={ALPHA[i]} compact={S.options.length > 6} />;
-            })}
-            {!AUTO_ADVANCE && <GoldButton onClick={next}>Next →</GoldButton>}
-            {PrevButton}
+            <div role="radiogroup">
+              {S.options.map((o, i) => {
+                const val = S.type === "score" ? o.s : o.v;
+                const sel = S.type === "score" ? scores[S.key] === o.s : (S.key in answers && answers[S.key] === o.v);
+                return <Option key={o.t} letter={ALPHA[i]} label={o.t} on={sel} onClick={() => pick(val)} />;
+              })}
+            </div>
+            <NavRow mob={mob} onBack={step > 0 ? back : null} right={(!AUTO_ADVANCE || answered) ? btn("Next", next) : null} />
           </>
         )}
 
         {/* ── DRIVER: check what's true, then rate 1–6 ── */}
-        {S.type === "rate" && (() => {
-          const p = { ...PILLARS[S.pillar], color: C.t(PILLARS[S.pillar].color) };
-          const n = DRIVER_KEYS.indexOf(S.key) + 1;
-          return (
-            <>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 14 }}>
-                <div style={{ display: "inline-flex", alignItems: "center", height: 26, padding: "0 11px", borderRadius: 5, background: `${p.color}14`, border: `1px solid ${p.color}40` }}>
-                  <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".12em", lineHeight: 1, textTransform: "uppercase", color: p.color }}>{p.long}</span>
-                </div>
-                <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: C.text3 }}>
-                  Driver {String(n).padStart(2, "0")} of 10
-                </span>
-              </div>
-              <h1 style={qStyle}>{S.title}</h1>
-              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: p.color, margin: "0 0 14px", lineHeight: 1.45 }}>{S.subtitle}</div>
-              <Description key={`d-${S.key}`} text={S.description} />
-              <Characteristics key={`c-${S.key}`} items={S.checklist} checked={checks[S.key] || []} onToggle={(i) => toggleCheck(S.key, i)} />
-
-              <RateYourself value={scores[S.key]} onChange={rate} lowLabel={S.lowLabel} highLabel={S.highShort || S.highLabel} />
-              {PrevButton}
-            </>
-          );
-        })()}
+        {S.type === "rate" && (
+          <>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: pillTone.ink, margin: "-2px 0 10px", lineHeight: 1.45 }}>{S.subtitle}</div>
+            <div style={{ marginBottom: 14 }}><Story key={`d-${S.key}`} text={S.description} mob={mob} A={KT.gold} more="Read more" /></div>
+            <Characteristics key={`c-${S.key}`} items={S.checklist} checked={checks[S.key] || []} onToggle={(i) => toggleCheck(S.key, i)} />
+            <RateYourself value={scores[S.key]} onChange={rate} lowLabel={S.lowLabel} highLabel={S.highShort || S.highLabel} />
+            <NavRow mob={mob} onBack={step > 0 ? back : null} right={answered ? btn("Next", next) : null} />
+          </>
+        )}
 
         {/* ── INTERSTITIAL ── */}
         {S.type === "interstitial" && (
           <>
-            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: C.gold, marginBottom: 16 }}>{S.kicker}</div>
             {S.stat && (
-              <div style={{ display: "inline-block", padding: "14px 24px 16px", marginBottom: 16, borderRadius: 14, background: C.statBg, border: `1px solid ${C.goldLight}66`, boxShadow: C.statShadow }}>
+              <div style={{ display: "inline-block", padding: "14px 24px 16px", margin: "0 0 14px", borderRadius: 14, background: C.statBg, border: `1px solid ${C.goldLight}66`, boxShadow: C.statShadow }}>
                 <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(40px,11vw,58px)", fontWeight: 700, color: C.statText, lineHeight: 1, whiteSpace: "nowrap" }}>
                   {S.statPre ? `${S.statPre} ${S.stat}` : S.stat}
                 </div>
               </div>
             )}
-            <h1 style={{ ...qStyle, fontSize: S.stat ? "clamp(20px,4.8vw,26px)" : "clamp(27px,6.6vw,38px)", fontWeight: S.stat ? 500 : 700 }}>{S.title}</h1>
-            {S.cite && <p style={{ fontSize: 12, fontStyle: "italic", color: C.text4, margin: "0 0 22px" }}>{S.cite}</p>}
+            <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: S.stat ? (mob ? 20 : 24) : (mob ? 23 : 29), fontWeight: S.stat ? 500 : 700, lineHeight: 1.2, color: C.text1, margin: "0 0 8px" }}>{S.title}</h2>
+            {S.cite && <p style={{ fontSize: 12, fontStyle: "italic", color: C.text4, margin: "0 0 14px" }}>{S.cite}</p>}
             {S.body && (
-              <div style={{ margin: "22px 0" }}>
+              <div style={{ margin: "14px 0 6px" }}>
                 {S.body.map(b => { const bc = C.t(b.color); return (
-                  <div key={b.label} style={{ padding: "16px 18px", marginBottom: 12, borderRadius: 12, background: C.light ? `linear-gradient(135deg,#FFFFFF 55%,${bc}10)` : `${bc}0a`, border: `1px solid ${bc}2e`, boxShadow: C.shadowCard }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: bc, marginBottom: 6 }}>{b.label}</div>
+                  <div key={b.label} style={{ padding: "14px 16px", marginBottom: 10, borderRadius: 12, background: `linear-gradient(135deg,#FFFFFF 55%,${bc}10)`, border: `1px solid ${bc}2e`, boxShadow: C.shadowCard }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: bc, marginBottom: 5 }}>{b.label}</div>
                     <div style={{ fontSize: 15, lineHeight: 1.5, color: C.text2 }}>{b.text}</div>
                   </div>
                 ); })}
               </div>
             )}
             {S.list && (
-              <div style={{ margin: "22px 0" }}>
+              <div style={{ margin: "14px 0 6px" }}>
                 {S.list.map(item => (
-                  <div key={item} style={{ display: "flex", gap: 11, alignItems: "flex-start", marginBottom: 13 }}>
+                  <div key={item} style={{ display: "flex", gap: 11, alignItems: "flex-start", marginBottom: 11 }}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 3 }}>
-                      <polyline points="4 12 10 18 20 6" stroke={C.gold} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+                      <polyline points="4 12 10 18 20 6" stroke={KT.gold.ink} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                     <span style={{ fontSize: 15, lineHeight: 1.5, color: C.text2 }}>{item}</span>
                   </div>
                 ))}
               </div>
             )}
-            {S.foot && <p style={{ fontSize: 15, lineHeight: 1.6, color: C.text2, margin: "0 0 8px" }}>{S.foot}</p>}
+            {S.foot && <p style={{ fontSize: 15, lineHeight: 1.6, color: C.text2, margin: "0 0 4px" }}>{S.foot}</p>}
             {S.divider && <div aria-hidden="true" style={{ borderTop: `2px dashed ${C.lineHi}`, margin: "6px 0 4px" }} />}
             {S.note && (
-              <div style={{ marginTop: 18, padding: "14px 16px", borderRadius: 12, background: C.light ? `linear-gradient(135deg,#FFFFFF 55%,${C.cyan}0d)` : `${C.cyan}08`, border: `1px solid ${C.cyan}26`, boxShadow: C.shadowCard }}>
+              <div style={{ marginTop: 14, padding: "14px 16px", borderRadius: 12, background: `linear-gradient(135deg,#FFFFFF 55%,${C.cyan}0d)`, border: `1px solid ${C.cyan}26`, boxShadow: C.shadowCard }}>
                 <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: C.cyan, marginBottom: 6 }}>{S.note.label}</div>
                 <div style={{ fontSize: 14, lineHeight: 1.55, color: C.text2 }}>{S.note.text}</div>
               </div>
             )}
-            <div style={{ marginTop: 18 }}><GoldButton onClick={next}>Continue →</GoldButton></div>
-            {PrevButton}
+            <NavRow mob={mob} onBack={step > 0 ? back : null} right={btn("Continue", next)} />
           </>
         )}
 
         {/* ── FINAL ── */}
         {S.type === "final" && (
           <>
-            <h1 style={qStyle}>That's everything.</h1>
-            <p style={subStyle}>
-              Your zone and your full results are ready. We'll show you where you landed, then email the complete report to <b style={{ color: C.text2 }}>{contact.email}</b>.
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: C.text2, margin: "0 0 4px" }}>
+              Your zone and your full results are ready. We'll show you where you landed, then email the complete report to <b style={{ color: C.text1 }}>{contact.email}</b>.
             </p>
-            <GoldButton onClick={submit} disabled={sending} big>
-              {sending ? "Scoring your answers…" : "SHOW ME MY ZONE →"}
-            </GoldButton>
-            <p style={{ fontSize: 11.5, lineHeight: 1.55, color: C.text4, textAlign: "center", marginTop: 16 }}>
+            <NavRow mob={mob} onBack={back} right={<HaloButton onClick={submit} disabled={sending} size={15.5} style={{ padding: "15px 28px" }}>{sending ? "Scoring your answers…" : "Show me my zone"}</HaloButton>} />
+            <p style={{ fontSize: 11.5, lineHeight: 1.55, color: C.text4, textAlign: "center", margin: "14px 0 0" }}>
               Educational self-assessment only - a valuation estimate, not a valuation. Not individualized financial, tax, or legal advice.
             </p>
-            {PrevButton}
           </>
         )}
       </div>
-    </div>
+    </FlowFrame>
   );
 }

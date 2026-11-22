@@ -12,7 +12,7 @@ import HumanCapital from './tools/HumanCapital.jsx'
 import CustomerCapital from './tools/CustomerCapital.jsx'
 import StructuralCapital from './tools/StructuralCapital.jsx'
 import StructuralCapitalV2 from './tools/StructuralCapitalV2.jsx'
-import StructuralCapitalFlow from './tools/StructuralCapitalFlow.jsx'
+import { StructuralCapitalFlow, CustomerCapitalFlow, HumanCapitalFlow } from './tools/CapitalFlows.jsx'
 import ConstraintRoadmap from './tools/ConstraintRoadmap.jsx'
 import RoadmapSession from './RoadmapSession.jsx'
 import BookIntensive from './BookIntensive.jsx'
@@ -61,11 +61,13 @@ const TITLES = {
   '/execution-debrief':       'Execution Debrief — Kriczky Virtus',
   '/tools/structural-capital/v2': 'Systems to Run Your Business Without You',
   '/tools/structural-capital/classic': 'Systems to Run Your Business Without You',
+  '/tools/customer-capital/classic': 'Getting More Valuable Customers',
+  '/tools/human-capital/classic': 'Attracting Top Employees',
   '/12cs-recurring-revenue':  'The 12 Cs of Recurring Revenue',
 }
 
 /* Unlinked previews and rollbacks stay out of search. */
-const NOINDEX = new Set(['/partnership', '/workshop-rh/dark', '/tools/structural-capital/v2', '/tools/structural-capital/classic', '/reinvest-harvest/dark', '/workshop-rh/snapshot', '/workshop-rh/scorecard', '/workshop-rh/scorecard/next'])
+const NOINDEX = new Set(['/partnership', '/workshop-rh/dark', '/tools/structural-capital/v2', '/tools/structural-capital/classic', '/tools/customer-capital/classic', '/tools/human-capital/classic', '/reinvest-harvest/dark', '/workshop-rh/snapshot', '/workshop-rh/scorecard', '/workshop-rh/scorecard/next'])
 
 const DEFAULT_TITLE = 'Build Businesses Worth Owning - Kriczky Virtus'
 
@@ -102,8 +104,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/workshop-rh/value-drivers" element={<ValueDriversWorkshopFlow />} />
         <Route path="/workshop-rh/value-drivers/next" element={<ValueDriversWorkshopNext />} />
         <Route path="/tools/bib" element={<BIB />} />
-        <Route path="/tools/human-capital" element={<HumanCapital />} />
-        <Route path="/tools/customer-capital" element={<CustomerCapital />} />
+        <Route path="/tools/human-capital" element={<HumanCapitalFlow />} />
+        <Route path="/tools/human-capital/classic" element={<HumanCapital />} />
+        <Route path="/tools/customer-capital" element={<CustomerCapitalFlow />} />
+        <Route path="/tools/customer-capital/classic" element={<CustomerCapital />} />
         <Route path="/tools/structural-capital" element={<StructuralCapitalFlow />} />
         <Route path="/tools/structural-capital/classic" element={<StructuralCapital />} />
         {/* Diagnostic tools v2 sample (house style) - unlinked and noindex until approved. */}
