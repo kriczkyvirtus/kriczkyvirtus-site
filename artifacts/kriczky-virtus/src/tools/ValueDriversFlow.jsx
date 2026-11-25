@@ -559,7 +559,7 @@ function FlowBody({ door, C }) {
   return (
     <FlowFrame A={KT.gold} topRef={topRef} barRef={barRef}
       kicker={door === "workshop" ? "Reinvest or Harvest Workshop · Pre-work" : "Value Drivers"}
-      title={<>What's my business <span style={{ color: KT.gold.ink, fontStyle: "italic", fontWeight: 500 }}>worth</span>, and what drives it?</>}
+      title={<>What's driving your growth, and what's <span style={{ color: KT.gold.ink, fontStyle: "italic", fontWeight: 500 }}>holding it back</span>?</>}
       progress={{ label: `Step ${step + 1} of ${TOTAL}`, pct: Math.round((step / TOTAL) * 100) }}
       samples={{ kicker: "Your Value Drivers report", pages: VD_SAMPLES,
         text: "Sample pages from a finished report. Yours is built from your ten scores: your zone, both pillars, and where to focus first.", caption: "Sample business. Scores and figures are illustrative." }}>
