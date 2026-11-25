@@ -33,6 +33,7 @@ import ReinvestHarvestLandingCream from './tools/ReinvestHarvestLandingCream.jsx
 import ReinvestHarvestFlow from './tools/ReinvestHarvestFlow.jsx'
 import { ReinvestHarvestThankYouRoute, ReinvestHarvestReportRoute, WorkshopScorecardNextRoute } from './tools/ReinvestHarvestRoutes.jsx'
 import RecurringRevenue12Cs from './tools/RecurringRevenue12Cs.jsx'
+import TwelveCsFlow from './tools/TwelveCsFlow.jsx'
 import './index.css'
 
 const TITLES = {
@@ -64,10 +65,11 @@ const TITLES = {
   '/tools/customer-capital/classic': 'Getting More Valuable Customers',
   '/tools/human-capital/classic': 'Attracting Top Employees',
   '/12cs-recurring-revenue':  'The 12 Cs of Recurring Revenue',
+  '/12cs-recurring-revenue/classic':  'The 12 Cs of Recurring Revenue',
 }
 
 /* Unlinked previews and rollbacks stay out of search. */
-const NOINDEX = new Set(['/partnership', '/workshop-rh/dark', '/tools/structural-capital/v2', '/tools/structural-capital/classic', '/tools/customer-capital/classic', '/tools/human-capital/classic', '/reinvest-harvest/dark', '/workshop-rh/snapshot', '/workshop-rh/scorecard', '/workshop-rh/scorecard/next'])
+const NOINDEX = new Set(['/partnership', '/workshop-rh/dark', '/tools/structural-capital/v2', '/tools/structural-capital/classic', '/tools/customer-capital/classic', '/tools/human-capital/classic', '/12cs-recurring-revenue/classic', '/reinvest-harvest/dark', '/workshop-rh/snapshot', '/workshop-rh/scorecard', '/workshop-rh/scorecard/next'])
 
 const DEFAULT_TITLE = 'Build Businesses Worth Owning - Kriczky Virtus'
 
@@ -130,7 +132,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/workshop-rh/dark" element={<WorkshopPage />} />
         <Route path="/execution-debrief" element={<ExecutionDebrief />} />
         <Route path="/r/:token" element={<ReinvestHarvestReportRoute />} />
-        <Route path="/12cs-recurring-revenue" element={<RecurringRevenue12Cs />} />
+        <Route path="/12cs-recurring-revenue" element={<TwelveCsFlow />} />
+        <Route path="/12cs-recurring-revenue/classic" element={<RecurringRevenue12Cs />} />
         <Route path="/constraint-roadmap" element={<ConstraintRoadmap />} />
         <Route path="/roadmap-session" element={<RoadmapSession />} />
         <Route path="/book-intensive" element={<BookIntensive />} />
