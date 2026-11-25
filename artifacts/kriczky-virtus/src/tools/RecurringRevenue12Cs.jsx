@@ -400,13 +400,14 @@ const readUtms = () => {
   }
 };
 
-const MAX_SCORE = SECTIONS.length * 6; // 72
-
+/* Nov 2026: not every C fits every business. Owners mark the ones that don't fit; only the rest are
+   scored, and the result is a percentage of what's possible across the C's that fit (score sum / 6 x fit
+   count), so a business that's strong on the three that matter to it isn't marked down for the other nine. */
 const BANDS = [
-  { min: 12, max: 27, label: "Leaky Bucket", color: C.red, desc: "Revenue leaves as fast as it comes in. Start with the two lowest scores." },
-  { min: 28, max: 42, label: "Holding On", color: C.amber, desc: "Some stickiness, but competitors and inertia erode it. Significant upside available." },
-  { min: 43, max: 57, label: "Building Momentum", color: C.cyan, desc: "Strong recurring foundations. Opportunity to steadily grow profits." },
-  { min: 58, max: 72, label: "Revenue Fortress", color: C.green, desc: "Deeply sticky revenue. Protect what you've built and invest in moat expansion." },
+  { min: 0, max: 39, range: "Under 40%", label: "Leaky Bucket", color: C.red, desc: "The C's that fit your business aren't holding customers yet. Start with the one that fits best." },
+  { min: 40, max: 59, range: "40-59%", label: "Holding On", color: C.amber, desc: "Some stickiness, but competitors and inertia erode it. Significant upside available." },
+  { min: 60, max: 79, range: "60-79%", label: "Building Momentum", color: C.cyan, desc: "Strong recurring foundations. Opportunity to steadily grow profits." },
+  { min: 80, max: 100, range: "80-100%", label: "Revenue Fortress", color: C.green, desc: "Deeply sticky revenue. Protect what you've built and invest in moat expansion." },
 ];
 
 // ─── PAGE SHELL ──────────────────────────────────────────────
@@ -449,7 +450,7 @@ const CheckItem = ({ text, sub, checked, onToggle }) => (
 );
 
 // ─── SCORE SELECTOR ──────────────────────────────────────────
-const ScoreSelector = ({ value, onChange, lowLabel, highLabel }) => {
+const ScoreSelector = ({ value, onChange, lowLabel, highLabel, notFit, onNotFit }) => {
   const activeColor = value ? scoreColor(value) : C.gold;
   return (
     <div style={{ padding: "20px 24px", borderRadius: 12, marginTop: 16, background: value ? `linear-gradient(145deg, ${activeColor}08, ${activeColor}03)` : "linear-gradient(145deg, rgba(200,162,78,0.06), rgba(200,162,78,0.02))", border: `1.5px solid ${value ? `${activeColor}50` : `${C.gold}30`}`, boxShadow: value ? `0 0 20px ${activeColor}15, inset 0 1px 0 ${activeColor}15` : "none", transition: "all 0.3s ease" }}>
@@ -466,7 +467,12 @@ const ScoreSelector = ({ value, onChange, lowLabel, highLabel }) => {
         <span style={{ fontSize: 9, color: C.text4, fontStyle: "italic" }}>{lowLabel}</span>
         <span style={{ fontSize: 9, color: C.text4, fontStyle: "italic" }}>{highLabel}</span>
       </div>
-      {!value && <div style={{ textAlign: "center", marginTop: 10 }}><span style={{ fontSize: 9, color: `${C.gold}80`, letterSpacing: "0.08em" }}>↑ TAP A NUMBER TO SCORE THIS DIMENSION</span></div>}
+      {!value && !notFit && <div style={{ textAlign: "center", marginTop: 10 }}><span style={{ fontSize: 9, color: `${C.gold}80`, letterSpacing: "0.08em" }}>↑ TAP A NUMBER TO SCORE THIS DIMENSION</span></div>}
+      <button onClick={onNotFit} style={{ display: "block", width: "100%", marginTop: 12, padding: "9px 12px", borderRadius: 8, cursor: "pointer",
+        background: notFit ? "rgba(255,255,255,0.07)" : "transparent", border: `1px solid ${notFit ? C.text3 : "rgba(255,255,255,0.12)"}`,
+        color: notFit ? C.text1 : C.text3, fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 600, letterSpacing: "0.02em" }}>
+        {notFit ? "✓ Doesn't fit my business - not scored" : "This one doesn't fit my business"}
+      </button>
     </div>
   );
 };
@@ -488,6 +494,7 @@ const GlassBtn = ({ href, color, children }) => (
 // ═══════════════════════════════════════════════════════════════════
 export default function RecurringRevenueRoadmap() {
   const [scores, setScores] = useState({});
+  const [notFit, setNotFit] = useState({});
   const [checks, setChecks] = useState({});
 
   /* Email capture — appears once all 12 are scored. Deliberately two fields:
@@ -535,12 +542,24 @@ export default function RecurringRevenueRoadmap() {
   const PILLS_ROW2 = ["Control of Payments","Customization","Compounding Value","Coordination"];
   const PILLS_ROW3 = ["Cadence","Cause","Community","Contracts"];
 
-  const setScore = (key, val) => setScores(prev => ({ ...prev, [key]: val }));
+  const setScore = (key, val) => { setScores(prev => ({ ...prev, [key]: val })); setNotFit(prev => ({ ...prev, [key]: false })); };
+  const toggleNotFit = (key) => {
+    const next = !notFit[key];
+    setNotFit(prev => ({ ...prev, [key]: next }));
+    if (next) setScores(prev => { const n = { ...prev }; delete n[key]; return n; });
+  };
   const toggleCheck = (sectionKey, itemIdx) => { const k = `${sectionKey}-${itemIdx}`; setChecks(prev => ({ ...prev, [k]: !prev[k] })); };
 
-  const totalScore = SECTIONS.reduce((sum, s) => sum + (scores[s.key] || 0), 0);
-  const allScored = SECTIONS.every(s => scores[s.key]);
-  const currentBand = allScored ? BANDS.find(b => totalScore >= b.min && totalScore <= b.max) : null;
+  const fitting = SECTIONS.filter(s => !notFit[s.key]);
+  const fitCount = fitting.length;
+  const totalScore = fitting.reduce((sum, s) => sum + (scores[s.key] || 0), 0);
+  const MAX_SCORE = fitCount * 6;
+  const allScored = SECTIONS.every(s => scores[s.key] || notFit[s.key]) && fitCount > 0;
+  const scorePct = MAX_SCORE ? Math.round((totalScore / MAX_SCORE) * 100) : 0;
+  const currentBand = allScored ? BANDS.find(b => scorePct >= b.min && scorePct <= b.max) : null;
+  const byScore = fitting.filter(s => scores[s.key]).map(s => ({ ...s, score: scores[s.key] }));
+  const buildNext = [...byScore].filter(s => s.score <= 4).sort((a, b) => a.score - b.score).slice(0, 3);
+  const strongest = [...byScore].filter(s => s.score >= 5).sort((a, b) => b.score - a.score).slice(0, 3);
 
   const submitCapture = async () => {
     if (capSending || capSent) return;
@@ -562,8 +581,11 @@ export default function RecurringRevenueRoadmap() {
       scores: SECTIONS.reduce((acc, sec) => ({ ...acc, [sec.key]: scores[sec.key] || 0 }), {}),
       totalScore,
       maxScore: MAX_SCORE,
+      scorePercent: scorePct,
+      fitCount,
+      notFit: SECTIONS.filter(s => notFit[s.key]).map(s => s.key),
       band: currentBand ? currentBand.label : "",
-      summary: `${totalScore}/${MAX_SCORE} — ${currentBand ? currentBand.label : ""}`,
+      summary: `${scorePct}% across ${fitCount} of 12 C's - ${currentBand ? currentBand.label : ""}`,
       timestamp: new Date().toISOString(),
     };
     console.log("[12cs] submitting:", payload.email);
@@ -618,9 +640,7 @@ export default function RecurringRevenueRoadmap() {
     }
   };
 
-  const scoredCount = SECTIONS.filter(s => scores[s.key]).length;
-  const sortedScores = SECTIONS.filter(s => scores[s.key]).map(s => ({ ...s, score: scores[s.key] })).sort((a, b) => a.score - b.score);
-  const lowestThree = sortedScores.slice(0, 3);
+  const scoredCount = SECTIONS.filter(s => scores[s.key] || notFit[s.key]).length;
 
   const TOTAL_PAGES = 15; // cover + howto + 12 sections + scoring
 
@@ -654,7 +674,7 @@ export default function RecurringRevenueRoadmap() {
               </div>
             ))}
           </div>
-          <p style={{ fontSize: 9.5, color: C.text4, marginTop: 24, maxWidth: 400, lineHeight: 1.55 }}>Score yourself 1–6 on each dimension. Your results and personalized action steps update automatically.</p>
+          <p style={{ fontSize: 9.5, color: C.text4, marginTop: 24, maxWidth: 400, lineHeight: 1.55 }}>Score yourself 1–6 on each dimension that fits your business, and mark the ones that don't. Your results update automatically.</p>
         </div>
       </Page>
 
@@ -663,6 +683,7 @@ export default function RecurringRevenueRoadmap() {
         <div style={{ fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: C.gold, fontWeight: 600, marginBottom: 7 }}>How To Use This Roadmap</div>
         <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: 30, lineHeight: 1.08, color: C.text1, margin: "0 0 8px" }}><b style={{ color: C.gold, fontWeight: 400 }}>Think in continuums, </b>not checkboxes.</h2>
         <p style={{ fontSize: 12, color: C.text2, lineHeight: 1.65, margin: "0 0 14px" }}>For each of the twelve dimensions that follow, don't ask yourself "yes or no." Instead, ask: <b style={{ color: C.text1 }}>"To what extent do I do this?"</b> The goal isn't to score perfectly on all twelve — it's to identify the one or two dimensions where a small improvement would create the biggest increase in revenue stickiness.</p>
+        <p style={{ fontSize: 12, color: C.text2, lineHeight: 1.65, margin: "0 0 14px" }}><b style={{ color: C.text1 }}>Not every C fits every business.</b> Some businesses build on three of them, some on one. If a C doesn't fit how you sell, mark it <i>doesn't fit my business</i>: it isn't scored, and it doesn't count against you. Your result is a percentage of what's possible across the C's that do fit.</p>
         <p style={{ fontSize: 12, color: C.text2, lineHeight: 1.65, margin: "0 0 20px" }}>Every business, regardless of industry, has recurring revenue potential. A realtor has the lifetime value of every home their client buys and sells. An auto shop has every oil change and brake job for the life of the relationship. The bank behind every mortgage has built an entire empire on recurring revenue secured by a physical asset. The question is always: how much of that potential are you capturing?</p>
         <div style={{ padding: "16px 20px", borderRadius: 10, background: `linear-gradient(135deg, ${C.cyan}08, ${C.cyan}02)`, border: `1.5px solid ${C.cyan}30`, marginBottom: 16 }}>
           <span style={{ fontSize: 10, fontWeight: 700, color: C.cyan, letterSpacing: "0.14em", textTransform: "uppercase" }}>Why 1–6 Instead of 1–5?</span>
@@ -685,7 +706,7 @@ export default function RecurringRevenueRoadmap() {
         </div>
         <div style={{ padding: "14px 20px", borderRadius: 8, background: "linear-gradient(135deg, rgba(200,162,78,0.06), rgba(200,162,78,0.015))", border: "1px solid rgba(200,162,78,0.2)" }}>
           <span style={{ fontSize: 9, fontWeight: 700, color: C.gold, letterSpacing: "0.12em", textTransform: "uppercase" }}>For Each Section</span>
-          <p style={{ fontSize: 11, color: C.text2, lineHeight: 1.55, margin: "6px 0 0" }}>Read the description and check off the statements that are true for your business today. Then use the <b style={{ color: C.gold }}>Rate Yourself</b> panel at the bottom to score yourself 1–6. Be honest — the value is in the gaps, not the total.</p>
+          <p style={{ fontSize: 11, color: C.text2, lineHeight: 1.55, margin: "6px 0 0" }}>Read the description and check off the statements that are true for your business today. Then use the <b style={{ color: C.gold }}>Rate Yourself</b> panel at the bottom to score yourself 1–6, or mark it as not fitting your business. Be honest — the value is in the gaps, not the total.</p>
         </div>
       </Page>
 
@@ -702,7 +723,8 @@ export default function RecurringRevenueRoadmap() {
               <CheckItem key={i} text={item.text} sub={item.sub} checked={!!checks[`${section.key}-${i}`]} onToggle={() => toggleCheck(section.key, i)}/>
             ))}
           </div>
-          <ScoreSelector value={scores[section.key]} onChange={(val) => setScore(section.key, val)} lowLabel={section.lowLabel} highLabel={section.highLabel}/>
+          <ScoreSelector value={scores[section.key]} onChange={(val) => setScore(section.key, val)} lowLabel={section.lowLabel} highLabel={section.highLabel}
+            notFit={!!notFit[section.key]} onNotFit={() => toggleNotFit(section.key)}/>
         </Page>
       ))}
 
@@ -711,22 +733,47 @@ export default function RecurringRevenueRoadmap() {
         <div style={{ fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: C.gold, fontWeight: 600, marginBottom: 7 }}>Your Recurring Revenue Stickiness Score</div>
         <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: 30, lineHeight: 1.08, color: C.text1, margin: "0 0 14px" }}><b style={{ color: C.gold, fontWeight: 400 }}>Your results, </b>at a glance.</h2>
         <div style={{ padding: "14px 18px", borderRadius: 12, background: "linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015))", border: `1px solid ${C.border2}`, marginBottom: 14 }}>
-          {SECTIONS.map(s => { const score = scores[s.key] || 0; const pct = score > 0 ? (score / 6) * 100 : 0; return (
-            <div key={s.key} style={{ display: "flex", alignItems: "center", gap: 10, padding: "3.5px 0" }}>
+          {SECTIONS.map(s => { const score = scores[s.key] || 0; const pct = score > 0 ? (score / 6) * 100 : 0; const nf = !!notFit[s.key]; return (
+            <div key={s.key} style={{ display: "flex", alignItems: "center", gap: 10, padding: "3.5px 0", opacity: nf ? 0.55 : 1 }}>
               <span style={{ fontSize: 9.5, color: score ? C.text2 : C.text4, width: 90, flexShrink: 0, textAlign: "right" }}>{s.title}</span>
               <div style={{ flex: 1, height: 7, borderRadius: 4, background: "rgba(255,255,255,0.04)", overflow: "hidden" }}>
                 <div style={{ width: `${pct}%`, height: "100%", borderRadius: 4, background: score ? scoreColor(score) : "transparent", transition: "width 0.5s ease, background 0.3s ease" }}/>
               </div>
-              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 14, fontWeight: 700, color: score ? scoreColor(score) : C.text4, minWidth: 22, textAlign: "right", transition: "color 0.3s ease" }}>{score || "—"}</span>
+              {nf ? <span style={{ fontSize: 9, color: C.text4, minWidth: 22, textAlign: "right", whiteSpace: "nowrap" }}>Doesn't fit</span>
+                : <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 14, fontWeight: 700, color: score ? scoreColor(score) : C.text4, minWidth: 22, textAlign: "right", transition: "color 0.3s ease" }}>{score || "—"}</span>}
             </div>
           ); })}
           <div style={{ borderTop: `1px solid ${C.border1}`, marginTop: 10, paddingTop: 10, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-            <span style={{ fontSize: 10, fontWeight: 700, color: C.gold, letterSpacing: "0.1em", textTransform: "uppercase" }}>Total Stickiness Score</span>
+            <span style={{ fontSize: 10, fontWeight: 700, color: C.gold, letterSpacing: "0.1em", textTransform: "uppercase" }}>Stickiness Score<span style={{ display: "block", fontSize: 9, fontWeight: 500, letterSpacing: "0.04em", textTransform: "none", color: C.text3, marginTop: 2 }}>{allScored ? `Across the ${fitCount} C's that fit your business` : "Score or skip each C to see it"}</span></span>
             <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, fontWeight: 700, color: allScored ? (currentBand?.color || C.text3) : C.text3, transition: "color 0.3s ease" }}>
-              {allScored ? totalScore : `${scoredCount}/12 scored`}{allScored && <span style={{ fontSize: 14, color: C.text4 }}> / {MAX_SCORE}</span>}
+              {allScored ? `${scorePct}%` : `${scoredCount}/12 done`}
             </span>
           </div>
         </div>
+        {allScored && currentBand && (
+          <div style={{ padding: "14px 18px", borderRadius: 12, marginBottom: 14, background: `linear-gradient(145deg, ${currentBand.color}10, ${currentBand.color}04)`, border: `1px solid ${currentBand.color}45` }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 700, color: currentBand.color }}>{currentBand.label}</span>
+              <span style={{ fontSize: 10, fontWeight: 700, color: currentBand.color, letterSpacing: "0.08em" }}>{currentBand.range}</span>
+            </div>
+            <p style={{ fontSize: 11.5, color: C.text2, lineHeight: 1.55, margin: "4px 0 0" }}>{currentBand.desc}</p>
+          </div>
+        )}
+        {allScored && (
+          <div style={{ display: "flex", gap: 12, marginBottom: 14 }}>
+            <div style={{ flex: 1, padding: "12px 16px", borderRadius: 10, background: "rgba(255,255,255,0.025)", border: `1px solid ${C.border2}` }}>
+              <div style={{ fontSize: 9, fontWeight: 700, color: C.green, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 6 }}>Your strongest</div>
+              {strongest.length ? strongest.map(s => <div key={s.key} style={{ fontSize: 11.5, color: C.text1, padding: "2px 0" }}>{s.title} <span style={{ color: C.text3 }}>· {s.score}/6</span></div>)
+                : <div style={{ fontSize: 11, color: C.text3, lineHeight: 1.5 }}>None at 5 or 6 yet. That's normal: pick one to build first.</div>}
+            </div>
+            <div style={{ flex: 1, padding: "12px 16px", borderRadius: 10, background: `linear-gradient(135deg, ${C.gold}0C, ${C.gold}03)`, border: `1px solid ${C.gold}35` }}>
+              <div style={{ fontSize: 9, fontWeight: 700, color: C.gold, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 6 }}>Worth building next</div>
+              {buildNext.length ? buildNext.map(s => <div key={s.key} style={{ fontSize: 11.5, color: C.text1, padding: "2px 0" }}>{s.title} <span style={{ color: C.text3 }}>· {s.score}/6</span></div>)
+                : <div style={{ fontSize: 11, color: C.text3, lineHeight: 1.5 }}>Every C that fits is at 5 or 6. Protect them, and look again at the ones you marked as not fitting.</div>}
+              <div style={{ fontSize: 9.5, color: C.text3, marginTop: 6, lineHeight: 1.45 }}>From the C's that fit your business. You don't need all twelve: one to three, built well, is plenty.</div>
+            </div>
+          </div>
+        )}
       </Page>
 
       {/* ═══ EMAIL CAPTURE — appears once all 12 are scored ═══ */}
@@ -756,7 +803,7 @@ export default function RecurringRevenueRoadmap() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 10, gap: 12 }}>
                   <div>
                     <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 19, color: C.text1, lineHeight: 1.25 }}>
-                      You scored <b style={{ color: currentBand ? currentBand.color : C.gold, fontWeight: 700 }}>{totalScore}/{MAX_SCORE}</b> — want a copy?
+                      You scored <b style={{ color: currentBand ? currentBand.color : C.gold, fontWeight: 700 }}>{scorePct}%</b> across the C's that fit - want a copy?
                     </div>
                     <div style={{ fontSize: 12.5, color: C.text3, marginTop: 2 }}>
                       We'll email you this scored report so you don't lose it.
