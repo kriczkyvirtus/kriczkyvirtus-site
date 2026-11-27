@@ -9,7 +9,7 @@ import { WORKSHOPS } from "./workshopEvents.js";
 const ICON = (slug) => `/img/icons/${slug}-light.svg`;
 
 /* The live workshop page (cream since 14 Oct 2026). WorkshopPage.jsx is the
-   retired dark version, kept at /workshop-rh/dark for rollback only.
+   retired dark version (removed 27 Nov 2026; /workshop-rh/dark redirects here).
 
    Reinvest or Harvest Workshop - /workshop-rh
    Cold-traffic build: problem → framework → what you leave with → authority →

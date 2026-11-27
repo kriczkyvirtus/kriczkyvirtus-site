@@ -12,7 +12,7 @@ import { Story } from "./FlowFrame.jsx";
    "This one doesn't fit my business": it isn't scored and doesn't count against the
    owner; the score is a percentage across the C's that fit. A score or a "doesn't
    fit" moves straight on. Same lead payload as the classic page
-   (/12cs-recurring-revenue/classic).
+   (retired 27 Nov 2026).
    ═══════════════════════════════════════════════════════════════ */
 
 const useBp = () => {

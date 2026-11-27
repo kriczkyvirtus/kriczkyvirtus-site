@@ -8,9 +8,6 @@ import {
   ValueDriversWorkshopNext, ValueDriversReportRoute,
 } from './tools/ValueDriversRoutes.jsx'
 import BIB from './tools/BIB.jsx'
-import HumanCapital from './tools/HumanCapital.jsx'
-import CustomerCapital from './tools/CustomerCapital.jsx'
-import StructuralCapital from './tools/StructuralCapital.jsx'
 import StructuralCapitalV2 from './tools/StructuralCapitalV2.jsx'
 import { StructuralCapitalFlow, CustomerCapitalFlow, HumanCapitalFlow } from './tools/CapitalFlows.jsx'
 import ConstraintRoadmap from './tools/ConstraintRoadmap.jsx'
@@ -19,20 +16,14 @@ import BookIntensive from './BookIntensive.jsx'
 import PartnerQualify from './PartnerQualify.jsx'
 import FreeWorkingSession from './FreeWorkingSession.jsx'
 import Unsubscribe from './Unsubscribe.jsx'
-import EngageGiveaway2026 from './EngageGiveaway2026.jsx'
-import AcqVantageBonus from './AcqVantageBonus.jsx'
 import ValuationEstimate from './ValuationEstimate.jsx'
 import Cohort from './Cohort.jsx'
 import Disclosures from './Disclosures.jsx'
-import GrowthHarvestPartnership from './GrowthHarvestPartnership.jsx'
-import WorkshopPage from './WorkshopPage.jsx'
 import WorkshopPageCream from './WorkshopPageCream.jsx'
 import ExecutionDebrief from './ExecutionDebrief.jsx'
-import ReinvestHarvestLanding from './tools/ReinvestHarvestLanding.jsx'
 import ReinvestHarvestLandingCream from './tools/ReinvestHarvestLandingCream.jsx'
 import ReinvestHarvestFlow from './tools/ReinvestHarvestFlow.jsx'
 import { ReinvestHarvestThankYouRoute, ReinvestHarvestReportRoute, WorkshopScorecardNextRoute } from './tools/ReinvestHarvestRoutes.jsx'
-import RecurringRevenue12Cs from './tools/RecurringRevenue12Cs.jsx'
 import TwelveCsFlow from './tools/TwelveCsFlow.jsx'
 import './index.css'
 
@@ -52,24 +43,16 @@ const TITLES = {
   '/cohort':                  'Virtus Collective — Cohort Program',
   '/tools/reinvest-harvest':  'Reinvest or Harvest — Capital Allocation Scorecard',
   '/reinvest-harvest':        'Reinvest or Harvest — Capital Allocation Scorecard',
-  '/reinvest-harvest/dark':   'Reinvest or Harvest — Capital Allocation Scorecard',
   '/reinvest-harvest/start':  'Reinvest or Harvest — Capital Allocation Scorecard',
   '/reinvest-harvest/next':   'Your Reinvest or Harvest Results',
-  '/partnership':             'Growth & Harvest Partnership',
-  '/partnership/workshop':    'Growth & Harvest Partnership',
-  '/partnership/collective':  'Growth & Harvest Partnership',
   '/workshop-rh':             'Reinvest or Harvest Workshop — Kriczky Virtus',
   '/execution-debrief':       'Execution Debrief — Kriczky Virtus',
   '/tools/structural-capital/v2': 'Systems to Run Your Business Without You',
-  '/tools/structural-capital/classic': 'Systems to Run Your Business Without You',
-  '/tools/customer-capital/classic': 'Getting More Valuable Customers',
-  '/tools/human-capital/classic': 'Attracting Top Employees',
   '/12cs-recurring-revenue':  'The 12 Cs of Recurring Revenue',
-  '/12cs-recurring-revenue/classic':  'The 12 Cs of Recurring Revenue',
 }
 
 /* Unlinked previews and rollbacks stay out of search. */
-const NOINDEX = new Set(['/partnership', '/workshop-rh/dark', '/tools/structural-capital/v2', '/tools/structural-capital/classic', '/tools/customer-capital/classic', '/tools/human-capital/classic', '/12cs-recurring-revenue/classic', '/reinvest-harvest/dark', '/workshop-rh/snapshot', '/workshop-rh/scorecard', '/workshop-rh/scorecard/next'])
+const NOINDEX = new Set(['/tools/structural-capital/v2', '/workshop-rh/snapshot', '/workshop-rh/scorecard', '/workshop-rh/scorecard/next'])
 
 const DEFAULT_TITLE = 'Build Businesses Worth Owning - Kriczky Virtus'
 
@@ -107,11 +90,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/workshop-rh/value-drivers/next" element={<ValueDriversWorkshopNext />} />
         <Route path="/tools/bib" element={<BIB />} />
         <Route path="/tools/human-capital" element={<HumanCapitalFlow />} />
-        <Route path="/tools/human-capital/classic" element={<HumanCapital />} />
+        <Route path="/tools/human-capital/classic" element={<Navigate to="/tools/human-capital" replace />} />  {/* retired 27 Nov 2026 */}
         <Route path="/tools/customer-capital" element={<CustomerCapitalFlow />} />
-        <Route path="/tools/customer-capital/classic" element={<CustomerCapital />} />
+        <Route path="/tools/customer-capital/classic" element={<Navigate to="/tools/customer-capital" replace />} />  {/* retired 27 Nov 2026 */}
         <Route path="/tools/structural-capital" element={<StructuralCapitalFlow />} />
-        <Route path="/tools/structural-capital/classic" element={<StructuralCapital />} />
+        <Route path="/tools/structural-capital/classic" element={<Navigate to="/tools/structural-capital" replace />} />  {/* retired 27 Nov 2026 */}
         {/* Diagnostic tools v2 sample (house style) - unlinked and noindex until approved. */}
         <Route path="/tools/structural-capital/v2" element={<StructuralCapitalV2 />} />
         <Route path="/tools/reinvest-harvest" element={<Navigate to="/reinvest-harvest" replace />} />
@@ -119,29 +102,29 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             unlinked and noindex, as a one-line rollback; remove it once cream has settled. */}
         <Route path="/reinvest-harvest" element={<ReinvestHarvestLandingCream />} />
         <Route path="/reinvest-harvest/cream" element={<Navigate to="/reinvest-harvest" replace />} />
-        <Route path="/reinvest-harvest/dark" element={<ReinvestHarvestLanding />} />
+        <Route path="/reinvest-harvest/dark" element={<Navigate to="/reinvest-harvest" replace />} />  {/* retired 27 Nov 2026 */}
         <Route path="/reinvest-harvest/start" element={<ReinvestHarvestFlow />} />
         <Route path="/reinvest-harvest/next" element={<ReinvestHarvestThankYouRoute />} />
-        <Route path="/partnership" element={<GrowthHarvestPartnership variant="session" />} />
-        <Route path="/partnership/workshop" element={<GrowthHarvestPartnership variant="workshop" />} />
-        <Route path="/partnership/collective" element={<GrowthHarvestPartnership variant="collective" />} />
+        <Route path="/partnership" element={<Navigate to="/" replace />} />  {/* retired 27 Nov 2026 */}
+        <Route path="/partnership/workshop" element={<Navigate to="/execution-debrief" replace />} />  {/* retired 27 Nov 2026 */}
+        <Route path="/partnership/collective" element={<Navigate to="/" replace />} />  {/* retired 27 Nov 2026 */}
         {/* The workshop page is cream (14 Oct 2026). The old dark page stays at /dark,
             unlinked and noindex, as a one-line rollback; remove it once cream has settled. */}
         <Route path="/workshop-rh" element={<WorkshopPageCream />} />
         <Route path="/workshop-rh/cream" element={<Navigate to="/workshop-rh" replace />} />
-        <Route path="/workshop-rh/dark" element={<WorkshopPage />} />
+        <Route path="/workshop-rh/dark" element={<Navigate to="/workshop-rh" replace />} />  {/* retired 27 Nov 2026 */}
         <Route path="/execution-debrief" element={<ExecutionDebrief />} />
         <Route path="/r/:token" element={<ReinvestHarvestReportRoute />} />
         <Route path="/12cs-recurring-revenue" element={<TwelveCsFlow />} />
-        <Route path="/12cs-recurring-revenue/classic" element={<RecurringRevenue12Cs />} />
+        <Route path="/12cs-recurring-revenue/classic" element={<Navigate to="/12cs-recurring-revenue" replace />} />  {/* retired 27 Nov 2026 */}
         <Route path="/constraint-roadmap" element={<ConstraintRoadmap />} />
         <Route path="/roadmap-session" element={<RoadmapSession />} />
         <Route path="/book-intensive" element={<BookIntensive />} />
         <Route path="/partner-qualify" element={<PartnerQualify />} />
         <Route path="/free-session" element={<FreeWorkingSession />} />
         <Route path="/unsubscribe" element={<Unsubscribe />} />
-        <Route path="/engage-giveaway-2026" element={<EngageGiveaway2026 />} />
-        <Route path="/acq-vantage-bonus" element={<AcqVantageBonus />} />
+        <Route path="/engage-giveaway-2026" element={<Navigate to="/valuation-estimate" replace />} />  {/* retired 27 Nov 2026 */}
+        <Route path="/acq-vantage-bonus" element={<Navigate to="/valuation-estimate" replace />} />  {/* retired 27 Nov 2026 */}
         <Route path="/valuation-estimate" element={<ValuationEstimate />} />
         {/* Workshop pre-work: the same questionnaire; the Snapshot is built for the workshop, no call to book. */}
         <Route path="/workshop-rh/snapshot" element={<ValuationEstimate door="workshop" />} />

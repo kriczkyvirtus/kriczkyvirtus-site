@@ -1,83 +1,12 @@
-import React, { useState, useEffect } from "react";
+import PageTexture from "./PageTexture.jsx";
+import { C, T, glow, CARD, KICKER, CREAM_CSS, FONTS, Logo, Num, ContactFooter } from "./CreamKit.jsx";
 
 // ═══════════════════════════════════════════════════════════════════
-// COHORT — Application Page
-// URL: /cohort
+// DISCLOSURES - /disclosures
 //
-// Sells the semi-private cohort program and captures applications.
-// POSTs to /api/lead-capture with tool: "cohort-waitlist".
-//
-// Server must apply: Cohort: Waitlist (46), Source: Website (8),
-// Entry: Lead Magnet (42), tier tag, and write Revenue Range +
-// Business Constraint fields. Do NOT apply Website Lead.
+// Cream (27 Nov 2026): the engraved ground, porcelain number discs, white
+// cards, as on /workshop-rh. Wording unchanged; em dashes set as " - ".
 // ═══════════════════════════════════════════════════════════════════
-
-const C = {
-  gold: "#C8A24E", goldMuted: "#A68A42", goldLight: "#D4B665",
-  green: "#34D399", red: "#F87171", amber: "#FBBF24",
-  blue: "#60A5FA", cyan: "#22D3EE",
-  bgDeep: "#0A0E14", bgCard: "#111720", bgElev: "#1A2130",
-  text1: "#E8ECF1", text2: "#8B95A5", text3: "#5A6474", text4: "#3D4654",
-  border1: "rgba(255,255,255,0.06)", border2: "rgba(255,255,255,0.10)",
-};
-
-const GRAIN = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
-
-const useBp = () => {
-  const [bp, setBp] = useState("desktop");
-  useEffect(() => {
-    const check = () => { const w = window.innerWidth; setBp(w < 768 ? "mobile" : w < 1024 ? "tablet" : "desktop"); };
-    check(); window.addEventListener("resize", check); return () => window.removeEventListener("resize", check);
-  }, []);
-  return { mob: bp === "mobile", tab: bp === "tablet" };
-};
-
-const Grain = () => (
-  <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 1, opacity: 0.07, mixBlendMode: "overlay", backgroundImage: GRAIN, backgroundSize: "128px 128px" }} />
-);
-
-const Shield = ({ size = 32 }) => (
-  <svg width={size} height={size} viewBox="0 0 64 64" fill="none"
-    style={{ filter: "drop-shadow(0 0 12px rgba(200,162,78,0.38)) drop-shadow(0 0 4px rgba(200,162,78,0.56))" }}>
-    <path d="M32 8L14 16V30C14 42 22 52 32 56C42 52 50 42 50 30V16L32 8Z"
-      fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinejoin="round" />
-    <path d="M32 12L18 18.5V30C18 40.5 24.5 49 32 52C39.5 49 46 40.5 46 30V18.5L32 12Z"
-      fill="rgba(200,162,78,0.06)" />
-  </svg>
-);
-
-const CARD = {
-  background: "linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.03))",
-  backdropFilter: "blur(16px)",
-  border: `1px solid ${C.border2}`,
-  borderTop: "1px solid rgba(255,255,255,0.12)",
-  borderRadius: 14,
-  boxShadow: `0 2px 4px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 40px ${C.gold}08`,
-};
-
-const H = ({ children, mob, size }) => (
-  <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: size || (mob ? 27 : 36), color: C.text1, letterSpacing: "-0.01em", lineHeight: 1.15, margin: "0 0 14px" }}>
-    {children}
-  </h2>
-);
-
-const Eyebrow = ({ children }) => (
-  <div style={{ fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: C.text3, fontWeight: 600, marginBottom: 10 }}>
-    {children}
-  </div>
-);
-
-const P = ({ children, mob, style }) => (
-  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: mob ? 13 : 14, lineHeight: 1.68, color: C.text2, margin: "0 0 14px", ...style }}>
-    {children}
-  </p>
-);
-
-/* ═══════════════════ CONTENT ═══════════════════ */
-
-/* ═══════════════════ CONTENT ═══════════════════ */
-
-/* ═══════════════════ CONTENT ═══════════════════ */
 
 const EFFECTIVE = "September 1, 2026";
 
@@ -86,7 +15,7 @@ const SECTIONS = [
     id: "educational",
     title: "This is educational content",
     body: [
-      "Kriczky Virtus, LLC (\u201CKriczky Virtus\u201D) provides business advisory services and education. Nothing published by Kriczky Virtus \u2014 on this site, in the Virtus Collective community, in a cohort session, on a call, in a diagnostic tool, or in any written or verbal communication \u2014 is individualized investment, tax, or legal advice.",
+      "Kriczky Virtus, LLC (\u201CKriczky Virtus\u201D) provides business advisory services and education. Nothing published by Kriczky Virtus - on this site, in the Virtus Collective community, in a cohort session, on a call, in a diagnostic tool, or in any written or verbal communication - is individualized investment, tax, or legal advice.",
       "None of it accounts for your specific circumstances, and none of it should be acted on as though it does. Coordinate tax matters with your CPA and legal matters with your attorney.",
     ],
   },
@@ -96,7 +25,7 @@ const SECTIONS = [
     body: [
       "Kriczky Virtus and Kriczky Wealth Management LLC (\u201CKWM\u201D) are separate legal entities under common ownership and control. Edward Kriczky is the founder of Kriczky Virtus and an investment adviser representative of KWM.",
       "Kriczky Virtus is not an investment adviser. It does not provide investment advisory services and is not registered as an investment adviser in any jurisdiction.",
-      "Content published by Kriczky Virtus \u2014 including the Virtus Collective, its cohorts, diagnostic tools, courses, emails, and social media \u2014 reflects the views of Kriczky Virtus and of Edward Kriczky in his capacity as its founder. It does not reflect the views of KWM, is not a description of KWM\u2019s advisory services, and is not investment advice from KWM.",
+      "Content published by Kriczky Virtus - including the Virtus Collective, its cohorts, diagnostic tools, courses, emails, and social media - reflects the views of Kriczky Virtus and of Edward Kriczky in his capacity as its founder. It does not reflect the views of KWM, is not a description of KWM\u2019s advisory services, and is not investment advice from KWM.",
     ],
   },
   {
@@ -125,7 +54,7 @@ const SECTIONS = [
     body: [
       "The Virtus Collective is an educational community operated by Kriczky Virtus. Semi-private cohorts are educational group programs about business decision-making.",
       "Most sessions are group sessions led by Kriczky Virtus. The VIP tier includes one 90-minute one-on-one call per month; that time covers business operations and decision-making. It is not personal financial planning or investment advice.",
-      "Where a member\u2019s numbers are reviewed \u2014 in a group session or one-on-one \u2014 it is limited to business operating metrics. We describe how we reason about those decisions and how we would decide if we owned the business; we do not tell any member what to do.",
+      "Where a member\u2019s numbers are reviewed - in a group session or one-on-one - it is limited to business operating metrics. We describe how we reason about those decisions and how we would decide if we owned the business; we do not tell any member what to do.",
       "No tier includes individualized financial planning or investment advisory services.",
     ],
   },
@@ -134,7 +63,7 @@ const SECTIONS = [
     title: "What membership is not",
     body: [
       "Membership in the Virtus Collective does not create an advisory relationship with Kriczky Virtus or with KWM. Neither does attending a call, posting a question, or receiving an answer.",
-      "If you want personal financial advice from Edward Kriczky, that requires a formal client relationship with KWM \u2014 a separate engagement, under a separate written agreement, with its own fee disclosure.",
+      "If you want personal financial advice from Edward Kriczky, that requires a formal client relationship with KWM - a separate engagement, under a separate written agreement, with its own fee disclosure.",
     ],
   },
   {
@@ -166,7 +95,7 @@ const SECTIONS = [
     id: "forward",
     title: "Forward-looking statements",
     body: [
-      "Any discussion of what could happen in a business \u2014 growth, margin, capacity, or the return on a reinvestment \u2014 is conditional and illustrative. Results depend on factors outside anyone\u2019s control. Nothing here is a guarantee, a projection, or a promise of a particular outcome.",
+      "Any discussion of what could happen in a business - growth, margin, capacity, or the return on a reinvestment - is conditional and illustrative. Results depend on factors outside anyone\u2019s control. Nothing here is a guarantee, a projection, or a promise of a particular outcome.",
     ],
   },
   {
@@ -180,95 +109,73 @@ const SECTIONS = [
 
 /* ═══════════════════ PAGE ═══════════════════ */
 
+const H = { fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, color: C.ink1, letterSpacing: "-.01em" };
+const P = { fontSize: "clamp(14px,1.9vw,15.5px)", lineHeight: 1.7, color: C.ink2, margin: 0 };
+
 export default function Disclosures() {
-  const { mob } = useBp();
-  const SectionGap = mob ? 30 : 38;
-
   return (
-    <div style={{ minHeight: "100vh", background: C.bgDeep, fontFamily: "'DM Sans', sans-serif", color: C.text1, position: "relative", overflow: "hidden" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <div style={{ background: C.page, minHeight: "100vh", fontFamily: "'DM Sans',sans-serif", color: C.ink1, position: "relative", isolation: "isolate", overflowX: "hidden" }}>
+      <link href={FONTS} rel="stylesheet" />
+      <style>{CREAM_CSS + `
+        .dz-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+        .dz-card + .dz-card { margin-top: 12px; }
+      `}</style>
+      <PageTexture />
+      <div aria-hidden="true" style={{ position: "absolute", top: -80, left: "50%", transform: "translateX(-50%)", width: "min(1100px,150vw)", height: 560,
+        background: `radial-gradient(ellipse at center, ${T.gold.fill}1c 0%, transparent 66%)`, pointerEvents: "none", zIndex: -1 }} />
 
-      {/* Background atmosphere */}
-      <div style={{ position: "fixed", inset: 0, zIndex: 0, background: `radial-gradient(ellipse 80% 60% at 25% 85%, #221a08 0%, transparent 55%), radial-gradient(ellipse 60% 50% at 75% 15%, #151a30 0%, transparent 55%), radial-gradient(ellipse 70% 50% at 50% 50%, rgba(200,162,78,0.04) 0%, transparent 60%), linear-gradient(155deg, #070a10 0%, #0c1018 25%, #151208 50%, #0e1220 75%, #090d14 100%)` }} />
-      <Grain />
+      <div style={{ maxWidth: 800, margin: "0 auto", padding: "0 20px" }}>
+        <Logo style={{ padding: "30px 0 0" }} />
 
-      <div style={{ position: "relative", zIndex: 2, maxWidth: 780, margin: "0 auto", padding: mob ? "40px 20px 56px" : "64px 32px 80px" }}>
-
-        {/* ─── HEADER ─────────────────────────────── */}
-        <div style={{ textAlign: "center", marginBottom: mob ? 34 : 46 }}>
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
-            <Shield size={40} />
-          </div>
-          <Eyebrow>Kriczky Virtus</Eyebrow>
-          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: mob ? 34 : 48, color: C.text1, letterSpacing: "-0.02em", lineHeight: 1.08, margin: "0 0 14px" }}>
-            Disclosures
-          </h1>
-          <P mob={mob} style={{ maxWidth: 560, margin: "0 auto 6px" }}>
+        {/* ─── HEADER ─── */}
+        <header style={{ textAlign: "center", padding: "clamp(30px,5vw,50px) 0 clamp(26px,4vw,38px)" }}>
+          <div style={KICKER}>Kriczky Virtus</div>
+          <h1 style={{ ...H, fontSize: "clamp(42px,8vw,72px)", lineHeight: 1.04, letterSpacing: "-.02em", margin: "0 0 16px" }}>Disclosures</h1>
+          <p style={{ ...P, fontSize: "clamp(16px,2.4vw,19px)", maxWidth: 560, margin: "0 auto" }}>
             What this is, what it isn&rsquo;t, and where the line sits.
-          </P>
-          <div style={{ fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: C.text3, marginTop: 14 }}>
+          </p>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: C.ink3, marginTop: 18 }}>
             Effective {EFFECTIVE}
           </div>
-        </div>
+        </header>
 
-        {/* ─── SECTIONS ───────────────────────────── */}
+        {/* ─── SECTIONS ─── */}
         {SECTIONS.map((s, i) => (
-          <div key={s.id} style={{ ...CARD, padding: mob ? "22px 20px" : "28px 30px", marginBottom: i === SECTIONS.length - 1 ? SectionGap : 12 }}>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 12 }}>
-              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: mob ? 15 : 17, fontWeight: 600, color: C.gold, lineHeight: 1, flexShrink: 0 }}>
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: mob ? 21 : 25, color: C.text1, letterSpacing: "-0.01em", lineHeight: 1.2, margin: 0 }}>
-                {s.title}
-              </h2>
+          <section key={s.id} id={s.id} className="dz-card" style={{ ...CARD, padding: "clamp(22px,3.6vw,30px) clamp(20px,3.6vw,32px)" }}>
+            <div className="dz-head">
+              <Num n={String(i + 1).padStart(2, "0")} t={T.gold} size={36} />
+              <h2 style={{ ...H, fontSize: "clamp(22px,3vw,27px)", lineHeight: 1.2, margin: 0 }}>{s.title}</h2>
             </div>
-            {s.intro && (
-              <P mob={mob} style={{ marginBottom: 12 }}>{s.intro}</P>
-            )}
-            {s.body.map((para, j) => (
-              <P key={j} mob={mob}
-                style={s.quoted
-                  ? { marginBottom: j === s.body.length - 1 ? 0 : 12, paddingLeft: mob ? 14 : 18, borderLeft: `2px solid ${C.gold}40`, color: C.text2 }
-                  : { marginBottom: j === s.body.length - 1 ? 0 : 12 }}>
-                {para}
-              </P>
-            ))}
+            {s.intro && <p style={{ ...P, marginBottom: 12 }}>{s.intro}</p>}
+            {s.quoted ? (
+              /* the KWM standard disclosure, set apart on a tinted panel */
+              <div style={{ padding: "16px 18px", borderRadius: 12, background: `linear-gradient(135deg, #FFFFFF 40%, ${T.gold.tint})`, border: `1px solid ${C.ruleLight}`,
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,.9)" }}>
+                {s.body.map((para, j) => <p key={j} style={{ ...P, marginTop: j ? 12 : 0 }}>{para}</p>)}
+              </div>
+            ) : s.body.map((para, j) => <p key={j} style={{ ...P, marginTop: j ? 12 : 0 }}>{para}</p>)}
             {s.link && (
-              <P mob={mob} style={{ marginTop: 14, marginBottom: 0 }}>
+              <p style={{ ...P, marginTop: 14 }}>
                 {s.linkIntro}{" "}
                 <a href={s.link.href} target="_blank" rel="noopener noreferrer"
-                  style={{ color: C.gold, textDecoration: "none", borderBottom: `1px solid ${C.gold}40` }}>
+                  style={{ color: T.gold.ink, fontWeight: 600, textDecoration: "underline", textDecorationColor: `${T.gold.fill}88`, textUnderlineOffset: 3 }}>
                   {s.link.label}
                 </a>.
-              </P>
+              </p>
             )}
-          </div>
+          </section>
         ))}
 
-        {/* ─── QUESTIONS ──────────────────────────── */}
-        <div style={{ ...CARD, padding: mob ? "22px 20px" : "28px 30px", marginBottom: SectionGap, textAlign: "center", border: `1px solid ${C.gold}25`, background: `linear-gradient(135deg, ${C.gold}08, ${C.gold}03)` }}>
-          <Eyebrow>Questions</Eyebrow>
-          <P mob={mob} style={{ marginBottom: 0, maxWidth: 520, marginLeft: "auto", marginRight: "auto" }}>
+        {/* ─── QUESTIONS ─── */}
+        <div style={{ ...glow(T.gold), padding: "clamp(22px,3.6vw,30px)", margin: "28px 0 clamp(30px,5vw,44px)", textAlign: "center" }}>
+          <div style={KICKER}>Questions</div>
+          <p style={{ ...P, maxWidth: 520, margin: "0 auto" }}>
             If anything here is unclear, ask before you act on it. Email{" "}
-            <span style={{ color: C.gold }}>ekriczky@kriczkyvirtus.com</span>.
-          </P>
+            <a href="mailto:ekriczky@kriczkyvirtus.com" style={{ color: T.gold.ink, fontWeight: 600, textDecoration: "none" }}>ekriczky@kriczkyvirtus.com</a>.
+          </p>
         </div>
 
-        {/* ─── FOOTER ─────────────────────────────── */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", paddingTop: 24, borderTop: `1px solid ${C.border1}` }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.text3} strokeWidth="1.5"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M22 7l-10 7L2 7" /></svg>
-              <span style={{ fontSize: 11, color: C.text3 }}>ekriczky@kriczkyvirtus.com</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.text3} strokeWidth="1.5"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" /></svg>
-              <span style={{ fontSize: 11, color: C.text3 }}>kriczkyvirtus.com</span>
-            </div>
-          </div>
-          <Shield size={28} />
-        </div>
-
+        <ContactFooter style={{ marginBottom: 56 }} />
       </div>
     </div>
   );

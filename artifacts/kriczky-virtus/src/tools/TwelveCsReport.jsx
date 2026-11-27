@@ -9,7 +9,7 @@ import { SECTIONS, BANDS } from "./RecurringRevenue12Cs.jsx";
    pages scaled to the screen, cream and porcelain, dark cover, a real PDF download.
    Not every C fits every business: C's the owner marked "doesn't fit" are shown but
    not scored, and the score is a percentage of what's possible across the C's that
-   fit. The old dark page lives on at /12cs-recurring-revenue/classic.
+   fit. The old dark page was retired 27 Nov 2026 (RecurringRevenue12Cs.jsx stays: this report uses it).
    ═══════════════════════════════════════════════════════════════ */
 
 const PAGE_W = 816, PAGE_H = 1056;
